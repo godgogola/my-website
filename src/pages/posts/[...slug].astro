@@ -1,0 +1,310 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  return allPosts.map(post => ({
+    params: { slug: post.data.slug || post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const allPosts = await getCollection('posts');
+const posts = allPosts
+  .filter(p => !p.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+const CATEGORY_ORDER = [
+  '內視鏡檢查', '肝病特區', '肝膽胰疾病', '胃部疾病', '腸道疾病',
+  '慢性病', '高血壓', '高血脂', '糖尿病', '減重',
+  '健檢報告判讀', '飲食禁忌', '藥物介紹'
+];
+
+const categorizedPosts = {};
+for (const p of posts) {
+  const cat = p.data.category || '其他';
+  if (!categorizedPosts[cat]) categorizedPosts[cat] = [];
+  categorizedPosts[cat].push(p);
+}
+
+const sortedCategories = [
+  ...CATEGORY_ORDER.filter(c => categorizedPosts[c]),
+  ...Object.keys(categorizedPosts).filter(c => !CATEGORY_ORDER.includes(c))
+];
+
+const currentSlug = post.data.slug || post.id;
+const currentCategory = post.data.category || '其他';
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+};
+---
+
+<Layout title={post.data.title} description={`${post.data.title} - 黃冠智醫師胃腸肝膽衛教筆記。`}>
+  <div class="obsidian-workspace">
+    <!-- 左側：Obsidian 風格側邊欄 -->
+    <aside class="obs-sidebar" id="obsSidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title-row">
+          <a href="/health-column" class="home-link" title="返回首頁">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </a>
+          <span>衛教文章庫</span>
+          <span class="post-count-badge">{posts.length}</span>
+        </div>
+        <div class="sidebar-search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="sidebarSearch" placeholder="搜尋文章..." autocomplete="off" />
+          <button id="sidebarSearchClear" class="search-clear" hidden>×</button>
+        </div>
+      </div>
+      <nav class="file-tree" id="fileTree">
+        {sortedCategories.map(cat => (
+          <div class="folder-group" data-category={cat}>
+            <button class="folder-btn" data-folder={cat}>
+              <svg class="folder-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg class="folder-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+              <span class="folder-name">{cat}</span>
+              <span class="folder-count">{categorizedPosts[cat]?.length || 0}</span>
+            </button>
+            <div class="folder-contents" id={`folder-${cat}`}>
+              {categorizedPosts[cat]?.map(p => (
+                <a href={`/posts/${p.data.slug || p.id}`} class:list={['file-item', { active: (p.data.slug || p.id) === currentSlug }]} data-slug={p.data.slug || p.id} data-title={p.data.title.toLowerCase()} data-category={p.data.category}>
+                  <svg class="file-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span class="file-name">{p.data.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </nav>
+      <button class="sidebar-close-btn" id="sidebarClose" aria-label="關閉側邊欄">×</button>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- 右側：文章內容 -->
+    <div class="obs-main">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="開啟文章分類">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        所有分類
+      </button>
+      <article class="article-detail">
+        <nav class="article-breadcrumb" aria-label="Breadcrumb">
+          <a href="/health-column">← 返回衛教專欄</a>
+          <span class="divider">/</span>
+          <span class="bc-cat">{currentCategory}</span>
+          <span class="divider">/</span>
+          <span class="current">{post.data.title}</span>
+        </nav>
+        <header class="article-header">
+          <div class="article-meta">
+            <span class="article-category">{post.data.category}</span>
+          </div>
+          <h1 class="article-title">{post.data.title}</h1>
+          <div class="header-divider"></div>
+        </header>
+        <div class="article-content">
+          <Content />
+        </div>
+        <footer class="article-footer">
+          <div class="footer-card">
+            <div class="doctor-mini-bio">
+              <img src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg" alt="黃冠智醫師" class="bio-avatar" />
+              <div class="bio-text">
+                <h3>黃冠智 醫師 審閱</h3>
+                <p>現任豐田診所院長。本站文章皆為醫學實證衛教筆記，旨在推廣胃腸肝膽健康知識。若您有相關健康疑問，建議尋求專業醫師診斷諮詢。</p>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-action">
+            <a href="/health-column" class="back-btn">返回文章列表</a>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ currentSlug, currentCategory }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fileTree = document.getElementById('fileTree');
+    const sidebarSearch = document.getElementById('sidebarSearch');
+    const sidebarSearchClear = document.getElementById('sidebarSearchClear');
+    const obsSidebar = document.getElementById('obsSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarClose = document.getElementById('sidebarClose');
+    const STORAGE_KEY = 'obs_folder_state';
+
+    function getFolderState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+    function saveFolderState(state) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {} }
+    function setFolderOpen(fn, open) {
+      const contents = document.getElementById('folder-' + fn);
+      const btn = fileTree?.querySelector('[data-folder="' + fn + '"]');
+      if (!contents || !btn) return;
+      contents.classList.toggle('open', open);
+      btn.classList.toggle('open', open);
+    }
+
+    // 恢復展開狀態，並確保當前文章所屬分類自動展開
+    const savedState = getFolderState();
+    const folderBtns = fileTree?.querySelectorAll('.folder-btn');
+    folderBtns?.forEach(btn => {
+      const fn = btn.getAttribute('data-folder');
+      if (!fn) return;
+      // 若是當前文章所屬分類，強制展開
+      const shouldOpen = (fn === currentCategory) || !!savedState[fn];
+      setFolderOpen(fn, shouldOpen);
+      btn.addEventListener('click', () => {
+        const nowOpen = document.getElementById('folder-' + fn)?.classList.contains('open');
+        setFolderOpen(fn, !nowOpen);
+        const state = getFolderState(); state[fn] = !nowOpen; saveFolderState(state);
+      });
+    });
+
+    // 當前文章捲動至可見
+    const activeItem = fileTree?.querySelector('.file-item.active');
+    activeItem?.scrollIntoView({ block: 'nearest' });
+
+    // 搜尋
+    sidebarSearch?.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      sidebarSearchClear?.toggleAttribute('hidden', !query);
+      applySearch(query);
+    });
+    sidebarSearchClear?.addEventListener('click', () => {
+      if (sidebarSearch) sidebarSearch.value = '';
+      sidebarSearchClear?.setAttribute('hidden', 'true');
+      applySearch('');
+      sidebarSearch?.focus();
+    });
+
+    function applySearch(query) {
+      const fileItems = fileTree?.querySelectorAll('.file-item');
+      const folderGroups = fileTree?.querySelectorAll('.folder-group');
+      if (!query) {
+        fileItems?.forEach(item => item.removeAttribute('hidden'));
+        folderGroups?.forEach(group => group.removeAttribute('hidden'));
+        const state = getFolderState();
+        folderBtns?.forEach(btn => { const fn = btn.getAttribute('data-folder'); if (fn) setFolderOpen(fn, (fn === currentCategory) || !!state[fn]); });
+        return;
+      }
+      folderGroups?.forEach(group => {
+        const catName = group.getAttribute('data-category') || '';
+        const items = group.querySelectorAll('.file-item');
+        let visible = 0;
+        items.forEach(item => {
+          const title = item.getAttribute('data-title') || '';
+          const cat = (item.getAttribute('data-category') || '').toLowerCase();
+          const matches = title.includes(query) || cat.includes(query);
+          item.toggleAttribute('hidden', !matches);
+          if (matches) visible++;
+        });
+        if (visible > 0) { group.removeAttribute('hidden'); setFolderOpen(catName, true); }
+        else group.setAttribute('hidden', 'true');
+      });
+    }
+
+    function openSidebar() { obsSidebar?.classList.add('mobile-open'); sidebarOverlay?.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { obsSidebar?.classList.remove('mobile-open'); sidebarOverlay?.classList.remove('active'); document.body.style.overflow = ''; }
+    mobileMenuBtn?.addEventListener('click', openSidebar);
+    sidebarClose?.addEventListener('click', closeSidebar);
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+  });
+</script>
+
+<style is:global>
+  .article-content { color:var(--color-text-body); font-size:1.08rem; line-height:1.85; letter-spacing:0.4px; }
+  .article-content h2 { color:var(--color-primary); font-size:1.5rem; font-weight:700; margin:36px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--color-primary-light); }
+  .article-content h3 { color:var(--color-primary); font-size:1.2rem; font-weight:700; margin:26px 0 10px; }
+  .article-content p { margin-bottom:18px; text-align:justify; }
+  .article-content ul, .article-content ol { margin-bottom:22px; padding-left:24px; }
+  .article-content li { margin-bottom:7px; }
+  .article-content blockquote { background-color:var(--color-primary-light); border-left:4px solid var(--color-primary); padding:14px 22px; border-radius:0 8px 8px 0; margin:22px 0; font-style:italic; color:var(--color-primary); }
+  .article-content blockquote p { margin-bottom:0; }
+  .article-content table { width:100%; border-collapse:collapse; margin:26px 0; font-size:0.98rem; }
+  .article-content th, .article-content td { padding:11px 14px; border:1px solid var(--color-border); text-align:left; }
+  .article-content th { background-color:var(--color-primary-light); color:var(--color-primary); font-weight:700; }
+  .article-content tr:nth-child(even) { background-color:rgba(47,102,86,.02); }
+  .article-content img { max-width:100%; height:auto; border-radius:12px; margin:22px auto; display:block; box-shadow:0 4px 12px var(--color-shadow); }
+  .article-content code { font-family:Consolas,Monaco,monospace; background-color:var(--color-primary-light); color:var(--color-primary); padding:2px 6px; border-radius:4px; font-size:0.93em; }
+</style>
+
+<style>
+  .obsidian-workspace { display:flex; gap:0; height:calc(100vh - 180px); min-height:650px; border-radius:16px; overflow:hidden; box-shadow:0 8px 40px var(--color-shadow); border:1px solid var(--color-border); }
+  .obs-sidebar { width:272px; min-width:232px; max-width:272px; background-color:#f3f0eb; border-right:1px solid var(--color-border); display:flex; flex-direction:column; overflow:hidden; flex-shrink:0; position:relative; }
+  .sidebar-header { padding:14px 12px 10px; border-bottom:1px solid var(--color-border); background-color:#eeeae2; flex-shrink:0; }
+  .sidebar-title-row { display:flex; align-items:center; gap:6px; color:var(--color-primary); font-weight:700; font-size:0.86rem; margin-bottom:10px; }
+  .home-link { color:var(--color-primary); display:flex; align-items:center; transition:opacity .2s; }
+  .home-link:hover { opacity:0.7; }
+  .post-count-badge { margin-left:auto; background-color:var(--color-primary); color:white; font-size:0.72rem; padding:1px 7px; border-radius:99px; font-weight:700; }
+  .sidebar-search { position:relative; display:flex; align-items:center; }
+  .sidebar-search svg { position:absolute; left:9px; color:var(--color-text-muted); pointer-events:none; }
+  #sidebarSearch { width:100%; padding:7px 28px 7px 28px; border-radius:6px; border:1.5px solid var(--color-border); background-color:var(--color-bg-card); font-family:inherit; font-size:0.84rem; color:var(--color-text-body); outline:none; transition:border-color .2s; }
+  #sidebarSearch:focus { border-color:var(--color-primary); }
+  #sidebarSearch::placeholder { color:var(--color-text-muted); }
+  .search-clear { position:absolute; right:8px; background:none; border:none; font-size:1.1rem; color:var(--color-text-muted); cursor:pointer; padding:0 2px; line-height:1; }
+  .search-clear:hover { color:var(--color-primary); }
+  .file-tree { flex:1; overflow-y:auto; overflow-x:hidden; padding:6px 0; scrollbar-width:thin; scrollbar-color:var(--color-border) transparent; }
+  .file-tree::-webkit-scrollbar { width:4px; }
+  .file-tree::-webkit-scrollbar-thumb { background:var(--color-border); border-radius:3px; }
+  .folder-group { margin-bottom:1px; }
+  .folder-btn { display:flex; align-items:center; gap:5px; width:100%; padding:5px 8px 5px 10px; background:none; border:none; cursor:pointer; font-family:inherit; font-size:0.84rem; font-weight:600; color:var(--color-text-body); text-align:left; border-radius:4px; transition:background-color .15s; }
+  .folder-btn:hover { background-color:rgba(47,102,86,.08); }
+  .folder-chevron { flex-shrink:0; color:var(--color-text-muted); transition:transform .2s; }
+  .folder-btn.open .folder-chevron { transform:rotate(90deg); }
+  .folder-icon-svg { flex-shrink:0; color:var(--color-text-muted); }
+  .folder-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .folder-count { flex-shrink:0; font-size:0.7rem; color:var(--color-text-muted); background-color:var(--color-border); padding:0 5px; border-radius:99px; }
+  .folder-contents { display:none; padding-left:18px; }
+  .folder-contents.open { display:block; }
+  .file-item { display:flex; align-items:center; gap:6px; padding:4px 8px 4px 5px; border-radius:4px; font-size:0.81rem; color:var(--color-text-body); text-decoration:none; transition:background-color .15s,color .15s; margin:1px 0; }
+  .file-item:hover { background-color:rgba(47,102,86,.08); color:var(--color-primary); }
+  .file-item.active { background-color:rgba(47,102,86,.14); color:var(--color-primary); font-weight:600; }
+  .file-icon { flex-shrink:0; color:var(--color-text-muted); }
+  .file-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.4; }
+  .obs-main { flex:1; overflow-y:auto; background-color:var(--color-bg-card); min-width:0; }
+  .mobile-menu-btn { display:none; align-items:center; gap:8px; margin:14px 16px 0; padding:7px 14px; background-color:var(--color-primary-light); color:var(--color-primary); border:1px solid var(--color-border); border-radius:8px; font-family:inherit; font-size:0.85rem; font-weight:700; cursor:pointer; transition:background-color .2s; }
+  .mobile-menu-btn:hover { background-color:var(--color-primary); color:white; }
+  .article-detail { max-width:760px; margin:0 auto; padding:16px 24px 56px; }
+  .article-breadcrumb { display:flex; align-items:center; gap:7px; font-size:0.88rem; color:var(--color-text-muted); margin-bottom:28px; flex-wrap:wrap; }
+  .article-breadcrumb a { transition:color .2s; font-weight:500; }
+  .article-breadcrumb a:hover { color:var(--color-primary); }
+  .article-breadcrumb .divider { color:var(--color-border); }
+  .bc-cat { color:var(--color-primary); font-weight:600; }
+  .article-breadcrumb .current { font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px; }
+  .article-header { margin-bottom:32px; }
+  .article-meta { display:flex; align-items:center; gap:14px; font-size:0.88rem; color:var(--color-text-muted); margin-bottom:14px; }
+  .article-category { background-color:var(--color-primary-light); color:var(--color-primary); padding:3px 10px; border-radius:4px; font-weight:700; }
+  .article-title { font-size:2.1rem; font-weight:900; color:var(--color-primary); line-height:1.3; margin-bottom:22px; }
+  .header-divider { width:56px; height:4px; background-color:var(--color-accent); border-radius:2px; }
+  .article-footer { margin-top:52px; border-top:1px solid var(--color-border); padding-top:36px; }
+  .footer-card { background-color:var(--color-bg-page); border-radius:14px; padding:22px; border:1px solid var(--color-border); box-shadow:0 4px 12px var(--color-shadow); margin-bottom:28px; }
+  .doctor-mini-bio { display:flex; gap:18px; align-items:center; }
+  .bio-avatar { width:68px; height:68px; border-radius:50%; object-fit:cover; object-position:top center; border:2px solid var(--color-primary-light); }
+  .bio-text h3 { font-size:1.1rem; color:var(--color-primary); font-weight:700; margin-bottom:5px; }
+  .bio-text p { font-size:0.9rem; color:var(--color-text-muted); line-height:1.6; }
+  .bottom-action { display:flex; justify-content:center; }
+  .back-btn { display:inline-block; padding:11px 30px; border-radius:99px; background-color:var(--color-primary); color:var(--color-bg-card); font-weight:700; box-shadow:0 4px 12px rgba(47,102,86,.2); transition:transform .2s,background-color .2s; }
+  .back-btn:hover { background-color:#244f43; transform:translateY(-2px); }
+  .back-btn:active { transform:translateY(0); }
+  .sidebar-close-btn { display:none; position:absolute; top:10px; right:10px; background:none; border:none; font-size:1.4rem; color:var(--color-text-muted); cursor:pointer; }
+  .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:99; opacity:0; transition:opacity .25s; }
+  .sidebar-overlay.active { display:block; opacity:1; }
+  @media (max-width: 768px) {
+    .obsidian-workspace { height:auto; min-height:auto; flex-direction:column; }
+    .obs-sidebar { position:fixed; top:0; left:-100%; height:100vh; z-index:100; width:290px; max-width:85vw; border-radius:0 14px 14px 0; transition:left .3s cubic-bezier(.4,0,.2,1); }
+    .obs-sidebar.mobile-open { left:0; box-shadow:4px 0 32px rgba(0,0,0,.2); }
+    .sidebar-close-btn { display:block; }
+    .obs-main { width:100%; }
+    .mobile-menu-btn { display:flex; }
+    .article-detail { padding:12px 14px 40px; }
+    .article-title { font-size:1.65rem; }
+    .doctor-mini-bio { flex-direction:column; text-align:center; }
+    .article-breadcrumb .current { max-width:140px; }
+  }
+</style>

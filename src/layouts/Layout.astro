@@ -1,0 +1,232 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  /** 覆蓋 <title> 標籤的完整文字（不會自動加上 " | 黃冠智醫師" suffix） */
+  meta_title?: string;
+  /** 覆蓋 <meta name="description"> 的文字 */
+  meta_description?: string;
+  /** Open Graph 封面圖完整 URL（用於 FB / LINE 分享） */
+  ogImage?: string;
+  /** 當前頁面完整 URL（用於 og:url） */
+  canonicalUrl?: string;
+}
+
+const {
+  title,
+  description = "黃冠智醫師的個人衛教專欄與筆記。提供肝膽腸胃健康、內科醫學等實證衛教資訊。",
+  meta_title,
+  meta_description,
+  ogImage = "https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg",
+  canonicalUrl,
+} = Astro.props;
+
+// 決定最終 <title> 文字
+const finalTitle = meta_title ?? `${title} | 黃冠智醫師`;
+// 決定最終 description
+const finalDescription = meta_description ?? description;
+---
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- 基礎 SEO -->
+    <title>{finalTitle}</title>
+    <meta name="description" content={finalDescription} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+
+    <!-- Open Graph（Facebook / LINE 分享） -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={finalTitle} />
+    <meta property="og:description" content={finalDescription} />
+    <meta property="og:image" content={ogImage} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:site_name" content="黃冠智醫師 | 豐田診所" />
+    <meta property="og:locale" content="zh_TW" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={finalTitle} />
+    <meta name="twitter:description" content={finalDescription} />
+    <meta name="twitter:image" content={ogImage} />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style is:global>
+      /* --- Design Tokens --- */
+      :root {
+        --color-bg-page: #FAF6EE;       /* 溫暖米白 */
+        --color-bg-card: #FFFFFF;       /* 卡片白色 */
+        --color-primary: #2F6656;       /* 品牌深綠 */
+        --color-primary-light: #E8F2EE; /* 品牌淺綠 */
+        --color-accent: #BC8A4A;        /* 溫暖香檳金 */
+        --color-accent-light: #F7EFE2;  /* 淺香檳 */
+        --color-text-body: #2C3E35;     /* 深炭綠（比純黑更溫和） */
+        --color-text-muted: #607369;    /* 灰綠色 */
+        --color-border: #E2EAE6;        /* 邊框線條 */
+        --color-shadow: rgba(47, 102, 86, 0.06);
+      }
+
+      /* Base Reset */
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-size: 16px;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: 'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: var(--color-bg-page);
+        color: var(--color-text-body);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* Layout Container */
+      .layout-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      main {
+        flex-grow: 1;
+        padding: 40px 0;
+      }
+
+      /* Header & Navigation */
+      .site-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 0;
+        border-bottom: 1.5px solid var(--color-border);
+      }
+
+      .logo-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .logo-title {
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: var(--color-primary);
+        letter-spacing: 1px;
+      }
+
+      .logo-subtitle {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--color-accent);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-top: 2px;
+      }
+
+      .site-nav {
+        display: flex;
+        gap: 28px;
+        font-weight: 700;
+      }
+
+      .nav-link {
+        font-size: 1rem;
+        color: var(--color-text-muted);
+        position: relative;
+        padding: 6px 0;
+        transition: color 0.25s ease;
+      }
+
+      .nav-link:hover, .nav-link.active {
+        color: var(--color-primary);
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--color-primary);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+      }
+
+      .nav-link:hover::after, .nav-link.active::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+
+      /* Footer */
+      .site-footer {
+        padding: 40px 0;
+        border-top: 1.5px solid var(--color-border);
+        text-align: center;
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      .footer-copy {
+        margin-top: 12px;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .site-header {
+          flex-direction: column;
+          gap: 16px;
+          padding: 16px 0;
+        }
+        .site-nav {
+          gap: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout-container">
+      <header class="site-header">
+        <a href="/" class="logo-group">
+          <span class="logo-title">黃冠智 醫師</span>
+          <span class="logo-subtitle">Gastroenterologist & Hepatologist</span>
+        </a>
+        <nav class="site-nav">
+          <a href="/" class="nav-link">首頁 & 關於我</a>
+          <a href="/health-column" class="nav-link">衛教專欄</a>
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <p>© {new Date().getFullYear()} 黃冠智醫師. All rights reserved.</p>
+        <p class="footer-copy">本站內容主要為個人衛教與醫療筆記，僅供參考。若有身體不適，請務必尋求專業醫師當面諮詢與評估。</p>
+      </footer>
+    </div>
+  </body>
+</html>

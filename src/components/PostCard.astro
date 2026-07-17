@@ -1,0 +1,245 @@
+---
+/**
+ * PostCard.astro — 衛教文章卡片元件
+ *
+ * Props:
+ *   - title: 文章標題
+ *   - href: 連結路徑
+ *   - category: 分類標籤
+ *   - publishDate: 發表日期
+ *   - summary: 摘要文字（可選）
+ *   - coverImage: 圖片檔名（例如 "胃食道逆流.png"），對應 src/assets/images/ 目錄
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  title: string;
+  href: string;
+  category: string;
+  publishDate: Date;
+  summary?: string;
+  coverImage?: string;
+}
+
+const { title, href, category, publishDate, summary, coverImage } = Astro.props;
+
+// 格式化日期
+const formattedDate = new Intl.DateTimeFormat('zh-TW', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(publishDate);
+
+// 使用 import.meta.glob 在編譯期預載所有圖片（Astro 官方推薦的動態圖片方案）
+// eager: true 代表同步載入，確保在 SSG 時可用
+const allImages = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/images/**/*.{png,jpg,jpeg,webp,avif}',
+  { eager: true }
+);
+
+// 判斷是否為外部網址
+const isExternalImage = coverImage && (coverImage.startsWith('http://') || coverImage.startsWith('https://'));
+
+// 依照 coverImage 檔名動態比對 glob 結果 (若非外部網址才比對)
+let resolvedImage: ImageMetadata | null = null;
+if (coverImage && !isExternalImage) {
+  // 嘗試比對路徑中包含此檔名的 key
+  const matchKey = Object.keys(allImages).find(
+    (key) => key.endsWith(`/${coverImage}`) || key === `../assets/images/${coverImage}`
+  );
+  if (matchKey) {
+    resolvedImage = allImages[matchKey].default;
+  }
+}
+---
+
+<a href={href} class="post-card" aria-label={`閱讀文章：${title}`}>
+  <!-- 圖片區塊 -->
+  <div class="card-image-wrapper">
+    {isExternalImage ? (
+      <img
+        src={coverImage}
+        alt={title}
+        class="card-image"
+        loading="lazy"
+        decoding="async"
+        width="400"
+        height="225"
+      />
+    ) : resolvedImage ? (
+      <Image
+        src={resolvedImage}
+        alt={title}
+        class="card-image"
+        width={400}
+        height={225}
+        format="webp"
+        quality={82}
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <div class="card-image-placeholder">
+        <svg viewBox="0 0 60 60" width="48" height="48" fill="none" aria-hidden="true">
+          <rect x="4" y="14" width="52" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
+          <circle cx="18" cy="28" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 38 L20 26 L32 36 L42 28 L56 38" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <span>{category}</span>
+      </div>
+    )}
+    <!-- 分類 Pill 標籤（懸浮在圖片左上角） -->
+    <span class="category-pill">{category}</span>
+  </div>
+
+  <!-- 文字區塊 -->
+  <div class="card-body">
+    <h3 class="card-title">{title}</h3>
+    {summary && <p class="card-summary">{summary}</p>}
+    <span class="card-read-more">
+      閱讀全文
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
+        <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </div>
+</a>
+
+<style>
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg-card);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 20px var(--color-shadow);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.3s ease;
+    height: 100%;
+  }
+
+  .post-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 16px 40px rgba(47, 102, 86, 0.14);
+  }
+
+  /* ── 圖片區塊 ── */
+  .card-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: var(--color-primary-light);
+    flex-shrink: 0;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.45s ease;
+  }
+
+  .post-card:hover .card-image {
+    transform: scale(1.06);
+  }
+
+  /* 無圖片時的漸層佔位塊 */
+  .card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-light) 0%,
+      #d6e8e1 50%,
+      #f0e9d8 100%
+    );
+    color: var(--color-primary);
+    opacity: 0.7;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* 分類 Pill 標籤（懸浮在圖片左上） */
+  .category-pill {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(47, 102, 86, 0.35);
+    /* 防止文字被 scale 裁切 */
+    white-space: nowrap;
+  }
+
+  /* ── 文字區塊 ── */
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px 22px 22px;
+    gap: 8px;
+  }
+
+  .card-date {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .card-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.5;
+    /* 最多顯示 2 行 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-summary {
+    font-size: 0.9rem;
+    color: var(--color-text-body);
+    line-height: 1.65;
+    flex: 1;
+    /* 最多顯示 3 行 */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    transition: gap 0.2s ease;
+  }
+
+  .post-card:hover .card-read-more {
+    gap: 9px;
+  }
+</style>

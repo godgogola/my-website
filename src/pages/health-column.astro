@@ -1,0 +1,453 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+// ── 取得所有已發布文章，依日期排序 ──
+const allPosts = await getCollection('posts');
+const posts = allPosts
+  .filter(post => !post.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+// ── 分類清單（依照指定順序排列） ──
+const CATEGORY_ORDER = [
+  '內視鏡檢查', '肝病特區', '肝膽胰疾病', '胃部疾病', '腸道疾病',
+  '慢性病', '高血壓', '高血脂', '糖尿病', '減重',
+  '健檢報告判讀', '飲食禁忌', '藥物介紹'
+];
+
+// ── 取得所有出現的分類（含未在 CATEGORY_ORDER 裡的） ──
+const allCategories = [...new Set(posts.map(p => p.data.category || '其他'))];
+const sortedCategories = [
+  '全部',
+  ...CATEGORY_ORDER.filter(c => allCategories.includes(c)),
+  ...allCategories.filter(c => !CATEGORY_ORDER.includes(c)),
+];
+
+// ── 擷取文章摘要（去除 Markdown 符號，取前 120 字） ──
+function getSummary(body: string | undefined): string {
+  if (!body) return '點擊閱讀完整文章。';
+  return body
+    .replace(/^---[\s\S]*?---/, '')        // 移除 frontmatter
+    .replace(/#{1,6}\s+/g, '')             // 移除標題符號
+    .replace(/[*_`~>|]/g, '')             // 移除格式符號
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // 保留連結文字
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 120) + '…';
+}
+---
+
+<Layout
+  title="衛教專欄"
+  description={`黃冠智醫師的胃腸肝膽衛教專欄，共 ${posts.length} 篇實證文章，涵蓋胃食道逆流、大腸鏡、肝病、減重醫學等主題。`}
+>
+  <!-- ── 頁面 Hero 標題 ── -->
+  <div class="column-hero">
+    <div class="column-hero-inner">
+      <h1 class="column-hero-title">衛教專欄</h1>
+      <p class="column-hero-desc">
+        整理自臨床經驗，共
+        <strong>{posts.length}</strong> 篇文章，
+        涵蓋 <strong>{sortedCategories.length - 1}</strong> 個主題。
+      </p>
+    </div>
+  </div>
+
+  <!-- ── 分類篩選 Tab Pills ── -->
+  <div class="filter-bar" id="filterBar" role="tablist" aria-label="文章分類篩選">
+    {sortedCategories.map((cat, i) => (
+      <button
+        class={`filter-pill ${i === 0 ? 'active' : ''}`}
+        role="tab"
+        aria-selected={i === 0 ? 'true' : 'false'}
+        data-filter={cat}
+        id={`tab-${cat}`}
+      >
+        {cat}
+        <span class="pill-count">
+          {cat === '全部' ? posts.length : posts.filter(p => p.data.category === cat).length}
+        </span>
+      </button>
+    ))}
+  </div>
+
+  <!-- ── 搜尋欄 ── -->
+  <div class="search-row">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input
+        type="search"
+        id="articleSearch"
+        class="search-input"
+        placeholder="搜尋文章標題或分類..."
+        autocomplete="off"
+        aria-label="搜尋文章"
+      />
+    </div>
+    <p class="result-count" id="resultCount" aria-live="polite">顯示 {posts.length} 篇文章</p>
+  </div>
+
+  <!-- ── 文章卡片網格 ── -->
+  <div class="posts-grid" id="postsGrid">
+    {posts.map((post) => (
+      <article
+        class="grid-item"
+        data-category={post.data.category || '其他'}
+        data-title={post.data.title.toLowerCase()}
+      >
+        <PostCard
+          title={post.data.title}
+          href={`/posts/${post.data.slug || post.id}`}
+          category={post.data.category || '其他'}
+          publishDate={post.data.publishDate}
+          summary={getSummary(post.body)}
+          coverImage={post.data.coverImage}
+        />
+      </article>
+    ))}
+  </div>
+
+  <!-- ── 無結果提示 ── -->
+  <div class="no-results" id="noResults" hidden aria-live="polite">
+    <svg viewBox="0 0 24 24" width="52" height="52" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <h3>找不到相符的文章</h3>
+    <p>請嘗試其他關鍵字，或點擊「全部」瀏覽所有文章。</p>
+    <button class="reset-btn" id="resetFilter">清除篩選</button>
+  </div>
+</Layout>
+
+<!-- ── 互動篩選 JS ── -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+    const gridItems = document.querySelectorAll<HTMLElement>('.grid-item');
+    const searchInput = document.getElementById('articleSearch') as HTMLInputElement;
+    const resultCount = document.getElementById('resultCount');
+    const noResults = document.getElementById('noResults');
+    const resetBtn = document.getElementById('resetFilter');
+
+    let activeFilter = '全部';
+    let searchQuery = '';
+
+    function updateView() {
+      let visible = 0;
+      gridItems.forEach(item => {
+        const cat = item.dataset.category || '';
+        const titleText = item.dataset.title || '';
+        const matchFilter = activeFilter === '全部' || cat === activeFilter;
+        const matchSearch = !searchQuery || titleText.includes(searchQuery) || cat.toLowerCase().includes(searchQuery);
+        const show = matchFilter && matchSearch;
+        item.hidden = !show;
+        if (show) visible++;
+      });
+      if (resultCount) resultCount.textContent = `顯示 ${visible} 篇文章`;
+      if (noResults) noResults.hidden = visible > 0;
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter || '全部';
+        filterBtns.forEach(b => {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+        });
+        updateView();
+        // 篩選後捲回網格頂部
+        document.getElementById('postsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    searchInput?.addEventListener('input', e => {
+      searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
+      updateView();
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      activeFilter = '全部';
+      searchQuery = '';
+      if (searchInput) searchInput.value = '';
+      filterBtns.forEach(b => {
+        const isAll = b.dataset.filter === '全部';
+        b.classList.toggle('active', isAll);
+        b.setAttribute('aria-selected', isAll ? 'true' : 'false');
+      });
+      updateView();
+    });
+  });
+</script>
+
+<style>
+  /* ── Hero ── */
+  .column-hero {
+    text-align: center;
+    padding: 48px 20px 36px;
+    margin-bottom: 8px;
+  }
+
+  .column-hero-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    background-color: var(--color-accent-light);
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .column-hero-title {
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 900;
+    color: var(--color-primary);
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+
+  .column-hero-desc {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  .column-hero-desc strong {
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  /* ── 分類篩選 Pill Tabs ── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 0 4px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-border);
+    background-color: var(--color-bg-card);
+    color: var(--color-text-muted);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .filter-pill:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  .filter-pill.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.3);
+  }
+
+  .pill-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    background-color: rgba(255,255,255,0.25);
+    padding: 1px 7px;
+    border-radius: 999px;
+    line-height: 1.6;
+  }
+
+  .filter-pill:not(.active) .pill-count {
+    background-color: var(--color-border);
+    color: var(--color-text-muted);
+  }
+
+  /* ── 搜尋欄 ── */
+  .search-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto 28px;
+    flex-wrap: wrap;
+  }
+
+  .search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 420px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 10px;
+    background-color: var(--color-bg-card);
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--color-text-body);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(47, 102, 86, 0.1);
+  }
+
+  .search-input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .result-count {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  /* ── 卡片網格 ── */
+  .posts-grid {
+    display: grid;
+    /* 手機：1 欄 */
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto 48px;
+  }
+
+  /* 平板：2 欄 */
+  @media (min-width: 640px) {
+    .posts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* 桌面：3 欄 */
+  @media (min-width: 1024px) {
+    .posts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .grid-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .grid-item[hidden] {
+    display: none;
+  }
+
+  /* ── 無結果提示 ── */
+  .no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 72px 24px;
+    text-align: center;
+    color: var(--color-text-muted);
+    gap: 12px;
+    max-width: 400px;
+    margin: 0 auto 48px;
+  }
+
+  .no-results[hidden] {
+    display: none;
+  }
+
+  .no-results svg {
+    color: #C5786E;
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+
+  .no-results h3 {
+    font-size: 1.15rem;
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  .no-results p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .reset-btn {
+    margin-top: 8px;
+    padding: 9px 24px;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .reset-btn:hover {
+    background-color: var(--color-primary);
+    color: #ffffff;
+  }
+
+  /* ── 響應式微調 ── */
+  @media (max-width: 480px) {
+    .column-hero {
+      padding: 32px 16px 24px;
+    }
+    .filter-bar {
+      gap: 6px;
+    }
+    .filter-pill {
+      font-size: 0.78rem;
+      padding: 5px 12px;
+    }
+    .search-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .search-wrapper {
+      max-width: 100%;
+    }
+  }
+</style>
