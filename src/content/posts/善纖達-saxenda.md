@@ -1,10 +1,10 @@
 ---
 title: "善纖達 Saxenda"
-coverImage: "善纖達 Saxenda.png"
 category: "減重"
-publishDate: "2026-07-13"
+publishDate: "2026-07-18"
 draft: false
 slug: "善纖達-saxenda"
+coverImage: "善纖達 Saxenda.png"
 ---
 # 「瘦瘦針」從降血糖到減重：善纖達 Saxenda®（Liraglutide）的原理與臨床應用
 

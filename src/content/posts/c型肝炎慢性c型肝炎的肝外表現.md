@@ -1,10 +1,10 @@
 ---
 title: "【C型肝炎】慢性C型肝炎的「肝外表現」"
-coverImage: "C型肝炎.png"
-category: "肝病特區"
-publishDate: "2026-07-13"
+category: "肝膽胰疾病"
+publishDate: "2026-07-18"
 draft: false
 slug: "c型肝炎慢性c型肝炎的肝外表現"
+coverImage: "C型肝炎.png"
 ---
 **慢性C型肝炎的「肝外表現」（Extrahepatic Manifestations of Chronic Hepatitis C, CHC）**，是指C型肝炎病毒（HCV）除了攻擊肝臟（引發肝炎、肝硬化、肝癌）之外，還會透過**系統性免疫反應、自體免疫複合物沉積**以及**直接感染其他組織**等機轉，引發全身多個器官系統的病變。
 

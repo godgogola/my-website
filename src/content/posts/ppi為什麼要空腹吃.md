@@ -1,10 +1,10 @@
 ---
 title: "【PPI】為什麼要空腹吃"
-coverImage: "【PPI】為什麼要空腹吃.png"
 category: "藥物介紹"
-publishDate: "2026-07-13"
+publishDate: "2026-07-18"
 draft: false
 slug: "ppi為什麼要空腹吃"
+coverImage: "【PPI】為什麼要空腹吃.png"
 ---
 質子幫浦抑制劑（PPI）之所以必須嚴格遵守在「空腹」且通常是「飯前 30 至 60 分鐘」服用，主要是基於其特殊的藥理機轉與人體胃壁細胞的生理運作時機。詳細原因如下：
 

@@ -1,10 +1,10 @@
 ---
 title: "瑞倍適 Rybelsus"
-coverImage: "瑞倍適 Rybelsus.png"
 category: "減重"
-publishDate: "2026-07-13"
+publishDate: "2026-07-18"
 draft: false
 slug: "瑞倍適-rybelsus"
+coverImage: "瑞倍適 Rybelsus.png"
 ---
 # 瑞倍適 Rybelsus®（Oral Semaglutide）：首款口服 GLP-1 藥物完整臨床解析
 

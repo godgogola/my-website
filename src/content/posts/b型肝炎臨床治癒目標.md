@@ -1,10 +1,10 @@
 ---
 title: "【B型肝炎】臨床治癒目標"
-coverImage: "B型肝炎.png"
-category: "肝病特區"
-publishDate: "2026-07-13"
+category: "肝膽胰疾病"
+publishDate: "2026-07-18"
 draft: false
 slug: "b型肝炎臨床治癒目標"
+coverImage: "B型肝炎.png"
 ---
 在B型肝炎的臨床治療上，單純的「肝功能正常（血清 ALT 指數正常）」並不被稱為「治癒」。
 

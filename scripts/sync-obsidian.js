@@ -56,13 +56,13 @@ function getFilesRecursively(dir, fileList = [], vaultRoot = '') {
       const parentDir = path.dirname(filePath);
       const parentName = path.basename(parentDir);
       let category;
-      // 如果父資料夾是根目錄或庫根目錄（非實際分類資料夾），則用檔名推斷分類
-      // 根目錄或根層資料夾的檔案一律跳過，只處理有分類資料夾的文章
+      // 如果父資料夾是根目錄，自動推斷分類
       if (parentDir === vaultRoot || ROOT_LEVEL_FOLDERS.has(parentName)) {
-        console.log(`[Sync] 跳過根目錄文章（未分類）: ${file}`);
-        continue;
+        category = inferCategoryFromFilename(file);
+        console.log(`[Sync] 根目錄文章自動歸類 [${category}]: ${file}`);
+      } else {
+        category = parentName;
       }
-      category = parentName;
       fileList.push({ filePath, category });
     }
   }
@@ -71,16 +71,34 @@ function getFilesRecursively(dir, fileList = [], vaultRoot = '') {
 
 function inferCategoryFromFilename(filename) {
   const name = filename.replace('.md', '');
-  // 肝炎相關
-  if (name.includes('B型肝炎') || name.includes('C型肝炎') || name.includes('A型肝炎') || name.includes('肝炎') || name.includes('肝硬化') || name.includes('肝癌')) {
-    return '肝病特區';
+  if (name.includes('肝炎') || name.includes('肝硬化') || name.includes('肝癌') || name.includes('肝脂肪') || name.includes('膽')) {
+    return '肝膽胰疾病';
   }
-  // 健檢相關
-  if (name.includes('空腹抽血') || name.includes('血液檢查') || name.includes('尿液') || name.includes('健檢') || name.includes('INBODY') || name.includes('惰性')) {
+  if (name.includes('胃') || name.includes('潰瘍') || name.includes('食道') || name.includes('幽門') || name.includes('打嗝')) {
+    return '胃部疾病';
+  }
+  if (name.includes('腸') || name.includes('便') || name.includes('痔瘡') || name.includes('屁')) {
+    return '腸道疾病';
+  }
+  if (name.includes('息肉') || name.includes('鏡') || name.includes('清腸')) {
+    return '內視鏡檢查';
+  }
+  if (name.includes('減重') || name.includes('瘦瘦') || name.includes('胰島素') || name.includes('肥胖')) {
+    return '減重';
+  }
+  if (name.includes('糖') || name.includes('血糖') || name.includes('ADA')) {
+    return '糖尿病';
+  }
+  if (name.includes('壓') || name.includes('心血管')) {
+    return '高血壓';
+  }
+  if (name.includes('脂') || name.includes('膽固醇')) {
+    return '高血脂';
+  }
+  if (name.includes('檢') || name.includes('血') || name.includes('尿') || name.includes('INBODY')) {
     return '健檢報告判讀';
   }
-  // 預設
-  return '肝病特區'; // 根目錄大多是肝病相關特殊文章
+  return '胃部疾病'; // 預設分類
 }
 
 function findImageInVault(vaultPath, imageName) {
@@ -103,11 +121,6 @@ function findImageInVault(vaultPath, imageName) {
 function sync() {
   if (!fs.existsSync(obsidianVaultPath)) {
     console.warn(`[Sync] [警告] 找不到 Obsidian 資料夾: "${obsidianVaultPath}"。`);
-    const demoFile = path.join(destDir, 'demo-post.md');
-    if (!fs.existsSync(demoFile)) {
-      const demoContent = `---\ntitle: "測試衛教文章（請設定 Obsidian 路徑）"\ncategory: "第一孕期"\ndraft: false\npublishDate: "${new Date().toISOString().split('T')[0]}"\nimage: ""\n---\n# 歡迎！\n`;
-      fs.writeFileSync(demoFile, demoContent, 'utf8');
-    }
     return;
   }
 
@@ -115,6 +128,7 @@ function sync() {
   console.log(`[Sync] 找到 ${mdFiles.length} 篇 Obsidian 文章。`);
 
   let syncedCount = 0;
+  const validOutputFiles = new Set();
 
   for (const { filePath, category: folderCategory } of mdFiles) {
     const fileName = path.basename(filePath, '.md');
@@ -146,7 +160,6 @@ function sync() {
       if (titleMatch) title = titleMatch[1].replace(/['"]/g, '').trim();
       if (catMatch) {
         const fmCategory = catMatch[1].replace(/['"]/g, '').trim();
-        // 只有 frontmatter 中有非預設分類才覆蓋
         if (fmCategory && fmCategory !== '衛教文章') {
           category = fmCategory;
         }
@@ -155,9 +168,10 @@ function sync() {
       if (draftMatch) draft = draftMatch[1].trim() === 'true';
     }
 
-    // 保留已存在目標檔案的 coverImage
     const outputFileName = `${slugify(fileName)}.md`;
     const outputPath = path.join(destDir, outputFileName);
+    validOutputFiles.add(outputFileName);
+
     let coverImage = '';
     if (fs.existsSync(outputPath)) {
       const existingContent = fs.readFileSync(outputPath, 'utf8');
@@ -193,7 +207,18 @@ function sync() {
     syncedCount++;
   }
 
-  console.log(`[Sync] 同步完成！共導入 ${syncedCount} 篇文章至 src/content/posts/`);
+  // 🗑️ 清除已在 Obsidian 刪除的文章
+  const existingDestFiles = fs.readdirSync(destDir).filter(f => f.endsWith('.md'));
+  let deletedCount = 0;
+  for (const existingFile of existingDestFiles) {
+    if (!validOutputFiles.has(existingFile)) {
+      fs.unlinkSync(path.join(destDir, existingFile));
+      console.log(`[Sync] 🗑️ 刪除已被移除的文章: ${existingFile}`);
+      deletedCount++;
+    }
+  }
+
+  console.log(`[Sync] 同步完成！共導入 ${syncedCount} 篇文章，刪除 ${deletedCount} 篇舊文章至 src/content/posts/`);
 
   const categoryStats = {};
   for (const { category } of mdFiles) {

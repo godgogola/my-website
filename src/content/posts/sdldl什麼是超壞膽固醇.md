@@ -1,10 +1,10 @@
 ---
 title: "【sdLDL】什麼是「超壞膽固醇」？"
-coverImage: "【sdLDL】什麼是「超壞膽固醇」？.png"
 category: "高血脂"
-publishDate: "2026-07-13"
+publishDate: "2026-07-18"
 draft: false
 slug: "sdldl什麼是超壞膽固醇"
+coverImage: "【sdLDL】什麼是「超壞膽固醇」？.png"
 ---
 # 【sdLDL】什麼是「超壞膽固醇」？
 

@@ -1,10 +1,10 @@
 ---
 title: "週纖達 Wegovy"
-coverImage: "週纖達 Wegovy.png"
 category: "減重"
-publishDate: "2026-07-13"
+publishDate: "2026-07-18"
 draft: false
 slug: "週纖達-wegovy"
+coverImage: "週纖達 Wegovy.png"
 ---
 # 每週一次 GLP-1 受體促效劑：週纖達 Wegovy®（Semaglutide 2.4mg）
 

@@ -1,10 +1,10 @@
 ---
 title: "康纖芙 Contrave"
-coverImage: "康纖芙 Contrave.png"
 category: "減重"
-publishDate: "2026-07-13"
+publishDate: "2026-07-18"
 draft: false
 slug: "康纖芙-contrave"
+coverImage: "康纖芙 Contrave.png"
 ---
 # 總是管不住嘴？認識雙重機轉減重藥物：康纖芙 Contrave®
 

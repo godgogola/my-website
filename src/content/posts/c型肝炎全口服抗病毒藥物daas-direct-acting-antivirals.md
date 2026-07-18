@@ -1,10 +1,10 @@
 ---
 title: "【C型肝炎】全口服抗病毒藥物（DAAs, Direct-acting antivirals）"
-coverImage: "C型肝炎.png"
-category: "肝病特區"
-publishDate: "2026-07-13"
+category: "肝膽胰疾病"
+publishDate: "2026-07-18"
 draft: false
 slug: "c型肝炎全口服抗病毒藥物daas-direct-acting-antivirals"
+coverImage: "C型肝炎.png"
 ---
 台灣健保自 2017 年起陸續將這些藥物納入給付，經歷了從「特定基因型」到如今「全基因型（1-6型通殺）」的演進。
 

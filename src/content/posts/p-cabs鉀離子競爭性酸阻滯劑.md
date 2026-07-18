@@ -1,10 +1,10 @@
 ---
 title: "【P-CABs】鉀離子競爭性酸阻滯劑"
-coverImage: "【P-CABs】鉀離子競爭性酸阻滯劑.png"
 category: "藥物介紹"
-publishDate: "2026-07-13"
+publishDate: "2026-07-18"
 draft: false
 slug: "p-cabs鉀離子競爭性酸阻滯劑"
+coverImage: "【P-CABs】鉀離子競爭性酸阻滯劑.png"
 ---
 我們在臨床上經常面臨傳統質子幫浦抑制劑 (PPI) 治療失敗或患者順從性不佳的挑戰。**鉀離子競爭性酸阻滯劑 (Potassium-Competitive Acid Blockers, P-CABs)** 作為新一代的胃酸抑制劑，從根本上解決了許多 PPI 的藥理學限制，目前健保不給付，還是得自費使用。
 
