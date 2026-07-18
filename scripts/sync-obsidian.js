@@ -56,13 +56,12 @@ function getFilesRecursively(dir, fileList = [], vaultRoot = '') {
       const parentDir = path.dirname(filePath);
       const parentName = path.basename(parentDir);
       let category;
-      // 如果父資料夾是根目錄，自動推斷分類
+      // 根目錄或根層資料夾的檔案一律跳過，只處理放在「分類資料夾」內部的文章
       if (parentDir === vaultRoot || ROOT_LEVEL_FOLDERS.has(parentName)) {
-        category = inferCategoryFromFilename(file);
-        console.log(`[Sync] 根目錄文章自動歸類 [${category}]: ${file}`);
-      } else {
-        category = parentName;
+        console.log(`[Sync] 跳過根目錄文章（未分類）: ${file}`);
+        continue;
       }
+      category = parentName;
       fileList.push({ filePath, category });
     }
   }
