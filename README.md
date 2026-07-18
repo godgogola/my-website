@@ -10,14 +10,14 @@
 
 ```
 📁 個人網站/
-   └── 更新文章.bat  ← 雙擊這個！
+   ├── 更新文章.bat  ← 同步與配對封面圖
+   └── 發布網站.bat  ← 一鍵打包並發布至網頁 (drhuanggi.vercel.app)
 ```
 
-雙擊後會自動依序執行：
-- ✅ 同步 Obsidian 文章（sync-obsidian.js）
-- ✅ 自動配對封面圖片（auto-cover-image-v2.js）
-
-完成後再回到 VS Code 執行 `npm run dev` 預覽，確認沒問題就執行 Step 5 上線！
+**使用方式：**
+1. 雙擊 **`更新文章.bat`**：同步 Obsidian 最新文章與配對圖片。
+2. （選做）在 VS Code 輸入 `npm run dev` 在本機預覽。
+3. 雙擊 **`發布網站.bat`**：一鍵完成打包 + 自動更新上線！
 
 ---
 
