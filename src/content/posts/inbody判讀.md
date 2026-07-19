@@ -1,5 +1,6 @@
 ---
 title: "INBODY判讀"
+order: 1
 category: "健檢報告判讀"
 publishDate: "2026-07-19"
 draft: false

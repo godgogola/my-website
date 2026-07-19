@@ -1,5 +1,6 @@
 ---
 title: "哪些食物會讓壞膽固醇（LDL）升高"
+order: 2
 category: "飲食禁忌"
 publishDate: "2026-07-19"
 draft: false

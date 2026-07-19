@@ -1,5 +1,6 @@
 ---
 title: "猛健樂 Mounjaro"
+order: 7
 category: "減重"
 publishDate: "2026-07-19"
 draft: false

@@ -11,6 +11,8 @@ const postsCollection = defineCollection({
     slug: z.string().optional(),
     // 封面圖檔名（對應 src/assets/images/ 內的檔案，例如 "胃食道逆流.png"）
     coverImage: z.string().optional(),
+    // 排序序號（例如 1, 2, 3...）
+    order: z.number().optional(),
     // SEO 專用欄位（覆蓋預設 title/description）
     meta_title: z.string().optional(),
     meta_description: z.string().optional(),

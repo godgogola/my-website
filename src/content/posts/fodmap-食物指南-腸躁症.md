@@ -1,5 +1,6 @@
 ---
 title: "FODMAP 食物指南-腸躁症"
+order: 5
 category: "飲食禁忌"
 publishDate: "2026-07-19"
 draft: false

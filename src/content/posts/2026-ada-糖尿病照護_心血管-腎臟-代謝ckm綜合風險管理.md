@@ -1,5 +1,6 @@
 ---
-title: "2026 ADA 糖尿病照護_心血管-腎臟-代謝（CKM）綜合風險管理"
+title: "【2026 ADA】 糖尿病照護_心血管-腎臟-代謝（CKM）綜合風險管理"
+order: 1
 category: "糖尿病"
 publishDate: "2026-07-19"
 draft: false

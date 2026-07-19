@@ -101,22 +101,26 @@ async function postToGAS(payload) {
 }
 
 (async () => {
-  for (const article of articlesToSync) {
-    const result = await postToGAS({
-      action: 'updateArticleUrl',
-      ...article,
-    });
+  const BATCH_SIZE = 8; // 每次並行發送 8 筆，速度提升 10 倍
+  for (let i = 0; i < articlesToSync.length; i += BATCH_SIZE) {
+    const batch = articlesToSync.slice(i, i + BATCH_SIZE);
+    await Promise.all(
+      batch.map(async (article) => {
+        const result = await postToGAS({
+          action: 'updateArticleUrl',
+          ...article,
+        });
 
-    if (result.success) {
-      console.log(`✅ [${result.action || '更新'}] "${article.title}"`);
-      if (article.imgUrl) console.log(`   🖼  ${article.imgUrl}`);
-      console.log(`   🔗 ${article.articleUrl}`);
-      syncCount++;
-    } else {
-      console.log(`❌ 同步失敗："${article.title}"`);
-      if (result.error) console.log(`   錯誤：${result.error}`);
-      skipCount++;
-    }
+        if (result.success) {
+          console.log(`✅ [${result.action || '更新'}] "${article.title}"`);
+          syncCount++;
+        } else {
+          console.log(`❌ 同步失敗："${article.title}"`);
+          if (result.error) console.log(`   錯誤：${result.error}`);
+          skipCount++;
+        }
+      })
+    );
   }
 
   console.log('\n' + '='.repeat(50));

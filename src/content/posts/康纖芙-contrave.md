@@ -1,5 +1,6 @@
 ---
 title: "康纖芙 Contrave"
+order: 3
 category: "減重"
 publishDate: "2026-07-19"
 draft: false

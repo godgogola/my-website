@@ -16,7 +16,12 @@ const { Content } = await render(post);
 const allPosts = await getCollection('posts');
 const posts = allPosts
   .filter(p => !p.data.draft)
-  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+  .sort((a, b) => {
+    const orderA = a.data.order ?? 9999;
+    const orderB = b.data.order ?? 9999;
+    if (orderA !== orderB) return orderA - orderB;
+    return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+  });
 
 const CATEGORY_ORDER = [
   '內視鏡檢查', '肝病特區', '肝膽胰疾病', '胃部疾病', '腸道疾病',

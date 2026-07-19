@@ -1,5 +1,6 @@
 ---
 title: "瑞倍適 Rybelsus"
+order: 5
 category: "減重"
 publishDate: "2026-07-19"
 draft: false

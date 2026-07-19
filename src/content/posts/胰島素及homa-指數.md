@@ -1,5 +1,6 @@
 ---
 title: "胰島素及HOMA 指數"
+order: 8
 category: "糖尿病"
 publishDate: "2026-07-19"
 draft: false

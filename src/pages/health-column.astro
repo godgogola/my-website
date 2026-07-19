@@ -3,11 +3,16 @@ import Layout from '../layouts/Layout.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
-// ── 取得所有已發布文章，依日期排序 ──
+// ── 取得所有已發布文章，優先依 order (由小到大)，再依日期排序 ──
 const allPosts = await getCollection('posts');
 const posts = allPosts
   .filter(post => !post.data.draft)
-  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+  .sort((a, b) => {
+    const orderA = a.data.order ?? 9999;
+    const orderB = b.data.order ?? 9999;
+    if (orderA !== orderB) return orderA - orderB;
+    return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+  });
 
 // ── 分類清單（依照指定順序排列） ──
 const CATEGORY_ORDER = [

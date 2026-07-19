@@ -149,17 +149,23 @@ function sync() {
     let category = folderCategory; // 預設使用資料夾名稱
     let publishDate = new Date().toISOString().split('T')[0];
     let draft = false;
+    let order = null;
 
     if (frontmatter) {
       const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
       const catMatch = frontmatter.match(/^category:\s*(.+)$/m);
       const dateMatch = frontmatter.match(/^publishDate:\s*(.+)$/m);
       const draftMatch = frontmatter.match(/^draft:\s*(.+)$/m);
+      const orderMatch = frontmatter.match(/^order:\s*(.+)$/m);
 
       // 使用資料夾名稱作為文章分類（Google Drive 目錄為唯一標準）
       category = folderCategory;
       if (dateMatch) publishDate = dateMatch[1].replace(/['"]/g, '').trim();
       if (draftMatch) draft = draftMatch[1].trim() === 'true';
+      if (orderMatch) {
+        const parsedOrder = parseInt(orderMatch[1].trim(), 10);
+        if (!isNaN(parsedOrder)) order = parsedOrder;
+      }
     }
 
     const outputFileName = `${slugify(fileName)}.md`;
@@ -171,10 +177,19 @@ function sync() {
       const existingContent = fs.readFileSync(outputPath, 'utf8');
       const coverMatch = existingContent.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
       if (coverMatch) coverImage = coverMatch[1].trim();
+      
+      if (order === null) {
+        const existingOrderMatch = existingContent.match(/^order:\s*(.+)$/m);
+        if (existingOrderMatch) {
+          const parsedOrder = parseInt(existingOrderMatch[1].trim(), 10);
+          if (!isNaN(parsedOrder)) order = parsedOrder;
+        }
+      }
     }
 
     const coverLine = coverImage ? `\ncoverImage: "${coverImage}"` : '';
-    const finalFrontmatter = `---\ntitle: "${title}"\ncategory: "${category}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slugify(fileName)}"${coverLine}\n---\n`;
+    const orderLine = (order !== null && !isNaN(order)) ? `\norder: ${order}` : '';
+    const finalFrontmatter = `---\ntitle: "${title}"\ncategory: "${category}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slugify(fileName)}"${orderLine}${coverLine}\n---\n`;
 
     let processedBody = body.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, noteTarget, display) => {
       const targetSlug = slugify(noteTarget.trim());

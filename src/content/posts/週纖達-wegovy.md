@@ -1,5 +1,6 @@
 ---
 title: "週纖達 Wegovy"
+order: 6
 category: "減重"
 publishDate: "2026-07-19"
 draft: false
