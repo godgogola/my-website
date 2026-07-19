@@ -1,7 +1,7 @@
 ---
 title: "INBODY判讀"
 category: "健檢報告判讀"
-publishDate: "2026-07-18"
+publishDate: "2026-07-19"
 draft: false
 slug: "inbody判讀"
 coverImage: "INBODY判讀.png"

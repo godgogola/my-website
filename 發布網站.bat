@@ -18,7 +18,9 @@ if %errorlevel% neq 0 (
 
 echo.
 echo [2/2] Deploying to Vercel...
-call npx vercel dist --prod --yes
+cd dist
+call npx vercel --prod --yes
+cd ..
 
 echo.
 echo =========================================

@@ -1,7 +1,7 @@
 ---
 title: "【PPI】為什麼要空腹吃"
 category: "藥物介紹"
-publishDate: "2026-07-18"
+publishDate: "2026-07-19"
 draft: false
 slug: "ppi為什麼要空腹吃"
 coverImage: "【PPI】為什麼要空腹吃.png"

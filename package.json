@@ -16,5 +16,8 @@
     "@astrojs/sitemap": "3.7.3",
     "astro": "^7.0.7",
     "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "vercel": "^56.3.2"
   }
 }

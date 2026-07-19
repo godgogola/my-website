@@ -1,7 +1,7 @@
 ---
 title: "FODMAP 食物指南-腸躁症"
 category: "飲食禁忌"
-publishDate: "2026-07-18"
+publishDate: "2026-07-19"
 draft: false
 slug: "fodmap-食物指南-腸躁症"
 coverImage: "FODMAP 食物指南-腸躁症.png"

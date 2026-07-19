@@ -1,7 +1,7 @@
 ---
 title: "善纖達 Saxenda"
 category: "減重"
-publishDate: "2026-07-18"
+publishDate: "2026-07-19"
 draft: false
 slug: "善纖達-saxenda"
 coverImage: "善纖達 Saxenda.png"

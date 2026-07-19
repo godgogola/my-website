@@ -1,6 +1,6 @@
 // ============================================
 // Code.gs - 豐田診所衛教專欄 (雙層快取極速版 v2)
-// UI/UX Pro Max — 後端優化
+// UI/UX Pro Max — 後端優化 + 安全同步機制
 // ============================================
 
 const SHEET_ID = '1zqiRJw2hp0vGqthOo4p9F1aUFk24dDBDgKHWV3bDR2U';
@@ -8,7 +8,6 @@ const CACHE_KEY = 'fengtien_clinic_data_v2';
 const CACHE_TTL = 600; // 快取存活時間：600秒 (10分鐘)
 
 function doGet(e) {
-  // 支援 ?output=json 參數，回傳純 JSON（供跨域 fetch 使用）
   var output = (e && e.parameter && e.parameter.output) || '';
   
   if (output === 'json') {
@@ -17,7 +16,6 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
   
-  // 預設：回傳 HTML 頁面（直接開 URL 時使用）
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('衛教專欄 | 豐田診所')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
@@ -104,8 +102,8 @@ function getCategoriesData() {
 }
 
 // ============================================
-// 【新增】doPost — 接收新網站同步請求
-// 自動將「文章網址」與「圖片網址」更新至次分類工作表
+// 【新增】doPost — 接收新網站同步請求 (安全版)
+// 規則：1. 絕對不改寫已有內容的欄位 2. 只填空白 3. 不自動新增新列
 // ============================================
 
 function doPost(e) {
@@ -113,7 +111,7 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
 
     if (data.action !== 'updateArticleUrl') {
-      return jsonResponse({ success: false, error: '不支援的 action: ' + data.action });
+      return jsonResponse({ success: false, error: '不支援的 action' });
     }
 
     var ss       = SpreadsheetApp.openById(SHEET_ID);
@@ -129,42 +127,32 @@ function doPost(e) {
       }
     }
 
+    // 只在找到對應列時處理（找不到直接忽略，不自動 appendRow）
     if (rowIndex > 0) {
-      // ── 更新現有列的圖片網址（欄 E）和文章網址（欄 F）──
-      if (data.imgUrl)     subSheet.getRange(rowIndex, 5).setValue(data.imgUrl);
-      if (data.articleUrl) subSheet.getRange(rowIndex, 6).setValue(data.articleUrl);
+      var existingImgUrl     = String(subSheet.getRange(rowIndex, 5).getValue()).trim();
+      var existingArticleUrl = String(subSheet.getRange(rowIndex, 6).getValue()).trim();
 
-      // 清除快取，讓診所網站下次立即讀到最新資料
-      CacheService.getScriptCache().remove(CACHE_KEY);
+      var updated = false;
 
-      return jsonResponse({ success: true, action: '更新', title: data.title });
-
-    } else {
-      // ── 文章不在 Sheet 裡，自動新增一列 ──
-      var category = data.category || '';
-
-      // 計算同分類中最大排序號，新文章排在最後
-      var maxSort = 0;
-      for (var j = 1; j < subData.length; j++) {
-        if (String(subData[j][0]).trim() === category) {
-          var sortVal = Number(subData[j][1]);
-          if (!isNaN(sortVal)) maxSort = Math.max(maxSort, sortVal);
-        }
+      // 🔒 只有欄位「完全空白」時才寫入新網址，絕對不覆蓋原本已有資料
+      if (!existingImgUrl && data.imgUrl) {
+        subSheet.getRange(rowIndex, 5).setValue(data.imgUrl);
+        updated = true;
+      }
+      if (!existingArticleUrl && data.articleUrl) {
+        subSheet.getRange(rowIndex, 6).setValue(data.articleUrl);
+        updated = true;
       }
 
-      subSheet.appendRow([
-        category,
-        maxSort + 1,
-        data.title,
-        '圖片卡片',
-        data.imgUrl || '',
-        data.articleUrl || '',
-        true
-      ]);
-
-      CacheService.getScriptCache().remove(CACHE_KEY);
-
-      return jsonResponse({ success: true, action: '新增', title: data.title });
+      if (updated) {
+        CacheService.getScriptCache().remove(CACHE_KEY);
+        return jsonResponse({ success: true, action: '僅填補空白欄位', title: data.title });
+      } else {
+        return jsonResponse({ success: true, action: '已有資料略過', title: data.title });
+      }
+    } else {
+      // 找不到標題，直接略過，不新增列
+      return jsonResponse({ success: true, action: '未匹配略過', title: data.title });
     }
 
   } catch (err) {
@@ -172,7 +160,6 @@ function doPost(e) {
   }
 }
 
-// 工具函數：統一回傳 JSON 格式
 function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))

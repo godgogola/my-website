@@ -48,6 +48,13 @@ for (const mdFile of mdFiles) {
   if (!fmMatch) continue;
 
   const frontmatter = fmMatch[1];
+  // 草稿文章跳過，不自動配封面圖
+  const draftMatch = frontmatter.match(/^draft:\s*(.+?)$/m);
+  if (draftMatch && draftMatch[1].trim() === 'true') {
+    console.log(`⏭  [草稿跳過] ${mdFile}`);
+    skipped++;
+    continue;
+  }
   if (frontmatter.includes('coverImage:')) continue; // 已有圖片，跳過
 
   const titleMatch = frontmatter.match(/^title:\s*["']?(.+?)["']?\s*$/m);

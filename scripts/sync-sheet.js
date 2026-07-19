@@ -78,34 +78,26 @@ for (const mdFile of mdFiles) {
 
 console.log(`\n📋 共找到 ${articlesToSync.length} 篇文章，準備同步至 Google Sheet...\n`);
 
-// 批次 POST 到 GAS（逐筆送出）
+// 批次 POST 到 GAS（使用 fetch 自動處理 302 重定向）
 async function postToGAS(payload) {
-  return new Promise((resolve) => {
-    const body = JSON.stringify(payload);
-    const url  = new URL(GAS_URL);
-    const options = {
-      hostname: url.hostname,
-      path: url.pathname + url.search,
+  try {
+    const res = await fetch(GAS_URL, {
       method: 'POST',
+      redirect: 'follow',
       headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body),
+        'Content-Type': 'text/plain;charset=utf-8', // GAS 跨域 POST 最佳 Content-Type
       },
-    };
-
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try { resolve(JSON.parse(data)); }
-        catch { resolve({ success: false, raw: data }); }
-      });
+      body: JSON.stringify(payload),
     });
-
-    req.on('error', (err) => resolve({ success: false, error: err.message }));
-    req.write(body);
-    req.end();
-  });
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { success: res.ok, raw: text };
+    }
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
 }
 
 (async () => {

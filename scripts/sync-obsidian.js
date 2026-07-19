@@ -156,13 +156,8 @@ function sync() {
       const dateMatch = frontmatter.match(/^publishDate:\s*(.+)$/m);
       const draftMatch = frontmatter.match(/^draft:\s*(.+)$/m);
 
-      if (titleMatch) title = titleMatch[1].replace(/['"]/g, '').trim();
-      if (catMatch) {
-        const fmCategory = catMatch[1].replace(/['"]/g, '').trim();
-        if (fmCategory && fmCategory !== '衛教文章') {
-          category = fmCategory;
-        }
-      }
+      // 使用資料夾名稱作為文章分類（Google Drive 目錄為唯一標準）
+      category = folderCategory;
       if (dateMatch) publishDate = dateMatch[1].replace(/['"]/g, '').trim();
       if (draftMatch) draft = draftMatch[1].trim() === 'true';
     }

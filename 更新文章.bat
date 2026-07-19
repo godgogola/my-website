@@ -8,7 +8,11 @@ echo   Article Sync Tool
 echo =========================================
 echo.
 
-echo [1/2] Syncing Obsidian articles...
+echo [0/3] Syncing images from Google Drive...
+node scripts/sync-drive-images.js
+echo.
+
+echo [1/3] Syncing Obsidian articles...
 node scripts/sync-obsidian.js
 if %errorlevel% neq 0 (
     echo [ERROR] Sync failed. Check Google Drive path in .env
