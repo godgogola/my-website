@@ -9,17 +9,17 @@
 
 import fs from 'fs';
 import path from 'path';
-import https from 'https';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ── 設定區 ────────────────────────────────────────
-const POSTS_DIR   = path.join(__dirname, '../src/content/posts');
-const IMAGES_DIR  = path.join(__dirname, '../src/assets/images');
-const OG_DIR      = path.join(__dirname, '../public/og-images'); // 穩定網址用的圖片資料夾
-const SITE_URL    = 'https://drhuanggi.vercel.app';
-const GAS_URL     = 'https://script.google.com/macros/s/AKfycbwrDmeXp0g6DaKrbY6xbRknwFmZlwHrMnJNJFpPm9bKJ_HbESQNMrLDJYL6M2N0v0f3Sg/exec';
+const POSTS_DIR         = path.join(__dirname, '../src/content/posts');
+const PUBLIC_IMAGES_DIR = path.join(__dirname, '../public/images');
+const ASSETS_IMAGES_DIR = path.join(__dirname, '../src/assets/images');
+const OG_DIR            = path.join(__dirname, '../public/og-images'); // 穩定網址用的圖片資料夾
+const SITE_URL          = 'https://drhuanggi.vercel.app';
+const GAS_URL           = 'https://script.google.com/macros/s/AKfycbwrDmeXp0g6DaKrbY6xbRknwFmZlwHrMnJNJFpPm9bKJ_HbESQNMrLDJYL6M2N0v0f3Sg/exec';
 // ─────────────────────────────────────────────────
 
 // 建立 og-images 資料夾（如果不存在）
@@ -63,7 +63,10 @@ for (const mdFile of mdFiles) {
   // 處理圖片：複製到 public/og-images/ 以產生穩定網址
   let imgUrl = '';
   if (cover) {
-    const srcImg = path.join(IMAGES_DIR, cover);
+    let srcImg = path.join(PUBLIC_IMAGES_DIR, cover);
+    if (!fs.existsSync(srcImg)) {
+      srcImg = path.join(ASSETS_IMAGES_DIR, cover);
+    }
     if (fs.existsSync(srcImg)) {
       const destImg = path.join(OG_DIR, cover);
       if (!fs.existsSync(destImg)) {
@@ -112,7 +115,7 @@ async function postToGAS(payload) {
         });
 
         if (result.success) {
-          console.log(`✅ [${result.action || '更新'}] "${article.title}"`);
+          console.log(`✅ [${result.action || '更新'}] "${article.title}" (圖片: ${article.imgUrl ? '有' : '無'})`);
           syncCount++;
         } else {
           console.log(`❌ 同步失敗："${article.title}"`);

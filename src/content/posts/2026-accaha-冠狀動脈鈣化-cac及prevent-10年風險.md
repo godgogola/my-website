@@ -1,5 +1,6 @@
 ---
 title: "【2026 ACCAHA 】冠狀動脈鈣化 (CAC)及PREVENT 10年風險"
+coverImage: "高血脂治療.png"
 category: "高血脂"
 publishDate: "2026-07-20"
 draft: false

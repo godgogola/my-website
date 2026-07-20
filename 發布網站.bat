@@ -10,6 +10,7 @@ echo.
 
 echo [1/4] 正在同步 Google Drive / Obsidian 文章與圖片...
 call node scripts/sync-obsidian.js
+call node scripts/fix-cover-images.js
 
 echo.
 echo [2/4] 正在編譯網站...
@@ -21,7 +22,7 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [3/4] 正在同步文章網址至 Google Sheet...
+echo [3/4] 正在同步文章與圖片網址至 Google Sheet...
 call node scripts/sync-sheet.js
 
 echo.

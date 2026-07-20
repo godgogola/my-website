@@ -1,5 +1,6 @@
 ---
 title: "【B型肝炎】臨床治癒目標"
+coverImage: "B型肝炎.png"
 category: "肝病特區"
 publishDate: "2026-07-20"
 draft: false

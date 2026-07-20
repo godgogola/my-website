@@ -1,5 +1,6 @@
 ---
 title: "抗逆流黏膜消融術（ARMA）"
+coverImage: "胃食道逆流.png"
 category: "內視鏡檢查"
 publishDate: "2026-07-20"
 draft: false

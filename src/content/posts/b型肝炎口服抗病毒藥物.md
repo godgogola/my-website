@@ -1,5 +1,6 @@
 ---
 title: "【B型肝炎】口服抗病毒藥物"
+coverImage: "B型肝炎.png"
 category: "肝病特區"
 publishDate: "2026-07-20"
 draft: false
