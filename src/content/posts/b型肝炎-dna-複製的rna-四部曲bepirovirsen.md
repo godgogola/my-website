@@ -1,6 +1,5 @@
 ---
 title: "【B型肝炎】 DNA 複製的「RNA 四部曲」【Bepirovirsen】"
-coverImage: "B型肝炎.png"
 category: "肝病特區"
 publishDate: "2026-07-20"
 draft: false

@@ -5,7 +5,7 @@ publishDate: "2026-07-20"
 draft: false
 slug: "apob-laa-sdldl-apoa1四大進階脂蛋白指標"
 order: 6
-coverImage: "【ApoB La(a) sdLDL ApoA1】四大進階脂蛋白指標.png"
+coverImage: "【ApoB, La(a), sdLDL, ApoA1】四大進階脂蛋白指標.png"
 ---
 # 【ApoB, La(a), sdLDL, ApoA1】四大進階脂蛋白指標
 

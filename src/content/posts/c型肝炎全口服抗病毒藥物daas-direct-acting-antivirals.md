@@ -1,6 +1,5 @@
 ---
 title: "【C型肝炎】全口服抗病毒藥物（DAAs, Direct-acting antivirals）"
-coverImage: "C型肝炎.png"
 category: "肝病特區"
 publishDate: "2026-07-20"
 draft: false

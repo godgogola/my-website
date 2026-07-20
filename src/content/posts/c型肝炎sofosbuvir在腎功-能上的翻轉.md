@@ -1,6 +1,5 @@
 ---
 title: "【C型肝炎】Sofosbuvir在腎功 能上的翻轉"
-coverImage: "C型肝炎.png"
 category: "肝病特區"
 publishDate: "2026-07-20"
 draft: false

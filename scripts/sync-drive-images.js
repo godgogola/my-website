@@ -1,17 +1,3 @@
-/**
- * sync-drive-images.js
- *
- * 📁 從 Google Drive「衛教文章圖片」資料夾自動同步圖片到本機：
- *   1. 複製 Google Drive 圖片 → src/assets/images/
- *   2. 找出同名的草稿文章（draft: true）→ 自動補上 coverImage
- *   3. 把 draft: true 改成 draft: false，讓文章正式上線
- *
- * 圖片命名規則：檔名（不含副檔名）需與文章 title 完全一致
- * 例如：「食道裂孔疝氣的原因.png」→ 配對 title: "食道裂孔疝氣的原因"
- *
- * 使用方式：node scripts/sync-drive-images.js
- */
-
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,135 +5,102 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 
-// ── 設定區 ────────────────────────────────────────────────
-// Google Drive 衛教文章圖片資料夾路徑
 const DRIVE_IMAGES_DIR = 'G:\\我的雲端硬碟\\衛教文章圖片';
+const PUBLIC_IMAGES_DIR = path.join(PROJECT_ROOT, 'public', 'images');
+const OG_IMAGES_DIR     = path.join(PROJECT_ROOT, 'public', 'og-images');
+const ASSETS_IMAGES_DIR = path.join(PROJECT_ROOT, 'src', 'assets', 'images');
+const POSTS_DIR         = path.join(PROJECT_ROOT, 'src', 'content', 'posts');
 
-// 本機目標圖片資料夾
-const LOCAL_IMAGES_DIR = path.join(PROJECT_ROOT, 'src', 'assets', 'images');
+if (!fs.existsSync(PUBLIC_IMAGES_DIR)) fs.mkdirSync(PUBLIC_IMAGES_DIR, { recursive: true });
+if (!fs.existsSync(OG_IMAGES_DIR)) fs.mkdirSync(OG_IMAGES_DIR, { recursive: true });
+if (!fs.existsSync(ASSETS_IMAGES_DIR)) fs.mkdirSync(ASSETS_IMAGES_DIR, { recursive: true });
 
-// 文章資料夾
-const POSTS_DIR = path.join(PROJECT_ROOT, 'src', 'content', 'posts');
+// 1. 讀取 Google Drive「衛教文章圖片」真實圖片清單
+const realImagesMap = new Map(); // normalizedName -> originalImgFileName
 
-// 支援的圖片副檔名
-const IMAGE_EXTS = ['.png', '.jpg', '.jpeg', '.webp'];
-// ─────────────────────────────────────────────────────────
+if (fs.existsSync(DRIVE_IMAGES_DIR)) {
+  const driveFiles = fs.readdirSync(DRIVE_IMAGES_DIR);
+  for (const file of driveFiles) {
+    const ext = path.extname(file).toLowerCase();
+    if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
+      // 複製到 public/images, public/og-images, src/assets/images
+      const srcPath = path.join(DRIVE_IMAGES_DIR, file);
+      fs.copyFileSync(srcPath, path.join(PUBLIC_IMAGES_DIR, file));
+      fs.copyFileSync(srcPath, path.join(OG_IMAGES_DIR, file));
+      fs.copyFileSync(srcPath, path.join(ASSETS_IMAGES_DIR, file));
 
-let copiedCount  = 0;
-let matchedCount = 0;
-let skippedCount = 0;
-
-// ── 1. 確認 Google Drive 資料夾是否存在 ─────────────────
-if (!fs.existsSync(DRIVE_IMAGES_DIR)) {
-  console.log(`\n⚠️  找不到 Google Drive 圖片資料夾：`);
-  console.log(`   ${DRIVE_IMAGES_DIR}`);
-  console.log(`   請確認 Google Drive 已掛載且資料夾名稱正確。\n`);
-  process.exit(0);
+      const baseName = path.basename(file, ext);
+      realImagesMap.set(baseName.toLowerCase().trim(), file);
+      realImagesMap.set(baseName.replace(/\s+/g, '').toLowerCase(), file);
+    }
+  }
 }
 
-// ── 2. 確保本機圖片資料夾存在 ───────────────────────────
-if (!fs.existsSync(LOCAL_IMAGES_DIR)) {
-  fs.mkdirSync(LOCAL_IMAGES_DIR, { recursive: true });
-}
-
-// ── 3. 讀取 Google Drive 圖片清單 ───────────────────────
-const driveFiles = fs.readdirSync(DRIVE_IMAGES_DIR).filter(f => {
-  const ext = path.extname(f).toLowerCase();
-  return IMAGE_EXTS.includes(ext);
-});
-
-if (driveFiles.length === 0) {
-  console.log('\n📂 Google Drive 圖片資料夾目前沒有圖片，跳過同步。\n');
-  process.exit(0);
-}
-
-console.log(`\n📂 Google Drive 圖片資料夾找到 ${driveFiles.length} 張圖片：`);
-console.log(`   來源：${DRIVE_IMAGES_DIR}\n`);
-
-// ── 4. 讀取所有文章，建立 title → 檔名 的對照表 ────────
+// 2. 檢查 src/content/posts/ 所有文章，僅保留真實配對的圖片，刪除假的/預設湊數的圖片
 const mdFiles = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.md'));
 
-// 建立 title（normalized）→ md 檔案路徑 的 Map
-const titleToPost = new Map();
-for (const mdFile of mdFiles) {
-  const filePath = path.join(POSTS_DIR, mdFile);
-  const content  = fs.readFileSync(filePath, 'utf-8');
-  const fmMatch  = content.match(/^---\n([\s\S]*?)\n---/);
+let validCoverCount = 0;
+let removedCoverCount = 0;
+
+for (const file of mdFiles) {
+  const filePath = path.join(POSTS_DIR, file);
+  const content = fs.readFileSync(filePath, 'utf8');
+
+  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
   if (!fmMatch) continue;
-  const fm = fmMatch[1];
-  const titleMatch = fm.match(/^title:\s*["']?(.+?)["']?\s*$/m);
+
+  const frontmatter = fmMatch[1];
+  const titleMatch = frontmatter.match(/^title:\s*["']?(.+?)["']?\s*$/m);
   if (!titleMatch) continue;
+
   const title = titleMatch[1].trim();
-  titleToPost.set(title, { filePath, content, fm });
-}
+  const titleClean = title.replace(/[【\[（(].+?[】\]）)]\s*/g, '').trim();
 
-// ── 5. 逐張圖片處理 ─────────────────────────────────────
-for (const imgFile of driveFiles) {
-  const srcPath  = path.join(DRIVE_IMAGES_DIR, imgFile);
-  const destPath = path.join(LOCAL_IMAGES_DIR, imgFile);
-  const titleKey = path.basename(imgFile, path.extname(imgFile));
+  // 嘗試比對標題是否有真正的圖檔
+  let matchedImage = null;
+  if (realImagesMap.has(title.toLowerCase())) matchedImage = realImagesMap.get(title.toLowerCase());
+  else if (realImagesMap.has(titleClean.toLowerCase())) matchedImage = realImagesMap.get(titleClean.toLowerCase());
+  else if (realImagesMap.has(title.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(title.replace(/\s+/g, '').toLowerCase());
+  else if (realImagesMap.has(titleClean.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(titleClean.replace(/\s+/g, '').toLowerCase());
 
-  // 5a. 複製圖片到本機（若已存在則覆蓋，因可能是更新版）
-  fs.copyFileSync(srcPath, destPath);
-  copiedCount++;
-  console.log(`📥 [複製] ${imgFile}`);
-
-  // 5b. 尋找同名文章
-  const post = titleToPost.get(titleKey);
-  if (!post) {
-    console.log(`   ⚠️  找不到對應文章（標題需完全一致）：「${titleKey}」`);
-    skippedCount++;
-    continue;
+  // 特殊檔名映射修正
+  if (!matchedImage && title === '大腸息肉切除術後的出血機率' && realImagesMap.has('大腸息肉切除術後出血')) {
+    matchedImage = realImagesMap.get('大腸息肉切除術後出血');
   }
 
-  const { filePath, content, fm } = post;
+  let newFrontmatter = frontmatter;
+  const hasCoverInFM = frontmatter.includes('coverImage:');
 
-  // 5c. 若已有 coverImage 且非草稿，不強制覆蓋
-  const hasCover = fm.includes('coverImage:');
-  const isDraft  = fm.match(/^draft:\s*true\s*$/m);
-
-  if (hasCover && !isDraft) {
-    console.log(`   ✅ 「${titleKey}」已有封面圖且已發布，跳過。`);
-    skippedCount++;
-    continue;
-  }
-
-  // 5d. 更新 frontmatter：加 coverImage、改 draft: false
-  let newFm = fm;
-
-  // 加 coverImage（如果沒有的話）
-  if (!hasCover) {
-    newFm = newFm.replace(
-      /(^title:.*$)/m,
-      `$1\ncoverImage: "${imgFile}"`
-    );
+  if (matchedImage) {
+    // 寫入/更新正確的 coverImage
+    if (hasCoverInFM) {
+      newFrontmatter = newFrontmatter.replace(
+        /^coverImage:\s*["']?.*?["']?\s*$/m,
+        `coverImage: "${matchedImage}"`
+      );
+    } else {
+      newFrontmatter = newFrontmatter.replace(
+        /(^title:.*$)/m,
+        `$1\ncoverImage: "${matchedImage}"`
+      );
+    }
+    validCoverCount++;
   } else {
-    // 已有 coverImage，替換成新圖片
-    newFm = newFm.replace(
-      /^coverImage:\s*["']?.+?["']?\s*$/m,
-      `coverImage: "${imgFile}"`
-    );
+    // 若沒有真正匹配的圖片，則把之前的假 coverImage 移除！
+    if (hasCoverInFM) {
+      newFrontmatter = newFrontmatter.replace(/^coverImage:.*$\n?/m, '');
+      removedCoverCount++;
+      console.log(`[移除無對應圖片的封面網址] ${title}`);
+    }
   }
 
-  // 把 draft: true 改成 draft: false
-  if (isDraft) {
-    newFm = newFm.replace(/^draft:\s*true\s*$/m, 'draft: false');
+  if (newFrontmatter !== frontmatter) {
+    const newContent = content.replace(fmMatch[0], `---\n${newFrontmatter}\n---`);
+    fs.writeFileSync(filePath, newContent, 'utf8');
   }
-
-  const newContent = content.replace(
-    /^---\n[\s\S]*?\n---/,
-    `---\n${newFm}\n---`
-  );
-
-  fs.writeFileSync(filePath, newContent, 'utf-8');
-  matchedCount++;
-
-  console.log(`   ✅ 「${titleKey}」→ 配對成功，coverImage 已寫入${isDraft ? '，draft → false（文章正式上線！）' : ''}`);
 }
 
-// ── 6. 摘要 ─────────────────────────────────────────────
 console.log('\n' + '='.repeat(50));
-console.log(`📥 複製圖片：   ${copiedCount} 張`);
-console.log(`✅ 成功配對：   ${matchedCount} 篇文章`);
-console.log(`⏭  跳過/未配對：${skippedCount} 張`);
+console.log(`✅ 保留/設定真實圖檔文章：${validCoverCount} 篇`);
+console.log(`🗑️  清除湊數無圖檔文章封面：${removedCoverCount} 篇`);
 console.log('='.repeat(50) + '\n');

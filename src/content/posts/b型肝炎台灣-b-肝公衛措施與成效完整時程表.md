@@ -1,6 +1,5 @@
 ---
 title: "【B型肝炎】台灣 B 肝公衛措施與成效完整時程表"
-coverImage: "B型肝炎.png"
 category: "肝病特區"
 publishDate: "2026-07-20"
 draft: false

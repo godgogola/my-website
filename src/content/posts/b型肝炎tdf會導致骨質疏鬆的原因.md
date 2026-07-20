@@ -1,6 +1,5 @@
 ---
 title: "【B型肝炎】TDF會導致骨質疏鬆的原因"
-coverImage: "B型肝炎.png"
 category: "肝病特區"
 publishDate: "2026-07-20"
 draft: false
