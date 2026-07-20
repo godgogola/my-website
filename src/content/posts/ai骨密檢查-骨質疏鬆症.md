@@ -1,7 +1,7 @@
 ---
 title: "AI骨密檢查-骨質疏鬆症"
 category: "健檢報告判讀"
-publishDate: "2026-07-19"
+publishDate: "2026-07-20"
 draft: false
 slug: "ai骨密檢查-骨質疏鬆症"
 coverImage: "胰島素的控糖新觀念.png"

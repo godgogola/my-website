@@ -1,10 +1,10 @@
 ---
 title: "猛健樂 Mounjaro"
-order: 7
 category: "減重"
-publishDate: "2026-07-19"
+publishDate: "2026-07-20"
 draft: false
 slug: "猛健樂-mounjaro"
+order: 7
 coverImage: "猛健樂 Mounjaro.png"
 ---
 # 衛福部核准・新一代雙機轉減重筆：猛健樂 Mounjaro®（Tirzepatide）

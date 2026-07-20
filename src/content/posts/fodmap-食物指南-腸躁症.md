@@ -1,10 +1,10 @@
 ---
 title: "FODMAP 食物指南-腸躁症"
-order: 5
 category: "飲食禁忌"
-publishDate: "2026-07-19"
+publishDate: "2026-07-20"
 draft: false
 slug: "fodmap-食物指南-腸躁症"
+order: 5
 coverImage: "FODMAP 食物指南-腸躁症.png"
 ---
 # 低 FODMAP 飲食指南：改善腸躁症與脹氣的第一步

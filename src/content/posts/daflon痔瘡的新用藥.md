@@ -1,10 +1,10 @@
 ---
 title: "【Daflon】痔瘡的新用藥"
-order: 8
 category: "藥物介紹"
-publishDate: "2026-07-19"
+publishDate: "2026-07-20"
 draft: false
 slug: "daflon痔瘡的新用藥"
+order: 8
 coverImage: "【Daflon】痔瘡的新用藥.png"
 ---
 # 認識痔瘡用藥「妥法隆（Daflon）」：功效、用法與注意事項全指南
