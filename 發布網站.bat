@@ -10,7 +10,7 @@ echo.
 
 echo [1/4] 正在同步 Google Drive / Obsidian 文章與圖片...
 call node scripts/sync-obsidian.js
-call node scripts/fix-cover-images.js
+call node scripts/sync-drive-images.js
 
 echo.
 echo [2/4] 正在編譯網站...
