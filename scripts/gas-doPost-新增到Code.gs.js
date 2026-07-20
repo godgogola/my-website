@@ -1,4 +1,4 @@
-// ============================================
+﻿// ============================================
 // Code.gs - 豐田診所衛教專欄 (雙層快取極速版 v2)
 // UI/UX Pro Max — 後端優化 + 安全同步機制
 // ============================================
@@ -102,8 +102,8 @@ function getCategoriesData() {
 }
 
 // ============================================
-// 【新增】doPost — 接收新網站同步請求 (安全版)
-// 規則：1. 絕對不改寫已有內容的欄位 2. 只填空白 3. 不自動新增新列
+// doPost — 接收新網站同步請求
+// 規則：圖片網址永遠覆蓋；文章網址只填空白；找不到標題則略過
 // ============================================
 
 function doPost(e) {
@@ -129,16 +129,16 @@ function doPost(e) {
 
     // 只在找到對應列時處理（找不到直接忽略，不自動 appendRow）
     if (rowIndex > 0) {
-      var existingImgUrl     = String(subSheet.getRange(rowIndex, 5).getValue()).trim();
       var existingArticleUrl = String(subSheet.getRange(rowIndex, 6).getValue()).trim();
 
       var updated = false;
 
-      // 🔒 只有欄位「完全空白」時才寫入新網址，絕對不覆蓋原本已有資料
-      if (!existingImgUrl && data.imgUrl) {
+      // 圖片網址：永遠覆蓋（確保換圖後能即時更新）
+      if (data.imgUrl) {
         subSheet.getRange(rowIndex, 5).setValue(data.imgUrl);
         updated = true;
       }
+      // 文章網址：只有空白時才寫入（網址不會變，不需要蓋掉）
       if (!existingArticleUrl && data.articleUrl) {
         subSheet.getRange(rowIndex, 6).setValue(data.articleUrl);
         updated = true;
@@ -146,12 +146,11 @@ function doPost(e) {
 
       if (updated) {
         CacheService.getScriptCache().remove(CACHE_KEY);
-        return jsonResponse({ success: true, action: '僅填補空白欄位', title: data.title });
+        return jsonResponse({ success: true, action: '更新成功', title: data.title });
       } else {
         return jsonResponse({ success: true, action: '已有資料略過', title: data.title });
       }
     } else {
-      // 找不到標題，直接略過，不新增列
       return jsonResponse({ success: true, action: '未匹配略過', title: data.title });
     }
 
