@@ -8,7 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const IMAGES_DIR = path.join(__dirname, '../src/assets/images');
+const IMAGES_DIR = path.join(__dirname, '../public/images');
 const POSTS_DIR = path.join(__dirname, '../src/content/posts');
 
 // 標準化字串：移除所有括號、標點、空格，只保留核心中英文

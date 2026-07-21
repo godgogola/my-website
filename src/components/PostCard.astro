@@ -30,8 +30,8 @@ const formattedDate = new Intl.DateTimeFormat('zh-TW', {
   day: 'numeric',
 }).format(publishDate);
 
-// 使用 import.meta.glob 在編譯期預載所有圖片（Astro 官方推薦的動態圖片方案）
-// eager: true 代表同步載入，確保在 SSG 時可用
+// 使用 import.meta.glob 編譯時處理圖片（Astro 官方推薦的靜態方案）
+// eager: true 為同步載入，確保在 SSG 時可用
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/images/**/*.{png,jpg,jpeg,webp,avif}',
   { eager: true }
@@ -40,10 +40,13 @@ const allImages = import.meta.glob<{ default: ImageMetadata }>(
 // 判斷是否為外部網址
 const isExternalImage = coverImage && (coverImage.startsWith('http://') || coverImage.startsWith('https://'));
 
-// 依照 coverImage 檔名動態比對 glob 結果 (若非外部網址才比對)
+// public/images/ 的圖片直接用 /images/ 路徑（不需要 glob）
+const isPublicImage = coverImage && !isExternalImage;
+const publicImageSrc = isPublicImage ? `/images/${coverImage}` : null;
+
+// 備援：從 src/assets/images/ glob 找圖（舊版相容）
 let resolvedImage: ImageMetadata | null = null;
 if (coverImage && !isExternalImage) {
-  // 嘗試比對路徑中包含此檔名的 key
   const matchKey = Object.keys(allImages).find(
     (key) => key.endsWith(`/${coverImage}`) || key === `../assets/images/${coverImage}`
   );
@@ -59,6 +62,16 @@ if (coverImage && !isExternalImage) {
     {isExternalImage ? (
       <img
         src={coverImage}
+        alt={title}
+        class="card-image"
+        loading="lazy"
+        decoding="async"
+        width="400"
+        height="225"
+      />
+    ) : publicImageSrc ? (
+      <img
+        src={publicImageSrc}
         alt={title}
         class="card-image"
         loading="lazy"
@@ -88,6 +101,7 @@ if (coverImage && !isExternalImage) {
         <span>{category}</span>
       </div>
     )}
+
     <!-- 分類 Pill 標籤（懸浮在圖片左上角） -->
     <span class="category-pill">{category}</span>
   </div>
