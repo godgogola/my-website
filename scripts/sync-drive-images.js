@@ -39,7 +39,10 @@ if (fs.existsSync(DRIVE_IMAGES_DIR)) {
   const driveFiles = fs.readdirSync(DRIVE_IMAGES_DIR);
   const imgFiles = driveFiles.filter(f => ['.png', '.jpg', '.jpeg', '.webp'].includes(path.extname(f).toLowerCase()));
 
-  console.log(`[圖片] 找到 ${imgFiles.length} 張圖片，開始壓縮為 WebP...`);
+  console.log(`[圖片] 找到 ${imgFiles.length} 張圖片，檢查是否需要壓縮...`);
+
+  let compressedCount = 0;
+  let skippedCount = 0;
 
   for (const file of imgFiles) {
     const ext = path.extname(file).toLowerCase();
@@ -47,8 +50,26 @@ if (fs.existsSync(DRIVE_IMAGES_DIR)) {
     const webpName = baseName + '.webp'; // 統一輸出為 .webp
 
     const srcPath = path.join(DRIVE_IMAGES_DIR, file);
+    const destPath = path.join(PUBLIC_IMAGES_DIR, webpName);
 
-    // 壓縮並複製到三個目錄
+    // ✅ 跳過：目的地已存在 且 來源沒有比目的地新
+    if (fs.existsSync(destPath)) {
+      const srcMtime = fs.statSync(srcPath).mtimeMs;
+      const destMtime = fs.statSync(destPath).mtimeMs;
+      if (srcMtime <= destMtime) {
+        // 來源沒有更新，只需確保其他兩個目錄也有同步
+        const ogPath = path.join(OG_IMAGES_DIR, webpName);
+        const assetsPath = path.join(ASSETS_IMAGES_DIR, webpName);
+        if (!fs.existsSync(ogPath)) fs.copyFileSync(destPath, ogPath);
+        if (!fs.existsSync(assetsPath)) fs.copyFileSync(destPath, assetsPath);
+        skippedCount++;
+        realImagesMap.set(baseName.toLowerCase().trim(), webpName);
+        realImagesMap.set(baseName.replace(/\s+/g, '').toLowerCase(), webpName);
+        continue;
+      }
+    }
+
+    // 需要壓縮（新圖 或 圖片已更新）
     await compressAndCopy(srcPath, path.join(PUBLIC_IMAGES_DIR, webpName));
     await compressAndCopy(srcPath, path.join(OG_IMAGES_DIR, webpName));
     await compressAndCopy(srcPath, path.join(ASSETS_IMAGES_DIR, webpName));
@@ -67,10 +88,14 @@ if (fs.existsSync(DRIVE_IMAGES_DIR)) {
     const sizeBefore = Math.round(fs.statSync(srcPath).size / 1024);
     const sizeAfter = Math.round(fs.statSync(path.join(PUBLIC_IMAGES_DIR, webpName)).size / 1024);
     console.log(`  ✅ ${baseName}  ${sizeBefore}KB → ${sizeAfter}KB`);
+    compressedCount++;
 
     realImagesMap.set(baseName.toLowerCase().trim(), webpName);
     realImagesMap.set(baseName.replace(/\s+/g, '').toLowerCase(), webpName);
   }
+
+  console.log(`[圖片] 壓縮：${compressedCount} 張 ／ 跳過（未更新）：${skippedCount} 張`);
+
 } else {
   console.warn(`[警告] 找不到 Google Drive 圖片資料夾：${DRIVE_IMAGES_DIR}`);
 }
