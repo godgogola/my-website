@@ -127,10 +127,19 @@ for (const file of mdFiles) {
   else if (realImagesMap.has(title.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(title.replace(/\s+/g, '').toLowerCase());
   else if (realImagesMap.has(titleClean.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(titleClean.replace(/\s+/g, '').toLowerCase());
 
-  // 特殊檔名映射修正
-  if (!matchedImage && title === '大腸息肉切除術後的出血機率' && realImagesMap.has('大腸息肉切除術後出血')) {
-    matchedImage = realImagesMap.get('大腸息肉切除術後出血');
+  // 特殊檔名映射修正（圖片名稱與文章 title 不一致時手動對應）
+  const SPECIAL_MAP = {
+    '大腸息肉切除術後的出血機率': '大腸息肉切除術後出血',
+    '常見止瀉藥':                 '常見止瀉劑',
+    '常見的軟便藥':               '常見軟便藥',
+    '哪些食物會讓三酸甘油脂升高': '三酸甘油脂食物地雷',
+    '台灣合法減重藥物':           '合法減重藥',
+    '難治性幽門桿菌治療_二次治療失敗': '難治性幽門桿菌治療',
+  };
+  if (!matchedImage && SPECIAL_MAP[title] && realImagesMap.has(SPECIAL_MAP[title])) {
+    matchedImage = realImagesMap.get(SPECIAL_MAP[title]);
   }
+
 
   let newFrontmatter = frontmatter;
   const hasCoverInFM = frontmatter.includes('coverImage:');
