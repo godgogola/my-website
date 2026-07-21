@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -15,28 +16,66 @@ if (!fs.existsSync(PUBLIC_IMAGES_DIR)) fs.mkdirSync(PUBLIC_IMAGES_DIR, { recursi
 if (!fs.existsSync(OG_IMAGES_DIR)) fs.mkdirSync(OG_IMAGES_DIR, { recursive: true });
 if (!fs.existsSync(ASSETS_IMAGES_DIR)) fs.mkdirSync(ASSETS_IMAGES_DIR, { recursive: true });
 
-// 1. 讀取 Google Drive「衛教文章圖片」真實圖片清單
-const realImagesMap = new Map(); // normalizedName -> originalImgFileName
-
-if (fs.existsSync(DRIVE_IMAGES_DIR)) {
-  const driveFiles = fs.readdirSync(DRIVE_IMAGES_DIR);
-  for (const file of driveFiles) {
-    const ext = path.extname(file).toLowerCase();
-    if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
-      // 複製到 public/images, public/og-images, src/assets/images
-      const srcPath = path.join(DRIVE_IMAGES_DIR, file);
-      fs.copyFileSync(srcPath, path.join(PUBLIC_IMAGES_DIR, file));
-      fs.copyFileSync(srcPath, path.join(OG_IMAGES_DIR, file));
-      fs.copyFileSync(srcPath, path.join(ASSETS_IMAGES_DIR, file));
-
-      const baseName = path.basename(file, ext);
-      realImagesMap.set(baseName.toLowerCase().trim(), file);
-      realImagesMap.set(baseName.replace(/\s+/g, '').toLowerCase(), file);
-    }
+// 壓縮圖片並存到目的地（轉 WebP，最大 1400px 寬）
+async function compressAndCopy(srcPath, destPath) {
+  const ext = path.extname(destPath).toLowerCase();
+  // 如果目的地已是 webp 檔，先刪除同名的舊 png/jpg（如果有）
+  try {
+    await sharp(srcPath)
+      .resize({ width: 1400, withoutEnlargement: true }) // 超過 1400px 才縮小
+      .webp({ quality: 82 })
+      .toFile(destPath);
+  } catch (err) {
+    // 壓縮失敗就直接複製原檔
+    fs.copyFileSync(srcPath, destPath);
+    console.warn(`[壓縮失敗，直接複製] ${path.basename(srcPath)}: ${err.message}`);
   }
 }
 
-// 2. 檢查 src/content/posts/ 所有文章，僅保留真實配對的圖片，刪除假的/預設湊數的圖片
+// 1. 讀取 Google Drive「衛教文章圖片」真實圖片清單
+const realImagesMap = new Map(); // normalizedName -> webp 檔名
+
+if (fs.existsSync(DRIVE_IMAGES_DIR)) {
+  const driveFiles = fs.readdirSync(DRIVE_IMAGES_DIR);
+  const imgFiles = driveFiles.filter(f => ['.png', '.jpg', '.jpeg', '.webp'].includes(path.extname(f).toLowerCase()));
+
+  console.log(`[圖片] 找到 ${imgFiles.length} 張圖片，開始壓縮為 WebP...`);
+
+  for (const file of imgFiles) {
+    const ext = path.extname(file).toLowerCase();
+    const baseName = path.basename(file, ext);
+    const webpName = baseName + '.webp'; // 統一輸出為 .webp
+
+    const srcPath = path.join(DRIVE_IMAGES_DIR, file);
+
+    // 壓縮並複製到三個目錄
+    await compressAndCopy(srcPath, path.join(PUBLIC_IMAGES_DIR, webpName));
+    await compressAndCopy(srcPath, path.join(OG_IMAGES_DIR, webpName));
+    await compressAndCopy(srcPath, path.join(ASSETS_IMAGES_DIR, webpName));
+
+    // 刪除三個目錄中同名的舊 png/jpg（如果有）
+    for (const oldExt of ['.png', '.jpg', '.jpeg']) {
+      if (oldExt === ext && ext !== '.webp') {
+        const oldFile = baseName + oldExt;
+        for (const dir of [PUBLIC_IMAGES_DIR, OG_IMAGES_DIR, ASSETS_IMAGES_DIR]) {
+          const oldPath = path.join(dir, oldFile);
+          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
+      }
+    }
+
+    const sizeBefore = Math.round(fs.statSync(srcPath).size / 1024);
+    const sizeAfter = Math.round(fs.statSync(path.join(PUBLIC_IMAGES_DIR, webpName)).size / 1024);
+    console.log(`  ✅ ${baseName}  ${sizeBefore}KB → ${sizeAfter}KB`);
+
+    realImagesMap.set(baseName.toLowerCase().trim(), webpName);
+    realImagesMap.set(baseName.replace(/\s+/g, '').toLowerCase(), webpName);
+  }
+} else {
+  console.warn(`[警告] 找不到 Google Drive 圖片資料夾：${DRIVE_IMAGES_DIR}`);
+}
+
+// 2. 更新文章 frontmatter 的 coverImage（改成 .webp 副檔名）
 const mdFiles = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.md'));
 
 let validCoverCount = 0;
@@ -72,7 +111,6 @@ for (const file of mdFiles) {
   const hasCoverInFM = frontmatter.includes('coverImage:');
 
   if (matchedImage) {
-    // 寫入/更新正確的 coverImage
     if (hasCoverInFM) {
       newFrontmatter = newFrontmatter.replace(
         /^coverImage:\s*["']?.*?["']?\s*$/m,
@@ -86,7 +124,6 @@ for (const file of mdFiles) {
     }
     validCoverCount++;
   } else {
-    // 若沒有真正匹配的圖片，則把之前的假 coverImage 移除！
     if (hasCoverInFM) {
       newFrontmatter = newFrontmatter.replace(/^coverImage:.*$\n?/m, '');
       removedCoverCount++;

@@ -1,11 +1,11 @@
 ---
 title: "C型肝炎"
 category: "肝膽胰疾病"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "c型肝炎"
 order: 6
-coverImage: "C型肝炎.png"
+coverImage: "C型肝炎.webp"
 ---
 # C型肝炎
 

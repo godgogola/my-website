@@ -1,11 +1,11 @@
 ---
 title: "哪些食物會讓壞膽固醇（LDL）升高"
 category: "飲食禁忌"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "哪些食物會讓壞膽固醇ldl升高"
 order: 2
-coverImage: "哪些食物會讓壞膽固醇（LDL）升高.png"
+coverImage: "哪些食物會讓壞膽固醇（LDL）升高.webp"
 ---
 # 除了油膩食物，這些「隱形殺手」也會讓壞膽固醇（LDL）失控！
 

@@ -1,11 +1,11 @@
 ---
 title: "胰島素及HOMA 指數"
 category: "糖尿病"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "胰島素及homa-指數"
 order: 8
-coverImage: "胰島素及HOMA 指數.png"
+coverImage: "胰島素及HOMA 指數.webp"
 ---
 **胰島素抽血檢查（Insulin Blood Test）** 主要用於評估體內胰島素的分泌能力與代謝狀態。在檢測時機上，**強烈建議以「空腹」為主**，通常需要禁食 8 至 12 小時。此時測得的「基礎胰島素分泌量」，能反映在沒有食物刺激下，胰臟為維持基礎血糖穩定所付出的努力。
 

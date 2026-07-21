@@ -1,9 +1,10 @@
 ---
 title: "【2026 ACCAHA 】冠狀動脈鈣化 (CAC)及PREVENT 10年風險"
 category: "高血脂"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "2026-accaha-冠狀動脈鈣化-cac及prevent-10年風險"
+coverImage: "【2026 ACCAHA 】冠狀動脈鈣化 (CAC)及PREVENT 10年風險.webp"
 ---
 # 冠狀動脈鈣化 (CAC) 評分
 主要是透過醫學影像技術來量化血管內的鈣化斑塊，具體的評分方式與指標如下：

@@ -1,11 +1,11 @@
 ---
 title: "INBODY判讀"
 category: "健檢報告判讀"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "inbody判讀"
 order: 1
-coverImage: "INBODY判讀.png"
+coverImage: "INBODY判讀.webp"
 ---
 # INBODY 判讀：ACCUNIQ BC380 報告解讀
 

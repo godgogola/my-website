@@ -1,10 +1,10 @@
 ---
 title: "為什麼體重較重InBody肌肉量卻很高"
 category: "減重"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "為什麼體重較重inbody肌肉量卻很高"
-coverImage: "為什麼體重較重InBody肌肉量卻很高.png"
+coverImage: "為什麼體重較重InBody肌肉量卻很高.webp"
 ---
 # 肥胖者的肌肉量特別高？InBody 數據背後的真相
 

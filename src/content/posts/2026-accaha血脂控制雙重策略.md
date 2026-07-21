@@ -1,9 +1,10 @@
 ---
 title: "【2026 ACCAHA】血脂控制雙重策略"
 category: "高血脂"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "2026-accaha血脂控制雙重策略"
+coverImage: "【2026 ACCAHA】血脂控制雙重策略.webp"
 ---
 2026 年的 ACC/AHA 多學會血脂異常管理指南中，最大的轉變之一就是**「雙重策略」（Dual Strategy）**的引入：即在強調「LDL-C 下降百分比」的同時，**全面恢復了具體的 LDL-C、非高密度脂蛋白膽固醇 (non-HDL-C) 以及載脂蛋白 B (ApoB) 的絕對目標值**。
 

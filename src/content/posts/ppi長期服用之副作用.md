@@ -1,11 +1,11 @@
 ---
 title: "【PPI】長期服用之副作用"
 category: "藥物介紹"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "ppi長期服用之副作用"
 order: 10
-coverImage: "【PPI】長期服用之副作用.png"
+coverImage: "【PPI】長期服用之副作用.webp"
 ---
 長期或頻繁服用質子幫浦抑制劑（PPI）雖然能有效控制胃酸，但隨著胃酸這個人體天然屏障與消化輔助工具被長期抑制，確實會衍生出許多潛在的全身性副作用。
 

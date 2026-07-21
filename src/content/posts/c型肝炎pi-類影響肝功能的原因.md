@@ -1,9 +1,10 @@
 ---
 title: "【C型肝炎】PI 類影響肝功能的原因"
 category: "肝病特區"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "c型肝炎pi-類影響肝功能的原因"
+coverImage: "【C型肝炎】PI 類影響肝功能的原因.webp"
 ---
 在 C 肝口服新藥（DAA）的三大機轉中，**PI 類（蛋白酶抑制劑，也就是字尾是 `-previr` 的藥物，如 Glecaprevir、Grazoprevir 等）** 確實是臨床上唯一會被蓋上「嚴禁使用於失代償性肝硬化（Child-Pugh B或C）」黃牌警告的類別。
 

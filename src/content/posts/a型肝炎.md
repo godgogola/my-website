@@ -1,11 +1,11 @@
 ---
 title: "A型肝炎"
 category: "肝膽胰疾病"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "a型肝炎"
 order: 4
-coverImage: "A型肝炎.png"
+coverImage: "A型肝炎.webp"
 ---
 # A型肝炎小知識
 

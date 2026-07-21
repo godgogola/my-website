@@ -1,11 +1,11 @@
 ---
 title: "【HDL】要如何提昇好的膽固醇"
 category: "高血脂"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "hdl要如何提昇好的膽固醇"
 order: 4
-coverImage: "【HDL】要如何提昇好的膽固醇.png"
+coverImage: "【HDL】要如何提昇好的膽固醇.webp"
 ---
 # 【HDL】要如何提昇好的膽固醇
 

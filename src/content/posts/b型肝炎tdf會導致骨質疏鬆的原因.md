@@ -1,9 +1,10 @@
 ---
 title: "【B型肝炎】TDF會導致骨質疏鬆的原因"
 category: "肝病特區"
-publishDate: "2026-07-20"
+publishDate: "2026-07-21"
 draft: false
 slug: "b型肝炎tdf會導致骨質疏鬆的原因"
+coverImage: "【B型肝炎】TDF會導致骨質疏鬆的原因.webp"
 ---
 ## 1. 為什麼前一代的 TDF（舊藥）會導致骨質疏鬆？
 
