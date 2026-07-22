@@ -25,6 +25,12 @@ const {
 const finalTitle = meta_title ?? `${title} | 黃冠智醫師`;
 // 決定最終 description
 const finalDescription = meta_description ?? description;
+
+// 取得當前網址路徑以動態高亮選單
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/' || pathname === '';
+const isHealthColumn = pathname.startsWith('/health-column');
+const isBowelPrep = pathname.startsWith('/bowel-prep');
 ---
 
 <!DOCTYPE html>
@@ -218,8 +224,9 @@ const finalDescription = meta_description ?? description;
           <span class="logo-subtitle">Gastroenterologist & Hepatologist</span>
         </a>
         <nav class="site-nav">
-          <a href="/" class="nav-link">首頁 & 關於我</a>
-          <a href="/health-column" class="nav-link">衛教專欄</a>
+          <a href="/" class={`nav-link ${isHome ? 'active' : ''}`}>首頁 & 關於我</a>
+          <a href="/health-column" class={`nav-link ${isHealthColumn ? 'active' : ''}`}>衛教專欄</a>
+          <a href="/bowel-prep" class={`nav-link ${isBowelPrep ? 'active' : ''}`}>大腸鏡清腸指南</a>
         </nav>
       </header>
 

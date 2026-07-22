@@ -1,0 +1,1471 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="大腸鏡清腸指南與時間試算"
+  description="保可淨 (Bowklean) 與耐福利散 (Niflec) 大腸鏡清腸衛教指南。提供個人化檢查時間試算、低渣與清流質飲食禁忌、慢性病藥物調整與減重瘦瘦針注意事項。"
+>
+  <!-- ── Hero 標題區 ── -->
+  <div class="prep-hero">
+    <div class="prep-hero-inner">
+      <span class="hero-badge">內視鏡檢查衛教專頁</span>
+      <h1 class="prep-hero-title">大腸鏡清腸指南與個人化時間試算</h1>
+      <p class="prep-hero-desc">
+        「清腸是否乾淨」是決定大腸鏡檢查品質與病灶發現率的關鍵。若腸道殘渣過多，可能遺漏早期息肉，甚至需要重新安排檢查。
+        本頁提供 <strong>保可淨 (Bowklean)</strong> 與 <strong>耐福利散 (Niflec)</strong> 的完整服用流程，請輸入您的預約檢查時間進行時間表試算。
+      </p>
+    </div>
+  </div>
+
+  <!-- ── 試算器區塊 (Interactive Calculator Section) ── -->
+  <section class="calc-section" id="calculator">
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <h2 class="calc-title">步驟 1：填寫預約檢查時間與藥物選擇</h2>
+          <p class="calc-subtitle">系統將自動為您生成精確的飲食控制、服藥與禁食禁水時間表</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <!-- 檢查時間輸入 -->
+        <div class="form-group">
+          <label for="examDateTime" class="form-label">
+            <span class="label-number">1</span> 選擇已安排的大腸鏡檢查時間：
+          </label>
+          <input type="datetime-local" id="examDateTime" class="form-input" />
+          
+          <div class="quick-presets">
+            <span class="preset-title">快速設定：</span>
+            <button type="button" class="btn-preset" data-preset="tomorrow-morning">明日上午 08:30</button>
+            <button type="button" class="btn-preset" data-preset="tomorrow-afternoon">明日下午 13:30</button>
+            <button type="button" class="btn-preset" data-preset="dayafter-morning">後天上午 08:30</button>
+          </div>
+        </div>
+
+        <!-- 清腸藥物選擇 -->
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-number">2</span> 選擇醫師處方的清腸藥物：
+          </label>
+
+          <div class="drug-selector" role="radiogroup" aria-label="清腸藥物選擇">
+            <label class="drug-card active" id="label-bowklean">
+              <input type="radio" name="drugType" value="bowklean" checked class="drug-radio" />
+              <div class="drug-card-content">
+                <div class="drug-badge badge-bowklean">低容量 / 需大補水</div>
+                <h3 class="drug-name">保可淨 (Bowklean)</h3>
+                <p class="drug-desc">單包僅需 150c.c. 水沖泡（分2包服藥），但服藥後需補足 1250~2000c.c. 清水。含鎂成分。</p>
+              </div>
+            </label>
+
+            <label class="drug-card" id="label-niflec">
+              <input type="radio" name="drugType" value="niflec" class="drug-radio" />
+              <div class="drug-card-content">
+                <div class="drug-badge badge-niflec">大容量等滲透壓</div>
+                <h3 class="drug-name">耐福利散 (Niflec Powder)</h3>
+                <p class="drug-desc">需整包以 2000c.c. (2公升) 冷開水完全溶解分次飲用。⚠️ 絕不可直接吞服粉末。</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 動態生成的個人化時間表卡片 ── -->
+    <div class="schedule-result-wrapper" id="scheduleWrapper">
+      <div class="schedule-card" id="printableSchedule">
+        <div class="schedule-header">
+          <div class="schedule-header-text">
+            <span class="schedule-tag" id="displayDrugTag">保可淨 (Bowklean) 專用時間表</span>
+            <h3 class="schedule-main-title">您的個人大腸鏡清腸準備時程</h3>
+            <p class="schedule-meta" id="displayExamTimeText">檢查時間：讀取中...</p>
+          </div>
+          <div class="schedule-actions no-print">
+            <button type="button" class="action-btn btn-print" id="btnPrint">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              列印 / 存為 PDF
+            </button>
+            <button type="button" class="action-btn btn-copy" id="btnCopy">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              複製 LINE 提醒文字
+            </button>
+          </div>
+        </div>
+
+        <div class="timeline-container" id="timelineContainer">
+          <!-- 時間軸節點將由 JS 動態算完填入 -->
+        </div>
+
+        <div class="schedule-footer-note">
+          <p>💡 <strong>重要提醒：</strong> 實際禁水與服藥時間請遵循您的檢驗單或醫師指示。若檢查需實施麻醉，務必在截止時間後滴水不沾。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ⚠️ 高風險族群與絕對禁忌卡片 (High Risk Warnings) ── -->
+  <section class="warning-section">
+    <div class="section-title-wrap">
+      <span class="section-tag warning-tag">安全第一</span>
+      <h2 class="section-main-title">⚠️ 檢查前必讀：高風險族群與絕對禁忌</h2>
+    </div>
+
+    <!-- 耐福利散絕對禁忌警告 (動態或固定強調) -->
+    <div class="alert-box alert-danger">
+      <div class="alert-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="alert-content">
+        <h3 class="alert-title">耐福利散 (Niflec Powder) 絕對危險警告：切勿直接吞服藥粉！</h3>
+        <p>
+          耐福利散<strong>必須以 2000 c.c. (2公升) 冷開水沖泡完全溶解</strong>後方可飲用。<strong>切勿直接將藥粉倒入嘴裡吞服</strong>，這會造成嚴重食道黏膜化學性灼傷，非常危險！
+        </p>
+      </div>
+    </div>
+
+    <div class="risk-grid">
+      <!-- 腎功能不佳 -->
+      <div class="risk-card">
+        <div class="risk-card-icon">🏥</div>
+        <h3>腎功能不佳 (eGFR &lt; 30)</h3>
+        <p><strong>保可淨</strong>含有鎂成分，洗腎或重度腎功能不佳者若服用有高血鎂風險，請告知醫師改用其他清腸藥物。</p>
+      </div>
+
+      <!-- 心肝疾病與脫水風險 -->
+      <div class="risk-card">
+        <div class="risk-card-icon">🫀</div>
+        <h3>心衰竭與腹水患者</h3>
+        <p>有嚴重心臟衰竭或肝硬化腹水者，清腸過程大量排水可能影響電解質與水分平衡，需評估脫水風險與飲水限制。</p>
+      </div>
+
+      <!-- 減重/糖尿病瘦瘦針 GLP-1 -->
+      <div class="risk-card card-highlight">
+        <div class="risk-card-icon">💉</div>
+        <h3>正在打「瘦瘦針」(GLP-1 針劑)</h3>
+        <p>使用 <strong>Ozempic (胰島妥)、Saxenda (善纖達)、Trulicity (易妥贊)</strong> 等 GLP-1 藥物會延緩胃排空。為防麻醉嘔吐吸入，<strong>麻醉科建議檢查前暫停使用一週</strong>。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 飲食控制指南 (Dietary Rules) ── -->
+  <section class="diet-section">
+    <div class="section-title-wrap">
+      <span class="section-tag">飲食準備</span>
+      <h2 class="section-main-title">檢查前飲食控制：低渣飲食 vs 清流質飲食</h2>
+      <p class="section-desc">清腸藥只能排除糞便，無法消除高纖維植物殘渣。飲食控制是清腸成功的另一半關鍵！</p>
+    </div>
+
+    <div class="diet-grid">
+      <!-- 檢查前兩天：低渣飲食 -->
+      <div class="diet-card">
+        <div class="diet-header header-low-residue">
+          <span class="diet-period">檢查前兩天</span>
+          <h3 class="diet-title">低渣飲食 (Low-Residue Diet)</h3>
+          <p class="diet-subtitle">減少食物消化後的殘渣，讓腸道容易清乾淨</p>
+        </div>
+        <div class="diet-body">
+          <div class="food-group group-allow">
+            <h4 class="group-title title-allow">⭕ 可以吃的食物</h4>
+            <ul class="food-list">
+              <li>白稀飯、白吐司、白饅頭、去湯去料麵條</li>
+              <li>去皮去骨魚肉、清蒸嫩雞肉、去皮蒸蛋</li>
+              <li>過濾後的清肉湯、清魚湯</li>
+            </ul>
+          </div>
+          <div class="food-group group-deny">
+            <h4 class="group-title title-deny">❌ 必須避免的食物</h4>
+            <ul class="food-list">
+              <li>高纖維食物：青菜、水果、堅果、蔬菜渣</li>
+              <li>高蛋白與油炸物：大塊煎炸肉類、牛羊肉</li>
+              <li>豆類與奶製品：豆腐、豆漿、牛奶、起司</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 檢查前一天：清流質飲食 -->
+      <div class="diet-card">
+        <div class="diet-header header-clear-liquid">
+          <span class="diet-period">檢查前一天</span>
+          <h3 class="diet-title">無渣清流質飲食 (Clear Liquid Diet)</h3>
+          <p class="diet-subtitle">只能攝取完全透明無殘渣的流質液體</p>
+        </div>
+        <div class="diet-body">
+          <div class="food-group group-allow">
+            <h4 class="group-title title-allow">⭕ 可以飲用的液體</h4>
+            <ul class="food-list">
+              <li>濾過渣的魚湯、肉湯、蔬菜清湯</li>
+              <li>無氣或運動飲料（寶礦力、舒跑）</li>
+              <li>蜂蜜水、冬瓜茶、沙士、雪碧</li>
+            </ul>
+          </div>
+          <div class="food-group group-deny">
+            <h4 class="group-title title-deny">❌ 禁止飲用的液體</h4>
+            <ul class="food-list">
+              <li>牛奶、優酪乳、奶茶、豆漿等乳製品</li>
+              <li>任何帶有果肉果渣的飲料（如現榨果汁）</li>
+              <li><strong class="text-danger">絕對禁止紅色或深色飲料</strong>（葡萄汁、番茄汁），以免染紅腸道誤診染色！</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 藥物沖泡與服用步驟比較 (Drug Instructions Detail) ── -->
+  <section class="drug-detail-section">
+    <div class="section-title-wrap">
+      <span class="section-tag">服藥說明</span>
+      <h2 class="section-main-title">兩款清腸劑沖泡與服用步驟詳細對比</h2>
+    </div>
+
+    <!-- Tab 切換器 -->
+    <div class="tab-buttons" role="tablist">
+      <button type="button" class="tab-btn active" data-tab="tab-bowklean" role="tab" aria-selected="true">
+        🍵 保可淨 (Bowklean) 步驟說明
+      </button>
+      <button type="button" class="tab-btn" data-tab="tab-niflec" role="tab" aria-selected="false">
+        🥤 耐福利散 (Niflec Powder) 步驟說明
+      </button>
+    </div>
+
+    <!-- 保可淨詳細內容 -->
+    <div class="tab-content active" id="tab-bowklean">
+      <div class="step-card-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>單包沖泡方式</h3>
+          <p>準備 <strong>150 c.c. 冷開水</strong>（約一小杯），倒入一包藥粉，充分攪拌 3-5 分鐘。</p>
+          <div class="step-note">💡 注意：溶解時會產生微溫（產熱）為正常現象，完全溶解後請立即喝下。</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>第一劑：檢查前一晚</h3>
+          <p>時間：<strong>17:00 ~ 19:00</strong></p>
+          <p>將第 1 包藥粉溶於 150c.c. 水中喝下。隨後數小時內務必飲用至少 <strong>1250 c.c. - 2000 c.c.</strong> 的清流質水分（約 5-8 杯水）幫助排空。</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>第二劑：檢查當天早上</h3>
+          <p>時間：<strong>04:00 ~ 05:00</strong></p>
+          <p>將第 2 包藥粉溶於 150c.c. 水中喝下。服藥後需再飲用至少 <strong>1000 c.c. 以上的水分</strong>，直到排出的糞水呈現清澈無渣狀。</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <h3>完全禁水截止時間</h3>
+          <p>檢查或麻醉前 <strong>2 - 4 小時</strong>（依醫院規定）必須完全停止所有飲水。否則麻醉有嘔吐誤吸風險！</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 耐福利散詳細內容 -->
+    <div class="tab-content" id="tab-niflec">
+      <div class="step-card-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>一整包沖泡方式</h3>
+          <p>準備 <strong>2000 c.c. (2公升) 冷開水</strong>，將一整包藥粉倒入水中，攪拌至少 5 分鐘直到粉末完全溶解。</p>
+          <div class="step-note step-note-danger">⚠️ 絕對不可直接倒入口中吞粉！必須完全水解沖泡！</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>第一階段：檢查前一晚</h3>
+          <p>時間：<strong>19:00 開始</strong></p>
+          <p>開始服用第 1 半 (1000 c.c.) 藥液。每 15-20 分鐘喝 250 c.c.，約在 20:00 前喝完。喝完建議再補充約 <strong>1000 c.c.</strong> 清水。</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>第二階段：檢查當天早上</h3>
+          <p>時間：<strong>04:00 ~ 05:00 開始</strong></p>
+          <p>開始服用剩下的 1000 c.c. 藥液（每 15-20 分鐘喝 250 c.c.），直到排出的糞水呈現<strong>「清澈、淡黃色、無渣」</strong>（就像尿液一樣）。</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <h3>完全禁水截止時間</h3>
+          <p>檢查或麻醉前 <strong>2 - 4 小時</strong> 必須停止所有飲水（含藥液與白開水）。否則為了安全，檢查可能被取消。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 慢性病藥物與副作用 (Chronic Meds & Side Effects) ── -->
+  <section class="med-side-section">
+    <div class="grid-two-cols">
+      <!-- 慢性病藥物調整 -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <span class="card-icon">💊</span>
+          <h2>慢性病藥物如何調整？</h2>
+        </div>
+        <ul class="med-rules-list">
+          <li>
+            <strong>降血糖藥 / 胰島素：</strong>
+            <span class="badge-tag tag-stop">當天停用</span>
+            <p>檢查當天需停用，以免空腹禁食導致低血糖風險。</p>
+          </li>
+          <li>
+            <strong>抗凝血劑 / 抗血小板藥：</strong>
+            <span class="badge-tag tag-consult">務必依醫囑停藥</span>
+            <p>如阿斯匹靈、保栓通等，請務必遵照原處方醫師指示提前停藥數天。</p>
+          </li>
+          <li>
+            <strong>高血壓藥 / 抗癲癇藥：</strong>
+            <span class="badge-tag tag-continue">繼續服用</span>
+            <p>建議繼續服用！請在喝第二劑清腸藥「<strong>前 1 小時</strong>」，用少許白開水吞服，避免藥物被瀉藥沖刷排出。</p>
+          </li>
+          <li>
+            <strong>減重針 / GLP-1 瘦瘦針：</strong>
+            <span class="badge-tag tag-stop">前 1 週停用</span>
+            <p>如 Ozempic、Saxenda、Trulicity，因延緩胃排空，建議檢查前暫停 1 週。</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 副作用與緊急應對 -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <span class="card-icon">🩺</span>
+          <h2>常見副作用與處置</h2>
+        </div>
+        <div class="side-effect-box">
+          <h3>常見反應（屬於正常的腸道蠕動）：</h3>
+          <p>喝藥過程中，可能會有腹脹、噁心、嘔吐、腹痛或畏寒身冷。若覺得非常噁心，可以<strong>適度減緩喝藥與喝水的速度</strong>，待噁心感稍退後繼續服用。</p>
+        </div>
+
+        <div class="side-effect-box alert-warning-box">
+          <h3>⚠️ 糖尿病友低血糖警告：</h3>
+          <p>清腸期間若出現<strong>冒冷汗、手抖、心悸、頭暈、發抖</strong>等低血糖症狀，請立即測量血糖，並可先補充少量無渣糖水（如含糖運動飲料或蜂蜜水），隨後告知醫護人員。</p>
+        </div>
+
+        <div class="cleansing-check-box">
+          <h3>💩 如何判斷清腸是否成功？</h3>
+          <p>最後排出的糞水如果呈現<strong>「無渣、清澈、淡黃色」</strong>（就像淡黃色尿液一樣完全透明），才算成功清腸喔！</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ── 頁面 Hero 樣式 ── */
+  .prep-hero {
+    background: linear-gradient(135deg, #1C4438 0%, #2F6656 100%);
+    color: #FFFFFF;
+    padding: 48px 24px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 10px 30px rgba(47, 102, 86, 0.15);
+  }
+  .prep-hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background-color: rgba(188, 138, 74, 0.25);
+    color: #F7EFE2;
+    border: 1px solid rgba(188, 138, 74, 0.5);
+    padding: 4px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .prep-hero-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 16px;
+    color: #FFFFFF;
+  }
+  .prep-hero-desc {
+    font-size: 1.05rem;
+    color: #E2EAE6;
+    line-height: 1.7;
+  }
+
+  /* ── 試算器區塊 ── */
+  .calc-section {
+    margin-bottom: 48px;
+  }
+  .calc-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 20px var(--color-shadow);
+    margin-bottom: 24px;
+  }
+  .calc-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid var(--color-border);
+  }
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .calc-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--color-primary);
+  }
+  .calc-subtitle {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  @media (max-width: 860px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .form-label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-text-body);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .label-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1.05rem;
+    font-family: inherit;
+    border: 2px solid var(--color-border);
+    border-radius: 10px;
+    background: #FAF6EE;
+    color: var(--color-text-body);
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(47, 102, 86, 0.15);
+  }
+
+  .quick-presets {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .preset-title {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+  .btn-preset {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-preset:hover {
+    background: var(--color-primary);
+    color: #FFFFFF;
+  }
+
+  /* 藥物單選卡片 */
+  .drug-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 500px) {
+    .drug-selector {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .drug-card {
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: #FAF6EE;
+    position: relative;
+    user-select: none;
+  }
+  .drug-card:hover {
+    border-color: var(--color-accent);
+    background: #FFFFFF;
+  }
+  .drug-card.active {
+    border-color: var(--color-primary);
+    background: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.12);
+  }
+  .drug-radio {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    accent-color: var(--color-primary);
+    width: 18px;
+    height: 18px;
+  }
+  .drug-card-content {
+    padding-right: 20px;
+  }
+  .drug-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .badge-bowklean {
+    background: #E8F2EE;
+    color: var(--color-primary);
+  }
+  .badge-niflec {
+    background: #F7EFE2;
+    color: #8C5E1A;
+  }
+  .drug-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--color-text-body);
+    margin-bottom: 4px;
+  }
+  .drug-desc {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+
+  /* ── 時程結果卡片 ── */
+  .schedule-card {
+    background: #FFFFFF;
+    border: 2px solid var(--color-primary);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 8px 30px rgba(47, 102, 86, 0.1);
+  }
+  .schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--color-primary-light);
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+  @media (max-width: 700px) {
+    .schedule-header {
+      flex-direction: column;
+    }
+  }
+  .schedule-tag {
+    display: inline-block;
+    background: var(--color-accent);
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 3px 12px;
+    border-radius: 50px;
+    margin-bottom: 8px;
+  }
+  .schedule-main-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    margin-bottom: 4px;
+  }
+  .schedule-meta {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  .schedule-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-print {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+  }
+  .btn-print:hover {
+    background: var(--color-primary);
+    color: #FFFFFF;
+  }
+  .btn-copy {
+    background: var(--color-accent-light);
+    color: #8C5E1A;
+    border: 1px solid var(--color-accent);
+  }
+  .btn-copy:hover {
+    background: var(--color-accent);
+    color: #FFFFFF;
+  }
+
+  /* 時間軸 Timeline */
+  .timeline-container {
+    position: relative;
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    background: var(--color-border);
+  }
+
+  .timeline-item {
+    position: relative;
+    background: #FAF6EE;
+    border: 1.5px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    transition: all 0.2s ease;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 20px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+
+  .timeline-item.item-warning {
+    border-color: #E6A23C;
+    background: #FDF6EC;
+  }
+  .timeline-item.item-warning::before {
+    background: #E6A23C;
+    box-shadow: 0 0 0 2px #E6A23C;
+  }
+
+  .timeline-item.item-danger {
+    border-color: #F56C6C;
+    background: #FEF0F0;
+  }
+  .timeline-item.item-danger::before {
+    background: #F56C6C;
+    box-shadow: 0 0 0 2px #F56C6C;
+  }
+
+  .timeline-time-badge {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    background: #FFFFFF;
+    padding: 2px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    margin-bottom: 6px;
+  }
+  .timeline-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--color-text-body);
+    margin-bottom: 6px;
+  }
+  .timeline-desc {
+    font-size: 0.92rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .timeline-desc strong {
+    color: var(--color-text-body);
+  }
+  .schedule-footer-note {
+    margin-top: 24px;
+    padding: 12px 16px;
+    background: var(--color-primary-light);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: var(--color-primary);
+  }
+
+  /* ── 高風險族群 ── */
+  .warning-section {
+    margin-bottom: 48px;
+  }
+  .section-title-wrap {
+    margin-bottom: 24px;
+  }
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    padding: 3px 12px;
+    border-radius: 50px;
+    margin-bottom: 8px;
+  }
+  .warning-tag {
+    background: #FEE2E2;
+    color: #DC2626;
+  }
+  .section-main-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--color-primary);
+  }
+  .section-desc {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+  }
+
+  .alert-box {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+  .alert-danger {
+    background: #FEF2F2;
+    border: 2px solid #FCA5A5;
+    color: #991B1B;
+  }
+  .alert-icon {
+    flex-shrink: 0;
+    color: #DC2626;
+  }
+  .alert-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .risk-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 14px var(--color-shadow);
+  }
+  .card-highlight {
+    border-color: var(--color-accent);
+    background: #FAF6EE;
+  }
+  .risk-card-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  .risk-card h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+  }
+  .risk-card p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── 飲食控制 ── */
+  .diet-section {
+    margin-bottom: 48px;
+  }
+  .diet-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 768px) {
+    .diet-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .diet-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px var(--color-shadow);
+  }
+  .diet-header {
+    padding: 20px;
+    color: #FFFFFF;
+  }
+  .header-low-residue {
+    background: linear-gradient(135deg, #2F6656 0%, #1C4438 100%);
+  }
+  .header-clear-liquid {
+    background: linear-gradient(135deg, #BC8A4A 0%, #8C5E1A 100%);
+  }
+  .diet-period {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 50px;
+    margin-bottom: 6px;
+  }
+  .diet-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .diet-subtitle {
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+  .diet-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .food-group {
+    padding: 14px;
+    border-radius: 10px;
+  }
+  .group-allow {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+  }
+  .group-deny {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+  }
+  .group-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .title-allow { color: #166534; }
+  .title-deny { color: #991B1B; }
+
+  .food-list {
+    list-style-type: disc;
+    padding-left: 20px;
+    font-size: 0.88rem;
+    color: var(--color-text-body);
+    line-height: 1.6;
+  }
+  .text-danger { color: #DC2626; }
+
+  /* ── 服藥詳細說明 Tab ── */
+  .drug-detail-section {
+    margin-bottom: 48px;
+  }
+  .tab-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 12px;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 800;
+    border: none;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  .tab-btn.active {
+    background: var(--color-primary);
+    color: #FFFFFF;
+  }
+
+  .tab-content {
+    display: none;
+  }
+  .tab-content.active {
+    display: block;
+  }
+
+  .step-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .step-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 14px var(--color-shadow);
+  }
+  .step-num {
+    width: 32px;
+    height: 32px;
+    background: var(--color-accent);
+    color: #FFFFFF;
+    border-radius: 50%;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .step-card h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+  }
+  .step-card p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+  .step-note {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #FAF6EE;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    color: #8C5E1A;
+    font-weight: 600;
+  }
+  .step-note-danger {
+    background: #FEF2F2;
+    color: #991B1B;
+  }
+
+  /* ── 慢性病藥物與副作用 ── */
+  .med-side-section {
+    margin-bottom: 48px;
+  }
+  .grid-two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  @media (max-width: 860px) {
+    .grid-two-cols {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .info-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 14px var(--color-shadow);
+  }
+  .info-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--color-border);
+  }
+  .card-icon {
+    font-size: 1.8rem;
+  }
+  .info-card-header h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--color-primary);
+  }
+
+  .med-rules-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .med-rules-list li {
+    background: #FAF6EE;
+    padding: 14px;
+    border-radius: 10px;
+    border-left: 4px solid var(--color-primary);
+  }
+  .med-rules-list strong {
+    font-size: 0.98rem;
+    color: var(--color-text-body);
+  }
+  .badge-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+  }
+  .tag-stop { background: #FEE2E2; color: #DC2626; }
+  .tag-consult { background: #FEF3C7; color: #D97706; }
+  .tag-continue { background: #DCFCE7; color: #15803D; }
+
+  .med-rules-list p {
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+  }
+
+  .side-effect-box {
+    background: #FAF6EE;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+  .side-effect-box h3 {
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 6px;
+  }
+  .side-effect-box p {
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  .alert-warning-box {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+  }
+  .alert-warning-box h3 {
+    color: #DC2626;
+  }
+
+  .cleansing-check-box {
+    background: #F0FDF4;
+    border: 1.5px solid #86EFAC;
+    padding: 14px;
+    border-radius: 10px;
+  }
+  .cleansing-check-box h3 {
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #166534;
+    margin-bottom: 4px;
+  }
+  .cleansing-check-box p {
+    font-size: 0.88rem;
+    color: #14532D;
+  }
+
+  /* ── 列印專用樣式 ── */
+  @media print {
+    .no-print, .site-header, .site-footer, .calc-card, .warning-section, .tab-buttons, .drug-detail-section, .med-side-section {
+      display: none !important;
+    }
+    body {
+      background: #FFFFFF !important;
+      color: #000000 !important;
+    }
+    .layout-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+    .schedule-card {
+      border: 1px solid #000000 !important;
+      box-shadow: none !important;
+      padding: 16px !important;
+    }
+    .timeline-item {
+      border: 1px solid #999999 !important;
+      background: #FFFFFF !important;
+    }
+  }
+</style>
+
+<script>
+  // ── JavaScript Client Side Script for Calculator & Tabs ──
+  document.addEventListener('DOMContentLoaded', () => {
+    const examDateTimeInput = document.getElementById('examDateTime') as HTMLInputElement;
+    const drugRadios = document.querySelectorAll('input[name="drugType"]') as NodeListOf<HTMLInputElement>;
+    const timelineContainer = document.getElementById('timelineContainer');
+    const displayDrugTag = document.getElementById('displayDrugTag');
+    const displayExamTimeText = document.getElementById('displayExamTimeText');
+    const labelBowklean = document.getElementById('label-bowklean');
+    const labelNiflec = document.getElementById('label-niflec');
+
+    // 預設將時間設為「明天 08:30」
+    function setDefaultDateTime() {
+      const now = new Date();
+      const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 8, 30);
+      const isoStr = formatDateTimeForInput(tomorrow);
+      examDateTimeInput.value = isoStr;
+    }
+
+    function formatDateTimeForInput(date: Date): string {
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      const yyyy = date.getFullYear();
+      const mm = pad(date.getMonth() + 1);
+      const dd = pad(date.getDate());
+      const hh = pad(date.getHours());
+      const min = pad(date.getMinutes());
+      return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+    }
+
+    // 格式化顯示用日期時間 (例如：2026/07/24 星期五 08:30)
+    function formatChineseDate(date: Date, showTime = true): string {
+      const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+      const yyyy = date.getFullYear();
+      const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+      const dd = date.getDate().toString().padStart(2, '0');
+      const dayName = days[date.getDay()];
+      const hh = date.getHours().toString().padStart(2, '0');
+      const min = date.getMinutes().toString().padStart(2, '0');
+
+      if (!showTime) {
+        return `${yyyy}/${mm}/${dd} (${dayName})`;
+      }
+      return `${yyyy}/${mm}/${dd} (${dayName}) ${hh}:${min}`;
+    }
+
+    // 格式化時間 (如 17:00)
+    function formatTimeOnly(date: Date): string {
+      const hh = date.getHours().toString().padStart(2, '0');
+      const min = date.getMinutes().toString().padStart(2, '0');
+      return `${hh}:${min}`;
+    }
+
+    // 更新選取卡片高亮
+    function updateDrugCardActive() {
+      const selectedDrug = (document.querySelector('input[name="drugType"]:checked') as HTMLInputElement)?.value;
+      if (selectedDrug === 'bowklean') {
+        labelBowklean?.classList.add('active');
+        labelNiflec?.classList.remove('active');
+      } else {
+        labelNiflec?.classList.add('active');
+        labelBowklean?.classList.remove('active');
+      }
+    }
+
+    // 計算時程主邏輯
+    function calculateSchedule() {
+      if (!examDateTimeInput.value) return;
+
+      const examDate = new Date(examDateTimeInput.value);
+      if (isNaN(examDate.getTime())) return;
+
+      const selectedDrug = (document.querySelector('input[name="drugType"]:checked') as HTMLInputElement)?.value || 'bowklean';
+
+      // 1. 檢查前兩天
+      const dayMinus2 = new Date(examDate);
+      dayMinus2.setDate(examDate.getDate() - 2);
+
+      // 2. 檢查前一天
+      const dayMinus1 = new Date(examDate);
+      dayMinus1.setDate(examDate.getDate() - 1);
+
+      // 3. 檢查前一晚第一劑 (保可淨 17:00-19:00 vs 耐福利散 19:00)
+      const dose1Time = new Date(dayMinus1);
+      dose1Time.setHours(selectedDrug === 'bowklean' ? 17 : 19, 0, 0);
+
+      // 4. 前一日午夜 12 點
+      const midnight = new Date(dayMinus1);
+      midnight.setHours(24, 0, 0); // 即當天 00:00
+
+      // 5. 檢查當天早上第二劑 (預設 04:00)
+      const dose2Time = new Date(examDate);
+      dose2Time.setHours(4, 0, 0);
+
+      // 6. 血壓藥時間 (第二劑前 1 小時，即 03:00)
+      const medBloodPressureTime = new Date(dose2Time);
+      medBloodPressureTime.setHours(dose2Time.getHours() - 1);
+
+      // 7. 禁水截止時間 (檢查前 3 小時)
+      const npoTime = new Date(examDate);
+      npoTime.setHours(examDate.getHours() - 3, examDate.getMinutes());
+
+      // 更新 Tag
+      if (displayDrugTag) {
+        displayDrugTag.textContent = selectedDrug === 'bowklean' ? '保可淨 (Bowklean) 服藥時間表' : '耐福利散 (Niflec Powder) 服藥時間表';
+      }
+      if (displayExamTimeText) {
+        displayExamTimeText.textContent = `預約檢查時間：${formatChineseDate(examDate)}`;
+      }
+
+      // 生成 HTML
+      let html = '';
+
+      // 節點 1：前 2 天低渣飲食
+      html += `
+        <div class="timeline-item">
+          <span class="timeline-time-badge">${formatChineseDate(dayMinus2, false)} 全天</span>
+          <h4 class="timeline-title">🍚 檢查前兩天：開始「低渣飲食」</h4>
+          <p class="timeline-desc">
+            請開始採行低渣飲食，減少腸道殘渣。<br/>
+            <strong>⭕ 可吃：</strong>白稀飯、白吐司、白饅頭、去皮蒸蛋、去皮魚肉、清湯。<br/>
+            <strong>❌ 避開：</strong>青菜、水果、堅果、大塊肉類、油炸物、牛奶與乳製品。
+          </p>
+        </div>
+      `;
+
+      // 節點 2：前 1 天清流質飲食
+      html += `
+        <div class="timeline-item">
+          <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} 全天</span>
+          <h4 class="timeline-title">🥤 檢查前一天：只能攝取「無渣清流質飲食」</h4>
+          <p class="timeline-desc">
+            今日全天禁止吃固體食物！<br/>
+            <strong>⭕ 可飲用：</strong>濾渣肉湯/魚湯、運動飲料、蜂蜜水、冬瓜茶、雪碧。<br/>
+            <strong>❌ 嚴禁：</strong>乳製品、任何有渣飲料、<strong class="text-danger">紅色/深色飲料（葡萄汁、番茄汁）</strong>。
+          </p>
+        </div>
+      `;
+
+      // 節點 3：前一晚第一劑
+      if (selectedDrug === 'bowklean') {
+        html += `
+          <div class="timeline-item item-warning">
+            <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} ${formatTimeOnly(dose1Time)} - 19:00</span>
+            <h4 class="timeline-title">🍵 服用「保可淨」第一劑 + 大量補水</h4>
+            <p class="timeline-desc">
+              1. 將<strong>第 1 包藥粉</strong>倒入 150 c.c. 冷開水，攪拌 3-5 分鐘後立即喝下（產熱為正常現象）。<br/>
+              2. 服藥後，務必於數小時內陸續飲用至少 <strong>1250 c.c. ~ 2000 c.c.</strong> 的清流質水分（約 5-8 杯水）幫助排空。
+            </p>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="timeline-item item-warning">
+            <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} ${formatTimeOnly(dose1Time)}</span>
+            <h4 class="timeline-title">🥤 服用「耐福利散」第一階段 (1000c.c.)</h4>
+            <p class="timeline-desc">
+              ⚠️ 請先以 2000c.c. 冷開水將全包藥粉完全溶解！<br/>
+              1. 於晚上 19:00 開始喝第 1 半（1000 c.c.），每 15-20 分鐘喝 250 c.c.，20:00 前喝完。<br/>
+              2. 喝完後建議再補充約 <strong>1000 c.c.</strong> 的清澈水分。
+            </p>
+          </div>
+        `;
+      }
+
+      // 節點 4：午夜 12 點
+      html += `
+        <div class="timeline-item item-danger">
+          <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} 24:00 (午夜 12 點)</span>
+          <h4 class="timeline-title">⛔ 嚴格禁食固體食物</h4>
+          <p class="timeline-desc">
+            午夜 12 點過後，除了清腸藥液與必要開水外，<strong>絕對禁止食用任何固體食物與零食</strong>。
+          </p>
+        </div>
+      `;
+
+      // 節點 5：高血壓藥服藥點
+      html += `
+        <div class="timeline-item">
+          <span class="timeline-time-badge">${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(medBloodPressureTime)}</span>
+          <h4 class="timeline-title">💊 高血壓 / 抗癲癇藥物服用時間</h4>
+          <p class="timeline-desc">
+            若您有長期服用高血壓或抗癲癇藥物，請在喝第二劑清腸藥<strong>前 1 小時</strong>，以<strong>少量白開水（一小口）</strong>吞服藥物，避免藥物被瀉藥腹瀉沖掉。（糖尿病降血糖藥請停用）。
+          </p>
+        </div>
+      `;
+
+      // 節點 6：當天早晨第二劑
+      if (selectedDrug === 'bowklean') {
+        html += `
+          <div class="timeline-item item-warning">
+            <span class="timeline-time-badge">${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
+            <h4 class="timeline-title">🍵 服用「保可淨」第二劑 + 補水至清澈</h4>
+            <p class="timeline-desc">
+              1. 將<strong>第 2 包藥粉</strong>溶於 150 c.c. 冷開水喝下。<br/>
+              2. 服藥後需再飲用至少 <strong>1000 c.c. 以上的水分</strong>，直到排出的糞水呈清澈淡黃無渣水狀。
+            </p>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="timeline-item item-warning">
+            <span class="timeline-time-badge">${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
+            <h4 class="timeline-title">🥤 服用「耐福利散」第二階段 (1000c.c.)</h4>
+            <p class="timeline-desc">
+              1. 服用剩下的 1000 c.c. 藥液，每 15-20 分鐘喝 250 c.c.。<br/>
+              2. 目標直到排出的糞水呈現<strong>「清澈、淡黃色、無渣」</strong>（就像尿液一樣）。
+            </p>
+          </div>
+        `;
+      }
+
+      // 節點 7：禁水截止時間
+      html += `
+        <div class="timeline-item item-danger">
+          <span class="timeline-time-badge">${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(npoTime)} 起</span>
+          <h4 class="timeline-title">🛑 滴水不沾！完全禁水截止時間</h4>
+          <p class="timeline-desc">
+            <strong>檢查前 2 - 4 小時起，必須完全停止飲用任何水分（包含白開水與藥液）</strong>。<br/>
+            ⚠️ 若有實施無痛麻醉，此為防止麻醉嘔吐吸入肺部的最重要安全要求，請嚴格遵守！
+          </p>
+        </div>
+      `;
+
+      if (timelineContainer) {
+        timelineContainer.innerHTML = html;
+      }
+    }
+
+    // 快速設定按鈕 Event
+    document.querySelectorAll('.btn-preset').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const preset = (e.currentTarget as HTMLElement).getAttribute('data-preset');
+        const now = new Date();
+
+        if (preset === 'tomorrow-morning') {
+          const t = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 8, 30);
+          examDateTimeInput.value = formatDateTimeForInput(t);
+        } else if (preset === 'tomorrow-afternoon') {
+          const t = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 13, 30);
+          examDateTimeInput.value = formatDateTimeForInput(t);
+        } else if (preset === 'dayafter-morning') {
+          const t = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2, 8, 30);
+          examDateTimeInput.value = formatDateTimeForInput(t);
+        }
+        calculateSchedule();
+      });
+    });
+
+    // 監聽變更
+    examDateTimeInput?.addEventListener('change', calculateSchedule);
+    drugRadios.forEach(r => r.addEventListener('change', () => {
+      updateDrugCardActive();
+      calculateSchedule();
+    }));
+
+    // 列印按鈕
+    document.getElementById('btnPrint')?.addEventListener('click', () => {
+      window.print();
+    });
+
+    // 複製 LINE 提醒文字
+    document.getElementById('btnCopy')?.addEventListener('click', () => {
+      const examDate = new Date(examDateTimeInput.value);
+      const selectedDrug = (document.querySelector('input[name="drugType"]:checked') as HTMLInputElement)?.value || 'bowklean';
+      const drugName = selectedDrug === 'bowklean' ? '保可淨 (Bowklean)' : '耐福利散 (Niflec)';
+
+      const dayMinus2 = new Date(examDate); dayMinus2.setDate(examDate.getDate() - 2);
+      const dayMinus1 = new Date(examDate); dayMinus1.setDate(examDate.getDate() - 1);
+
+      const text = `【大腸鏡清腸提醒卡】
+🏥 預約檢查時間：${formatChineseDate(examDate)}
+💊 使用藥物：${drugName}
+
+📌 檢查前兩天 (${formatChineseDate(dayMinus2, false)})：開始低渣飲食 (白稀飯、白吐司、去皮魚肉蒸蛋)。
+📌 檢查前一天 (${formatChineseDate(dayMinus1, false)})：全天無渣清流質飲食 (魚湯清湯、寶礦力、冬瓜茶，忌乳製品/深色飲料)。
+📌 前一晚 (17:00-19:00)：喝第 1 劑清腸藥 + 大補充 1250-2000c.c. 水分。
+📌 前一晚 24:00：午夜起禁止食用任何固體食物。
+📌 當天早上 (04:00-05:00)：喝第 2 劑清腸藥 + 補水直到糞水清澈無渣如尿液。
+📌 當天約 03:00：高血壓藥用少許開水吞服。
+🛑 檢查前 3 小時：滴水不沾，停止所有飲水！`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已成功複製清腸提醒文字！您可以直接貼上發送到 LINE 分享給家人。');
+      }).catch(() => {
+        alert('複製失敗，請手動選取文字複製。');
+      });
+    });
+
+    // 頁面詳細步驟 Tab 切換
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetTab = (e.currentTarget as HTMLElement).getAttribute('data-tab');
+
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        (e.currentTarget as HTMLElement).classList.add('active');
+        (e.currentTarget as HTMLElement).setAttribute('aria-selected', 'true');
+        document.getElementById(targetTab!)?.classList.add('active');
+      });
+    });
+
+    // 初始化
+    setDefaultDateTime();
+    updateDrugCardActive();
+    calculateSchedule();
+  });
+</script>
