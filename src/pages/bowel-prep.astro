@@ -83,7 +83,7 @@ import Layout from '../layouts/Layout.astro';
           <div class="schedule-header-text">
             <span class="schedule-tag" id="displayDrugTag">保可淨 (Bowklean) 專用時間表</span>
             <h3 class="schedule-main-title">您的個人大腸鏡清腸準備時程</h3>
-            <p class="schedule-meta" id="displayExamTimeText">檢查時間：讀取中...</p>
+            <div class="schedule-meta-box" id="displayExamTimeText">📅 預約檢查時間：讀取中...</div>
           </div>
           <div class="schedule-actions no-print">
             <button type="button" class="action-btn btn-print" id="btnPrint">
@@ -631,10 +631,19 @@ import Layout from '../layouts/Layout.astro';
     color: var(--color-primary);
     margin-bottom: 4px;
   }
-  .schedule-meta {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--color-text-muted);
+  .schedule-meta-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #E8F2EE;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 900;
+    margin-top: 8px;
+    box-shadow: 0 2px 8px rgba(47, 102, 86, 0.08);
   }
 
   .schedule-actions {
@@ -694,14 +703,14 @@ import Layout from '../layouts/Layout.astro';
     background: #FAF6EE;
     border: 1.5px solid var(--color-border);
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 18px 20px;
     transition: all 0.2s ease;
   }
   .timeline-item::before {
     content: '';
     position: absolute;
     left: -24px;
-    top: 20px;
+    top: 22px;
     width: 13px;
     height: 13px;
     border-radius: 50%;
@@ -728,16 +737,35 @@ import Layout from '../layouts/Layout.astro';
     box-shadow: 0 0 0 2px #F56C6C;
   }
 
+  /* 日期時間外框與標籤強烈顯示 */
   .timeline-time-badge {
-    display: inline-block;
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: var(--color-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.98rem;
+    font-weight: 900;
+    color: #1C4438;
     background: #FFFFFF;
-    padding: 2px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--color-border);
-    margin-bottom: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 2px 8px rgba(47, 102, 86, 0.12);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .timeline-item.item-warning .timeline-time-badge {
+    color: #8C5E1A;
+    background: #FFFBF0;
+    border-color: #D97706;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+  }
+
+  .timeline-item.item-danger .timeline-time-badge {
+    color: #991B1B;
+    background: #FFF5F5;
+    border-color: #DC2626;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
   }
   .timeline-title {
     font-size: 1.1rem;
@@ -1265,7 +1293,7 @@ import Layout from '../layouts/Layout.astro';
         displayDrugTag.textContent = selectedDrug === 'bowklean' ? '保可淨 (Bowklean) 服藥時間表' : '耐福利散 (Niflec Powder) 服藥時間表';
       }
       if (displayExamTimeText) {
-        displayExamTimeText.textContent = `預約檢查時間：${formatChineseDate(examDate)}`;
+        displayExamTimeText.textContent = `📅 預約檢查時間：${formatChineseDate(examDate)}`;
       }
 
       // 生成 HTML
@@ -1274,7 +1302,7 @@ import Layout from '../layouts/Layout.astro';
       // 節點 1：前 2 天低渣飲食
       html += `
         <div class="timeline-item">
-          <span class="timeline-time-badge">${formatChineseDate(dayMinus2, false)} 全天</span>
+          <span class="timeline-time-badge">📅 ${formatChineseDate(dayMinus2, false)} 全天</span>
           <h4 class="timeline-title">🍚 檢查前兩天：開始「低渣飲食」</h4>
           <p class="timeline-desc">
             請開始採行低渣飲食，減少腸道殘渣。<br/>
@@ -1287,7 +1315,7 @@ import Layout from '../layouts/Layout.astro';
       // 節點 2：前 1 天清流質飲食
       html += `
         <div class="timeline-item">
-          <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} 全天</span>
+          <span class="timeline-time-badge">📅 ${formatChineseDate(dayMinus1, false)} 全天</span>
           <h4 class="timeline-title">🥤 檢查前一天：只能攝取「無渣清流質飲食」</h4>
           <p class="timeline-desc">
             今日全天禁止吃固體食物！<br/>
@@ -1301,7 +1329,7 @@ import Layout from '../layouts/Layout.astro';
       if (selectedDrug === 'bowklean') {
         html += `
           <div class="timeline-item item-warning">
-            <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} ${formatTimeOnly(dose1Time)} - 19:00</span>
+            <span class="timeline-time-badge">⏰ ${formatChineseDate(dayMinus1, false)} ${formatTimeOnly(dose1Time)} - 19:00</span>
             <h4 class="timeline-title">🍵 服用「保可淨」第一劑 + 大量補水</h4>
             <p class="timeline-desc">
               1. 將<strong>第 1 包藥粉</strong>倒入 150 c.c. 冷開水，攪拌 3-5 分鐘後立即喝下（產熱為正常現象）。<br/>
@@ -1312,7 +1340,7 @@ import Layout from '../layouts/Layout.astro';
       } else {
         html += `
           <div class="timeline-item item-warning">
-            <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} ${formatTimeOnly(dose1Time)}</span>
+            <span class="timeline-time-badge">⏰ ${formatChineseDate(dayMinus1, false)} ${formatTimeOnly(dose1Time)}</span>
             <h4 class="timeline-title">🥤 服用「耐福利散」第一階段 (1000c.c.)</h4>
             <p class="timeline-desc">
               ⚠️ 請先以 2000c.c. 冷開水將全包藥粉完全溶解！<br/>
@@ -1326,7 +1354,7 @@ import Layout from '../layouts/Layout.astro';
       // 節點 4：午夜 12 點
       html += `
         <div class="timeline-item item-danger">
-          <span class="timeline-time-badge">${formatChineseDate(dayMinus1, false)} 24:00 (午夜 12 點)</span>
+          <span class="timeline-time-badge">🌙 ${formatChineseDate(dayMinus1, false)} 24:00 (午夜 12 點)</span>
           <h4 class="timeline-title">⛔ 嚴格禁食固體食物</h4>
           <p class="timeline-desc">
             午夜 12 點過後，除了清腸藥液與必要開水外，<strong>絕對禁止食用任何固體食物與零食</strong>。
@@ -1337,7 +1365,7 @@ import Layout from '../layouts/Layout.astro';
       // 節點 5：高血壓藥服藥點
       html += `
         <div class="timeline-item">
-          <span class="timeline-time-badge">${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(medBloodPressureTime)}</span>
+          <span class="timeline-time-badge">💊 ${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(medBloodPressureTime)}</span>
           <h4 class="timeline-title">💊 高血壓 / 抗癲癇藥物服用時間</h4>
           <p class="timeline-desc">
             若您有長期服用高血壓或抗癲癇藥物，請在喝第二劑清腸藥<strong>前 1 小時</strong>，以<strong>少量白開水（一小口）</strong>吞服藥物，避免藥物被瀉藥腹瀉沖掉。（糖尿病降血糖藥請停用）。
@@ -1349,7 +1377,7 @@ import Layout from '../layouts/Layout.astro';
       if (selectedDrug === 'bowklean') {
         html += `
           <div class="timeline-item item-warning">
-            <span class="timeline-time-badge">${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
+            <span class="timeline-time-badge">⏰ ${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
             <h4 class="timeline-title">🍵 服用「保可淨」第二劑 + 補水至清澈</h4>
             <p class="timeline-desc">
               1. 將<strong>第 2 包藥粉</strong>溶於 150 c.c. 冷開水喝下。<br/>
@@ -1360,7 +1388,7 @@ import Layout from '../layouts/Layout.astro';
       } else {
         html += `
           <div class="timeline-item item-warning">
-            <span class="timeline-time-badge">${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
+            <span class="timeline-time-badge">⏰ ${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
             <h4 class="timeline-title">🥤 服用「耐福利散」第二階段 (1000c.c.)</h4>
             <p class="timeline-desc">
               1. 服用剩下的 1000 c.c. 藥液，每 15-20 分鐘喝 250 c.c.。<br/>
@@ -1373,7 +1401,7 @@ import Layout from '../layouts/Layout.astro';
       // 節點 7：禁水截止時間
       html += `
         <div class="timeline-item item-danger">
-          <span class="timeline-time-badge">${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(npoTime)} 起</span>
+          <span class="timeline-time-badge">🛑 ${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(npoTime)} 起</span>
           <h4 class="timeline-title">🛑 滴水不沾！完全禁水截止時間</h4>
           <p class="timeline-desc">
             <strong>檢查前 2 - 4 小時起，必須完全停止飲用任何水分（包含白開水與藥液）</strong>。<br/>
