@@ -680,73 +680,83 @@ import Layout from '../layouts/Layout.astro';
     color: #FFFFFF;
   }
 
-  /* 時間軸 Timeline */
+  /* 時間軸 Timeline Flowchart Cards */
   .timeline-container {
     position: relative;
-    padding-left: 28px;
+    padding-left: 36px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
   }
   .timeline-container::before {
     content: '';
     position: absolute;
-    left: 9px;
-    top: 8px;
-    bottom: 8px;
-    width: 3px;
-    background: var(--color-border);
+    left: 14px;
+    top: 24px;
+    bottom: 24px;
+    width: 4px;
+    background: linear-gradient(180deg, var(--color-primary) 0%, #D97706 60%, #DC2626 100%);
+    border-radius: 4px;
   }
 
+  /* 獨立卡片造型 (Solid Elevated Card Container) */
   .timeline-item {
     position: relative;
-    background: #FAF6EE;
-    border: 1.5px solid var(--color-border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    transition: all 0.2s ease;
+    background: #FFFFFF;
+    border: 2px solid var(--color-border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 6px 20px rgba(47, 102, 86, 0.08);
+    transition: all 0.25s ease;
   }
+  .timeline-item:hover {
+    box-shadow: 0 10px 28px rgba(47, 102, 86, 0.14);
+    transform: translateY(-2px);
+  }
+
   .timeline-item::before {
     content: '';
     position: absolute;
-    left: -24px;
-    top: 22px;
-    width: 13px;
-    height: 13px;
+    left: -30px;
+    top: 28px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: var(--color-primary);
-    border: 3px solid #FFFFFF;
-    box-shadow: 0 0 0 2px var(--color-primary);
+    border: 4px solid #FFFFFF;
+    box-shadow: 0 0 0 3px var(--color-primary);
+    z-index: 2;
   }
 
   .timeline-item.item-warning {
-    border-color: #E6A23C;
-    background: #FDF6EC;
+    border-color: #F59E0B;
+    background: #FFFDF9;
   }
   .timeline-item.item-warning::before {
-    background: #E6A23C;
-    box-shadow: 0 0 0 2px #E6A23C;
+    background: #F59E0B;
+    box-shadow: 0 0 0 3px #F59E0B;
   }
 
   .timeline-item.item-danger {
-    border-color: #F56C6C;
-    background: #FEF0F0;
+    border-color: #EF4444;
+    background: #FFFAFA;
   }
   .timeline-item.item-danger::before {
-    background: #F56C6C;
-    box-shadow: 0 0 0 2px #F56C6C;
+    background: #EF4444;
+    box-shadow: 0 0 0 3px #EF4444;
   }
 
   /* 流程圖兩欄式卡片結構 (Two-Column Flow Card) */
   .timeline-flow-card {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
-    gap: 20px;
+    gap: 24px;
     align-items: stretch;
   }
   @media (max-width: 820px) {
     .timeline-flow-card {
       grid-template-columns: 1fr;
+      gap: 16px;
     }
   }
 
@@ -759,9 +769,9 @@ import Layout from '../layouts/Layout.astro';
   .badge-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .step-number-tag {
@@ -769,42 +779,60 @@ import Layout from '../layouts/Layout.astro';
     align-items: center;
     background: var(--color-primary);
     color: #FFFFFF;
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 900;
-    padding: 3px 10px;
-    border-radius: 6px;
+    padding: 4px 12px;
+    border-radius: 50px;
     letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
   .item-warning .step-number-tag { background: #D97706; }
   .item-danger .step-number-tag { background: #DC2626; }
 
-  /* 右側對照食物/目標卡片 */
+  /* 右側對照食物/目標獨立深框卡片 */
   .flow-right-card {
-    background: #FFFFFF;
-    border: 1.5px solid var(--color-border);
-    border-radius: 12px;
-    padding: 14px;
+    background: #FAF6EE;
+    border: 2px solid var(--color-border);
+    border-radius: 14px;
+    padding: 16px 18px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    gap: 12px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
   }
 
-  .food-pill-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  .food-box-allow {
+    background: #F0FDF4;
+    border: 1.5px solid #86EFAC;
+    border-radius: 10px;
+    padding: 10px 12px;
   }
+
+  .food-box-deny {
+    background: #FEF2F2;
+    border: 1.5px solid #FCA5A5;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .food-box-water {
+    background: #EFF6FF;
+    border: 1.5px solid #93C5FD;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
   .food-pill-title {
-    font-size: 0.84rem;
+    font-size: 0.86rem;
     font-weight: 800;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 4px;
   }
-  .title-allow { color: #15803D; }
-  .title-deny { color: #B91C1C; }
+  .title-allow { color: #166534; }
+  .title-deny { color: #991B1B; }
   .title-water { color: #1D4ED8; }
 
   .food-pills {
@@ -813,27 +841,30 @@ import Layout from '../layouts/Layout.astro';
     gap: 6px;
   }
   .pill {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 4px 11px;
     border-radius: 50px;
     line-height: 1.3;
     display: inline-block;
   }
   .pill-allow {
-    background: #DCFCE7;
+    background: #FFFFFF;
     color: #15803D;
-    border: 1px solid #86EFAC;
+    border: 1.5px solid #86EFAC;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
   .pill-deny {
-    background: #FEE2E2;
+    background: #FFFFFF;
     color: #991B1B;
-    border: 1px solid #FCA5A5;
+    border: 1.5px solid #FCA5A5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
   .pill-water {
-    background: #EFF6FF;
+    background: #FFFFFF;
     color: #1D4ED8;
-    border: 1px solid #93C5FD;
+    border: 1.5px solid #93C5FD;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
 
   .timeline-time-badge {
@@ -847,8 +878,22 @@ import Layout from '../layouts/Layout.astro';
     padding: 4px 12px;
     border-radius: 8px;
     border: 2px solid var(--color-primary);
-    box-shadow: 0 2px 8px rgba(47, 102, 86, 0.12);
+    box-shadow: 0 2px 6px rgba(47, 102, 86, 0.1);
     letter-spacing: 0.5px;
+  }
+
+  .timeline-item.item-warning .timeline-time-badge {
+    color: #8C5E1A;
+    background: #FFFBF0;
+    border-color: #D97706;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+  }
+
+  .timeline-item.item-danger .timeline-time-badge {
+    color: #991B1B;
+    background: #FFF5F5;
+    border-color: #DC2626;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
   }
 
   .timeline-item.item-warning .timeline-time-badge {
@@ -1409,7 +1454,7 @@ import Layout from '../layouts/Layout.astro';
               <p class="timeline-desc">請開始採行低渣飲食，大幅減少腸道殘渣，提升大腸鏡檢查品質與發現率。</p>
             </div>
             <div class="flow-right-card">
-              <div class="food-pill-group">
+              <div class="food-box-allow">
                 <span class="food-pill-title title-allow">⭕ 可以吃的食物（軟質低渣）：</span>
                 <div class="food-pills">
                   <span class="pill pill-allow">白稀飯</span>
@@ -1421,7 +1466,7 @@ import Layout from '../layouts/Layout.astro';
                   <span class="pill pill-allow">清湯</span>
                 </div>
               </div>
-              <div class="food-pill-group">
+              <div class="food-box-deny">
                 <span class="food-pill-title title-deny">❌ 必須避開的食物（高纖/奶類）：</span>
                 <div class="food-pills">
                   <span class="pill pill-deny">青菜水果</span>
@@ -1448,7 +1493,7 @@ import Layout from '../layouts/Layout.astro';
               <p class="timeline-desc">今日全天<strong>嚴禁食用任何固體食物與零食</strong>！只能飲用完全透明無渣的清流質液體。</p>
             </div>
             <div class="flow-right-card">
-              <div class="food-pill-group">
+              <div class="food-box-allow">
                 <span class="food-pill-title title-allow">⭕ 可以飲用的液體（無渣清流）：</span>
                 <div class="food-pills">
                   <span class="pill pill-allow">濾渣肉湯/魚湯</span>
@@ -1458,7 +1503,7 @@ import Layout from '../layouts/Layout.astro';
                   <span class="pill pill-allow">雪碧/沙士</span>
                 </div>
               </div>
-              <div class="food-pill-group">
+              <div class="food-box-deny">
                 <span class="food-pill-title title-deny">❌ 絕對禁止飲用（奶/有渣/深色）：</span>
                 <div class="food-pills">
                   <span class="pill pill-deny">牛奶/優酪乳</span>
@@ -1486,13 +1531,13 @@ import Layout from '../layouts/Layout.astro';
                 <p class="timeline-desc">將<strong>第 1 包藥粉</strong>倒入 150 c.c. 冷開水，攪拌 3-5 分鐘後立即喝下（產熱為正常現象，切勿乾吞）。</p>
               </div>
               <div class="flow-right-card">
-                <div class="food-pill-group">
+                <div class="food-box-water">
                   <span class="food-pill-title title-water">💧 關鍵大補充水分目標：</span>
                   <div class="food-pills">
                     <span class="pill pill-water">陸續喝足 1250 ~ 2000 c.c. 水</span>
                     <span class="pill pill-water">約 5-8 杯清流質水</span>
                   </div>
-                  <p style="font-size:0.78rem; color:#607369; margin-top:4px;">💡 充足水分能幫助腸道加速蠕動排空殘渣</p>
+                  <p style="font-size:0.78rem; color:#1E40AF; margin-top:6px; margin-bottom:0;">💡 充足水分能幫助腸道加速蠕動排空殘渣</p>
                 </div>
               </div>
             </div>
@@ -1511,7 +1556,7 @@ import Layout from '../layouts/Layout.astro';
                 <p class="timeline-desc">⚠️ 請先以 2000c.c. 冷開水將全包藥粉完全溶解！於晚上 19:00 開始喝第 1 半 (1000c.c.)，每 15-20 分鐘喝 250c.c.，20:00 前喝完。</p>
               </div>
               <div class="flow-right-card">
-                <div class="food-pill-group">
+                <div class="food-box-water">
                   <span class="food-pill-title title-water">💧 補充水分目標：</span>
                   <div class="food-pills">
                     <span class="pill pill-water">喝完藥後再補 1000 c.c. 水</span>
