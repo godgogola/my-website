@@ -1,7 +1,7 @@
 ---
 title: "AI骨密檢查-骨質疏鬆症"
 category: "健檢報告判讀"
-publishDate: "2026-07-21"
+publishDate: "2026-07-23"
 draft: false
 slug: "ai骨密檢查-骨質疏鬆症"
 ---

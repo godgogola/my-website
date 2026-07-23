@@ -11,17 +11,20 @@
 **雙擊桌面上的「一鍵更新發布」**
 
 它會自動完成以下所有步驟，完成後視窗顯示「完成！」按任意鍵關閉，
-約 1~2 分鐘後 [drhuanggi.vercel.app](https://drhuanggi.vercel.app) 就會更新。
+約 **10~15 分鐘後** [drhuanggi.vercel.app](https://drhuanggi.vercel.app) 就會更新。
 
 ```
 一鍵更新發布.bat  （位於：個人網站/ 資料夾內，桌面有捷徑）
 
-  [1/5] 同步 Obsidian 文章（新增 / 刪除 / 改標題 / 改排序）
-  [2/5] 同步 Google Drive 圖片到網站
-  [3/5] 重新編譯網站
-  [4/5] 將文章網址寫回 Google Sheet
-  [5/5] 推送到 GitHub → Vercel 自動部署上線 🚀
+  [1/6] 同步 Obsidian 文章（新增 / 刪除 / 改標題 / 改排序）
+  [2/6] 同步 Google Drive 圖片到網站
+  [3/6] 自動配對封面圖（依圖片檔名對應文章）
+  [4/6] 重新編譯網站（本機確認格式正確）
+  [5/6] 將文章網址與圖片寫回 Google Sheet
+  [6/6] 上傳到 Vercel，網站立即更新 🚀
 ```
+
+> 📌 Vercel 在美國伺服器重新編譯 134 頁 + 100+ 張圖，需要約 10 分鐘，這是正常的。
 
 ---
 
@@ -87,7 +90,8 @@ G:\我的雲端硬碟\衛教文章圖片\
 | 文章刪了但網站還有 | 確認是否在 Obsidian 分類資料夾內刪除，然後執行「一鍵更新發布」 |
 | 圖片沒有顯示 | 確認圖片已上傳到 `G:\我的雲端硬碟\衛教文章圖片\`，且檔名與 title 完全一致 |
 | 文章分類錯誤 | 確認 Obsidian 文章有放在正確的分類子資料夾 |
-| 網站改動後沒更新 | 直接雙擊「一鍵更新發布」即可 |
+| 網站改動後沒更新 | 等 10~15 分鐘後再看，Vercel 在雲端 build 需要時間 |
+| Google Sheet 圖片沒更新 | 重新執行 `node scripts/sync-sheet.js` |
 | 編譯失敗 | 請截圖黑色視窗的錯誤訊息給 AI 排查 |
 
 ---
@@ -100,7 +104,8 @@ G:\我的雲端硬碟\衛教文章圖片\
 |------|------|
 | `node scripts/sync-obsidian.js` | 同步 Obsidian 文章（新增 / 刪除 / 排序） |
 | `node scripts/sync-drive-images.js` | 從 Google Drive 同步圖片到網站 |
+| `node scripts/auto-cover-image-v2.js` | 自動配對封面圖到文章（依檔名比對） |
 | `node scripts/sync-sheet.js` | 更新 Google Sheet 網址欄位 |
 | `npm run dev` | 本機預覽（http://localhost:4321） |
 | `npm run build` | 重新編譯網站 |
-| `git push origin main` | 推送到 GitHub（Vercel 自動部署） |
+| `npx vercel dist --prod --yes` | 直接上傳 dist/ 到 Vercel（緊急時使用） |

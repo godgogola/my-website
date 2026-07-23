@@ -4,36 +4,36 @@ cd /d "%~dp0"
 
 echo.
 echo =========================================
-echo   è‡ªå‹•åŒæ­¥èˆ‡ç™¼å¸ƒç¶²ç«™åˆ° Vercel
+echo   ¦Û°Ê¦P¨B»Pµo¥¬ºô¯¸¨ì Vercel
 echo =========================================
 echo.
 
-echo [1/4] æ­£åœ¨åŒæ­¥ Google Drive / Obsidian æ–‡ç« èˆ‡åœ–ç‰‡...
+echo [1/4] ¥¿¦b¦P¨B Google Drive / Obsidian ¤å³¹»P¹Ï¤ù...
 call node scripts/sync-obsidian.js
 call node scripts/sync-drive-images.js
 
 echo.
-echo [2/4] æ­£åœ¨ç·¨è­¯ç¶²ç«™...
+echo [2/4] ¥¿¦b½sÄ¶ºô¯¸...
 call npm run build
 if %errorlevel% neq 0 (
-    echo [ERROR] ç·¨è­¯å¤±æ•—ï¼Œè«‹æª¢æŸ¥æ–‡ç« æ ¼å¼ã€‚
+    echo [ERROR] ½sÄ¶¥¢±Ñ¡A½ĞÀË¬d¤å³¹®æ¦¡¡C
     pause
     exit /b %errorlevel%
 )
 
 echo.
-echo [3/4] æ­£åœ¨åŒæ­¥æ–‡ç« èˆ‡åœ–ç‰‡ç¶²å€è‡³ Google Sheet...
+echo [3/4] ¥¿¦b¦P¨B¤å³¹»P¹Ï¤ùºô§}¦Ü Google Sheet...
 call node scripts/sync-sheet.js
 
 echo.
-echo [4/4] æ­£åœ¨æ¨é€æ›´æ–°è‡³ Vercel é›²ç«¯ç™¼å¸ƒ...
+echo [4/4] ¥¿¦b±À°e§ó·s¦Ü Vercel ¶³ºİµo¥¬...
 call git add .
 call git commit -m "Auto update articles and images"
 call git push origin main
 
 echo.
 echo =========================================
-echo   ç™¼å¸ƒå®Œæˆï¼ç¶²ç«™å°‡æ–¼ 1-2 åˆ†é˜å…§æ–¼ç·šä¸Šæ›´æ–°ï¼š
+echo   µo¥¬§¹¦¨¡Iºô¯¸±N©ó 1-2 ¤ÀÄÁ¤º©ó½u¤W§ó·s¡G
 echo   https://drhuanggi.vercel.app
 echo =========================================
 echo.

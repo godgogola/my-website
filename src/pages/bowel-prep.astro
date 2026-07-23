@@ -13,13 +13,130 @@ import Layout from '../layouts/Layout.astro';
       <h1 class="prep-hero-title">大腸鏡清腸指南與個人化時間試算</h1>
       <p class="prep-hero-desc">
         「清腸是否乾淨」是決定大腸鏡檢查品質與病灶發現率的關鍵。若腸道殘渣過多，可能遺漏早期息肉，甚至需要重新安排檢查。
-        本頁提供 <strong>保可淨 (Bowklean)</strong> 與 <strong>耐福利散 (Niflec)</strong> 的完整服用流程，請輸入您的預約檢查時間進行時間表試算。
+        本頁提供 <strong>保可淨 (Bowklean)</strong> 與 <strong>耐福利散 (Niflec)</strong> 的完整預備與照護流程，依據「檢查前必讀 ➔ 低渣飲食 ➔ 清腸服藥 ➔ 檢查後衛教」時間軸為您詳細導覽。
       </p>
     </div>
   </div>
 
-  <!-- ── 試算器區塊 (Interactive Calculator Section) ── -->
+  <!-- ── 區塊一：⚠️ 檢查前必讀：高風險族群與絕對禁忌 (High Risk Warnings) ── -->
+  <section class="warning-section" id="prep-read">
+    <div class="section-title-wrap">
+      <span class="section-tag warning-tag">檢查前必讀</span>
+      <h2 class="section-main-title">⚠️ 檢查前必讀：高風險族群與絕對禁忌</h2>
+    </div>
+
+    <!-- 絕對禁忌警告：清腸藥粉不可乾吞 -->
+    <div class="alert-box alert-danger">
+      <div class="alert-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="alert-content">
+        <h3 class="alert-title">⚠️ 清腸藥粉絕對危險警告：切勿直接乾吞藥粉！</h3>
+        <p>
+          無論是<strong>保可淨 (Bowklean)</strong> 還是<strong>耐福利散 (Niflec Powder)</strong>，<strong>都絕對不可以直接把藥粉倒入口中乾吞</strong>！<br/>
+          保可淨藥粉溶解時會產生放熱反應（微溫），耐福利散亦為高滲透壓劑型，直接乾吞會造成嚴重的<strong>食道與胃黏膜化學性灼傷</strong>，非常危險！請務必依指示加水沖泡完全溶解後方可飲用。
+        </p>
+      </div>
+    </div>
+
+    <div class="risk-grid">
+      <!-- 腎功能不佳 -->
+      <div class="risk-card">
+        <div class="risk-card-icon">🏥</div>
+        <h3>腎功能不佳 (eGFR &lt; 30)</h3>
+        <p><strong>保可淨</strong>含有鎂成分，洗腎或重度腎功能不佳者若服用有高血鎂風險，請告知醫師改用其他清腸藥物。</p>
+      </div>
+
+      <!-- 心肝疾病與脫水風險 -->
+      <div class="risk-card">
+        <div class="risk-card-icon">🫀</div>
+        <h3>心衰竭與腹水患者</h3>
+        <p>有嚴重心臟衰竭或肝硬化腹水者，清腸過程大量排水可能影響電解質與水分平衡，需評估脫水風險與飲水限制。</p>
+      </div>
+
+      <!-- 減重/糖尿病瘦瘦針 GLP-1 -->
+      <div class="risk-card card-highlight">
+        <div class="risk-card-icon">💉</div>
+        <h3>正在打「瘦瘦針」(GLP-1 針劑)</h3>
+        <p>使用 <strong>Ozempic (胰島妥)、Saxenda (善纖達)、Trulicity (易妥贊)</strong> 等 GLP-1 藥物會延緩胃排空。為防麻醉嘔吐吸入，<strong>麻醉科建議檢查前暫停使用一週</strong>。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 區塊二：飲食控制指南 (Dietary Rules) ── -->
+  <section class="diet-section" id="prep-diet">
+    <div class="section-title-wrap">
+      <span class="section-tag">飲食準備</span>
+      <h2 class="section-main-title">檢查前飲食控制：低渣飲食 vs 清流質飲食</h2>
+      <p class="section-desc">清腸藥只能排除糞便，無法消除高纖維植物殘渣。飲食控制是清腸成功的另一半關鍵！</p>
+    </div>
+
+    <div class="diet-grid">
+      <!-- 檢查前二至三天：低渣飲食 -->
+      <div class="diet-card">
+        <div class="diet-header header-low-residue">
+          <span class="diet-period">檢查前二至三天</span>
+          <h3 class="diet-title">低渣飲食 (Low-Residue Diet)</h3>
+          <p class="diet-subtitle">臨床建議檢查前二至三日開始採行；若有嚴重便秘習慣者建議提前至五至七天</p>
+        </div>
+        <div class="diet-body">
+          <div class="food-group group-allow">
+            <h4 class="group-title title-allow">⭕ 可以吃的食物</h4>
+            <ul class="food-list">
+              <li>白稀飯、白吐司、白饅頭、去湯去料麵條</li>
+              <li>去皮去骨魚肉、清蒸嫩雞肉、去皮蒸蛋</li>
+              <li>過濾後的清肉湯、清魚湯</li>
+            </ul>
+          </div>
+          <div class="food-group group-deny">
+            <h4 class="group-title title-deny">❌ 必須避免的食物</h4>
+            <ul class="food-list">
+              <li>高纖維食物：青菜、水果、堅果、蔬菜渣</li>
+              <li>高蛋白與油炸物：大塊煎炸肉類、牛羊肉</li>
+              <li>豆類與奶製品：豆腐、豆漿、牛奶、起司</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 檢查前一天：清流質飲食 -->
+      <div class="diet-card">
+        <div class="diet-header header-clear-liquid">
+          <span class="diet-period">檢查前一天</span>
+          <h3 class="diet-title">無渣清流質飲食 (Clear Liquid Diet)</h3>
+          <p class="diet-subtitle">只能攝取完全透明無殘渣的流質液體</p>
+        </div>
+        <div class="diet-body">
+          <div class="food-group group-allow">
+            <h4 class="group-title title-allow">⭕ 可以飲用的液體</h4>
+            <ul class="food-list">
+              <li>濾過渣的魚湯、肉湯、蔬菜清湯</li>
+              <li>無氣或運動飲料（寶礦力、舒跑）</li>
+              <li>蜂蜜水、冬瓜茶</li>
+              <li><span class="carbonated-note">💡 沙士、雪碧等碳酸氣泡飲料建議「消氣後再飲用」，以免增加腸道氣體加重腹脹與絞痛。</span></li>
+            </ul>
+          </div>
+          <div class="food-group group-deny">
+            <h4 class="group-title title-deny">❌ 禁止飲用的液體</h4>
+            <ul class="food-list">
+              <li>牛奶、優酪乳、奶茶、豆漿等乳製品</li>
+              <li>任何帶有果肉果渣的飲料（如現榨果汁）</li>
+              <li><strong class="text-danger">絕對禁止紅色或深色飲料</strong>（葡萄汁、番茄汁），以免染紅腸道誤診染色！</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 區塊三：清腸準備與個人化時間試算 (Bowel Prep Calculator & Details) ── -->
   <section class="calc-section" id="calculator">
+    <div class="section-title-wrap">
+      <span class="section-tag">清腸準備</span>
+      <h2 class="section-main-title">清腸服藥與個人化時間試算表</h2>
+      <p class="section-desc">請選擇您的預約檢查時間與藥物，系統將為您自動生成精確的服藥與飲食時程</p>
+    </div>
+
     <div class="calc-card">
       <div class="calc-header">
         <div class="header-icon">
@@ -57,9 +174,9 @@ import Layout from '../layouts/Layout.astro';
             <label class="drug-card active" id="label-bowklean">
               <input type="radio" name="drugType" value="bowklean" checked class="drug-radio" />
               <div class="drug-card-content">
-                <div class="drug-badge badge-bowklean">低容量 / 需大補水</div>
+                <div class="drug-badge badge-bowklean">低容量 / 兩劑補水</div>
                 <h3 class="drug-name">保可淨 (Bowklean)</h3>
-                <p class="drug-desc">單包僅需 150c.c. 水沖泡（分2包服藥），但服藥後需補足 1250~2000c.c. 清水。含鎂成分。</p>
+                <p class="drug-desc">單包 150c.c. 沖泡。第1劑補充 1500~2000c.c. 水，第2劑補充至少 750c.c. 水分。含鎂成分。</p>
               </div>
             </label>
 
@@ -108,116 +225,6 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- ── ⚠️ 高風險族群與絕對禁忌卡片 (High Risk Warnings) ── -->
-  <section class="warning-section">
-    <div class="section-title-wrap">
-      <span class="section-tag warning-tag">安全第一</span>
-      <h2 class="section-main-title">⚠️ 檢查前必讀：高風險族群與絕對禁忌</h2>
-    </div>
-
-    <!-- 絕對禁忌警告：清腸藥粉不可乾吞 -->
-    <div class="alert-box alert-danger">
-      <div class="alert-icon">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      </div>
-      <div class="alert-content">
-        <h3 class="alert-title">⚠️ 清腸藥粉絕對危險警告：切勿直接乾吞藥粉！</h3>
-        <p>
-          無論是<strong>保可淨 (Bowklean)</strong> 還是<strong>耐福利散 (Niflec Powder)</strong>，<strong>都絕對不可以直接把藥粉倒入口中乾吞</strong>！<br/>
-          保可淨藥粉溶解時會產生放熱反應（微溫），耐福利散亦為高滲透壓劑型，直接乾吞會造成嚴重的<strong>食道與胃黏膜化學性灼傷</strong>，非常危險！請務必依指示加水沖泡完全溶解後方可飲用。
-        </p>
-      </div>
-    </div>
-
-    <div class="risk-grid">
-      <!-- 腎功能不佳 -->
-      <div class="risk-card">
-        <div class="risk-card-icon">🏥</div>
-        <h3>腎功能不佳 (eGFR &lt; 30)</h3>
-        <p><strong>保可淨</strong>含有鎂成分，洗腎或重度腎功能不佳者若服用有高血鎂風險，請告知醫師改用其他清腸藥物。</p>
-      </div>
-
-      <!-- 心肝疾病與脫水風險 -->
-      <div class="risk-card">
-        <div class="risk-card-icon">🫀</div>
-        <h3>心衰竭與腹水患者</h3>
-        <p>有嚴重心臟衰竭或肝硬化腹水者，清腸過程大量排水可能影響電解質與水分平衡，需評估脫水風險與飲水限制。</p>
-      </div>
-
-      <!-- 減重/糖尿病瘦瘦針 GLP-1 -->
-      <div class="risk-card card-highlight">
-        <div class="risk-card-icon">💉</div>
-        <h3>正在打「瘦瘦針」(GLP-1 針劑)</h3>
-        <p>使用 <strong>Ozempic (胰島妥)、Saxenda (善纖達)、Trulicity (易妥贊)</strong> 等 GLP-1 藥物會延緩胃排空。為防麻醉嘔吐吸入，<strong>麻醉科建議檢查前暫停使用一週</strong>。</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 飲食控制指南 (Dietary Rules) ── -->
-  <section class="diet-section">
-    <div class="section-title-wrap">
-      <span class="section-tag">飲食準備</span>
-      <h2 class="section-main-title">檢查前飲食控制：低渣飲食 vs 清流質飲食</h2>
-      <p class="section-desc">清腸藥只能排除糞便，無法消除高纖維植物殘渣。飲食控制是清腸成功的另一半關鍵！</p>
-    </div>
-
-    <div class="diet-grid">
-      <!-- 檢查前兩天：低渣飲食 -->
-      <div class="diet-card">
-        <div class="diet-header header-low-residue">
-          <span class="diet-period">檢查前兩天</span>
-          <h3 class="diet-title">低渣飲食 (Low-Residue Diet)</h3>
-          <p class="diet-subtitle">減少食物消化後的殘渣，讓腸道容易清乾淨</p>
-        </div>
-        <div class="diet-body">
-          <div class="food-group group-allow">
-            <h4 class="group-title title-allow">⭕ 可以吃的食物</h4>
-            <ul class="food-list">
-              <li>白稀飯、白吐司、白饅頭、去湯去料麵條</li>
-              <li>去皮去骨魚肉、清蒸嫩雞肉、去皮蒸蛋</li>
-              <li>過濾後的清肉湯、清魚湯</li>
-            </ul>
-          </div>
-          <div class="food-group group-deny">
-            <h4 class="group-title title-deny">❌ 必須避免的食物</h4>
-            <ul class="food-list">
-              <li>高纖維食物：青菜、水果、堅果、蔬菜渣</li>
-              <li>高蛋白與油炸物：大塊煎炸肉類、牛羊肉</li>
-              <li>豆類與奶製品：豆腐、豆漿、牛奶、起司</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- 檢查前一天：清流質飲食 -->
-      <div class="diet-card">
-        <div class="diet-header header-clear-liquid">
-          <span class="diet-period">檢查前一天</span>
-          <h3 class="diet-title">無渣清流質飲食 (Clear Liquid Diet)</h3>
-          <p class="diet-subtitle">只能攝取完全透明無殘渣的流質液體</p>
-        </div>
-        <div class="diet-body">
-          <div class="food-group group-allow">
-            <h4 class="group-title title-allow">⭕ 可以飲用的液體</h4>
-            <ul class="food-list">
-              <li>濾過渣的魚湯、肉湯、蔬菜清湯</li>
-              <li>無氣或運動飲料（寶礦力、舒跑）</li>
-              <li>蜂蜜水、冬瓜茶、沙士、雪碧</li>
-            </ul>
-          </div>
-          <div class="food-group group-deny">
-            <h4 class="group-title title-deny">❌ 禁止飲用的液體</h4>
-            <ul class="food-list">
-              <li>牛奶、優酪乳、奶茶、豆漿等乳製品</li>
-              <li>任何帶有果肉果渣的飲料（如現榨果汁）</li>
-              <li><strong class="text-danger">絕對禁止紅色或深色飲料</strong>（葡萄汁、番茄汁），以免染紅腸道誤診染色！</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ── 藥物沖泡與服用步驟比較 (Drug Instructions Detail) ── -->
   <section class="drug-detail-section">
     <div class="section-title-wrap">
@@ -249,14 +256,14 @@ import Layout from '../layouts/Layout.astro';
           <div class="step-num">2</div>
           <h3>第一劑：檢查前一晚</h3>
           <p>時間：<strong>17:00 ~ 19:00</strong></p>
-          <p>將第 1 包藥粉溶於 150c.c. 水中喝下。隨後數小時內務必飲用至少 <strong>1250 c.c. - 2000 c.c.</strong> 的清流質水分（約 5-8 杯水）幫助排空。</p>
+          <p>將第 1 包藥粉溶於 150c.c. 水中喝下。隨後數小時內務必飲用 <strong>1500 c.c. - 2000 c.c.</strong> 的清流質水分（約 6-8 杯水）幫助排空。</p>
         </div>
 
         <div class="step-card">
           <div class="step-num">3</div>
           <h3>第二劑：檢查當天早上</h3>
           <p>時間：<strong>04:00 ~ 05:00</strong></p>
-          <p>將第 2 包藥粉溶於 150c.c. 水中喝下。服藥後需再飲用至少 <strong>1000 c.c. 以上的水分</strong>，直到排出的糞水呈現清澈無渣狀。</p>
+          <p>將第 2 包藥粉溶於 150c.c. 水中喝下。服藥後需再飲用至少 <strong>750 c.c.（或 3 杯 250 c.c.）的水分</strong>，直到排出的糞水呈現清澈無渣狀。</p>
         </div>
 
         <div class="step-card">
@@ -352,6 +359,108 @@ import Layout from '../layouts/Layout.astro';
         <div class="cleansing-check-box">
           <h3>💩 如何判斷清腸是否成功？</h3>
           <p>最後排出的糞水如果呈現<strong>「無渣、清澈、淡黃色」</strong>（就像淡黃色尿液一樣完全透明），才算成功清腸喔！</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 區塊四：🩺 檢查後的衛教與照護指南 (Post-Exam Care & Polyp Care) ── -->
+  <section class="post-care-section" id="post-care">
+    <div class="section-title-wrap">
+      <span class="section-tag post-tag">檢查後衛教</span>
+      <h2 class="section-main-title">🩺 檢查後的衛教與照護指南</h2>
+      <p class="section-desc">檢查結束後的正確照護與觀察，是確保無痛恢復與預防併發症的關鍵最後一步。</p>
+    </div>
+
+    <!-- 新增區塊一：正常現象與危險警訊 -->
+    <div class="post-grid-two">
+      <!-- 正常現象 -->
+      <div class="post-card post-card-normal">
+        <div class="post-card-header header-normal">
+          <span class="card-icon">✅</span>
+          <div>
+            <h3 class="post-card-title">【正常現象，不必驚慌】</h3>
+            <p class="post-card-sub">身體會在短時間內恢復，屬正常生理反應</p>
+          </div>
+        </div>
+        <ul class="post-list">
+          <li>
+            <strong>💨 腹脹與頻繁排氣：</strong>
+            <p>檢查時為了獲得清晰視野，醫師會灌注氣體（如二氧化碳）撐開腸道。檢查後有腹脹與絞痛感是正常的，建議可「<strong>多走動</strong>」並「<strong>順時針輕柔按摩腹部</strong>」，有助於氣體順利排出。</p>
+          </li>
+          <li>
+            <strong>🩸 極微量的血絲：</strong>
+            <p>若檢查中有進行切片或瘜肉切除，前一兩次排便時廁紙上帶有極少量血絲，屬於正常傷口滲血，身體會自行止血。</p>
+          </li>
+          <li>
+            <strong>😴 麻醉殘留效應：</strong>
+            <p>若進行無痛大腸鏡，鎮靜藥物會在體內殘留，<strong>24小時內絕對禁止駕駛交通工具、操作危險機械或簽署重要法律文件</strong>，且務必由親友陪同返家。</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 危險警號 -->
+      <div class="post-card post-card-danger">
+        <div class="post-card-header header-danger">
+          <span class="card-icon">🚨</span>
+          <div>
+            <h3 class="post-card-title">【危險警號：請立即急診就醫】</h3>
+            <p class="post-card-sub">若出現以下狀況，請立即停止進食並就近前往急診！</p>
+          </div>
+        </div>
+        <ul class="post-list list-danger">
+          <li>
+            <strong>🩸 排出大量鮮血或黑便：</strong>
+            <p>若馬桶水染成鮮紅，或排出如同仙草凍般的暗紅色血塊、黏稠柏油狀黑便，可能是延遲性出血。</p>
+          </li>
+          <li>
+            <strong>⚡ 劇烈持續性腹痛：</strong>
+            <p>伴隨發燒、畏寒、冒冷汗，或腹部肌肉僵硬緊繃（按下去如木板硬），可能是罕見的腸道穿孔併發症。</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 新增區塊二：瘜肉切除術後「黃金一週」照護指南 -->
+    <div class="polyp-care-card">
+      <div class="polyp-care-header">
+        <span class="polyp-badge">術後照護重點</span>
+        <h3 class="polyp-title">🌱 瘜肉切除術後的「黃金一週」照護指南</h3>
+        <p class="polyp-desc">
+          若您在檢查中切除了大腸瘜肉，腸道內會留下微小創口。<strong>延遲性出血最常發生在術後第 3 至第 7 天</strong>（此時傷口保護性焦痂剛脫落，新生血管尚未成熟），請務必嚴格遵守以下指南：
+        </p>
+      </div>
+
+      <div class="polyp-grid">
+        <!-- 1. 階梯式飲食恢復 -->
+        <div class="polyp-box">
+          <div class="polyp-box-title">
+            <span class="box-num">1</span>
+            <h4>階梯式飲食恢復</h4>
+          </div>
+          <div class="polyp-box-content">
+            <p><strong>術後 1~3 天（嚴格保護期）：</strong>請採行低渣飲食（如白稀飯、麵條、蒸蛋、去皮魚肉），減少糞便體積摩擦傷口，避免辛辣、油炸與高纖食物。</p>
+            <div class="prohibit-box">
+              <strong>🚫 絕對禁忌食物：</strong>
+              <p>一週內嚴禁食用活血補品（如薑母鴨、羊肉爐、人參、當歸）以及酒精飲品，這些會導致血管擴張、抑制凝血功能，大幅增加大出血風險。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 生活作息三不原則 -->
+        <div class="polyp-box">
+          <div class="polyp-box-title">
+            <span class="box-num">2</span>
+            <h4>生活作息「三不原則」與洗澡注意事項</h4>
+          </div>
+          <div class="polyp-box-content">
+            <ul class="three-no-list">
+              <li><strong>📦 不提重物：</strong>一週內禁止搬運超過 5 公斤的物品或抱小孩，排便時也請勿過度用力，避免腹部壓力驟升。</li>
+              <li><strong>🏃 不劇烈運動：</strong>暫停跑步、重量訓練、游泳、高爾夫等運動，僅可進行輕鬆散步。</li>
+              <li><strong>✈️ 不搭飛機與遠行：</strong>機艙內的高空氣壓變化易拉扯腸道傷口，且高空中若發生大出血無法及時急救，建議術後 1~2 週內避免出國或搭機。</li>
+              <li><strong>🛁 洗澡注意：</strong>一週內建議以淋浴為主，避免泡熱水澡或泡溫泉，以免高溫使全身血管擴張增加出血風險。</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -1304,9 +1413,207 @@ import Layout from '../layouts/Layout.astro';
     color: #14532D;
   }
 
+  .carbonated-note {
+    font-size: 0.83rem;
+    color: #8C5E1A;
+    font-weight: 600;
+    line-height: 1.5;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  /* ── 檢查後衛教與照護 ── */
+  .post-care-section {
+    margin-bottom: 48px;
+  }
+  .post-tag {
+    background: #E0E7FF;
+    color: #3730A3;
+  }
+  .post-grid-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 860px) {
+    .post-grid-two {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .post-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 14px var(--color-shadow);
+  }
+  .post-card-normal {
+    border-top: 4px solid #10B981;
+  }
+  .post-card-danger {
+    border-top: 4px solid #EF4444;
+    background: #FFFAFA;
+  }
+  .post-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--color-border);
+  }
+  .header-normal .post-card-title {
+    color: #065F46;
+    font-size: 1.25rem;
+    font-weight: 900;
+  }
+  .header-danger .post-card-title {
+    color: #991B1B;
+    font-size: 1.25rem;
+    font-weight: 900;
+  }
+  .post-card-sub {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .post-list li strong {
+    font-size: 0.96rem;
+    color: var(--color-text-body);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .post-list li p {
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .list-danger li p {
+    color: #7F1D1D;
+  }
+
+  .polyp-care-card {
+    background: #FFFFFF;
+    border: 2px solid var(--color-primary);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 6px 20px rgba(47, 102, 86, 0.08);
+  }
+  .polyp-badge {
+    display: inline-block;
+    background: var(--color-accent);
+    color: #FFFFFF;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: 50px;
+    margin-bottom: 8px;
+  }
+  .polyp-title {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+  }
+  .polyp-desc {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid var(--color-border);
+  }
+  .polyp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 820px) {
+    .polyp-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .polyp-box {
+    background: #FAF6EE;
+    border: 1.5px solid var(--color-border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .polyp-box-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .box-num {
+    width: 26px;
+    height: 26px;
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .polyp-box-title h4 {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: var(--color-primary);
+  }
+  .polyp-box-content p {
+    font-size: 0.9rem;
+    color: var(--color-text-body);
+    line-height: 1.6;
+  }
+  .prohibit-box {
+    margin-top: 12px;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .prohibit-box strong {
+    color: #DC2626;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .prohibit-box p {
+    color: #991B1B;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .three-no-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .three-no-list li {
+    font-size: 0.88rem;
+    color: var(--color-text-body);
+    line-height: 1.6;
+    background: #FFFFFF;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+  }
+
   /* ── 列印專用樣式 ── */
   @media print {
-    .no-print, .site-header, .site-footer, .calc-card, .warning-section, .tab-buttons, .drug-detail-section, .med-side-section {
+    .no-print, .site-header, .site-footer, .calc-card, .warning-section, .tab-buttons, .drug-detail-section, .med-side-section, .post-care-section {
       display: none !important;
     }
     body {
@@ -1441,17 +1748,17 @@ import Layout from '../layouts/Layout.astro';
       // 生成 HTML
       let html = '';
 
-      // 節點 1：前 2 天低渣飲食
+      // 節點 1：前 2-3 天低渣飲食
       html += `
         <div class="timeline-item">
           <div class="timeline-flow-card">
             <div class="flow-left">
               <div class="badge-row">
                 <span class="step-number-tag">Step 1</span>
-                <span class="timeline-time-badge">📅 ${formatChineseDate(dayMinus2, false)} 全天</span>
+                <span class="timeline-time-badge">📅 ${formatChineseDate(dayMinus2, false)} 起</span>
               </div>
-              <h4 class="timeline-title">🍚 檢查前兩天：開始「低渣飲食」</h4>
-              <p class="timeline-desc">請開始採行低渣飲食，大幅減少腸道殘渣，提升大腸鏡檢查品質與發現率。</p>
+              <h4 class="timeline-title">🍚 檢查前二至三天：開始「低渣飲食」</h4>
+              <p class="timeline-desc">臨床建議檢查前二至三日開始採行低渣飲食（有嚴重便秘習慣者建議提前至 5~7 天），大幅減少腸道殘渣。</p>
             </div>
             <div class="flow-right-card">
               <div class="food-box-allow">
@@ -1500,7 +1807,7 @@ import Layout from '../layouts/Layout.astro';
                   <span class="pill pill-allow">運動飲料</span>
                   <span class="pill pill-allow">蜂蜜水</span>
                   <span class="pill pill-allow">冬瓜茶</span>
-                  <span class="pill pill-allow">雪碧/沙士</span>
+                  <span class="pill pill-allow">雪碧/沙士(建議消氣後喝)</span>
                 </div>
               </div>
               <div class="food-box-deny">
@@ -1534,8 +1841,8 @@ import Layout from '../layouts/Layout.astro';
                 <div class="food-box-water">
                   <span class="food-pill-title title-water">💧 關鍵大補充水分目標：</span>
                   <div class="food-pills">
-                    <span class="pill pill-water">陸續喝足 1250 ~ 2000 c.c. 水</span>
-                    <span class="pill pill-water">約 5-8 杯清流質水</span>
+                    <span class="pill pill-water">陸續喝足 1500 ~ 2000 c.c. 水</span>
+                    <span class="pill pill-water">約 6-8 杯清流質水</span>
                   </div>
                   <p style="font-size:0.78rem; color:#1E40AF; margin-top:6px; margin-bottom:0;">💡 充足水分能幫助腸道加速蠕動排空殘渣</p>
                 </div>
@@ -1568,69 +1875,24 @@ import Layout from '../layouts/Layout.astro';
         `;
       }
 
-      // 節點 4：午夜 12 點
-      html += `
-        <div class="timeline-item item-danger">
-          <div class="timeline-flow-card">
-            <div class="flow-left">
-              <div class="badge-row">
-                <span class="step-number-tag">Step 4</span>
-                <span class="timeline-time-badge">🌙 ${formatChineseDate(dayMinus1, false)} 24:00 (午夜12點)</span>
-              </div>
-              <h4 class="timeline-title">⛔ 嚴格禁食固體食物</h4>
-              <p class="timeline-desc">午夜 12 點過後，除了清腸藥液與必要開水外，<strong>絕對禁止食用任何固體食物與零食</strong>。</p>
-            </div>
-            <div class="flow-right-card" style="justify-content:center; background:#FFF5F5; border-color:#FCA5A5;">
-              <span class="food-pill-title title-deny" style="font-size:0.9rem;">🚫 所有固體食物全面停止！</span>
-              <p style="font-size:0.8rem; color:#991B1B; margin:0;">包含宵夜、水果、餅乾零食皆不可食用。</p>
-            </div>
-          </div>
-        </div>
-      `;
-
-      // 節點 5：高血壓藥服藥點
-      html += `
-        <div class="timeline-item">
-          <div class="timeline-flow-card">
-            <div class="flow-left">
-              <div class="badge-row">
-                <span class="step-number-tag">Step 5</span>
-                <span class="timeline-time-badge">💊 ${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(medBloodPressureTime)}</span>
-              </div>
-              <h4 class="timeline-title">💊 高血壓 / 抗癲癇藥物吞服點</h4>
-              <p class="timeline-desc">在喝第二劑清腸藥<strong>前 1 小時</strong>，以<strong>一小口白開水</strong>吞服高血壓藥物。（降血糖藥當天請停用）。</p>
-            </div>
-            <div class="flow-right-card">
-              <div class="food-pill-group">
-                <span class="food-pill-title title-allow">✅ 慢性病藥物注意事項：</span>
-                <div class="food-pills">
-                  <span class="pill pill-allow">高血壓/抗癲癇藥：開水吞服</span>
-                  <span class="pill pill-deny">降血糖藥/胰島素：當天停用</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      // 節點 6：當天早晨第二劑
+      // 節點 4：當天早晨第二劑
       if (selectedDrug === 'bowklean') {
         html += `
           <div class="timeline-item item-warning">
             <div class="timeline-flow-card">
               <div class="flow-left">
                 <div class="badge-row">
-                  <span class="step-number-tag">Step 6</span>
+                  <span class="step-number-tag">Step 4</span>
                   <span class="timeline-time-badge">⏰ ${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
                 </div>
                 <h4 class="timeline-title">🍵 服用「保可淨」第二劑 + 補水至清澈</h4>
-                <p class="timeline-desc">將<strong>第 2 包藥粉</strong>溶於 150 c.c. 冷開水喝下。服藥後需再飲用至少 **1000 c.c. 以上水分**。</p>
+                <p class="timeline-desc">將<strong>第 2 包藥粉</strong>溶於 150 c.c. 冷開水喝下。服藥後需再飲用至少 <strong>750 c.c.（或 3 杯 250 c.c.）的水分</strong>。</p>
               </div>
               <div class="flow-right-card">
                 <div class="food-pill-group">
                   <span class="food-pill-title title-water">🎯 糞水清澈檢查目標：</span>
                   <div class="food-pills">
-                    <span class="pill pill-water">再補水 1000 c.c. 以上</span>
+                    <span class="pill pill-water">再補水 750 c.c. 以上</span>
                     <span class="pill pill-allow">糞水呈清澈淡黃無渣如尿液</span>
                   </div>
                 </div>
@@ -1644,7 +1906,7 @@ import Layout from '../layouts/Layout.astro';
             <div class="timeline-flow-card">
               <div class="flow-left">
                 <div class="badge-row">
-                  <span class="step-number-tag">Step 6</span>
+                  <span class="step-number-tag">Step 4</span>
                   <span class="timeline-time-badge">⏰ ${formatChineseDate(examDate, false)} ${formatTimeOnly(dose2Time)} - 05:00</span>
                 </div>
                 <h4 class="timeline-title">🥤 服用「耐福利散」第二階段 (1000c.c.)</h4>
@@ -1663,13 +1925,13 @@ import Layout from '../layouts/Layout.astro';
         `;
       }
 
-      // 節點 7：禁水截止時間
+      // 節點 5：禁水截止時間
       html += `
         <div class="timeline-item item-danger">
           <div class="timeline-flow-card">
             <div class="flow-left">
               <div class="badge-row">
-                <span class="step-number-tag">Step 7</span>
+                <span class="step-number-tag">Step 5</span>
                 <span class="timeline-time-badge">🛑 ${formatChineseDate(examDate, false)} 約 ${formatTimeOnly(npoTime)} 起</span>
               </div>
               <h4 class="timeline-title">🛑 滴水不沾！完全禁水截止時間</h4>
@@ -1733,13 +1995,11 @@ import Layout from '../layouts/Layout.astro';
 🏥 預約檢查時間：${formatChineseDate(examDate)}
 💊 使用藥物：${drugName}
 
-📌 檢查前兩天 (${formatChineseDate(dayMinus2, false)})：開始低渣飲食 (白稀飯、白吐司、去皮魚肉蒸蛋)。
-📌 檢查前一天 (${formatChineseDate(dayMinus1, false)})：全天無渣清流質飲食 (魚湯清湯、寶礦力、冬瓜茶，忌乳製品/深色飲料)。
-📌 前一晚 (17:00-19:00)：喝第 1 劑清腸藥 + 大補充 1250-2000c.c. 水分。
-📌 前一晚 24:00：午夜起禁止食用任何固體食物。
-📌 當天早上 (04:00-05:00)：喝第 2 劑清腸藥 + 補水直到糞水清澈無渣如尿液。
-📌 當天約 03:00：高血壓藥用少許開水吞服。
-🛑 檢查前 3 小時：滴水不沾，停止所有飲水！`;
+📌 檢查前二至三天 (${formatChineseDate(dayMinus2, false)})：開始低渣飲食 (白稀飯、白吐司、去皮魚肉蒸蛋；便秘者建議 5-7 天)。
+📌 檢查前一天 (${formatChineseDate(dayMinus1, false)})：全天無渣清流質飲食 (魚湯清湯、寶礦力、冬瓜茶，沙士雪碧建議消氣喝)。
+📌 前一晚 (17:00-19:00)：喝第 1 劑清腸藥 + 補充 1500-2000c.c. 水分。
+📌 當天早上 (04:00-05:00)：喝第 2 劑清腸藥 + 補充至少 750c.c. 水分直到糞水清澈無渣如尿液。
+🛑 檢查前 2-4 小時：滴水不沾，停止所有飲水！`;
 
       navigator.clipboard.writeText(text).then(() => {
         alert('已成功複製清腸提醒文字！您可以直接貼上發送到 LINE 分享給家人。');
