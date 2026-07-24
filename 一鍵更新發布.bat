@@ -37,8 +37,14 @@ echo [5/6] Writing URLs and images to Google Sheet...
 node scripts/sync-sheet.js
 echo.
 
-echo [6/6] Uploading to Vercel...
-npx vercel dist --prod --yes
+echo [6/6] Pushing to GitHub and deploying to Vercel...
+git add -A
+git commit -m "auto: sync articles and images %date% %time%"
+git push origin main
+if %errorlevel% neq 0 (
+    echo [WARNING] git push failed. Trying Vercel direct deploy...
+)
+call npx vercel --prod --yes
 echo.
 
 echo ==========================================

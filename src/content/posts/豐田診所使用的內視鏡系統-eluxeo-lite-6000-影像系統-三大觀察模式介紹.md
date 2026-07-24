@@ -1,7 +1,7 @@
 ---
 title: "豐田診所使用的內視鏡系統-ELUXEO™ Lite 6000 影像系統 — 三大觀察模式介紹"
 category: "內視鏡檢查"
-publishDate: "2026-07-23"
+publishDate: "2026-07-24"
 draft: false
 slug: "豐田診所使用的內視鏡系統-eluxeo-lite-6000-影像系統-三大觀察模式介紹"
 order: 2

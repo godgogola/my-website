@@ -1,7 +1,7 @@
 ---
 title: "【P-CABs】鉀離子競爭性酸阻滯劑"
 category: "藥物介紹"
-publishDate: "2026-07-23"
+publishDate: "2026-07-24"
 draft: false
 slug: "p-cabs鉀離子競爭性酸阻滯劑"
 order: 11
