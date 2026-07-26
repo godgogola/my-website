@@ -162,6 +162,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         position: relative;
         padding: 6px 0;
         transition: color 0.25s ease;
+        white-space: nowrap;
       }
 
       .nav-link:hover, .nav-link.active {
@@ -203,15 +204,24 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       @media (max-width: 600px) {
         .site-header {
           flex-direction: column;
-          gap: 16px;
+          gap: 14px;
           padding: 16px 0;
         }
         .site-nav {
-          gap: 24px;
+          gap: 12px;
+          width: 100%;
+          justify-content: space-between;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding: 4px 0;
+        }
+        .site-nav::-webkit-scrollbar {
+          display: none;
         }
         .nav-link {
-          font-size: 1.18rem;
+          font-size: 0.92rem;
           font-weight: 800;
+          flex-shrink: 0;
         }
       }
     </style>
