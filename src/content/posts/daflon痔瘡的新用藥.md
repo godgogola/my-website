@@ -1,7 +1,7 @@
 ---
 title: "【Daflon】痔瘡的新用藥"
 category: "藥物介紹"
-publishDate: "2026-07-24"
+publishDate: "2026-07-27"
 draft: false
 slug: "daflon痔瘡的新用藥"
 order: 8

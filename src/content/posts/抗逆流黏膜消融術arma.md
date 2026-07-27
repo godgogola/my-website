@@ -1,7 +1,7 @@
 ---
 title: "抗逆流黏膜消融術（ARMA）"
 category: "內視鏡檢查"
-publishDate: "2026-07-24"
+publishDate: "2026-07-27"
 draft: false
 slug: "抗逆流黏膜消融術arma"
 coverImage: "抗逆流黏膜消融術（ARMA）.webp"

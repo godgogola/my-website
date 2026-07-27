@@ -1,7 +1,7 @@
 ---
 title: "週纖達 Wegovy"
 category: "減重"
-publishDate: "2026-07-24"
+publishDate: "2026-07-27"
 draft: false
 slug: "週纖達-wegovy"
 order: 6
