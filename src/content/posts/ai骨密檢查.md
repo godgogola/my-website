@@ -1,10 +1,10 @@
 ---
 title: "AI骨密檢查"
-coverImage: "AI骨密檢查.webp"
 category: "各種檢驗檢查"
 publishDate: "2026-07-27"
 draft: false
 slug: "ai骨密檢查"
+coverImage: "AI骨密檢查.webp"
 ---
 # AI 骨密篩檢：二張 X 光，預見您的骨骼健康
 

@@ -187,6 +187,30 @@ function sync() {
       }
     }
 
+    // 🔍 若 slug 對應的舊檔不存在（標題改名），掃描所有現有文章，用 title 比對繼承 coverImage
+    if (!coverImage) {
+      const allExisting = fs.readdirSync(destDir).filter(f => f.endsWith('.md'));
+      for (const existingFile of allExisting) {
+        const existingContent = fs.readFileSync(path.join(destDir, existingFile), 'utf8');
+        const existingTitleMatch = existingContent.match(/^title:\s*["']?(.+?)["']?\s*$/m);
+        if (existingTitleMatch && existingTitleMatch[1].trim() === title) {
+          const coverMatch = existingContent.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
+          if (coverMatch) {
+            coverImage = coverMatch[1].trim();
+            console.log(`[Sync] 🔗 標題改名，繼承封面圖: "${title}" → ${coverImage}`);
+          }
+          if (order === null) {
+            const existingOrderMatch = existingContent.match(/^order:\s*(.+)$/m);
+            if (existingOrderMatch) {
+              const parsedOrder = parseInt(existingOrderMatch[1].trim(), 10);
+              if (!isNaN(parsedOrder)) order = parsedOrder;
+            }
+          }
+          break;
+        }
+      }
+    }
+
     const coverLine = coverImage ? `\ncoverImage: "${coverImage}"` : '';
     const orderLine = (order !== null && !isNaN(order)) ? `\norder: ${order}` : '';
     const finalFrontmatter = `---\ntitle: "${title}"\ncategory: "${category}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slugify(fileName)}"${orderLine}${coverLine}\n---\n`;
