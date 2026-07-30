@@ -1,10 +1,10 @@
 ---
 title: "【C型肝炎】DAA藥物機轉"
 category: "肝病特區"
-publishDate: "2026-07-27"
+publishDate: "2026-07-30"
 draft: false
 slug: "c型肝炎daa藥物機轉"
-coverImage: "【C型肝炎】DAA藥物機轉.webp"
+coverImage: "C型肝炎.webp"
 ---
 C型肝炎全口服抗病毒藥物（DAAs）之所以具有高達 98% 以上的根除率且副作用低，是因為它們是直接針對 C 型肝炎病毒（HCV）複製過程中必需的「非結構蛋白（Non-structural proteins）」進行精準阻斷。
 

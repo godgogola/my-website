@@ -131,74 +131,55 @@ function sync() {
 
   for (const { filePath, category: folderCategory } of mdFiles) {
     const fileName = path.basename(filePath, '.md');
-    let content = fs.readFileSync(filePath, 'utf8');
-
-    const hasFrontmatter = content.startsWith('---');
-    let frontmatter = '';
-    let body = content;
-
-    if (hasFrontmatter) {
-      const parts = content.split('---');
-      if (parts.length >= 3) {
-        frontmatter = parts[1];
-        body = parts.slice(2).join('---');
-      }
-    }
-
-    let title = fileName;
-    let category = folderCategory; // 預設使用資料夾名稱
-    let publishDate = new Date().toISOString().split('T')[0];
-    let draft = false;
-    let order = null;
-
-    if (frontmatter) {
-      const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
-      const catMatch = frontmatter.match(/^category:\s*(.+)$/m);
-      const dateMatch = frontmatter.match(/^publishDate:\s*(.+)$/m);
-      const draftMatch = frontmatter.match(/^draft:\s*(.+)$/m);
-      const orderMatch = frontmatter.match(/^order:\s*(.+)$/m);
-
-      // 使用資料夾名稱作為文章分類（Google Drive 目錄為唯一標準）
-      category = folderCategory;
-      if (dateMatch) publishDate = dateMatch[1].replace(/['"]/g, '').trim();
-      if (draftMatch) draft = draftMatch[1].trim() === 'true';
-      if (orderMatch) {
-        const parsedOrder = parseInt(orderMatch[1].trim(), 10);
-        if (!isNaN(parsedOrder)) order = parsedOrder;
-      }
-    }
-
     const outputFileName = `${slugify(fileName)}.md`;
     const outputPath = path.join(destDir, outputFileName);
     validOutputFiles.add(outputFileName);
 
-    let coverImage = '';
-    if (fs.existsSync(outputPath)) {
-      const existingContent = fs.readFileSync(outputPath, 'utf8');
-      const coverMatch = existingContent.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
-      if (coverMatch) coverImage = coverMatch[1].trim();
-      
-      if (order === null) {
-        const existingOrderMatch = existingContent.match(/^order:\s*(.+)$/m);
-        if (existingOrderMatch) {
-          const parsedOrder = parseInt(existingOrderMatch[1].trim(), 10);
+    try {
+      let content = fs.readFileSync(filePath, 'utf8');
+
+      const hasFrontmatter = content.startsWith('---');
+      let frontmatter = '';
+      let body = content;
+
+      if (hasFrontmatter) {
+        const parts = content.split('---');
+        if (parts.length >= 3) {
+          frontmatter = parts[1];
+          body = parts.slice(2).join('---');
+        }
+      }
+
+      let title = fileName;
+      let category = folderCategory; // 預設使用資料夾名稱
+      let publishDate = new Date().toISOString().split('T')[0];
+      let draft = false;
+      let order = null;
+
+      if (frontmatter) {
+        const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
+        const catMatch = frontmatter.match(/^category:\s*(.+)$/m);
+        const dateMatch = frontmatter.match(/^publishDate:\s*(.+)$/m);
+        const draftMatch = frontmatter.match(/^draft:\s*(.+)$/m);
+        const orderMatch = frontmatter.match(/^order:\s*(.+)$/m);
+
+        // 使用資料夾名稱作為文章分類（Google Drive 目錄為唯一標準）
+        category = folderCategory;
+        if (dateMatch) publishDate = dateMatch[1].replace(/['"]/g, '').trim();
+        if (draftMatch) draft = draftMatch[1].trim() === 'true';
+        if (orderMatch) {
+          const parsedOrder = parseInt(orderMatch[1].trim(), 10);
           if (!isNaN(parsedOrder)) order = parsedOrder;
         }
       }
-    }
 
-    // 🔍 若 slug 對應的舊檔不存在（標題改名），掃描所有現有文章，用 title 比對繼承 coverImage
-    if (!coverImage) {
-      const allExisting = fs.readdirSync(destDir).filter(f => f.endsWith('.md'));
-      for (const existingFile of allExisting) {
-        const existingContent = fs.readFileSync(path.join(destDir, existingFile), 'utf8');
-        const existingTitleMatch = existingContent.match(/^title:\s*["']?(.+?)["']?\s*$/m);
-        if (existingTitleMatch && existingTitleMatch[1].trim() === title) {
+      let coverImage = '';
+      if (fs.existsSync(outputPath)) {
+        try {
+          const existingContent = fs.readFileSync(outputPath, 'utf8');
           const coverMatch = existingContent.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
-          if (coverMatch) {
-            coverImage = coverMatch[1].trim();
-            console.log(`[Sync] 🔗 標題改名，繼承封面圖: "${title}" → ${coverImage}`);
-          }
+          if (coverMatch) coverImage = coverMatch[1].trim();
+
           if (order === null) {
             const existingOrderMatch = existingContent.match(/^order:\s*(.+)$/m);
             if (existingOrderMatch) {
@@ -206,38 +187,73 @@ function sync() {
               if (!isNaN(parsedOrder)) order = parsedOrder;
             }
           }
-          break;
+        } catch (e) {
+          // 檔案被佔用，略過讀取現有內容
         }
       }
-    }
 
-    const coverLine = coverImage ? `\ncoverImage: "${coverImage}"` : '';
-    const orderLine = (order !== null && !isNaN(order)) ? `\norder: ${order}` : '';
-    const finalFrontmatter = `---\ntitle: "${title}"\ncategory: "${category}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slugify(fileName)}"${orderLine}${coverLine}\n---\n`;
-
-    let processedBody = body.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, noteTarget, display) => {
-      const targetSlug = slugify(noteTarget.trim());
-      const displayText = display ? display.trim() : noteTarget.trim();
-      return `[${displayText}](/posts/${targetSlug})`;
-    });
-
-    processedBody = processedBody.replace(/!\[\[([^\]]+)\]\]/g, (match, imageName) => {
-      imageName = imageName.trim();
-      const originImgPath = findImageInVault(obsidianVaultPath, imageName);
-      if (originImgPath && fs.existsSync(originImgPath)) {
-        const ext = path.extname(imageName);
-        const nameWithoutExt = path.basename(imageName, ext);
-        const destImgName = `${slugify(nameWithoutExt)}${ext}`;
-        const destImgPath = path.join(publicImagesDir, destImgName);
-        fs.copyFileSync(originImgPath, destImgPath);
-        return `![${nameWithoutExt}](/images/${destImgName})`;
-      } else {
-        return `[圖片: ${imageName}]`;
+      // 🔍 若 slug 對應的舊檔不存在（標題改名），掃描所有現有文章，用 title 比對繼承 coverImage
+      if (!coverImage) {
+        const allExisting = fs.readdirSync(destDir).filter(f => f.endsWith('.md'));
+        for (const existingFile of allExisting) {
+          try {
+            const existingContent = fs.readFileSync(path.join(destDir, existingFile), 'utf8');
+            const existingTitleMatch = existingContent.match(/^title:\s*["']?(.+?)["']?\s*$/m);
+            if (existingTitleMatch && existingTitleMatch[1].trim() === title) {
+              const coverMatch = existingContent.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
+              if (coverMatch) {
+                coverImage = coverMatch[1].trim();
+                console.log(`[Sync] 🔗 標題改名，繼承封面圖: "${title}" → ${coverImage}`);
+              }
+              if (order === null) {
+                const existingOrderMatch = existingContent.match(/^order:\s*(.+)$/m);
+                if (existingOrderMatch) {
+                  const parsedOrder = parseInt(existingOrderMatch[1].trim(), 10);
+                  if (!isNaN(parsedOrder)) order = parsedOrder;
+                }
+              }
+              break;
+            }
+          } catch (e) {
+            // 略過被佔用的既有文章
+          }
+        }
       }
-    });
 
-    fs.writeFileSync(outputPath, finalFrontmatter + processedBody, 'utf8');
-    syncedCount++;
+      const coverLine = coverImage ? `\ncoverImage: "${coverImage}"` : '';
+      const orderLine = (order !== null && !isNaN(order)) ? `\norder: ${order}` : '';
+      const finalFrontmatter = `---\ntitle: "${title}"\ncategory: "${category}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slugify(fileName)}"${orderLine}${coverLine}\n---\n`;
+
+      let processedBody = body.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, noteTarget, display) => {
+        const targetSlug = slugify(noteTarget.trim());
+        const displayText = display ? display.trim() : noteTarget.trim();
+        return `[${displayText}](/posts/${targetSlug})`;
+      });
+
+      processedBody = processedBody.replace(/!\[\[([^\]]+)\]\]/g, (match, imageName) => {
+        imageName = imageName.trim();
+        const originImgPath = findImageInVault(obsidianVaultPath, imageName);
+        if (originImgPath && fs.existsSync(originImgPath)) {
+          const ext = path.extname(imageName);
+          const nameWithoutExt = path.basename(imageName, ext);
+          const destImgName = `${slugify(nameWithoutExt)}${ext}`;
+          const destImgPath = path.join(publicImagesDir, destImgName);
+          try {
+            fs.copyFileSync(originImgPath, destImgPath);
+          } catch (e) {
+            console.warn(`[Sync] ⚠️ 無法複製圖片（略過）: ${imageName} — ${e.message}`);
+          }
+          return `![${nameWithoutExt}](/images/${destImgName})`;
+        } else {
+          return `[圖片: ${imageName}]`;
+        }
+      });
+
+      fs.writeFileSync(outputPath, finalFrontmatter + processedBody, 'utf8');
+      syncedCount++;
+    } catch (err) {
+      console.warn(`[Sync] ⚠️ 處理文章時發生錯誤，略過: ${fileName} — ${err.message}`);
+    }
   }
 
   // 🗑️ 清除已在 Obsidian 刪除的文章
@@ -245,9 +261,13 @@ function sync() {
   let deletedCount = 0;
   for (const existingFile of existingDestFiles) {
     if (!validOutputFiles.has(existingFile)) {
-      fs.unlinkSync(path.join(destDir, existingFile));
-      console.log(`[Sync] 🗑️ 刪除已被移除的文章: ${existingFile}`);
-      deletedCount++;
+      try {
+        fs.unlinkSync(path.join(destDir, existingFile));
+        console.log(`[Sync] 🗑️ 刪除已被移除的文章: ${existingFile}`);
+        deletedCount++;
+      } catch (err) {
+        console.warn(`[Sync] ⚠️ 無法刪除（檔案被佔用，略過）: ${existingFile} — ${err.message}`);
+      }
     }
   }
 

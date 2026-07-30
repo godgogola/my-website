@@ -1,10 +1,10 @@
 ---
 title: "【B型肝炎】 DNA 複製的「RNA 四部曲」【Bepirovirsen】"
 category: "肝病特區"
-publishDate: "2026-07-27"
+publishDate: "2026-07-30"
 draft: false
 slug: "b型肝炎-dna-複製的rna-四部曲bepirovirsen"
-coverImage: "【B型肝炎】 DNA 複製的「RNA 四部曲」【Bepirovirsen】.webp"
+coverImage: "B型肝炎.webp"
 ---
 為您整理 B 肝病毒 DNA 複製的「RNA 四部曲」，並詳細補充新藥 Bepirovirsen 的作用機轉與最新臨床資訊：
 

@@ -1,11 +1,9 @@
 ---
-title: "【ApoB, La(a), sdLDL, ApoA1】四大進階脂蛋白指標"
+title: "【ApoB, Lp(a), sdLDL, ApoA1】四大進階脂蛋白指標"
 category: "高血脂"
-publishDate: "2026-07-27"
+publishDate: "2026-07-30"
 draft: false
-slug: "apob-laa-sdldl-apoa1四大進階脂蛋白指標"
-order: 6
-coverImage: "【ApoB, La(a), sdLDL, ApoA1】四大進階脂蛋白指標.webp"
+slug: "apob-lpa-sdldl-apoa1四大進階脂蛋白指標"
 ---
 # 【ApoB, La(a), sdLDL, ApoA1】四大進階脂蛋白指標
 

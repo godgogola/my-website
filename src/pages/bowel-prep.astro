@@ -1611,6 +1611,50 @@ import Layout from '../layouts/Layout.astro';
     border: 1px solid var(--color-border);
   }
 
+  /* ── 手機版螢幕優化 (減少留白) ── */
+  @media (max-width: 640px) {
+    .prep-hero {
+      padding: 24px 12px;
+      margin-bottom: 20px;
+    }
+    .warning-section, .diet-section, .calc-card, .schedule-card {
+      margin-bottom: 24px;
+    }
+    .calc-card, .schedule-card, .risk-card, .diet-card {
+      padding: 16px 12px;
+    }
+    .schedule-card-header {
+      padding-bottom: 12px;
+    }
+    .timeline-container {
+      padding-left: 20px;
+      gap: 16px;
+    }
+    .timeline-container::before {
+      left: 6px;
+    }
+    .timeline-item {
+      padding: 14px 12px;
+      border-radius: 12px;
+    }
+    .timeline-item::before {
+      left: -20px;
+      width: 12px;
+      height: 12px;
+      border-width: 2px;
+    }
+    .flow-right-card {
+      padding: 10px;
+    }
+    .food-pills {
+      gap: 4px;
+    }
+    .pill {
+      padding: 3px 8px;
+      font-size: 0.8rem;
+    }
+  }
+
   /* ── 列印專用樣式 ── */
   @media print {
     .no-print, .site-header, .site-footer, .calc-card, .warning-section, .tab-buttons, .drug-detail-section, .med-side-section, .post-care-section {

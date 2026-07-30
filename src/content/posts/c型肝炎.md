@@ -1,7 +1,7 @@
 ---
 title: "C型肝炎"
 category: "肝膽胰疾病"
-publishDate: "2026-07-27"
+publishDate: "2026-07-30"
 draft: false
 slug: "c型肝炎"
 order: 6

@@ -1,7 +1,7 @@
 ---
 title: "【PPI】長期服用之副作用"
 category: "藥物介紹"
-publishDate: "2026-07-27"
+publishDate: "2026-07-30"
 draft: false
 slug: "ppi長期服用之副作用"
 order: 10

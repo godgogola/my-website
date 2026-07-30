@@ -1,7 +1,7 @@
 ---
 title: "瑞倍適 Rybelsus"
 category: "減重"
-publishDate: "2026-07-27"
+publishDate: "2026-07-30"
 draft: false
 slug: "瑞倍適-rybelsus"
 order: 5
