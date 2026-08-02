@@ -17,9 +17,16 @@ const {
   description = "黃冠智醫師的個人衛教專欄與筆記。提供肝膽腸胃健康、內科醫學等實證衛教資訊。",
   meta_title,
   meta_description,
-  ogImage = "https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg",
+  ogImage,
   canonicalUrl,
 } = Astro.props;
+
+// 決定最終 Open Graph / LINE 封面圖
+const defaultOgImage = "https://drhuanggi.vercel.app/images/og-turtle.jpg";
+const rawOgImage = ogImage || defaultOgImage;
+const finalOgImage = rawOgImage.startsWith('http')
+  ? rawOgImage
+  : `${Astro.site?.origin ?? 'https://drhuanggi.vercel.app'}${rawOgImage.startsWith('/') ? '' : '/'}${rawOgImage}`;
 
 // 決定最終 <title> 文字
 const finalTitle = meta_title ?? `${title} | 黃冠智醫師`;
@@ -49,7 +56,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
     <meta property="og:type" content="website" />
     <meta property="og:title" content={finalTitle} />
     <meta property="og:description" content={finalDescription} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={finalOgImage} />
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta property="og:site_name" content="黃冠智醫師 | 豐田診所" />
     <meta property="og:locale" content="zh_TW" />
@@ -58,7 +65,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={finalTitle} />
     <meta name="twitter:description" content={finalDescription} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={finalOgImage} />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
