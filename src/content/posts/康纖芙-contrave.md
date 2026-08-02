@@ -1,7 +1,7 @@
 ---
 title: "康纖芙 Contrave"
 category: "減重"
-publishDate: "2026-07-30"
+publishDate: "2026-08-02"
 draft: false
 slug: "康纖芙-contrave"
 order: 3

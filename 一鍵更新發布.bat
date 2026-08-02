@@ -57,7 +57,16 @@ echo [7/7] Deploying to Vercel...
 echo [7/7] Deploying >> "%LOGFILE%"
 git add -A 1>> "%LOGFILE%" 2>> "%LOGFILE%"
 git commit -m "auto: sync %date% %time%" 1>> "%LOGFILE%" 2>> "%LOGFILE%"
-start /b git push origin main
+if %errorlevel% neq 0 (
+    echo [INFO] Nothing new to commit, continuing...
+    echo [INFO] Nothing to commit >> "%LOGFILE%"
+)
+git push origin main 1>> "%LOGFILE%" 2>> "%LOGFILE%"
+if %errorlevel% neq 0 (
+    echo [ERROR] Step 7 git push failed
+    pause
+    exit /b 1
+)
 npx vercel --prod --yes 1>> "%LOGFILE%" 2>> "%LOGFILE%"
 echo.
 
