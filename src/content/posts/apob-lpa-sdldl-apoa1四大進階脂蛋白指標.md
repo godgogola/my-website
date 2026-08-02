@@ -1,5 +1,6 @@
 ---
 title: "【ApoB, Lp(a), sdLDL, ApoA1】四大進階脂蛋白指標"
+coverImage: "【ApoB, Lp(a), sdLDL, ApoA1】四大進階脂蛋白指標.webp"
 category: "高血脂"
 publishDate: "2026-08-02"
 draft: false

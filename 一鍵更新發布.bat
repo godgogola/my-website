@@ -13,8 +13,8 @@ echo   Dr Huang - Update and Publish
 echo ==========================================
 echo.
 
-echo [1/6] Syncing Obsidian articles...
-echo [1/6] Syncing Obsidian articles >> "%LOGFILE%"
+echo [1/7] Syncing Obsidian articles...
+echo [1/7] Syncing Obsidian articles >> "%LOGFILE%"
 node scripts/sync-obsidian.js
 if %errorlevel% neq 0 (
     echo [ERROR] Step 1 failed
@@ -23,23 +23,23 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-echo [2/6] Syncing Google Drive images...
-echo [2/6] Syncing Drive images >> "%LOGFILE%"
+echo [2/7] Syncing Google Drive images...
+echo [2/7] Syncing Drive images >> "%LOGFILE%"
 node scripts/sync-drive-images.js
 echo.
 
-echo [3/6] Applying manual cover image mappings...
-echo [3/6] Applying cover mappings >> "%LOGFILE%"
+echo [3/7] Applying manual cover image mappings...
+echo [3/7] Applying cover mappings >> "%LOGFILE%"
 node scripts/apply-mapping.js
 echo.
 
-echo [4/6] Matching remaining cover images...
-echo [4/6] Matching cover images >> "%LOGFILE%"
+echo [4/7] Matching remaining cover images...
+echo [4/7] Matching cover images >> "%LOGFILE%"
 node scripts/auto-cover-image-v2.js
 echo.
 
-echo [5/6] Building website...
-echo [5/6] Building >> "%LOGFILE%"
+echo [5/7] Building website...
+echo [5/7] Building >> "%LOGFILE%"
 call npm run build
 if %errorlevel% neq 0 (
     echo [ERROR] Step 5 Build failed
@@ -48,26 +48,31 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-echo [6/6] Writing to Google Sheet...
-echo [6/6] Sync sheet >> "%LOGFILE%"
+echo [6/7] Writing to Google Sheet...
+echo [6/7] Sync sheet >> "%LOGFILE%"
 node scripts/sync-sheet.js
 echo.
 
 echo [7/7] Deploying to Vercel...
 echo [7/7] Deploying >> "%LOGFILE%"
-git add -A 1>> "%LOGFILE%" 2>> "%LOGFILE%"
-git commit -m "auto: sync %date% %time%" 1>> "%LOGFILE%" 2>> "%LOGFILE%"
+git add -A
+git commit -m "auto: sync %date% %time%"
 if %errorlevel% neq 0 (
     echo [INFO] Nothing new to commit, continuing...
     echo [INFO] Nothing to commit >> "%LOGFILE%"
 )
-git push origin main 1>> "%LOGFILE%" 2>> "%LOGFILE%"
+git push origin main
 if %errorlevel% neq 0 (
-    echo [ERROR] Step 7 git push failed
+    echo [ERROR] git push failed! Please check the error above.
     pause
     exit /b 1
 )
-npx vercel --prod --yes 1>> "%LOGFILE%" 2>> "%LOGFILE%"
+npx vercel --prod --yes
+if %errorlevel% neq 0 (
+    echo [ERROR] Vercel deploy failed! Please check the error above.
+    pause
+    exit /b 1
+)
 echo.
 
 echo Finished: %date% %time% >> "%LOGFILE%"

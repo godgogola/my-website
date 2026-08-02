@@ -148,3 +148,47 @@ G:\我的雲端硬碟\衛教文章圖片\
 | `npm run dev` | 本機預覽（http://localhost:4321） |
 | `npm run build` | 重新編譯網站 |
 | `npx vercel --prod --yes` | 直接部署到 Vercel（緊急時使用） |
+
+---
+
+## 💻 換電腦 / 電腦壞掉的恢復步驟
+
+> ✅ **網站不會下線** — 網站跑在 Vercel 上，和本機無關。
+
+### 資料備份在哪裡？
+
+| 資料 | 備份位置 |
+|------|--------|
+| 程式碼 + 文章 + 圖片 | ✅ GitHub（每次一鍵更新都會自動同步） |
+| 原始 PNG 圖片 | ✅ Google Drive → `衛教文章圖片/` |
+| Obsidian 文章原稿 | ✅ Google Drive → `Wix衛教文章/` |
+| 已上線網站 | ✅ Vercel（持續運作中） |
+
+### 換機清單（依序執行）
+
+```
+① 安裝軟體：
+   - Node.js (https://nodejs.org)
+   - Git (https://git-scm.com)
+   - Google Drive 桌面版（等待雲端資料同步完成）
+
+② Clone 專案：
+   git clone https://github.com/godgogola/my-website.git
+   cd my-website
+
+③ 安裝套件：
+   npm install
+
+④ 建立 .env 檔（在專案根目錄新建 .env 檔，貼入以下內容）：
+   OBSIDIAN_VAULT_PATH=G:/我的雲端硬碟/Wix衛教文章
+
+⑤ 登入 Vercel：
+   npx vercel login
+
+⑥ 建立桌面捷徑：
+   node scripts/_make_shortcuts.js
+
+⑦ 完成！雙擊「Update-Website」捷徑即可正常使用 🚀
+```
+
+> 📌 如果 Google Drive 掛載磁碟機字母不是 `G:`，請修改 `.env` 的路徑。
