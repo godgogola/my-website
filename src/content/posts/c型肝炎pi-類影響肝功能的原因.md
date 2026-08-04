@@ -1,7 +1,7 @@
 ---
 title: "【C型肝炎】PI 類影響肝功能的原因"
 category: "肝病特區"
-publishDate: "2026-08-02"
+publishDate: "2026-08-04"
 draft: false
 slug: "c型肝炎pi-類影響肝功能的原因"
 coverImage: "C型肝炎.webp"

@@ -1,7 +1,7 @@
 ---
 title: "【C型肝炎】慢性C型肝炎的「肝外表現」"
 category: "肝病特區"
-publishDate: "2026-08-02"
+publishDate: "2026-08-04"
 draft: false
 slug: "c型肝炎慢性c型肝炎的肝外表現"
 coverImage: "C型肝炎.webp"

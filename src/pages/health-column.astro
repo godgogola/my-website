@@ -3,16 +3,23 @@ import Layout from '../layouts/Layout.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
-// ── 取得所有已發布文章，優先依 order (由小到大)，再依日期排序 ──
+// ── 取得所有已發布文章 ──
 const allPosts = await getCollection('posts');
-const posts = allPosts
-  .filter(post => !post.data.draft)
-  .sort((a, b) => {
-    const orderA = a.data.order ?? 9999;
-    const orderB = b.data.order ?? 9999;
-    if (orderA !== orderB) return orderA - orderB;
-    return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
-  });
+const unDraftPosts = allPosts.filter(post => !post.data.draft);
+
+// 1. 「全部」分類預設排序：純粹依發布日期 (publishDate) 由新到舊排序
+const posts = [...unDraftPosts].sort((a, b) => {
+  return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+});
+
+// 2. 其他特定分類排序：優先依 order (由小到大)，再依發布日期排序
+const categoryPosts = [...unDraftPosts].sort((a, b) => {
+  const orderA = a.data.order ?? 9999;
+  const orderB = b.data.order ?? 9999;
+  if (orderA !== orderB) return orderA - orderB;
+  return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+});
+
 
 // ── 分類清單（依照指定順序排列） ──
 const CATEGORY_ORDER = [
@@ -98,6 +105,8 @@ function getSummary(body: string | undefined): string {
         class="grid-item"
         data-category={post.data.category || '其他'}
         data-title={post.data.title.toLowerCase()}
+        data-publish-date={post.data.publishDate}
+        data-order={post.data.order ?? 9999}
       >
         <PostCard
           title={post.data.title}
@@ -150,7 +159,7 @@ function getSummary(body: string | undefined): string {
 
       <nav class="drawer-tree">
         {sortedCategories.filter(c => c !== '全部').map((cat) => {
-          const catPosts = posts.filter(p => (p.data.category || '其他') === cat);
+          const catPosts = categoryPosts.filter(p => (p.data.category || '其他') === cat);
           return (
             <div class="drawer-folder" data-drawer-cat={cat}>
               <button class="drawer-folder-btn" data-toggle-cat={cat}>
@@ -188,6 +197,29 @@ function getSummary(body: string | undefined): string {
     let activeFilter = '全部';
     let searchQuery = '';
 
+    function reorderItems() {
+      const postsGrid = document.getElementById('postsGrid');
+      if (!postsGrid) return;
+      const items = Array.from(gridItems);
+      items.sort((a, b) => {
+        if (activeFilter === '全部') {
+          // 「全部」分類：依 publishDate 由新到舊排序
+          const dateA = new Date(a.dataset.publishDate || 0).getTime();
+          const dateB = new Date(b.dataset.publishDate || 0).getTime();
+          return dateB - dateA;
+        } else {
+          // 特定分類：依 order (由小到大)，次要依 publishDate 由新到舊
+          const orderA = parseInt(a.dataset.order || '9999', 10);
+          const orderB = parseInt(b.dataset.order || '9999', 10);
+          if (orderA !== orderB) return orderA - orderB;
+          const dateA = new Date(a.dataset.publishDate || 0).getTime();
+          const dateB = new Date(b.dataset.publishDate || 0).getTime();
+          return dateB - dateA;
+        }
+      });
+      items.forEach(item => postsGrid.appendChild(item));
+    }
+
     function updateView() {
       let visible = 0;
       gridItems.forEach(item => {
@@ -210,6 +242,7 @@ function getSummary(body: string | undefined): string {
           b.classList.toggle('active', b === btn);
           b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
         });
+        reorderItems();
         updateView();
         // 篩選後捲回網格頂部
         document.getElementById('postsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -230,6 +263,7 @@ function getSummary(body: string | undefined): string {
         b.classList.toggle('active', isAll);
         b.setAttribute('aria-selected', isAll ? 'true' : 'false');
       });
+      reorderItems();
       updateView();
     });
 

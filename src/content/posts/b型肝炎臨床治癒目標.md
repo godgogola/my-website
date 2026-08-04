@@ -1,7 +1,7 @@
 ---
 title: "【B型肝炎】臨床治癒目標"
 category: "肝病特區"
-publishDate: "2026-08-02"
+publishDate: "2026-08-04"
 draft: false
 slug: "b型肝炎臨床治癒目標"
 coverImage: "B型肝炎.webp"

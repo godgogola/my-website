@@ -1,4 +1,4 @@
-﻿// ============================================
+// ============================================
 // Code.gs - 豐田診所衛教專欄 (雙層快取極速版 v2)
 // UI/UX Pro Max — 後端優化 + 安全同步機制
 // ============================================
@@ -109,6 +109,31 @@ function getCategoriesData() {
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
+
+    // ── fixCategory：依文章標題修正 A 欄（主分類名稱）──
+    if (data.action === 'fixCategory') {
+      var ss2      = SpreadsheetApp.openById(SHEET_ID);
+      var sub2     = ss2.getSheetByName('次分類');
+      var rows2    = sub2.getDataRange().getValues();
+      var found2   = false;
+      for (var j = 1; j < rows2.length; j++) {
+        if (String(rows2[j][2]).trim() === String(data.title).trim()) {
+          var currentCat = String(rows2[j][0]).trim();
+          if (currentCat !== String(data.category).trim()) {
+            sub2.getRange(j + 1, 1).setValue(data.category);
+            CacheService.getScriptCache().remove(CACHE_KEY);
+            return jsonResponse({ success: true, action: '分類已修正', title: data.title, from: currentCat, to: data.category });
+          } else {
+            return jsonResponse({ success: true, action: '分類正確無需修正', title: data.title });
+          }
+          found2 = true;
+          break;
+        }
+      }
+      if (!found2) {
+        return jsonResponse({ success: true, action: '未找到標題', title: data.title });
+      }
+    }
 
     if (data.action !== 'updateArticleUrl') {
       return jsonResponse({ success: false, error: '不支援的 action' });

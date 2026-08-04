@@ -1,7 +1,7 @@
 ---
 title: "【糞便潛血】傳統（gFOBT）與免疫法（ iFOBT _FIT ）的比較"
 category: "各種檢驗檢查"
-publishDate: "2026-08-02"
+publishDate: "2026-08-04"
 draft: false
 slug: "糞便潛血傳統gfobt與免疫法-ifobt-_fit-的比較"
 coverImage: "【糞便潛血】傳統（gFOBT）與免疫法（ iFOBT _FIT ）的比較.webp"

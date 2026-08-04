@@ -1,7 +1,7 @@
 ---
 title: "AI骨密檢查"
 category: "各種檢驗檢查"
-publishDate: "2026-08-02"
+publishDate: "2026-08-04"
 draft: false
 slug: "ai骨密檢查"
 coverImage: "AI骨密檢查.webp"

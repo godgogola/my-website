@@ -19,7 +19,27 @@ const formatDate = (date: Date) => {
 };
 ---
 
-<Layout title="首頁 & 關於我" description="豐田診所院長黃冠智醫師的個人網站。分享肝膽腸胃內科專業知識與個人衛教筆記。">
+<Layout
+  meta_title="黃冠智醫師｜肝膽腸胃科·豐田診所院長｜衛教專區與健康筆記"
+  title="黃冠智醫師｜肝膽腸胃科·豐田診所院長｜衛教專區與健康筆記"
+  description="豐田診所院長黃冠智醫師的官方網站。提供胃食道逆流、大腸鏡檢查、肝病防治、減重門診等肝膽腸胃內科專業衛教知識與健康指南。"
+>
+  <!-- Google 醫師專業結構化標籤 (JSON-LD) -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Physician",
+    "name": "黃冠智醫師",
+    "alternateName": ["黃冠智 醫師", "黃冠智 院長"],
+    "jobTitle": "豐田診所院長 / 肝膽腸胃內科主治醫師",
+    "medicalSpecialty": [
+      "Gastroenterology",
+      "Hepatology",
+      "InternalMedicine"
+    ],
+    "description": "豐田診所院長黃冠智醫師，專長內視鏡檢查、胃食道逆流、大腸息肉切除、肝病追蹤、減重醫學與三高慢病管理。",
+    "image": "https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg",
+    "url": "https://drhuanggi.vercel.app"
+  })} />
   <!-- 頁首海龜視覺橫幅 Banner -->
   <section class="turtle-hero-banner">
     <img src="/images/turtle-banner.jpg" alt="海龜悠遊海洋" class="banner-bg-img" />
