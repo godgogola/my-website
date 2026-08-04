@@ -23,9 +23,9 @@ const categoryPosts = [...unDraftPosts].sort((a, b) => {
 
 // ── 分類清單（依照指定順序排列） ──
 const CATEGORY_ORDER = [
-  '內視鏡檢查', '肝病特區', '肝膽胰疾病', '胃部疾病', '腸道疾病',
+  '內視鏡檢查', '肝膽胰疾病', '胃部疾病', '腸道疾病',
   '慢性病', '高血壓', '高血脂', '糖尿病', '減重',
-  '健檢報告判讀', '飲食禁忌', '藥物介紹'
+  '健康飲食', '各種檢驗檢查', '藥物介紹', '肝病特區'
 ];
 
 // ── 取得所有出現的分類（含未在 CATEGORY_ORDER 裡的） ──
@@ -51,8 +51,9 @@ function getSummary(body: string | undefined): string {
 ---
 
 <Layout
-  title="衛教專欄"
-  description={`黃冠智醫師的胃腸肝膽衛教專欄，共 ${posts.length} 篇實證文章，涵蓋胃食道逆流、大腸鏡、肝病、減重醫學等主題。`}
+  meta_title="衛教專欄｜胃腸鏡、減重與三高控制筆記 - 黃冠智醫師"
+  title="衛教專欄｜胃腸鏡、減重與三高控制筆記 - 黃冠智醫師"
+  description={`黃冠智醫師的胃腸肝膽衛教專欄，共 ${posts.length} 篇實證文章，涵蓋胃食道逆流、無痛胃腸鏡、肝病追蹤、減重醫學與三高慢病管理等主題。`}
 >
   <!-- ── 頁面 Hero 標題 ── -->
   <div class="column-hero">
