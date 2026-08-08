@@ -168,58 +168,100 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         padding: 40px 0;
       }
 
-      /* Header & Navigation */
+      /* SmoothUI Header-4 Floating Glass Header */
+      .site-header-wrapper {
+        position: sticky;
+        top: 14px;
+        z-index: 100;
+        width: 100%;
+        margin: 0 0 20px 0;
+      }
+
       .site-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 0;
-        border-bottom: 1.5px solid var(--color-border);
+        padding: 8px 14px;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(47, 102, 86, 0.14);
+        border-radius: 9999px;
+        box-shadow: 0 8px 24px -4px rgba(47, 102, 86, 0.1), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+
+      .site-header:hover {
+        box-shadow: 0 12px 30px -4px rgba(47, 102, 86, 0.14), 0 4px 10px -1px rgba(0, 0, 0, 0.06);
+        border-color: rgba(47, 102, 86, 0.22);
       }
 
       .logo-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 8px;
+        border-radius: 9999px;
+        transition: opacity 0.2s ease;
+      }
+
+      .logo-group:hover {
+        opacity: 0.9;
+      }
+
+      .logo-badge-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--color-primary), #3d806d);
+        color: #FFFFFF;
+        font-size: 1.05rem;
+        box-shadow: 0 2px 8px rgba(47, 102, 86, 0.3);
+      }
+
+      .logo-text-wrap {
         display: flex;
         flex-direction: column;
       }
 
       .logo-title {
-        font-size: 1.4rem;
+        font-size: 1.15rem;
         font-weight: 900;
         color: var(--color-primary);
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
       }
 
       .logo-subtitle {
-        font-size: 0.8rem;
-        font-weight: 500;
+        font-size: 0.68rem;
+        font-weight: 600;
         color: var(--color-accent);
         text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin-top: 2px;
+        letter-spacing: 1px;
       }
 
-      /* SmoothUI Animated Tabs Navigation */
+      /* SmoothUI Center Tabs */
       .smooth-tabs-nav {
         position: relative;
         display: inline-flex;
         align-items: center;
-        background: rgba(47, 102, 86, 0.07);
-        padding: 5px;
+        background: rgba(47, 102, 86, 0.06);
+        padding: 4px;
         border-radius: 9999px;
-        border: 1px solid rgba(47, 102, 86, 0.12);
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(47, 102, 86, 0.08);
       }
 
       .smooth-tab-pill {
         position: absolute;
-        top: 5px;
+        top: 4px;
         left: 0;
-        height: calc(100% - 10px);
+        height: calc(100% - 8px);
         background: #FFFFFF;
         border-radius: 9999px;
-        box-shadow: 0 2px 10px rgba(47, 102, 86, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(47, 102, 86, 0.14), 0 1px 3px rgba(0, 0, 0, 0.06);
         pointer-events: none;
         z-index: 1;
         transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
@@ -229,29 +271,51 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       .smooth-tab-link {
         position: relative;
         z-index: 2;
-        padding: 8px 18px;
-        font-size: 0.95rem;
+        padding: 7px 16px;
+        font-size: 0.92rem;
         font-weight: 700;
         color: var(--color-text-muted);
         text-decoration: none;
         border-radius: 9999px;
-        transition: color 0.25s ease, transform 0.15s ease;
+        transition: color 0.2s ease;
         white-space: nowrap;
         user-select: none;
-        -webkit-tap-highlight-color: transparent;
       }
 
       .smooth-tab-link:hover {
         color: var(--color-primary);
       }
 
-      .smooth-tab-link:active {
-        transform: scale(0.96);
-      }
-
       .smooth-tab-link.active {
         color: var(--color-primary);
         font-weight: 800;
+      }
+
+      /* Right CTA Button */
+      .header-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, var(--color-primary), #245244);
+        color: #FFFFFF;
+        padding: 8px 18px;
+        border-radius: 9999px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 2px 10px rgba(47, 102, 86, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .header-cta-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(47, 102, 86, 0.35);
+        filter: brightness(1.05);
+      }
+
+      .header-cta-btn:active {
+        transform: scale(0.97);
       }
 
       /* Footer */
@@ -268,47 +332,73 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       }
 
       /* Responsive */
-      @media (max-width: 768px) {
+      @media (max-width: 900px) {
+        .site-header-wrapper {
+          top: 8px;
+          margin-bottom: 16px;
+        }
         .site-header {
-          flex-direction: column;
-          gap: 16px;
-          padding: 18px 0;
+          flex-wrap: wrap;
+          gap: 10px;
+          padding: 10px 14px;
+          border-radius: 20px;
+        }
+        .logo-group {
+          padding: 0;
         }
         .smooth-tabs-nav {
+          order: 3;
           width: 100%;
-          justify-content: space-between;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          padding: 4px;
+          justify-content: space-around;
         }
-        .smooth-tabs-nav::-webkit-scrollbar {
-          display: none;
+        .header-cta-btn {
+          padding: 6px 14px;
+          font-size: 0.82rem;
         }
+      }
+
+      @media (max-width: 600px) {
         .smooth-tab-link {
-          padding: 7px 12px;
-          font-size: 0.88rem;
-          flex-shrink: 0;
+          padding: 6px 10px;
+          font-size: 0.84rem;
+        }
+        .logo-title {
+          font-size: 1.05rem;
+        }
+        .header-cta-btn {
+          display: none;
         }
       }
     </style>
   </head>
   <body>
     <div class="layout-container">
-      <header class="site-header">
-        <a href="/" class="logo-group">
-          <span class="logo-title">黃冠智 醫師</span>
-          <span class="logo-subtitle">Gastroenterologist & Hepatologist</span>
-        </a>
-        <nav class="smooth-tabs-nav" id="main-nav-tabs" aria-label="主要導覽">
-          <div class="smooth-tab-pill" id="smooth-nav-pill"></div>
-          <a href="/" class={`smooth-tab-link ${isHome ? 'active' : ''}`}>首頁</a>
-          <a href="/health-column" class={`smooth-tab-link ${isHealthColumn ? 'active' : ''}`}>醫學筆記</a>
-          <a href="/bowel-prep" class={`smooth-tab-link ${isBowelPrep ? 'active' : ''}`}>大腸鏡檢個人化表單</a>
-        </nav>
-      </header>
+      <div class="site-header-wrapper">
+        <header class="site-header">
+          <a href="/" class="logo-group">
+            <span class="logo-badge-icon">🩺</span>
+            <div class="logo-text-wrap">
+              <span class="logo-title">黃冠智 醫師</span>
+              <span class="logo-subtitle">豐田診所院長 · 肝膽腸胃專科</span>
+            </div>
+          </a>
+
+          <nav class="smooth-tabs-nav" id="main-nav-tabs" aria-label="主要導覽">
+            <div class="smooth-tab-pill" id="smooth-nav-pill"></div>
+            <a href="/" class={`smooth-tab-link ${isHome ? 'active' : ''}`}>首頁</a>
+            <a href="/health-column" class={`smooth-tab-link ${isHealthColumn ? 'active' : ''}`}>醫學筆記</a>
+            <a href="/bowel-prep" class={`smooth-tab-link ${isBowelPrep ? 'active' : ''}`}>大腸鏡檢表單</a>
+          </nav>
+
+          <a href="/health-column" class="header-cta-btn">
+            <span>瀏覽衛教專欄</span>
+            <span>→</span>
+          </a>
+        </header>
+      </div>
 
       <script is:inline>
-        // SmoothUI Animated Tabs Interactivity
+        // SmoothUI Header-4 Animated Tabs Interactivity
         (function initSmoothTabs() {
           const nav = document.getElementById('main-nav-tabs');
           const pill = document.getElementById('smooth-nav-pill');
@@ -339,7 +429,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
           // Initial position
           requestAnimationFrame(() => {
             movePillTo(activeLink, false);
-            setTimeout(() => movePillTo(activeLink, false), 50);
+            setTimeout(() => movePillTo(activeLink, false), 60);
           });
 
           // Hover events on links
