@@ -54,14 +54,9 @@ const formatDate = (date: Date) => {
 
     <div class="hero-image-wrapper">
       <img src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg" alt="黃冠智 醫師" class="hero-image" />
-      <div class="hero-image-badge">
-        <span class="badge-dot"></span>
-        <span>現任 豐田診所院長</span>
-      </div>
     </div>
 
     <div class="hero-text-content">
-      <div class="hero-header-badge">🩺 肝膽腸胃專科 · 實證醫學</div>
       <h1 class="hero-name">關於 黃冠智 醫師</h1>
       <p class="hero-title">豐田診所院長 / 肝膽腸胃內科主治醫師</p>
       
@@ -74,18 +69,17 @@ const formatDate = (date: Date) => {
 
       <div class="hero-meta">
         <div class="meta-header">
-          <span class="meta-title-icon">✨</span>
           <strong>專長領域與特色診療</strong>
         </div>
         <div class="specialty-pill-grid">
-          <span class="specialty-pill">🔬 消化道內視鏡</span>
-          <span class="specialty-pill">📡 腹部超音波</span>
-          <span class="specialty-pill">🩺 胃食道逆流</span>
-          <span class="specialty-pill">🌿 肝病慢性追蹤</span>
-          <span class="specialty-pill">⚖️ 減重代謝門診</span>
-          <span class="specialty-pill">💊 三高慢性病</span>
-          <span class="specialty-pill">🩹 內痔微創結紮</span>
-          <span class="specialty-pill">📋 勞工健康檢查</span>
+          <span class="specialty-pill">消化道內視鏡</span>
+          <span class="specialty-pill">腹部超音波</span>
+          <span class="specialty-pill">胃食道逆流</span>
+          <span class="specialty-pill">肝病慢性追蹤</span>
+          <span class="specialty-pill">減重代謝門診</span>
+          <span class="specialty-pill">三高慢性病</span>
+          <span class="specialty-pill">內痔微創結紮</span>
+          <span class="specialty-pill">勞工健康檢查</span>
         </div>
       </div>
     </div>
@@ -505,57 +499,12 @@ const formatDate = (date: Date) => {
     transform: scale(1.03);
   }
 
-  .hero-image-badge {
-    position: absolute;
-    bottom: 14px;
-    left: 14px;
-    right: 14px;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 8px 14px;
-    border-radius: 12px;
-    font-size: 0.84rem;
-    font-weight: 800;
-    color: var(--color-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    user-select: none;
-  }
-
-  .badge-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #10B981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
-    flex-shrink: 0;
-  }
-
   .hero-text-content {
     position: relative;
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .hero-header-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(47, 102, 86, 0.08);
-    color: var(--color-primary);
-    font-size: 0.82rem;
-    font-weight: 800;
-    padding: 4px 14px;
-    border-radius: 9999px;
-    margin-bottom: 10px;
-    border: 1px solid rgba(47, 102, 86, 0.14);
-    letter-spacing: 0.5px;
   }
 
   .hero-name {
