@@ -63,9 +63,18 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
     <meta property="og:title" content={finalTitle} />
     <meta property="og:description" content={finalDescription} />
     <meta property="og:image" content={finalOgImage} />
-    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-    <meta property="og:site_name" content="黃冠智醫師 | 豐田診所" />
+    <meta property="og:site_name" content="黃冠智醫師 醫學筆記" />
     <meta property="og:locale" content="zh_TW" />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+
+    <!-- Google 網站名稱 (Site Name) 官方結構化資料 -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "黃冠智醫師 醫學筆記",
+      "alternateName": ["黃冠智醫師", "豐田診所 黃冠智醫師", "黃冠智 院長", "Dr. Huang GI"],
+      "url": "https://drhuanggi.vercel.app/"
+    })} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -109,7 +118,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
 
       @media (max-width: 768px) {
         html {
-          font-size: 16px;
+          font-size: 18px;
         }
       }
 
@@ -248,7 +257,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
           display: none;
         }
         .nav-link {
-          font-size: 0.92rem;
+          font-size: 1.05rem;
           font-weight: 800;
           flex-shrink: 0;
         }
@@ -264,7 +273,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         </a>
         <nav class="site-nav">
           <a href="/" class={`nav-link ${isHome ? 'active' : ''}`}>首頁</a>
-          <a href="/health-column" class={`nav-link ${isHealthColumn ? 'active' : ''}`}>衛教專欄</a>
+          <a href="/health-column" class={`nav-link ${isHealthColumn ? 'active' : ''}`}>醫學筆記</a>
           <a href="/bowel-prep" class={`nav-link ${isBowelPrep ? 'active' : ''}`}>大腸鏡檢個人化表單</a>
         </nav>
       </header>

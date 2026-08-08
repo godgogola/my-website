@@ -1,12 +1,12 @@
 ---
 title: "【ApoB, Lp(a), sdLDL, ApoA1】四大進階脂蛋白指標"
 category: "高血脂"
-publishDate: "2026-08-04"
+publishDate: "2026-08-08"
 draft: false
 slug: "apob-lpa-sdldl-apoa1四大進階脂蛋白指標"
 coverImage: "【ApoB, Lp(a), sdLDL, ApoA1】四大進階脂蛋白指標.webp"
 ---
-# 【ApoB, La(a), sdLDL, ApoA1】四大進階脂蛋白指標
+# 【ApoB, Lp(a), sdLDL, ApoA1】四大進階脂蛋白指標
 
 在過去，我們常聽人提到「壞膽固醇（LDL-C）」，認為只要這個數值正常，血管就很安全。然而在診間或臨床上，我們常看到肥胖、代謝症候群或糖尿病的患者，明明壞膽固醇數值很漂亮，卻依然發生了心肌梗塞。
 

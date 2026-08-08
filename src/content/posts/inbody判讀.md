@@ -1,7 +1,7 @@
 ---
 title: "INBODY判讀"
-category: "各種檢驗檢查"
-publishDate: "2026-08-04"
+category: "健檢項目介紹"
+publishDate: "2026-08-08"
 draft: false
 slug: "inbody判讀"
 order: 1

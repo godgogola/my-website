@@ -1,7 +1,7 @@
 ---
 title: "【地雷食物】腸躁症 FODMAP"
 category: "健康飲食"
-publishDate: "2026-08-04"
+publishDate: "2026-08-08"
 draft: false
 slug: "地雷食物腸躁症-fodmap"
 coverImage: "【地雷食物】腸躁症 FODMAP.webp"

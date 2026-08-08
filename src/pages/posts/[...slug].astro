@@ -58,7 +58,7 @@ const formatDate = (date) => {
           <a href="/health-column" class="home-link" title="返回首頁">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </a>
-          <span>衛教文章庫</span>
+          <span>醫學筆記庫</span>
           <span class="post-count-badge">{posts.length}</span>
         </div>
         <div class="sidebar-search">
@@ -99,7 +99,7 @@ const formatDate = (date) => {
       </button>
       <article class="article-detail">
         <nav class="article-breadcrumb" aria-label="Breadcrumb">
-          <a href="/health-column">← 返回衛教專欄</a>
+          <a href="/health-column">← 返回醫學筆記</a>
           <span class="divider">/</span>
           <span class="bc-cat">{currentCategory}</span>
           <span class="divider">/</span>
@@ -306,10 +306,13 @@ const formatDate = (date) => {
     .obs-sidebar.mobile-open { left:0; box-shadow:4px 0 32px rgba(0,0,0,.2); }
     .sidebar-close-btn { display:block; }
     .obs-main { width:100%; }
-    .mobile-menu-btn { display:flex; }
-    .article-detail { padding:12px 14px 40px; }
-    .article-title { font-size:1.65rem; }
+    .mobile-menu-btn { display:flex; font-size: 0.98rem; }
+    .article-detail { padding:14px 16px 44px; }
+    .article-title { font-size:1.85rem; line-height: 1.35; }
+    .article-content { font-size: 1.15rem; line-height: 1.85; }
+    .article-content h2 { font-size: 1.55rem; margin: 32px 0 12px; }
+    .article-content h3 { font-size: 1.3rem; margin: 24px 0 10px; }
     .doctor-mini-bio { flex-direction:column; text-align:center; }
-    .article-breadcrumb .current { max-width:140px; }
+    .article-breadcrumb .current { max-width:160px; }
   }
 </style>
