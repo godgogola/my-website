@@ -53,6 +53,11 @@ const formatDate = (date: Date) => {
 
   <!-- Hero Section (關於我) -->
   <section class="about-hero">
+    <!-- SmoothUI Interactive 3D Perspective Grid -->
+    <div class="interactive-grid-container" aria-hidden="true">
+      <div class="main-3d-grid" id="about-hero-grid"></div>
+    </div>
+
     <div class="hero-image-wrapper">
       <img src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg" alt="黃冠智 醫師" class="hero-image" />
     </div>
@@ -308,6 +313,22 @@ const formatDate = (date: Date) => {
       </div>
     </div>
   </section>
+
+  <!-- SmoothUI 3D Interactive Perspective Grid Initialization -->
+  <script is:inline>
+    (function initHero3DGrid() {
+      const grid = document.getElementById('about-hero-grid');
+      if (!grid || grid.children.length > 0) return;
+      const fragment = document.createDocumentFragment();
+      const count = 28 * 28; // 784 tiles for silky 60fps interaction
+      for (let i = 0; i < count; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'grid-tile';
+        fragment.appendChild(tile);
+      }
+      grid.appendChild(fragment);
+    })();
+  </script>
 </Layout>
 
 <style>
@@ -418,26 +439,105 @@ const formatDate = (date: Date) => {
     }
   }
 
-  /* Hero Section */
+  /* Hero Section (關於我) + SmoothUI 3D Interactive Perspective Grid */
   .about-hero {
+    position: relative;
+    overflow: hidden;
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 48px;
     align-items: center;
     background-color: var(--color-bg-card);
-    border-radius: 20px;
+    border-radius: 24px;
     padding: 40px;
     box-shadow: 0 10px 30px var(--color-shadow);
     margin-bottom: 40px;
+    border: 1px solid var(--color-border);
+  }
+
+  .interactive-grid-container {
+    --hero-grid-hover-color-1: rgba(47, 102, 86, 0.3);
+    --hero-grid-hover-color-2: rgba(61, 128, 109, 0.3);
+    --hero-grid-hover-color-3: rgba(188, 138, 74, 0.3);
+    --hero-grid-hover-color-4: rgba(232, 242, 238, 0.7);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    perspective: 2000px;
+    perspective-origin: center center;
+    pointer-events: auto;
+    z-index: 0;
+  }
+
+  .main-3d-grid {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    grid-template-rows: repeat(28, 1fr);
+    grid-template-columns: repeat(28, 1fr);
+    width: 110rem;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%) rotateX(50deg) rotateY(-5deg) rotateZ(20deg) scale(1.25);
+    pointer-events: auto;
+  }
+
+  .main-3d-grid::after {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    content: "";
+    background: radial-gradient(circle, transparent 25%, #FFFFFF 78%);
+  }
+
+  .grid-tile {
+    border: 0.5px solid rgba(47, 102, 86, 0.08);
+    transition: background-color 1500ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: crosshair;
+  }
+
+  .grid-tile:hover {
+    transition-duration: 0ms !important;
+  }
+
+  .grid-tile:nth-child(4n):hover { background-color: var(--hero-grid-hover-color-1); }
+  .grid-tile:nth-child(4n + 1):hover { background-color: var(--hero-grid-hover-color-2); }
+  .grid-tile:nth-child(4n + 2):hover { background-color: var(--hero-grid-hover-color-3); }
+  .grid-tile:nth-child(4n + 3):hover { background-color: var(--hero-grid-hover-color-4); }
+  .grid-tile:nth-child(7n):hover { background-color: var(--hero-grid-hover-color-2); }
+  .grid-tile:nth-child(7n + 3):hover { background-color: var(--hero-grid-hover-color-3); }
+  .grid-tile:nth-child(7n + 5):hover { background-color: var(--hero-grid-hover-color-4); }
+  .grid-tile:nth-child(7n + 6):hover { background-color: var(--hero-grid-hover-color-1); }
+  .grid-tile:nth-child(11n + 1):hover { background-color: var(--hero-grid-hover-color-1); }
+  .grid-tile:nth-child(11n + 4):hover { background-color: var(--hero-grid-hover-color-2); }
+  .grid-tile:nth-child(11n + 7):hover { background-color: var(--hero-grid-hover-color-3); }
+  .grid-tile:nth-child(11n + 10):hover { background-color: var(--hero-grid-hover-color-4); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .main-3d-grid {
+      transform: translate(-50%, -50%) rotateZ(20deg);
+    }
+    .grid-tile {
+      transition: none;
+    }
   }
 
   .hero-image-wrapper {
     position: relative;
+    z-index: 2;
     border-radius: 16px;
     overflow: hidden;
     aspect-ratio: 1 / 1.1;
     background: linear-gradient(135deg, var(--color-primary-light), var(--color-bg-page));
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .hero-text-content {
+    position: relative;
+    z-index: 2;
   }
 
   .hero-image {
