@@ -54,19 +54,38 @@ const formatDate = (date: Date) => {
 
     <div class="hero-image-wrapper">
       <img src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg" alt="黃冠智 醫師" class="hero-image" />
+      <div class="hero-image-badge">
+        <span class="badge-dot"></span>
+        <span>現任 豐田診所院長</span>
+      </div>
     </div>
+
     <div class="hero-text-content">
+      <div class="hero-header-badge">🩺 肝膽腸胃專科 · 實證醫學</div>
       <h1 class="hero-name">關於 黃冠智 醫師</h1>
       <p class="hero-title">豐田診所院長 / 肝膽腸胃內科主治醫師</p>
       
-      <blockquote class="hero-quote">
-        「我很喜歡肝膽腸胃科，除了病史、理學及抽血檢查之外，還有超音波和胃腸鏡，可以動手幫病患找出及解決問題」
-      </blockquote>
+      <div class="hero-quote-card">
+        <span class="quote-mark">“</span>
+        <blockquote class="hero-quote-text">
+          我很喜歡肝膽腸胃科，除了病史、理學及抽血檢查之外，還有超音波和胃腸鏡，可以動手幫病患找出及解決問題。
+        </blockquote>
+      </div>
 
       <div class="hero-meta">
-        <div class="meta-item">
-          <strong>專長領域</strong>
-          <span>內視鏡檢查，超音波檢查，腸胃問題，肝病追蹤，三高控制，減重，內痔結紮，勞工健檢</span>
+        <div class="meta-header">
+          <span class="meta-title-icon">✨</span>
+          <strong>專長領域與特色診療</strong>
+        </div>
+        <div class="specialty-pill-grid">
+          <span class="specialty-pill">🔬 消化道內視鏡</span>
+          <span class="specialty-pill">📡 腹部超音波</span>
+          <span class="specialty-pill">🩺 胃食道逆流</span>
+          <span class="specialty-pill">🌿 肝病慢性追蹤</span>
+          <span class="specialty-pill">⚖️ 減重代謝門診</span>
+          <span class="specialty-pill">💊 三高慢性病</span>
+          <span class="specialty-pill">🩹 內痔微創結紮</span>
+          <span class="specialty-pill">📋 勞工健康檢查</span>
         </div>
       </div>
     </div>
@@ -464,71 +483,175 @@ const formatDate = (date: Date) => {
     transition: transform 0.5s ease;
   }
 
+  .hero-image-wrapper {
+    position: relative;
+    z-index: 2;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1.15;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-bg-page));
+    box-shadow: 0 8px 24px rgba(47, 102, 86, 0.12);
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.5s ease;
+  }
+
   .hero-image-wrapper:hover .hero-image {
     transform: scale(1.03);
   }
 
+  .hero-image-badge {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    right: 14px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    user-select: none;
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    flex-shrink: 0;
+  }
+
   .hero-text-content {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .hero-badge {
-    background-color: var(--color-primary-light);
+  .hero-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(47, 102, 86, 0.08);
     color: var(--color-primary);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    margin-bottom: 16px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 9999px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(47, 102, 86, 0.14);
     letter-spacing: 0.5px;
   }
 
   .hero-name {
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     font-weight: 900;
     color: var(--color-primary);
     margin-bottom: 4px;
+    line-height: 1.2;
   }
 
   .hero-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--color-accent);
-    font-weight: 500;
-    margin-bottom: 24px;
+    font-weight: 600;
+    margin-bottom: 18px;
   }
 
-  .hero-quote {
-    font-size: 1.1rem;
-    font-style: italic;
+  .hero-quote-card {
+    position: relative;
+    background: rgba(188, 138, 74, 0.08);
+    border-left: 3.5px solid var(--color-accent);
+    border-radius: 14px;
+    padding: 16px 20px 16px 36px;
+    margin-bottom: 22px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .quote-mark {
+    position: absolute;
+    top: 6px;
+    left: 12px;
+    font-size: 2.2rem;
+    line-height: 1;
+    font-family: Georgia, serif;
+    color: var(--color-accent);
+    opacity: 0.6;
+  }
+
+  .hero-quote-text {
+    font-size: 0.98rem;
+    font-weight: 500;
     color: var(--color-text-body);
-    border-left: 4px solid var(--color-accent);
-    padding-left: 18px;
-    margin-bottom: 28px;
-    line-height: 1.7;
+    line-height: 1.65;
+    margin: 0;
   }
 
   .hero-meta {
     width: 100%;
-    border-top: 1px solid var(--color-border);
-    padding-top: 20px;
+    border-top: 1.5px solid var(--color-border);
+    padding-top: 18px;
   }
 
-  .meta-item {
+  .meta-header {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 6px;
-  }
-
-  .meta-item strong {
+    margin-bottom: 10px;
     font-size: 0.95rem;
     color: var(--color-primary);
   }
 
-  .meta-item span {
-    color: var(--color-text-muted);
+  .meta-title-icon {
     font-size: 1rem;
+  }
+
+  .specialty-pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .specialty-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #FFFFFF;
+    color: var(--color-text-body);
+    font-size: 0.86rem;
+    font-weight: 700;
+    padding: 6px 13px;
+    border-radius: 9999px;
+    border: 1px solid rgba(47, 102, 86, 0.14);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: default;
+    user-select: none;
+  }
+
+  .specialty-pill:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    box-shadow: 0 4px 12px rgba(47, 102, 86, 0.15);
+  }
   }
 
   /* Profile Details (学经历) */
