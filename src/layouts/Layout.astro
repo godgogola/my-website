@@ -173,7 +173,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 24px 0;
+        padding: 20px 0;
         border-bottom: 1.5px solid var(--color-border);
       }
 
@@ -198,41 +198,60 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         margin-top: 2px;
       }
 
-      .site-nav {
-        display: flex;
-        gap: 28px;
-        font-weight: 700;
-      }
-
-      .nav-link {
-        font-size: 1rem;
-        color: var(--color-text-muted);
+      /* SmoothUI Animated Tabs Navigation */
+      .smooth-tabs-nav {
         position: relative;
-        padding: 6px 0;
-        transition: color 0.25s ease;
-        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        background: rgba(47, 102, 86, 0.07);
+        padding: 5px;
+        border-radius: 9999px;
+        border: 1px solid rgba(47, 102, 86, 0.12);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
       }
 
-      .nav-link:hover, .nav-link.active {
+      .smooth-tab-pill {
+        position: absolute;
+        top: 5px;
+        left: 0;
+        height: calc(100% - 10px);
+        background: #FFFFFF;
+        border-radius: 9999px;
+        box-shadow: 0 2px 10px rgba(47, 102, 86, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
+        pointer-events: none;
+        z-index: 1;
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+        opacity: 0;
+      }
+
+      .smooth-tab-link {
+        position: relative;
+        z-index: 2;
+        padding: 8px 18px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        border-radius: 9999px;
+        transition: color 0.25s ease, transform 0.15s ease;
+        white-space: nowrap;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .smooth-tab-link:hover {
         color: var(--color-primary);
       }
 
-      .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background-color: var(--color-primary);
-        transform: scaleX(0);
-        transform-origin: right;
-        transition: transform 0.3s ease;
+      .smooth-tab-link:active {
+        transform: scale(0.96);
       }
 
-      .nav-link:hover::after, .nav-link.active::after {
-        transform: scaleX(1);
-        transform-origin: left;
+      .smooth-tab-link.active {
+        color: var(--color-primary);
+        font-weight: 800;
       }
 
       /* Footer */
@@ -249,26 +268,25 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       }
 
       /* Responsive */
-      @media (max-width: 600px) {
+      @media (max-width: 768px) {
         .site-header {
           flex-direction: column;
-          gap: 14px;
-          padding: 16px 0;
+          gap: 16px;
+          padding: 18px 0;
         }
-        .site-nav {
-          gap: 12px;
+        .smooth-tabs-nav {
           width: 100%;
           justify-content: space-between;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
-          padding: 4px 0;
+          padding: 4px;
         }
-        .site-nav::-webkit-scrollbar {
+        .smooth-tabs-nav::-webkit-scrollbar {
           display: none;
         }
-        .nav-link {
-          font-size: 1.05rem;
-          font-weight: 800;
+        .smooth-tab-link {
+          padding: 7px 12px;
+          font-size: 0.88rem;
           flex-shrink: 0;
         }
       }
@@ -281,12 +299,65 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
           <span class="logo-title">黃冠智 醫師</span>
           <span class="logo-subtitle">Gastroenterologist & Hepatologist</span>
         </a>
-        <nav class="site-nav">
-          <a href="/" class={`nav-link ${isHome ? 'active' : ''}`}>首頁</a>
-          <a href="/health-column" class={`nav-link ${isHealthColumn ? 'active' : ''}`}>醫學筆記</a>
-          <a href="/bowel-prep" class={`nav-link ${isBowelPrep ? 'active' : ''}`}>大腸鏡檢個人化表單</a>
+        <nav class="smooth-tabs-nav" id="main-nav-tabs" aria-label="主要導覽">
+          <div class="smooth-tab-pill" id="smooth-nav-pill"></div>
+          <a href="/" class={`smooth-tab-link ${isHome ? 'active' : ''}`}>首頁</a>
+          <a href="/health-column" class={`smooth-tab-link ${isHealthColumn ? 'active' : ''}`}>醫學筆記</a>
+          <a href="/bowel-prep" class={`smooth-tab-link ${isBowelPrep ? 'active' : ''}`}>大腸鏡檢個人化表單</a>
         </nav>
       </header>
+
+      <script is:inline>
+        // SmoothUI Animated Tabs Interactivity
+        (function initSmoothTabs() {
+          const nav = document.getElementById('main-nav-tabs');
+          const pill = document.getElementById('smooth-nav-pill');
+          if (!nav || !pill) return;
+
+          const links = Array.from(nav.querySelectorAll('.smooth-tab-link'));
+          const activeLink = nav.querySelector('.smooth-tab-link.active') || links[0];
+
+          function movePillTo(target, smooth = true) {
+            if (!target) return;
+            const navRect = nav.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+            
+            const left = targetRect.left - navRect.left;
+            const width = targetRect.width;
+
+            if (!smooth) {
+              pill.style.transition = 'none';
+            } else {
+              pill.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease';
+            }
+
+            pill.style.transform = `translateX(${left}px)`;
+            pill.style.width = `${width}px`;
+            pill.style.opacity = '1';
+          }
+
+          // Initial position
+          requestAnimationFrame(() => {
+            movePillTo(activeLink, false);
+            setTimeout(() => movePillTo(activeLink, false), 50);
+          });
+
+          // Hover events on links
+          links.forEach((link) => {
+            link.addEventListener('mouseenter', () => movePillTo(link, true));
+          });
+
+          // Reset to active tab when mouse leaves nav
+          nav.addEventListener('mouseleave', () => {
+            movePillTo(activeLink, true);
+          });
+
+          // Handle window resize
+          window.addEventListener('resize', () => {
+            movePillTo(activeLink, false);
+          });
+        })();
+      </script>
 
       <main>
         <slot />
