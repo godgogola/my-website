@@ -213,13 +213,22 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 34px;
-        height: 34px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--color-primary), #3d806d);
-        color: #FFFFFF;
-        font-size: 1.05rem;
-        box-shadow: 0 2px 8px rgba(47, 102, 86, 0.3);
+        background: #FFFFFF;
+        padding: 2px;
+        box-shadow: 0 2px 8px rgba(47, 102, 86, 0.16);
+        border: 1.5px solid rgba(47, 102, 86, 0.18);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .logo-turtle-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
       }
 
       .logo-text-wrap {
@@ -376,7 +385,9 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       <div class="site-header-wrapper">
         <header class="site-header">
           <a href="/" class="logo-group">
-            <span class="logo-badge-icon">🩺</span>
+            <div class="logo-badge-icon">
+              <img src="/favicon-48x48.png" alt="海龜標誌" class="logo-turtle-img" />
+            </div>
             <div class="logo-text-wrap">
               <span class="logo-title">黃冠智 醫師</span>
               <span class="logo-subtitle">豐田診所院長 · 肝膽腸胃專科</span>
