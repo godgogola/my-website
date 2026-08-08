@@ -82,6 +82,16 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
     <meta name="twitter:description" content={finalDescription} />
     <meta name="twitter:image" content={finalOgImage} />
     
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2P627PEG5"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-M2P627PEG5');
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
