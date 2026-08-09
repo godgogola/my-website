@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import PostCard from '../components/PostCard.astro';
+import ExpandablePostCard from '../components/ExpandablePostCard.astro';
 import { getCollection } from 'astro:content';
 
 // ── 取得所有已發布文章 ──
@@ -99,9 +99,9 @@ function getSummary(body: string | undefined): string {
     <p class="result-count" id="resultCount" aria-live="polite">顯示 {posts.length} 篇文章</p>
   </div>
 
-  <!-- ── 文章卡片網格 ── -->
+  <!-- ── 文章卡片網格 (SmoothUI Expandable Cards) ── -->
   <div class="posts-grid" id="postsGrid">
-    {posts.map((post) => (
+    {posts.map((post, idx) => (
       <article
         class="grid-item"
         data-category={post.data.category || '其他'}
@@ -109,13 +109,14 @@ function getSummary(body: string | undefined): string {
         data-publish-date={post.data.publishDate}
         data-order={post.data.order ?? 9999}
       >
-        <PostCard
+        <ExpandablePostCard
           title={post.data.title}
           href={`/posts/${post.data.slug || post.id}`}
           category={post.data.category || '其他'}
           publishDate={post.data.publishDate}
           summary={getSummary(post.body)}
           coverImage={post.data.coverImage}
+          cardId={`col-card-${idx}`}
         />
       </article>
     ))}
@@ -331,6 +332,50 @@ function getSummary(body: string | undefined): string {
         }
       });
     });
+
+    // ── Expandable Cards 點擊與鍵盤展開互動 ──
+    const cards = document.querySelectorAll<HTMLElement>('#postsGrid [data-expandable-card]');
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('.read-full-btn')) return;
+
+        const isExpanded = card.classList.contains('is-expanded');
+
+        // 關閉同網格內其他已展開卡片
+        document.querySelectorAll<HTMLElement>('#postsGrid [data-expandable-card].is-expanded').forEach(otherCard => {
+          if (otherCard !== card) {
+            otherCard.classList.remove('is-expanded');
+            otherCard.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        if (isExpanded) {
+          card.classList.remove('is-expanded');
+          card.setAttribute('aria-expanded', 'false');
+        } else {
+          card.classList.add('is-expanded');
+          card.setAttribute('aria-expanded', 'true');
+          setTimeout(() => {
+            card.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest',
+              inline: 'center'
+            });
+          }, 150);
+        }
+      });
+
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          if ((e.target as HTMLElement).closest('.read-full-btn')) return;
+          e.preventDefault();
+          card.click();
+        } else if (e.key === 'Escape') {
+          card.classList.remove('is-expanded');
+          card.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
   });
 </script>
 
@@ -501,7 +546,7 @@ function getSummary(body: string | undefined): string {
     font-weight: 500;
   }
 
-  /* ── 卡片網格 ── */
+  /* ── 卡片網格 (SmoothUI Expandable Grid) ── */
   .posts-grid {
     display: grid;
     /* 手機：1 欄 */
@@ -509,12 +554,16 @@ function getSummary(body: string | undefined): string {
     gap: 24px;
     max-width: 1200px;
     margin: 0 auto 48px;
+    align-items: start;
   }
 
   /* 平板：2 欄 */
   @media (min-width: 640px) {
     .posts-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-item:has(.is-expanded) {
+      grid-column: span 2;
     }
   }
 
@@ -523,11 +572,16 @@ function getSummary(body: string | undefined): string {
     .posts-grid {
       grid-template-columns: repeat(3, 1fr);
     }
+    .grid-item:has(.is-expanded) {
+      grid-column: span 2;
+    }
   }
 
   .grid-item {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .grid-item[hidden] {
