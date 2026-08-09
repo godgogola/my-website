@@ -1,14 +1,13 @@
 ---
 /**
- * PostCard.astro — 衛教文章卡片元件
+ * PostCard.astro — 全景圖文衛教卡片（字在圖片中，點擊直接進入文章）
  *
  * Props:
  *   - title: 文章標題
  *   - href: 連結路徑
  *   - category: 分類標籤
  *   - publishDate: 發表日期
- *   - summary: 摘要文字（可選）
- *   - coverImage: 圖片檔名（例如 "胃食道逆流.png"），對應 src/assets/images/ 目錄
+ *   - coverImage: 圖片檔名（例如 "胃食道逆流.png" / "胃食道逆流.webp"）
  */
 import { Image } from 'astro:assets';
 
@@ -21,7 +20,7 @@ interface Props {
   coverImage?: string;
 }
 
-const { title, href, category, publishDate, summary, coverImage } = Astro.props;
+const { title, href, category, publishDate, coverImage } = Astro.props;
 
 // 格式化日期
 const formattedDate = new Intl.DateTimeFormat('zh-TW', {
@@ -30,21 +29,16 @@ const formattedDate = new Intl.DateTimeFormat('zh-TW', {
   day: 'numeric',
 }).format(publishDate);
 
-// 使用 import.meta.glob 編譯時處理圖片（Astro 官方推薦的靜態方案）
-// eager: true 為同步載入，確保在 SSG 時可用
+// 使用 import.meta.glob 編譯時處理圖片
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/images/**/*.{png,jpg,jpeg,webp,avif}',
   { eager: true }
 );
 
-// 判斷是否為外部網址
 const isExternalImage = coverImage && (coverImage.startsWith('http://') || coverImage.startsWith('https://'));
-
-// public/images/ 的圖片直接用 /images/ 路徑（不需要 glob）
 const isPublicImage = coverImage && !isExternalImage;
 const publicImageSrc = isPublicImage ? `/images/${coverImage}` : null;
 
-// 備援：從 src/assets/images/ glob 找圖（舊版相容）
 let resolvedImage: ImageMetadata | null = null;
 if (coverImage && !isExternalImage) {
   const matchKey = Object.keys(allImages).find(
@@ -56,246 +50,256 @@ if (coverImage && !isExternalImage) {
 }
 ---
 
-<a href={href} class="post-card" aria-label={`閱讀文章：${title}`}>
-  <!-- 圖片區塊 -->
-  <div class="card-image-wrapper">
+<a href={href} class="media-post-card" aria-label={`閱讀文章：${title}`}>
+  <!-- 滿版背景圖 -->
+  <div class="card-bg-layer">
     {isExternalImage ? (
       <img
         src={coverImage}
         alt={title}
-        class="card-image"
+        class="card-img"
         loading="lazy"
         decoding="async"
-        width="400"
-        height="225"
       />
     ) : publicImageSrc ? (
       <img
         src={publicImageSrc}
         alt={title}
-        class="card-image"
+        class="card-img"
         loading="lazy"
         decoding="async"
-        width="400"
-        height="225"
       />
     ) : resolvedImage ? (
       <Image
         src={resolvedImage}
         alt={title}
-        class="card-image"
-        width={400}
-        height={225}
+        class="card-img"
         format="webp"
-        quality={82}
+        quality={85}
         loading="lazy"
         decoding="async"
       />
     ) : (
-      <div class="card-image-placeholder">
+      <div class="card-placeholder">
         <svg viewBox="0 0 60 60" width="48" height="48" fill="none" aria-hidden="true">
           <rect x="4" y="14" width="52" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
           <circle cx="18" cy="28" r="5" stroke="currentColor" stroke-width="2"/>
           <path d="M4 38 L20 26 L32 36 L42 28 L56 38" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
         </svg>
-        <span>{category}</span>
       </div>
     )}
-
-    <!-- 分類 Pill 標籤（懸浮在圖片左上角） -->
-    <span class="category-pill">{category}</span>
   </div>
 
-  <!-- 文字區塊 -->
-  <div class="card-body">
-    <div class="card-meta">
-      <span class="card-date">
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        {formattedDate}
-      </span>
-      <span class="read-time-badge">衛教資訊</span>
+  <!-- 暗色多層漸層遮罩 -->
+  <div class="card-gradient-overlay" aria-hidden="true"></div>
+
+  <!-- 浮貼內容層（頂部標籤、底部標題與閱讀指示） -->
+  <div class="card-overlay-content">
+    <div class="card-top-row">
+      <span class="category-pill-badge">{category}</span>
+      <span class="date-badge">{formattedDate}</span>
     </div>
 
-    <h3 class="card-title">{title}</h3>
-    {summary && <p class="card-summary">{summary}</p>}
-    
-    <div class="card-footer">
-      <span class="card-read-more">
-        閱讀全文
-        <svg viewBox="0 0 20 20" width="15" height="15" fill="none" aria-hidden="true">
-          <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
+    <div class="card-bottom-row">
+      <h3 class="card-article-title">{title}</h3>
+      <div class="card-action-hint">
+        <span class="action-text">閱讀文章</span>
+        <div class="action-arrow-circle" aria-hidden="true">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
     </div>
   </div>
 </a>
 
 <style>
-  .post-card {
+  .media-post-card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    background-color: var(--color-bg-card);
-    border-radius: var(--radius-md, 16px);
-    overflow: hidden;
-    border: 1px solid var(--color-border);
-    box-shadow: var(--color-shadow-sm, 0 4px 14px rgba(27, 67, 50, 0.05));
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    height: 100%;
-    position: relative;
-  }
-
-  .post-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--color-shadow-lg, 0 20px 40px -12px rgba(27, 67, 50, 0.14));
-    border-color: var(--color-mint);
-  }
-
-  /* ── 圖片區塊 ── */
-  .card-image-wrapper {
-    position: relative;
+    height: 280px;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    border-radius: 20px;
     overflow: hidden;
-    background-color: var(--color-primary-light);
-    flex-shrink: 0;
+    background-color: #1e332a;
+    border: 1px solid var(--color-border, #E2EAE6);
+    box-shadow: 0 8px 24px var(--color-shadow, rgba(47, 102, 86, 0.08));
+    text-decoration: none;
+    color: #FFFFFF;
+    box-sizing: border-box;
+    transition:
+      transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
   }
 
-  .card-image {
+  .media-post-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 36px rgba(47, 102, 86, 0.2);
+    border-color: rgba(47, 102, 86, 0.4);
+  }
+
+  /* 背景圖層 */
+  .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .card-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
-    display: block;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .post-card:hover .card-image {
-    transform: scale(1.08);
+  .media-post-card:hover .card-img {
+    transform: scale(1.06);
   }
 
-  /* 無圖片時的漸層佔位塊 */
-  .card-image-placeholder {
+  .card-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    background: linear-gradient(
-      135deg,
-      var(--color-primary-light) 0%,
-      #D8F3DC 50%,
-      #FBF7EE 100%
-    );
-    color: var(--color-primary);
-    opacity: 0.8;
-    font-size: 0.85rem;
-    font-weight: 600;
+    background: linear-gradient(135deg, var(--color-primary, #2F6656), #1b4332);
+    color: rgba(255, 255, 255, 0.6);
   }
 
-  /* 分類 Pill 標籤 */
-  .category-pill {
+  /* 漸層覆蓋層 */
+  .card-gradient-overlay {
     position: absolute;
-    top: 14px;
-    left: 14px;
-    background-color: rgba(27, 67, 50, 0.92);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: #ffffff;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 5px 14px;
-    border-radius: 30px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    white-space: nowrap;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0.1) 40%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+    transition: background 0.3s ease;
   }
 
-  /* ── 文字區塊 ── */
-  .card-body {
+  .media-post-card:hover .card-gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.45) 0%,
+      rgba(0, 0, 0, 0.15) 35%,
+      rgba(0, 0, 0, 0.9) 100%
+    );
+  }
+
+  /* 內容層 */
+  .card-overlay-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    padding: 22px 24px 24px;
-    gap: 10px;
+    justify-content: space-between;
+    padding: 18px 20px;
+    box-sizing: border-box;
   }
 
-  .card-meta {
+  .card-top-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
+    gap: 8px;
   }
 
-  .card-date {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 600;
-    color: var(--color-text-muted);
-  }
-
-  .read-time-badge {
-    font-size: 0.72rem;
+  .category-pill-badge {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #FFFFFF;
+    font-size: 0.78rem;
     font-weight: 700;
-    color: var(--color-mint);
-    background: var(--color-primary-light);
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 
-  .card-title {
-    font-size: 1.15rem;
+  .date-badge {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .card-bottom-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-article-title {
+    font-size: 1.18rem;
     font-weight: 800;
-    color: var(--color-primary);
-    line-height: 1.5;
+    line-height: 1.35;
+    color: #FFFFFF;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    transition: color 0.25s ease;
+    margin: 0;
   }
 
-  .post-card:hover .card-title {
-    color: var(--color-mint);
-  }
-
-  .card-summary {
-    font-size: 0.9rem;
-    color: var(--color-text-body);
-    line-height: 1.65;
-    flex: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    opacity: 0.9;
-  }
-
-  .card-footer {
-    padding-top: 10px;
-    border-top: 1px solid rgba(224, 235, 229, 0.6);
-    margin-top: auto;
-  }
-
-  .card-read-more {
-    display: inline-flex;
+  .card-action-hint {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.88rem;
-    font-weight: 800;
-    color: var(--color-accent);
-    transition: gap 0.25s ease, color 0.25s ease;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.9);
   }
 
-  .post-card:hover .card-read-more {
-    gap: 10px;
-    color: var(--color-primary);
+  .action-text {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .action-arrow-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+
+  .media-post-card:hover .action-arrow-circle {
+    transform: translateX(4px);
+    background: var(--color-primary, #2F6656);
+    border-color: var(--color-primary, #2F6656);
+  }
+
+  @media (max-width: 640px) {
+    .media-post-card {
+      height: 250px;
+      border-radius: 16px;
+    }
+    .card-overlay-content {
+      padding: 14px 16px;
+    }
+    .card-article-title {
+      font-size: 1.1rem;
+    }
   }
 </style>
-

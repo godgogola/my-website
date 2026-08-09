@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ExpandablePostCard from '../components/ExpandablePostCard.astro';
+import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
 // 取得所有未草稿的文章，並依日期排序
@@ -8,20 +8,7 @@ const allPosts = await getCollection('posts');
 const latestPosts = allPosts
   .filter(post => !post.data.draft)
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
-  .slice(0, 6); // 取最新 6 篇精選文章
-
-// 擷取文章摘要
-function getSummary(body: string | undefined): string {
-  if (!body) return '點擊閱讀完整文章。';
-  return body
-    .replace(/^---[\s\S]*?---/, '')
-    .replace(/#{1,6}\s+/g, '')
-    .replace(/[*_`~>|]/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 110) + '…';
-}
+  .slice(0, 3); // 取最新 3 篇精選文章
 
 // 格式化日期
 const formatDate = (date: Date) => {
@@ -201,37 +188,32 @@ const formatDate = (date: Date) => {
     </div>
   </section>
 
-
-  <!-- Latest Articles Section (SmoothUI Expandable Cards) -->
+  <!-- Latest Articles Section (Direct Link Cards) -->
   <section class="latest-articles">
     <div class="section-header">
       <div>
         <h2>最新醫學筆記</h2>
-        <p class="section-desc">點擊卡片展開閱讀重點摘要，或直接點選閱讀完整衛教文章</p>
+        <p class="section-desc">實證醫學衛教文章，點擊直接閱讀完整內容</p>
       </div>
       <a href="/health-column" class="view-all-link">查看全部文章 ({allPosts.filter(p => !p.data.draft).length} 篇) →</a>
     </div>
 
-    <div class="expandable-cards-wrapper" id="homeExpandableWrapper">
-      <div class="expandable-cards-track" id="homeExpandableTrack">
-        {latestPosts.length > 0 ? (
-          latestPosts.map((post, idx) => (
-            <ExpandablePostCard
-              title={post.data.title}
-              href={`/posts/${post.data.slug || post.id}`}
-              category={post.data.category || '衛教文章'}
-              publishDate={post.data.publishDate}
-              summary={getSummary(post.body)}
-              coverImage={post.data.coverImage}
-              cardId={`home-card-${idx}`}
-            />
-          ))
-        ) : (
-          <div class="empty-articles">
-            <p>目前尚無文章，請設定並同步您的 Obsidian 筆記！</p>
-          </div>
-        )}
-      </div>
+    <div class="articles-grid">
+      {latestPosts.length > 0 ? (
+        latestPosts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            href={`/posts/${post.data.slug || post.id}`}
+            category={post.data.category || '衛教文章'}
+            publishDate={post.data.publishDate}
+            coverImage={post.data.coverImage}
+          />
+        ))
+      ) : (
+        <div class="empty-articles">
+          <p>目前尚無文章，請設定並同步您的 Obsidian 筆記！</p>
+        </div>
+      )}
     </div>
   </section>
 
@@ -355,60 +337,6 @@ const formatDate = (date: Date) => {
       }
       grid.appendChild(fragment);
     })();
-
-    // SmoothUI Expandable Cards Controller
-    function initExpandableCards() {
-      const cards = document.querySelectorAll('[data-expandable-card]');
-      cards.forEach(card => {
-        card.addEventListener('click', (e) => {
-          if (e.target.closest('.read-full-btn')) return;
-
-          const isExpanded = card.classList.contains('is-expanded');
-          const container = card.parentElement;
-
-          if (container) {
-            container.querySelectorAll('[data-expandable-card].is-expanded').forEach(otherCard => {
-              if (otherCard !== card) {
-                otherCard.classList.remove('is-expanded');
-                otherCard.setAttribute('aria-expanded', 'false');
-              }
-            });
-          }
-
-          if (isExpanded) {
-            card.classList.remove('is-expanded');
-            card.setAttribute('aria-expanded', 'false');
-          } else {
-            card.classList.add('is-expanded');
-            card.setAttribute('aria-expanded', 'true');
-            setTimeout(() => {
-              card.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'center'
-              });
-            }, 100);
-          }
-        });
-
-        card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            if (e.target.closest('.read-full-btn')) return;
-            e.preventDefault();
-            card.click();
-          } else if (e.key === 'Escape') {
-            card.classList.remove('is-expanded');
-            card.setAttribute('aria-expanded', 'false');
-          }
-        });
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initExpandableCards);
-    } else {
-      initExpandableCards();
-    }
   </script>
 </Layout>
 
@@ -846,7 +774,7 @@ const formatDate = (date: Date) => {
     color: var(--color-primary);
   }
 
-  /* Latest Articles (SmoothUI Expandable Track) */
+  /* Latest Articles */
   .latest-articles {
     margin-bottom: 48px;
   }
@@ -862,38 +790,15 @@ const formatDate = (date: Date) => {
     color: var(--color-primary);
   }
 
-  .expandable-cards-wrapper {
-    position: relative;
-    width: 100%;
-    overflow-x: auto;
-    padding: 12px 0 20px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(47, 102, 86, 0.25) transparent;
-  }
-
-  .expandable-cards-wrapper::-webkit-scrollbar {
-    height: 6px;
-  }
-  .expandable-cards-wrapper::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .expandable-cards-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(47, 102, 86, 0.2);
-    border-radius: 999px;
-  }
-
-  .expandable-cards-track {
-    display: flex;
-    gap: 20px;
-    padding: 10px 4px 16px;
-    scroll-snap-type: x mandatory;
-    scroll-padding-left: 10px;
-    align-items: stretch;
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 24px;
   }
 
   .empty-articles {
-    width: 100%;
+    grid-column: span 3;
     text-align: center;
     padding: 48px;
     background-color: var(--color-bg-card);
@@ -902,11 +807,17 @@ const formatDate = (date: Date) => {
     color: var(--color-text-muted);
   }
 
+  @media (max-width: 900px) {
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+  }
+
   @media (max-width: 640px) {
-    .expandable-cards-track {
-      flex-direction: column;
+    .articles-grid {
+      grid-template-columns: 1fr;
       gap: 16px;
-      padding: 4px 0;
     }
   }
 
