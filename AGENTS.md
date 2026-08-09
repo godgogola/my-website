@@ -37,5 +37,5 @@ Cute 3D knitted crochet amigurumi plush doll style, hand-crafted yarn texture, s
 ### 生成與發布 SOP (自動化處理)
 1. **生圖 (地雷食物系列 16:9 規格)**：依主題生成符合上述「坐姿/半身、豐富桌面橫向陳列、四周充足留白」的 16:9 圖片。
 2. **原圖備份**：將 16:9 PNG 備份至 `G:\我的雲端硬碟\衛教文章圖片\<Title>.png`。
-3. **WebP 轉檔發布**：將 16:9 圖片轉檔為高品質 WebP 存入 `public/images/<Title>.webp`。
+3. **WebP 轉檔發布**：將 16:9 圖片轉檔為高品質 WebP，**同時存入 `public/images/<Title>.webp` 與 `public/og-images/<Title>.webp`**（確保 Google Sheet / LINE 官方帳號圖文選單之圖片自動無縫更新為最新版）。
 4. **綁定與驗證**：更新 Markdown 的 `coverImage` 欄位並執行 `npm run build` 驗證。
