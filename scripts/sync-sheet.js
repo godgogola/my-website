@@ -71,7 +71,7 @@ for (const mdFile of mdFiles) {
       const destImg = path.join(OG_DIR, cover);
       // 永遠覆蓋，確保新圖片能更新 og-images
       fs.copyFileSync(srcImg, destImg);
-      imgUrl = `${SITE_URL}/og-images/${encodeURIComponent(cover)}`;
+      imgUrl = `${SITE_URL}/og-images/${encodeURIComponent(cover)}?v=${Date.now()}`;
     }
   }
 
