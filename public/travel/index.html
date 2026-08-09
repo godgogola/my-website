@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>2026 家庭年度旅遊手冊 | 黃冠智醫師</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .trip-card-gradient-1 {
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.15), transparent 60%),
+                        linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+        }
+        .trip-card-gradient-2 {
+            background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.2), transparent 60%),
+                        linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="relative pt-12 pb-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center space-y-4 relative z-10">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-300 text-xs font-semibold tracking-wider uppercase backdrop-blur-md">
+                <i class="fa-solid fa-compass text-sky-400"></i> Family Travel Portal
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                2026 家庭年度旅遊手冊
+            </h1>
+            <p class="text-slate-400 text-sm sm:text-base max-w-xl mx-auto font-medium">
+                專屬私人導航 · 完整行程接駁 · 景點門票與地圖速查
+            </p>
+        </div>
+
+        <!-- Ambient Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    </header>
+
+    <!-- Main Trip Cards -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Card 1: 2026 寒假 -->
+            <a href="/2026寒假" class="group relative rounded-3xl p-6 sm:p-7 trip-card-gradient-1 border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col justify-between overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+                            <i class="fa-solid fa-sun text-amber-400"></i> 2026 寒假 · 8 天
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono">2/16 ~ 2/24</span>
+                    </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-white group-hover:text-amber-300 transition-colors flex items-center gap-2">
+                            澳洲自由行行程表
+                            <i class="fa-solid fa-arrow-right text-base opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-amber-400"></i>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1 font-medium">布里斯本 ➔ 黃金海岸 ➔ 雪梨 ➔ 藍山</p>
+                    </div>
+
+                    <!-- Highlight Tags -->
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">✈️ 華航 CI52</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">🎡 夢幻世界 / 海洋世界</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">⛵ 曼利渡輪雙拼</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">⛰️ 藍山景觀世界</span>
+                    </div>
+
+                    <!-- Accommodation Preview -->
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 text-xs text-slate-400 space-y-1">
+                        <p class="text-slate-300 font-semibold flex items-center gap-1.5">
+                            <i class="fa-solid fa-hotel text-amber-400"></i> 入住飯店：
+                        </p>
+                        <p class="text-[11px] truncate">Indigo Brisbane / Bel Air Broadbeach / Paradox Sydney / Palais Royale</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-amber-400 group-hover:text-amber-300">
+                    <span>開啟 2026 寒假每日行程</span>
+                    <span class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-slate-950 transition-all">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Card 2: 2026 暑假 -->
+            <a href="/2026暑假" class="group relative rounded-3xl p-6 sm:p-7 trip-card-gradient-2 border border-sky-500/20 hover:border-sky-500/40 transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col justify-between overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1.5">
+                            <i class="fa-solid fa-snowflake text-sky-400"></i> 2026 暑假 · 12 天
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono">8/15 ~ 8/26</span>
+                    </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-white group-hover:text-sky-300 transition-colors flex items-center gap-2">
+                            墨爾本 12 天親子遊
+                            <i class="fa-solid fa-arrow-right text-base opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-sky-400"></i>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1 font-medium">每日行程 ➔ 交通接駁 ➔ 景點導航</p>
+                    </div>
+
+                    <!-- Highlight Tags -->
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">✈️ 華航 CI 57/58</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">🚂 帕芬比利蒸汽火車</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">🐧 菲利浦島企鵝歸巢</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-300">🐨 墨爾本動物園</span>
+                    </div>
+
+                    <!-- Accommodation Preview -->
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 text-xs text-slate-400 space-y-1">
+                        <p class="text-slate-300 font-semibold flex items-center gap-1.5">
+                            <i class="fa-solid fa-hotel text-sky-400"></i> 全程連住：
+                        </p>
+                        <p class="text-[11px]">Brady Apartment Hotel Flinders St (2 房公寓)</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-sky-400 group-hover:text-sky-300">
+                    <span>開啟 2026 暑假每日行程</span>
+                    <span class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center group-hover:bg-sky-500 group-hover:text-slate-950 transition-all">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </span>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- Quick Travel Utilities -->
+        <section class="glass-card rounded-3xl p-6 border border-white/10 space-y-4">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-toolbox text-sky-400"></i> 出國旅遊快捷工具箱
+            </h3>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <a href="https://www.google.com/search?q=Melbourne+weather" target="_blank" class="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition flex flex-col items-center justify-center text-center space-y-1.5">
+                    <i class="fa-solid fa-cloud-sun text-amber-400 text-lg"></i>
+                    <span class="text-xs font-medium text-slate-200">墨爾本天氣</span>
+                </a>
+                <a href="https://www.google.com/search?q=Sydney+weather" target="_blank" class="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition flex flex-col items-center justify-center text-center space-y-1.5">
+                    <i class="fa-solid fa-cloud-rain text-sky-400 text-lg"></i>
+                    <span class="text-xs font-medium text-slate-200">雪梨天氣</span>
+                </a>
+                <a href="https://www.google.com/search?q=AUD+to+TWD" target="_blank" class="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition flex flex-col items-center justify-center text-center space-y-1.5">
+                    <i class="fa-solid fa-money-bill-transfer text-emerald-400 text-lg"></i>
+                    <span class="text-xs font-medium text-slate-200">澳幣匯率換算</span>
+                </a>
+                <a href="https://www.china-airlines.com/tw/zh/fly/flight-status/index" target="_blank" class="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition flex flex-col items-center justify-center text-center space-y-1.5">
+                    <i class="fa-solid fa-plane-up text-rose-400 text-lg"></i>
+                    <span class="text-xs font-medium text-slate-200">華航航班狀態</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-6 text-center text-xs text-slate-500 border-t border-white/5">
+        <p>© 2026 黃冠智醫師 家庭專屬旅行手冊 · 僅供個人隱私使用</p>
+    </footer>
+
+</body>
+</html>

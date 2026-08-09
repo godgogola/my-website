@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>澳洲自由行行程表 (2/16-2/25)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Timeline adjustments for larger circles */
+        .timeline-line {
+            position: absolute;
+            left: 31px; /* Adjusted for w-16 (64px) center */
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #cbd5e1; /* slightly darker for visibility */
+            z-index: 0;
+        }
+
+        .hotel-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .hotel-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Sticky Nav Active State */
+        .nav-btn.active {
+            background-color: #2563eb;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Place Link Style */
+        .place-link {
+            color: #2563eb;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-bottom: 1px dotted transparent;
+        }
+        .place-link:hover {
+            color: #1e40af;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+        
+        /* Time Circle Text Shadow for better readability */
+        .time-text {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="text-gray-700">
+
+    <!-- Sticky Navigation -->
+    <nav class="sticky top-0 z-50 bg-white shadow-md w-full border-b border-gray-100">
+        <div class="max-w-3xl mx-auto px-2 py-3">
+            <div class="flex space-x-2 overflow-x-auto no-scrollbar pb-1" id="date-nav">
+                <!-- Added Day 0 -->
+                <button onclick="scrollToDate('day0')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/16 (一)</button>
+                <button onclick="scrollToDate('day1')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/17 (二)</button>
+                <button onclick="scrollToDate('day2')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/18 (三)</button>
+                <button onclick="scrollToDate('day3')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/19 (四)</button>
+                <button onclick="scrollToDate('day4')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/20 (五)</button>
+                <button onclick="scrollToDate('day5')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/21 (六)</button>
+                <button onclick="scrollToDate('day6')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/22 (日)</button>
+                <button onclick="scrollToDate('day7')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/23 (一)</button>
+                <button onclick="scrollToDate('day8')" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-100 transition-colors text-sm font-medium flex-shrink-0">2/24 (二)</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content: Reduced px-4 to px-2 on mobile for "fuller" look -->
+    <main class="max-w-3xl mx-auto px-2 sm:px-4 py-6 space-y-12 pb-24">
+
+        <!-- Day 0: Pre-departure -->
+        <section id="day0" class="scroll-mt-32">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/16 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(一)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">出發日：機場接送 & 搭機</p>
+            </div>
+
+            <!-- Timeline -->
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <!-- Event: Pickup -->
+                <div class="relative flex items-center mb-8 z-10">
+                    <!-- Larger Circle (w-16 h-16) -->
+                    <div class="bg-gray-800 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">18:00</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            <i class="fas fa-car text-gray-600 mr-2"></i>機場接送
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">
+                            準時接機，準備前往桃園機場。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Event: Flight Departure -->
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-blue-600 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">23:55</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1 border-l-4 border-l-blue-500">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            <i class="fas fa-plane-departure text-blue-500 mr-2"></i>飛往澳洲 (CI53)
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">
+                            中華航空 CI53，直飛布里斯本 (BNE)。
+                        </p>
+                        <p class="text-xs text-gray-400 mt-2">飛行時間約 9 小時</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 1 -->
+        <section id="day1" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/17 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(二)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">布里斯本：春田市在地體驗</p>
+            </div>
+
+            <!-- Daily Image -->
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_5fced69792d14d1a8008ec5435873bde~mv2.jpg" alt="Day 1 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <!-- Hotel Card -->
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-blue-100 p-4 mb-6 border-l-4 border-l-blue-500 relative overflow-hidden mx-1 sm:mx-0">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-blue-500 uppercase tracking-wide mb-1">今晚住宿</div>
+                        <h3 class="text-lg font-bold text-gray-800">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Indigo+Brisbane+City+Centre" target="_blank" class="place-link">
+                                Hotel Indigo Brisbane City Centre <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </h3>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-utensils mr-1.5"></i> 含早餐
+                            </span>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 p-2 rounded-lg">
+                        <i class="fas fa-bed text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <!-- Event -->
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-blue-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">10:45</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            <i class="fas fa-plane-arrival text-blue-400 mr-2"></i>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Brisbane+Airport" target="_blank" class="place-link">
+                                抵達布里斯本機場 (BNE)
+                            </a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">歡迎來到澳洲！</p>
+                    </div>
+                </div>
+
+                <!-- Event -->
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">12:00</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">交通：前往飯店</h4>
+                        <p class="text-sm text-gray-600 mt-1">
+                            搭 Airtrain 到 <a href="https://www.google.com/maps/search/?api=1&query=Roma+Street+Station+Brisbane" target="_blank" class="place-link font-medium">Roma Street</a>，
+                            走路 5 分鐘去 Hotel Indigo 寄放行李。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Event -->
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">13:00</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            前往 <a href="https://www.google.com/maps/search/?api=1&query=Springfield+Central+Station+QLD" target="_blank" class="place-link">Springfield Central</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">走回 Roma Street 車站，搭火車 (Springfield Line) 直達。</p>
+                    </div>
+                </div>
+
+                <!-- Event -->
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-orange-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-sun text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            下午：<a href="https://www.google.com/maps/search/?api=1&query=Orion+Springfield+Central" target="_blank" class="place-link">Orion Springfield Central</a>
+                        </h4>
+                        <ul class="text-sm text-gray-600 mt-2 space-y-1 list-disc list-inside">
+                            <li><strong>玩：</strong><a href="https://www.google.com/maps/search/?api=1&query=Orion+Lagoon" target="_blank" class="place-link">Orion Lagoon 免費潟湖泳池</a></li>
+                            <li><strong>逛：</strong>Orion 商場 (Target, Big W, Coles)。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Event -->
+                <div class="relative flex items-center z-10">
+                    <div class="bg-indigo-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-moon text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">晚上：回飯店休息</h4>
+                        <p class="text-sm text-gray-600 mt-1">搭火車回 Hotel Indigo。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 2 -->
+        <section id="day2" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/18 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(三)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">布里斯本最大商場 + 移動去黃金海岸</p>
+            </div>
+
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_1b3f91944d8d42feb0ad4332bafc859b~mv2.jpg" alt="Day 2 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-amber-100 p-4 mb-6 border-l-4 border-l-amber-500 relative overflow-hidden mx-1 sm:mx-0">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">今晚換飯店</div>
+                        <h3 class="text-lg font-bold text-gray-800">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Bel+Air+on+Broadbeach" target="_blank" class="place-link">
+                                Bel Air on Broadbeach <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </h3>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                <i class="fas fa-utensils mr-1.5"></i> 不含早餐
+                            </span>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 p-2 rounded-lg">
+                        <i class="fas fa-suitcase-rolling text-amber-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-gray-400 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">09:00</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">退房 & 寄放行李</h4>
+                        <p class="text-sm text-gray-600 mt-1">大行李寄放在 Hotel Indigo 櫃台。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">09:30</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            交通：前往 <a href="https://www.google.com/maps/search/?api=1&query=Westfield+Chermside" target="_blank" class="place-link">Westfield Chermside</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <a href="https://www.google.com/maps/search/?api=1&query=King+George+Square+Station" target="_blank" class="place-link font-medium">King George Square 站</a> 搭 333 號公車。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-pink-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-shopping-bag text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">10:00 - 14:00 逛街 & 午餐</h4>
+                        <p class="text-sm text-gray-600 mt-1">Westfield Chermside (昆士蘭最大商場)。</p>
+                        <p class="text-sm text-gray-500 mt-2"><i class="fas fa-bus mr-1"></i> 14:00 搭 333 公車回市區，回飯店拿行李。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">15:00</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">大移動：前往黃金海岸</h4>
+                        <ul class="text-sm text-gray-600 mt-2 space-y-1 list-decimal list-inside">
+                            <li>Roma Street 搭火車 (Gold Coast Line) 到 Helensvale。</li>
+                            <li>轉輕軌 (G:link) 到 <a href="https://www.google.com/maps/search/?api=1&query=Broadbeach+South+Station" target="_blank" class="place-link font-medium">Broadbeach South</a> (終點站)。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-amber-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-check text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">16:30 抵達飯店 Check-in</h4>
+                        <p class="text-sm text-gray-600 mt-1">Bel Air on Broadbeach 就在輕軌站對面。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center z-10">
+                    <div class="bg-indigo-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-star text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            18:00 <a href="https://www.google.com/maps/search/?api=1&query=Surfers+Paradise+Beachfront+Markets" target="_blank" class="place-link">衝浪者天堂海濱市集</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">搭輕軌去 Cavill Avenue，逛週三限定的海邊市集。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 3 -->
+        <section id="day3" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/19 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(四)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">夢幻世界 & 庫馬拉購物夜</p>
+            </div>
+
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_a5259386c4d74b8997986cd65fe371d4~mv2.jpg" alt="Day 3 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 border-l-4 border-l-gray-400 relative mx-1 sm:mx-0">
+                <div class="flex items-center">
+                    <div class="bg-gray-100 p-2 rounded-lg mr-3"><i class="fas fa-bed text-gray-500"></i></div>
+                    <div>
+                        <span class="text-gray-500 text-sm">續住</span>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Bel+Air+on+Broadbeach" target="_blank" class="place-link font-bold text-gray-800 hover:text-blue-800">Bel Air on Broadbeach</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-bus text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">上午：前往 Coomera</h4>
+                        <p class="text-sm text-gray-600 mt-1">從飯店對面的公車站或輕軌出發。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-ticket-alt text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            10:00 <a href="https://www.google.com/maps/search/?api=1&query=Dreamworld+Coomera" target="_blank" class="place-link">Dreamworld (夢幻世界)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">平日去不排隊，看老虎、玩水 (WhiteWater World)。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-pink-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-shopping-bag text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            16:00 <a href="https://www.google.com/maps/search/?api=1&query=Westfield+Coomera" target="_blank" class="place-link">Westfield Coomera</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">Late Night Shopping (開到 9pm)。晚餐在 The Backyard 吃。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 4 -->
+        <section id="day4" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/20 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(五)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">海洋世界 & 太平洋購物中心</p>
+            </div>
+
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_b420f5f7c8954906b385416b31186342~mv2.jpg" alt="Day 4 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 border-l-4 border-l-gray-400 relative mx-1 sm:mx-0">
+                <div class="flex items-center">
+                    <div class="bg-gray-100 p-2 rounded-lg mr-3"><i class="fas fa-bed text-gray-500"></i></div>
+                    <div>
+                        <span class="text-gray-500 text-sm">續住</span>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Bel+Air+on+Broadbeach" target="_blank" class="place-link font-bold text-gray-800 hover:text-blue-800">Bel Air on Broadbeach</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">10:30</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">交通：前往 Sea World</h4>
+                        <p class="text-sm text-gray-600 mt-1">Broadbeach South 站搭 705 公車直達。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-blue-400 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-fish text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            11:00 <a href="https://www.google.com/maps/search/?api=1&query=Sea+World+Gold+Coast" target="_blank" class="place-link">Sea World (海洋世界)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">看海豚、摸魟魚、汪汪隊樂園。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center z-10">
+                    <div class="bg-orange-400 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-umbrella-beach text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">15:00 下午休閒</h4>
+                        <p class="text-sm text-gray-600 mt-1">
+                            在飯店泳池玩水，或走到對面
+                            <a href="https://www.google.com/maps/search/?api=1&query=Pacific+Fair+Shopping+Centre" target="_blank" class="place-link font-medium">Pacific Fair</a> 逛街補貨。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 5 -->
+        <section id="day5" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/21 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(六)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">飛往雪梨：入住 Paradox</p>
+            </div>
+
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_6025b38856864a49aa84fa48a4c58788~mv2.jpg" alt="Day 5 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-amber-100 p-4 mb-6 border-l-4 border-l-amber-500 relative overflow-hidden mx-1 sm:mx-0">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">今晚換飯店</div>
+                        <h3 class="text-lg font-bold text-gray-800">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Paradox+Hotel+Sydney" target="_blank" class="place-link">
+                                Paradox Sydney <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </h3>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                <i class="fas fa-utensils mr-1.5"></i> 不含早餐
+                            </span>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 p-2 rounded-lg">
+                        <i class="fas fa-city text-amber-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">09:15</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">前往機場</h4>
+                        <p class="text-sm text-gray-600 mt-1">從 Bel Air 旁搭 777 機場巴士直達。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-blue-600 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-plane text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            11:10 飛往雪梨 (JQ409)
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">
+                            13:40 抵達 <a href="https://www.google.com/maps/search/?api=1&query=Sydney+Airport" target="_blank" class="place-link font-medium">雪梨機場 (SYD)</a>。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">15:30</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">入住 Paradox Sydney</h4>
+                        <p class="text-sm text-gray-600 mt-1">搭火車到 Wynyard 站。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center z-10">
+                    <div class="bg-indigo-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-moon text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            晚上：<a href="https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney" target="_blank" class="place-link">環形碼頭</a> / 達令港
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">欣賞雪梨夜景並享用晚餐。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 6 -->
+        <section id="day6" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/22 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(日)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">雪梨渡輪雙拼 (週日優惠)</p>
+            </div>
+
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_34bbcff7966c44858d02c957a5b5f1f1~mv2.jpg" alt="Day 6 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 border-l-4 border-l-gray-400 relative mx-1 sm:mx-0">
+                <div class="flex items-center">
+                    <div class="bg-gray-100 p-2 rounded-lg mr-3"><i class="fas fa-bed text-gray-500"></i></div>
+                    <div>
+                        <span class="text-gray-500 text-sm">續住</span>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Paradox+Hotel+Sydney" target="_blank" class="place-link font-bold text-gray-800 hover:text-blue-800">Paradox Sydney</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-blue-400 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-ship text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            10:00 <a href="https://www.google.com/maps/search/?api=1&query=Manly+Wharf" target="_blank" class="place-link">Manly (曼利)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">搭 F1 渡輪。從飯店走到 Circular Quay 只要 7 分鐘。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-blue-400 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-camera text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            14:00 <a href="https://www.google.com/maps/search/?api=1&query=Watsons+Bay" target="_blank" class="place-link">Watsons Bay (屈臣氏灣)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">搭 F9 渡輪，看懸崖絕景。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center z-10">
+                    <div class="bg-indigo-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-beer text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            17:00 <a href="https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney" target="_blank" class="place-link">岩石區 (The Rocks)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">回環形碼頭逛古老街區。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 7 -->
+        <section id="day7" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/23 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(一)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">藍山上山住一晚</p>
+            </div>
+
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_8953e89e6879453294a37542a5c166b5~mv2.jpg" alt="Day 7 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-amber-100 p-4 mb-6 border-l-4 border-l-amber-500 relative overflow-hidden mx-1 sm:mx-0">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">今晚換飯店</div>
+                        <h3 class="text-lg font-bold text-gray-800">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Palais+Royale+Katoomba" target="_blank" class="place-link">
+                                Palais Royale <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </h3>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-utensils mr-1.5"></i> 含早餐
+                            </span>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 p-2 rounded-lg">
+                        <i class="fas fa-mountain text-amber-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-teal-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">09:00</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            交通：搭火車去 <a href="https://www.google.com/maps/search/?api=1&query=Katoomba+Station" target="_blank" class="place-link">藍山 (Katoomba)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">Wynyard -> Central -> Katoomba (藍山線)。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-amber-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">11:30</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">抵達飯店寄行李</h4>
+                        <p class="text-sm text-gray-600 mt-1">走路去 Palais Royale。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-pink-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-coffee text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            12:00 <a href="https://www.google.com/maps/search/?api=1&query=Leura+Mall" target="_blank" class="place-link">Leura (蘿拉小鎮)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">逛街並吃午餐。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center z-10">
+                    <div class="bg-orange-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-camera text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            15:30 <a href="https://www.google.com/maps/search/?api=1&query=Echo+Point+Three+Sisters" target="_blank" class="place-link">三姐妹岩 (Echo Point)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">搭公車去 Echo Point。晚上回飯店享受設施。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 8 -->
+        <section id="day8" class="scroll-mt-32 pt-8 border-t border-gray-200">
+            <div class="mb-4 pl-2">
+                <h1 class="text-4xl sm:text-5xl font-bold text-blue-900 tracking-tight">2/24 <span class="text-2xl font-medium text-gray-500 align-middle ml-2">(二)</span></h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">景觀世界 & Penrith & 賦歸</p>
+            </div>
+
+            <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 mx-1 sm:mx-0">
+                <img src="https://static.wixstatic.com/media/f229cb_e52db87a213446e29ea4afe0da4d0e29~mv2.jpg" alt="Day 8 Image" class="w-full h-48 sm:h-64 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+            </div>
+
+            <div class="hotel-card bg-white rounded-xl shadow-sm border border-red-100 p-4 mb-6 border-l-4 border-l-red-500 relative mx-1 sm:mx-0">
+                <div class="flex items-center">
+                    <div class="bg-red-50 p-2 rounded-lg mr-3"><i class="fas fa-sign-out-alt text-red-500"></i></div>
+                    <div><span class="text-red-500 text-sm font-bold uppercase">今日退房</span> <span class="text-gray-600 text-sm ml-2">準備回家</span></div>
+                </div>
+            </div>
+
+            <div class="relative pl-2 sm:pl-4">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-green-600 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-tree text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            09:00 <a href="https://www.google.com/maps/search/?api=1&query=Scenic+World+Katoomba" target="_blank" class="place-link">Scenic World (景觀世界)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">寄放行李於飯店，搭 686 公車去搭纜車。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-pink-500 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-shopping-cart text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">
+                            13:30 <a href="https://www.google.com/maps/search/?api=1&query=Westfield+Penrith" target="_blank" class="place-link">Penrith (佩恩里斯)</a>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">下山途中停留。逛 Westfield Penrith 吃午餐 + 最後補貨。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center mb-8 z-10">
+                    <div class="bg-blue-600 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <i class="fas fa-plane-departure text-lg"></i>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                        <h4 class="font-bold text-gray-800 text-lg">16:30 前往雪梨機場 (SYD)</h4>
+                        <p class="text-sm text-gray-600 mt-1">從 Penrith 搭火車回 Central，轉機場線。</p>
+                        <p class="text-sm font-bold text-blue-600 mt-2">18:30 抵達機場</p>
+                    </div>
+                </div>
+
+                <!-- Flight Home -->
+                <div class="relative flex items-center z-10">
+                    <div class="bg-gray-800 rounded-full h-16 w-16 flex items-center justify-center text-white shrink-0 border-4 border-white shadow-md">
+                        <span class="text-sm font-extrabold time-text">22:10</span>
+                    </div>
+                    <div class="ml-3 sm:ml-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1 border-l-4 border-l-blue-900">
+                        <h4 class="font-bold text-gray-800 text-lg">起飛回台灣 (CI52)</h4>
+                        <p class="text-sm text-gray-600 mt-1">帶著滿滿回憶飛回台灣。</p>
+                        <hr class="my-2 border-gray-100">
+                        <p class="text-sm font-bold text-blue-800">
+                            <i class="fas fa-flag-checkered mr-1"></i> 2026/2/25 (三) 04:20 抵達桃園機場
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Scroll to specific section with offset for sticky header
+        function scrollToDate(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const offset = 80; // Height of sticky nav + padding
+                const bodyRect = document.body.getBoundingClientRect().top;
+                const elementRect = element.getBoundingClientRect().top;
+                const elementPosition = elementRect - bodyRect;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        // Active state handling for scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navButtons = document.querySelectorAll('.nav-btn');
+
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(current)) {
+                    btn.classList.add('active');
+                    
+                    // Auto scroll nav bar to keep active button visible
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            });
+        });
+    </script>
+
+    <!-- Floating Back to Hub Button -->
+    <div class="fixed bottom-6 right-6 z-50 no-print">
+        <a href="/trip" class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white text-xs font-semibold shadow-lg backdrop-blur-md transition-transform hover:scale-105 border border-white/20">
+            <i class="fa-solid fa-arrow-left"></i> 回行程總覽
+        </a>
+    </div>
+  
+</body>
+</html>
