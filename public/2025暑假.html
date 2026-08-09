@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>雪梨八天七夜自由行 (2025暑假)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- 預設 (桌面版) 樣式 --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        header {
+            background-color: #005a9c;
+            color: #ffffff;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .section {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        h2 {
+            font-size: 1.8em;
+            color: #005a9c;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h3 {
+            font-size: 1.4em;
+            color: #343a40;
+            margin-top: 20px;
+        }
+        h4 {
+            font-size: 1.1em;
+            color: #17a2b8;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 12px;
+            padding-left: 28px;
+            position: relative;
+        }
+
+        li::before {
+            content: '✈️';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9em;
+            line-height: 1;
+        }
+
+        .day-itinerary li::before {
+            content: '📍';
+        }
+        .tips li::before {
+            content: '💡';
+        }
+        strong {
+            color: #007bff;
+            font-weight: 600;
+        }
+        .flight-info, .accommodation-info {
+            background-color: #e9f5ff;
+            border-left: 5px solid #007bff;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .checklist-container {
+            background-color: #fffaf0;
+            border: 1px solid #fdecc8;
+            border-left: 5px solid #ffc107;
+            padding: 15px 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        .checklist-container h3 {
+            margin-top: 5px;
+            color: #c77700;
+        }
+        .checklist li::before {
+            content: '☐';
+            color: #ff9800;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        .day-card {
+            background: #fafafa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .final-day {
+            background-color: #fff8e1;
+            border-left: 5px solid #ffc107;
+        }
+        .transport {
+            font-style: italic;
+            color: #555;
+        }
+
+        .link-tip {
+            font-style: italic;
+            font-size: 0.95em;
+            color: #6c757d;
+        }
+        .link-tip a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .link-tip a:hover {
+            text-decoration: underline;
+        }
+        .link-tip::before {
+           content: '🔗' !important;
+        }
+
+        .route-box {
+            background-color: #f0f8ff;
+            border: 1px solid #d6eaff;
+            border-left: 5px solid #007bff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+        .route-box h4 {
+            margin-top: 0;
+            color: #005a9c;
+            border-bottom: none;
+            padding-bottom: 5px;
+            font-size: 1.2em;
+        }
+        .route-box ol {
+            padding-left: 20px;
+            list-style-type: decimal;
+        }
+        .route-box li {
+            padding-left: 5px;
+            margin-bottom: 10px;
+        }
+        .route-box li::before {
+            content: none;
+        }
+        .route-box em {
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .floating-back-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .floating-back-btn:hover {
+            background: #1e293b;
+            transform: scale(1.05);
+            color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            .container {
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .section {
+                padding: 25px 15px;
+            }
+            header {
+                padding: 20px 15px;
+            }
+            header h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            h3 {
+                font-size: 1.25em;
+            }
+            .checklist-container, .day-card {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>雪梨八天七夜自由行</h1>
+            <p>2025年08月16日 (週六) - 2025年08月23日 (週六)</p>
+        </header>
+
+        <div class="section">
+            <h2>行程總覽</h2>
+            <div class="flight-info">
+                <h3>✈️ 航班資訊</h3>
+                <ul>
+                    <li><strong>去程：</strong>中華航空 CI51 航班<br>
+                        08月16日 (週六) 23:30 台灣桃園機場 (T2) → 08月17日 (週日) 10:45 雪梨 (T1)</li>
+                    <li><strong>回程：</strong>中華航空 CI52 航班<br>
+                        08月22日 (週五) 22:10 雪梨 (T1) → 08月23日 (週六) 05:40 台灣桃園機場 (T2)</li>
+                </ul>
+            </div>
+            <div class="accommodation-info">
+                <h3>🏨 住宿地點</h3>
+                <ul>
+                    <li><strong>飯店名稱：</strong>Rydges Sydney Central</li>
+                    <li><strong>行程天數：</strong>六天五夜 (雪梨當地時間)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="tips">行前小提示</h2>
+
+            <div class="checklist-container">
+                <h3>✅ 行前準備檢查清單</h3>
+                <ul class="checklist">
+                    <li>線上簽證 (ETA) 申請</li>
+                    <li>兌換澳幣 (AUD) 現金</li>
+                    <li>投保海外旅平險 (含海外醫療)</li>
+                    <li>投保旅遊不便險 (班機延誤、行李遺失等)</li>
+                    <li>預訂機場接送 (或確認大眾交通方式)</li>
+                    <li>準備海外 WiFi / SIM 卡 / 開通電信漫遊</li>
+                    <li>其他個人物品 (常備藥、轉接頭、太陽眼鏡等)</li>
+                </ul>
+            </div>
+
+            <ul class="tips">
+                <li><strong>Opal卡：</strong>務必準備好Opal卡並儲值，若有兒童同行，請記得購買兒童適用的Opal卡。</li>
+                <li><strong>天氣：</strong>8月是雪梨的冬季，氣溫約在 8°C - 18°C。請準備足夠的保暖衣物，如毛衣、厚外套、圍巾等。</li>
+                <li><strong>預訂：</strong>熱門景點門票（如景觀世界、水族館）建議提早線上預訂，以節省排隊時間並可能享有折扣。</li>
+                <li><strong>步行：</strong>行程中包含許多步行路段，請務必穿著一雙舒適好走的鞋子。</li>
+                <li><strong>第六天行李：</strong>早上從飯店退房後，可將大件行李寄存在 Rydges Sydney Central 飯店櫃台，輕鬆進行最後一天的行程。</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>每日行程規劃</h2>
+
+            <div class="day-card">
+                <h3>出發日：08月16日 (週六) - 啟程</h3>
+                <ul class="day-itinerary">
+                    <li><strong>18:30：</strong>預約機場接送，準備出發前往機場。</li>
+                    <li><strong>晚上：</strong>抵達台灣桃園國際機場第二航廈 (TERMINAL 2)。</li>
+                    <li><strong>23:30：</strong>搭乘 <strong>中華航空 CI51</strong> 班機，滿心期待地出發前往雪梨！</li>
+                </ul>
+            </div>
+
+            <div class="day-card">
+                <h3>第一天：08月17日 (週日) - 抵達雪梨 / 岩石區與環形碼頭經典</h3>
+                <h4>上午</h4>
+                <ul class="day-itinerary">
+                    <li><strong>10:45 (雪梨時間)：</strong>班機抵達雪梨國際機場第一航廈 (TERMINAL 1)。</li>
+                    <li>辦理入境手續、提領行李。</li>
+                    <li><strong>交通 (機場到飯店)：</strong>搭乘 <strong>機場快線 (Airport Link Train)</strong> 直達 <strong>中央車站 (Central Station)</strong>，再步行至飯店 Rydges Sydney Central 辦理入住或寄放行李。</li>
+                    <li><strong>午餐：</strong>飯店附近或前往環形碼頭途中解決。</li>
+                </ul>
+                <h4>下午</h4>
+                <ul class="day-itinerary">
+                    <li><strong>活動：</strong>前往 <strong>岩石區 (The Rocks)</strong> 周邊探索，包含 <strong>The Rocks Centre</strong>。今天是週日，可以逛逛熱鬧的 <strong>岩石區市集 (The Rocks Markets)</strong>！</li>
+                    <li>接著前往 <strong>環形碼頭 (Circular Quay)</strong> 周邊。參觀指標性的 <strong>雪梨歌劇院 (Sydney Opera House)</strong> 外觀，並遠眺或漫步於 <strong>雪梨港灣大橋 (Sydney Harbour Bridge)</strong>，也可考慮登上 <strong>橋塔觀景台 (Pylon Lookout)</strong>。</li>
+                    <li><strong>交通 (飯店到環形碼頭)：</strong>從中央車站搭乘火車或輕軌至 <strong>Circular Quay 站</strong>。</li>
+                    <li class="link-tip">參考行程： <a href="https://minahaha.com/sydney-the-rocks-market/" target="_blank" rel="noopener">岩石區週末市集 (The Rocks Market) 攻略</a></li>
+                </ul>
+                 <h4>傍晚/晚餐</h4>
+                 <ul class="day-itinerary">
+                    <li>在充滿歷史風情的岩石區或海港景色的環形碼頭享用晚餐。</li>
+                 </ul>
+            </div>
+
+            <div class="day-card">
+                <h3>第二天：08月18日 (週一) - 藍山國家公園全日遊</h3>
+                <h4>全天</h4>
+                <ul class="day-itinerary">
+                    <li><strong>活動：</strong>前往世界自然遺產 <strong>藍山國家公園 (Blue Mountains)</strong>。</li>
+                    <li>搭火車至 <strong>卡通巴 (Katoomba)</strong>，主要遊覽 <strong>景觀世界 (Scenic World)</strong>。</li>
+                </ul>
+                <div class="route-box">
+                    <h4>景觀世界推薦路線</h4>
+                    <ol>
+                        <li>
+                            <strong>搭乘【黃線】高空纜車 (Scenic Skyway)</strong><br>
+                            從主入口出發，搭乘黃線纜車橫越山谷到對岸的東站 (Skyway East Station)。<br>
+                            <em>亮點： 纜車行駛途中，記得站在中間的玻璃地板上，可以直接俯瞰腳下的雨林和瀑布，非常壯觀！您也可以從車窗遠眺三姐妹峰。</em>
+                        </li>
+                        <li>
+                            <strong>健行至回聲角 (Echo Point)</strong><br>
+                            從東站下車後，沿著步道健行約 10-15 分鐘，即可抵達回聲角觀景台 (Echo Point Lookout)，這裡是欣賞三姐妹峰 (The Three Sisters) 最經典的位置。
+                        </li>
+                        <li>
+                            <strong>返回主建築，搭乘【紅線】叢林礦車 (Scenic Railway)</strong><br>
+                            從回聲角走回東站，搭乘黃線纜車返回景觀世界主建築。接著，去體驗全世界最陡峭的載客火車——紅線礦車，以 52 度的斜角高速衝入山谷雨林中。<br>
+                            <em>亮點： 追求刺激的話，可以選擇第一排的座位，視野絕佳！</em>
+                        </li>
+                        <li>
+                            <strong>漫步雨林步道 (Scenic Walkway)</strong><br>
+                            抵達谷底後，您可以在全長 2.4 公里的雨林棧道上輕鬆漫步，享受芬多精。步道非常平緩好走，您可以根據時間選擇 10、30 或 50 分鐘的路線。
+                        </li>
+                        <li>
+                            <strong>搭乘【藍線】叢林纜車 (Scenic Cableway)</strong><br>
+                            走完雨林步道後，搭乘南半球最陡峭的藍線空中纜車，平穩地從谷底返回山頂的主建築，結束行程。
+                        </li>
+                    </ol>
+                </div>
+                <ul class="day-itinerary">
+                    <li>若有時間，可逛逛充滿特色小店的 <strong>魯拉小鎮 (Leura Village)</strong>。</li>
+                    <li><strong>交通：</strong>從中央車站搭乘 <strong>藍山線 (Blue Mountains Line)</strong> 火車直達Katoomba。在藍山內可搭乘觀觀光巴士或公共巴士。</li>
+                    <li><strong>午餐/晚餐：</strong>午餐可在卡通巴鎮上或景觀世界內解決。晚餐於返回中央車站後安排。</li>
+                    <li class="link-tip">參考行程： <a href="https://www.leo-travel.idv.tw/6651/australia-sydney-blue-mountains-day-trip" target="_blank" rel="noopener">漫遊藍山國家公園、Featherdale動物園與Parramatta River遊船</a></li>
+                </ul>
+            </div>
+
+            <div class="day-card">
+                <h3>第三天：08月19日 (週二) - Featherdale 野生動物園 & 巴拉瑪打 (Parramatta) 河畔風光</h3>
+                <h4>上午</h4>
+                <ul class="day-itinerary">
+                    <li><strong>活動：</strong>前往 <strong>Featherdale Sydney Wildlife Park</strong>，與無尾熊、袋鼠等澳洲特有動物近距離接觸。</li>
+                    <li><strong>交通：</strong>從中央車站搭火車至 <strong>Blacktown 站</strong>，再轉乘巴士抵達。(小提示：Blacktown車站旁有 <strong>Westpoint</strong> 商場可以逛逛)</li>
+                    <li><strong>午餐：</strong>動物園內或附近。</li>
+                </ul>
+                <h4>下午</h4>
+                <ul class="day-itinerary">
+                    <li><strong>活動：</strong>前往雪梨第二大CBD <strong>巴拉瑪打 (Parramatta)</strong>，主攻大型商場 <strong>Westfield Parramatta</strong>。</li>
+                    <li><strong>交通 (Featherdale到Parramatta)：</strong>搭乘巴士轉火車至 <strong>Parramatta 站</strong>。</li>
+                    <li><strong>特別體驗：</strong>可從 <strong>Parramatta Wharf</strong> 搭乘 <strong>F3 渡輪</strong> 沿著河岸返回環形碼頭，欣賞沿途風光。或直接從Parramatta火車站搭車回中央車站。</li>
+                </ul>
+                <h4>晚餐</h4>
+                 <ul class="day-itinerary">
+                    <li>在 Parramatta 或返回雪梨市區享用。</li>
+                 </ul>
+            </div>
+
+            <div class="day-card">
+                <h3>第四天：08月20日 (週三) - Newtown 文青風 & 雪梨大學探索</h3>
+                <h4>上午</h4>
+                <ul class="day-itinerary">
+                    <li><strong>活動：</strong>搭火車前往充滿個性的 <strong>Newtown</strong> 區，探索主街 <strong>King Street</strong> 上林立的特色小店、塗鴉藝術與二手書店。</li>
+                    <li><strong>交通：</strong>從中央車站搭乘 <strong>T2 線</strong> 火車，僅需幾站即可抵達 <strong>Newtown Station</strong>。</li>
+                    <li><strong>午餐：</strong>在 King Street 上尋找一家風格獨具的咖啡館或異國料理餐廳。</li>
+                </ul>
+                <h4>下午</h4>
+                <ul class="day-itinerary">
+                    <li><strong>活動：</strong>從 Newtown 步行至澳洲最古老的高等學府 <strong>雪梨大學 (The University of Sydney)</strong>，欣賞其如同哈利波特場景般的砂岩建築群 (The Quadrangle)。</li>
+                    <li><strong>點心：</strong>回到 Newtown，尋找知名甜點店 <strong>Black Star Pastry</strong>，品嚐夢幻的「西瓜草莓蛋糕」。</li>
+                    <li><strong>交通 (返回飯店)：</strong>從 Newtown Station 搭乘火車返回中央車站。</li>
+                </ul>
+                 <h4>晚餐</h4>
+                 <ul class="day-itinerary">
+                    <li>可在 Newtown 享用晚餐，或返回市區後再做安排。</li>
+                 </ul>
+            </div>
+
+            <div class="day-card">
+                <h3>第五天：08月21日 (週四) - 達令港 (Darling Harbour) 親子同樂日</h3>
+                 <h4>上午</h4>
+                <ul class="day-itinerary">
+                     <li><strong>交通：</strong>從飯店步行至中央車站 (Central Station) 的 <strong>Grand Concourse (主大廳)</strong>，搭乘 <strong>輕軌 L1 線</strong> (往 Dulwich Hill 方向) 前往達令港區域 (可於 <strong>Convention</strong> 或 <strong>Pyrmont Bay</strong> 站下車)。</li>
+                    <li><strong>活動：</strong>參觀 <strong>雪梨海洋生物水族館 (SEA LIFE Sydney Aquarium)</strong>，探索奇妙的海底世界。</li>
+                    <li><strong>午餐：</strong>達令港周邊有多樣的餐廳選擇。</li>
+                </ul>
+                <h4>下午 (二選一)</h4>
+                <ul class="day-itinerary">
+                    <li>
+                        <strong>方案一：達令港悠閒親子樂</strong><br>
+                        帶孩子到廣受歡迎的 <strong>達令港兒童遊樂場 (Darling Quarter Playground)</strong> 盡情放電。之後可以在達令港周邊悠閒散步，逛逛特色商店。
+                    </li>
+                    <li>
+                        <strong>方案二：經典樂園 Luna Park</strong><br>
+                        前往雪梨最經典的 <strong>月神公園 (Luna Park Sydney)</strong>，與巨大的笑臉入口合照，體驗復古的遊樂設施。<br>
+                        <span class="transport"><strong>交通 (海生館 → Luna Park)：</strong>從達令港碼頭 (Darling Harbour Wharf) 搭乘 <strong>F4 渡輪</strong> 前往環形碼頭 (Circular Quay)，再轉乘 <strong>F3 或 F4 渡輪</strong> 一站即可抵達月神公園門口的 <strong>Milsons Point 碼頭</strong>。</span>
+                    </li>
+                </ul>
+                 <h4>傍晚/晚餐</h4>
+                 <ul class="day-itinerary">
+                    <li>在熱鬧的達令港或返回中央車站附近用餐。</li>
+                 </ul>
+            </div>
+
+            <div class="day-card final-day">
+                <h3>第六天：08月22日 (週五) - 市區購物樂 & 悠閒告別</h3>
+                <h4>上午</h4>
+                <ul class="day-itinerary">
+                    <li>悠閒享用早餐後，約10:00-11:00辦理飯店退房手續。</li>
+                    <li>將大件行李寄存在 <strong>Rydges Sydney Central</strong> 飯店櫃台。</li>
+                </ul>
+                <h4>上午至下午</h4>
+                <ul class="day-itinerary">
+                    <li><strong>活動：</strong>前往雪梨市中心CBD購物區血拚！主要地點推薦：<strong>皮特街購物中心 (Pitt Street Mall)</strong>、典雅的 <strong>QVB (維多利亞女王大廈)</strong>、<strong>Westfield Sydney</strong> 及 <strong>The Strand Arcade</strong>。</li>
+                     <li><strong>交通：</strong>從中央車站搭火車至 <strong>Town Hall 站</strong> 或 <strong>St James 站</strong>；或搭輕軌至 <strong>QVB 站</strong>。</li>
+                    <li><strong>午餐：</strong>在CBD購物區內解決。</li>
+                </ul>
+                <h4>傍晚 - 準備回家</h4>
+                <ul class="day-itinerary">
+                    <li><strong>約 16:30 - 17:00：</strong>結束購物，搭火車或輕軌返回中央車站。</li>
+                    <li><strong>約 17:00 - 17:30：</strong>步行回飯店領取寄存的行李。</li>
+                    <li><strong>約 17:30 - 18:30：</strong>從飯店出發，步行至中央車站。</li>
+                    <li><strong>約 18:30 - 19:00：</strong>從中央車站搭乘 <strong>機場快線 (Airport Link Train)</strong> 前往雪梨國際機場第一航廈 (TERMINAL 1)。(建議最晚 19:10 前抵達機場)</li>
+                </ul>
+                <h4>晚上</h4>
+                <ul class="day-itinerary">
+                    <li>在機場辦理登機手續、過安檢、逛免稅店。</li>
+                    <li><strong>22:10：</strong>搭乘 <strong>中華航空 CI52</strong> 班機，帶著滿滿的回憶返回台灣。</li>
+                </ul>
+            </div>
+
+             <div class="day-card">
+                <h3>返抵日：08月23日 (週六) - 抵達台灣</h3>
+                <ul class="day-itinerary">
+                    <li><strong>清晨 05:40 (台灣時間)：</strong>班機抵達台灣桃園國際機場第二航廈 (TERMINAL 2)，結束愉快的旅程。</li>
+                    <li><strong>05:40：</strong>預約機場接送，返回溫暖的家。</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Floating Back to Hub Button -->
+    <a href="/trip" class="floating-back-btn">
+        <i class="fa-solid fa-arrow-left"></i> 回行程總覽
+    </a>
+
+</body>
+</html>
