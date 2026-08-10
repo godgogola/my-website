@@ -1,10 +1,10 @@
 ---
 title: "【B型肝炎】台灣 B 肝公衛措施與成效完整時程表"
 category: "肝病特區"
-publishDate: "2026-08-08"
+publishDate: "2026-08-10"
 draft: false
 slug: "b型肝炎台灣-b-肝公衛措施與成效完整時程表"
-coverImage: "【B型肝炎】台灣 B 肝公衛措施與成效完整時程表.webp"
+coverImage: "B型肝炎.webp"
 ---
 #### 1. 1984 年（試辦） / 1986 年（全面）：新生兒 B 肝疫苗接種（第一、二道防線）
 

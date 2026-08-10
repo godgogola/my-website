@@ -1,7 +1,7 @@
 ---
 title: "AI骨密檢查"
 category: "健檢項目介紹"
-publishDate: "2026-08-08"
+publishDate: "2026-08-10"
 draft: false
 slug: "ai骨密檢查"
 coverImage: "AI骨密檢查.webp"

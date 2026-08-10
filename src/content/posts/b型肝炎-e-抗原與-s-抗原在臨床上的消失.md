@@ -1,10 +1,10 @@
 ---
 title: "【B型肝炎】 e 抗原與 s 抗原在臨床上的消失"
 category: "肝病特區"
-publishDate: "2026-08-08"
+publishDate: "2026-08-10"
 draft: false
 slug: "b型肝炎-e-抗原與-s-抗原在臨床上的消失"
-coverImage: "【B型肝炎】 e 抗原與 s 抗原在臨床上的消失.webp"
+coverImage: "B型肝炎.webp"
 ---
 B 型肝炎中的 e 抗原/抗體與 s 抗原/抗體在臨床上的消失比例、產生意義以及空窗期資訊如下：
 

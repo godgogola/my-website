@@ -1,7 +1,7 @@
 ---
 title: "【Cystatin C】血清胱蛋白 C"
 category: "健檢項目介紹"
-publishDate: "2026-08-08"
+publishDate: "2026-08-10"
 draft: false
 slug: "cystatin-c血清胱蛋白-c"
 coverImage: "【Cystatin C】血清胱蛋白 C.webp"
