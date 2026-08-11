@@ -9,7 +9,12 @@ const unDraftPosts = allPosts.filter(post => !post.data.draft);
 
 // 1. 「全部」分類預設排序：純粹依發布日期 (publishDate) 由新到舊排序
 const posts = [...unDraftPosts].sort((a, b) => {
-  return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+  const dateDiff = new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+  if (dateDiff !== 0) return dateDiff;
+  const orderA = a.data.order ?? 9999;
+  const orderB = b.data.order ?? 9999;
+  if (orderA !== orderB) return orderA - orderB;
+  return a.data.title.localeCompare(b.data.title, 'zh-Hant');
 });
 
 // 2. 其他特定分類排序：優先依 order (由小到大)，再依發布日期排序
@@ -206,7 +211,11 @@ function getSummary(body: string | undefined): string {
           // 「全部」分類：依 publishDate 由新到舊排序
           const dateA = new Date(a.dataset.publishDate || 0).getTime();
           const dateB = new Date(b.dataset.publishDate || 0).getTime();
-          return dateB - dateA;
+          if (dateB !== dateA) return dateB - dateA;
+          const orderA = parseInt(a.dataset.order || '9999', 10);
+          const orderB = parseInt(b.dataset.order || '9999', 10);
+          if (orderA !== orderB) return orderA - orderB;
+          return (a.dataset.title || '').localeCompare(b.dataset.title || '', 'zh-Hant');
         } else {
           // 特定分類：依 order (由小到大)，次要依 publishDate 由新到舊
           const orderA = parseInt(a.dataset.order || '9999', 10);

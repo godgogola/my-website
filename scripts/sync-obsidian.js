@@ -150,9 +150,21 @@ function sync() {
         }
       }
 
+      // 讀取檔案建立時間（若無 birthtime 則使用 mtime）作為預設發布日期
+      let fileDateStr = new Date().toISOString().split('T')[0];
+      try {
+        const fileStat = fs.statSync(filePath);
+        const fileDate = (fileStat.birthtime && fileStat.birthtime.getTime() > 0)
+          ? fileStat.birthtime
+          : fileStat.mtime;
+        fileDateStr = fileDate.toISOString().split('T')[0];
+      } catch (e) {
+        // 略過讀取時間錯誤
+      }
+
       let title = fileName;
       let category = folderCategory; // 預設使用資料夾名稱
-      let publishDate = new Date().toISOString().split('T')[0];
+      let publishDate = fileDateStr;
       let draft = false;
       let order = null;
 

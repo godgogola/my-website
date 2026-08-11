@@ -7,7 +7,11 @@ import { getCollection } from 'astro:content';
 const allPosts = await getCollection('posts');
 const latestPosts = allPosts
   .filter(post => !post.data.draft)
-  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
+  .sort((a, b) => {
+    const dateDiff = new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+    if (dateDiff !== 0) return dateDiff;
+    return a.data.title.localeCompare(b.data.title, 'zh-Hant');
+  })
   .slice(0, 3); // 取最新 3 篇精選文章
 
 // 格式化日期

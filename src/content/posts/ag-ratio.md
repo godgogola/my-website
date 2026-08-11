@@ -1,7 +1,7 @@
 ---
 title: "【AG ratio】"
 category: "健檢紅字怎麼辦"
-publishDate: "2026-08-10"
+publishDate: "2026-08-07"
 draft: false
 slug: "ag-ratio"
 coverImage: "【AG ratio】.webp"

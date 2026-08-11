@@ -1,7 +1,7 @@
 ---
 title: "【ALT AST】肝功能上升"
 category: "健檢紅字怎麼辦"
-publishDate: "2026-08-10"
+publishDate: "2026-08-07"
 draft: false
 slug: "alt-ast肝功能上升"
 coverImage: "【ALT AST】肝功能上升.webp"

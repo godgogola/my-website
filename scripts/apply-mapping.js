@@ -37,9 +37,9 @@ for (const entry of mapping) {
   // Match by title first, then fallback to filename
   let postData = titleIndex[entry.title];
 
-  if (!postData) {
+  if (!postData && entry.file) {
     const filePath = path.join(POSTS_DIR, entry.file);
-    if (fs.existsSync(filePath)) {
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
       const content = fs.readFileSync(filePath, 'utf-8');
       const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
       if (fmMatch) postData = { file: entry.file, content, fmMatch };

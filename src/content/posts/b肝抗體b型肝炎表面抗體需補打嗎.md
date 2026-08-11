@@ -1,7 +1,7 @@
 ---
 title: "【B肝抗體】B型肝炎表面抗體需補打嗎"
 category: "健檢紅字怎麼辦"
-publishDate: "2026-08-10"
+publishDate: "2026-08-07"
 draft: false
 slug: "b肝抗體b型肝炎表面抗體需補打嗎"
 coverImage: "【B肝抗體】B型肝炎表面抗體需補打嗎.webp"
