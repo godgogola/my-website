@@ -92,24 +92,33 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       gtag('config', 'G-M2P627PEG5');
     </script>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts (Plus Jakarta Sans + Noto Sans TC) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style is:global>
-      /* --- Design Tokens --- */
+      /* --- Pet Adoption Warm Coral & Cream Design Tokens --- */
       :root {
-        --color-bg-page: #FAF6EE;       /* 溫暖米白 */
-        --color-bg-card: #FFFFFF;       /* 卡片白色 */
-        --color-primary: #2F6656;       /* 品牌深綠 */
-        --color-primary-light: #E8F2EE; /* 品牌淺綠 */
-        --color-accent: #BC8A4A;        /* 溫暖香檳金 */
-        --color-accent-light: #F7EFE2;  /* 淺香檳 */
-        --color-text-body: #2C3E35;     /* 深炭綠（比純黑更溫和） */
-        --color-text-muted: #607369;    /* 灰綠色 */
-        --color-border: #E2EAE6;        /* 邊框線條 */
-        --color-shadow: rgba(47, 102, 86, 0.06);
+        --color-bg-page: #FAF6F0;       /* 溫暖奶油米白 */
+        --color-bg-alt: #F4EFE6;        /* 柔和沙色副背景 */
+        --color-bg-card: #FFFFFF;       /* 純白卡片 */
+        --color-primary: #E76F51;       /* 暖珊瑚橘主色 */
+        --color-primary-hover: #D65A3D; /* 珊瑚深橘 */
+        --color-primary-light: #FDEEE9; /* 柔粉珊瑚淺底 */
+        --color-secondary: #F4A261;     /* 溫暖蜜桃橘 */
+        --color-secondary-light: #FEF6EC;/* 淺蜜桃 */
+        --color-accent: #E9C46A;        /* 柔陽光金 */
+        --color-accent-light: #FFF9E6;  /* 淺金底 */
+        --color-mint: #4DB6AC;          /* 薄荷綠 */
+        --color-mint-light: #E0F2F1;    /* 淺薄荷底 */
+        --color-text-title: #1E293B;    /* 深暖炭灰標題 */
+        --color-text-body: #334155;     /* 易讀深石板灰內文 */
+        --color-text-muted: #64748B;    /* 柔和石板灰次要字 */
+        --color-border: #EFE8DE;        /* 柔和邊框 */
+        --color-border-subtle: #F5EFEB; /* 微細邊框 */
+        --color-shadow: rgba(231, 111, 81, 0.08);
+        --color-shadow-hover: rgba(231, 111, 81, 0.16);
       }
 
       /* Base Reset */
@@ -128,18 +137,59 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
 
       @media (max-width: 768px) {
         html {
-          font-size: 18px;
+          font-size: 17px;
         }
       }
 
       body {
-        font-family: 'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
         background-color: var(--color-bg-page);
         color: var(--color-text-body);
-        line-height: 1.6;
+        line-height: 1.65;
         -webkit-font-smoothing: antialiased;
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
+        position: relative;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Background Ambient Light Glow Orbs */
+      .ambient-glow-layer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .glow-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.18;
+      }
+
+      .glow-orb-1 {
+        top: -100px;
+        right: -80px;
+        width: 500px;
+        height: 500px;
+        background: #E76F51;
+      }
+
+      .glow-orb-2 {
+        top: 40%;
+        left: -150px;
+        width: 450px;
+        height: 450px;
+        background: #F4A261;
+      }
+
+      .glow-orb-3 {
+        bottom: 10%;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: #E9C46A;
       }
 
       a {
@@ -147,59 +197,69 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         text-decoration: none;
       }
 
+      /* Universal Gradient Text */
+      .gradient-text {
+        background: linear-gradient(135deg, #E76F51 0%, #F4845F 50%, #FF8A65 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+
       /* Layout Container */
       .layout-container {
+        position: relative;
+        z-index: 1;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
-        max-width: 1200px;
+        max-width: 1240px;
         margin: 0 auto;
-        padding: 0 16px;
+        padding: 0 20px;
       }
 
       @media (max-width: 600px) {
         .layout-container {
-          padding: 0 10px;
+          padding: 0 12px;
         }
       }
 
       main {
         flex-grow: 1;
-        padding: 40px 0;
+        padding: 30px 0 60px;
       }
 
-      /* SmoothUI Header-4 Floating Glass Header */
+      /* Header (Pill Glassmorphism) */
       .site-header-wrapper {
         position: sticky;
-        top: 14px;
+        top: 16px;
         z-index: 100;
         width: 100%;
-        margin: 0 0 20px 0;
+        margin: 0 0 24px 0;
       }
 
       .site-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 14px;
-        background: rgba(255, 255, 255, 0.86);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(47, 102, 86, 0.14);
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(231, 111, 81, 0.14);
         border-radius: 9999px;
-        box-shadow: 0 8px 24px -4px rgba(47, 102, 86, 0.1), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
-        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        box-shadow: 0 10px 30px -4px rgba(231, 111, 81, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.03);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
       }
 
       .site-header:hover {
-        box-shadow: 0 12px 30px -4px rgba(47, 102, 86, 0.14), 0 4px 10px -1px rgba(0, 0, 0, 0.06);
-        border-color: rgba(47, 102, 86, 0.22);
+        box-shadow: 0 14px 36px -4px rgba(231, 111, 81, 0.14), 0 4px 12px -1px rgba(0, 0, 0, 0.05);
+        border-color: rgba(231, 111, 81, 0.25);
       }
 
       .logo-group {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         padding: 4px 8px;
         border-radius: 9999px;
         transition: opacity 0.2s ease;
@@ -213,13 +273,12 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
-        background: #FFFFFF;
-        padding: 2px;
-        box-shadow: 0 2px 8px rgba(47, 102, 86, 0.16);
-        border: 1.5px solid rgba(47, 102, 86, 0.18);
+        background: linear-gradient(135deg, #E76F51, #F4845F);
+        box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+        border: 2px solid #FFFFFF;
         overflow: hidden;
         flex-shrink: 0;
       }
@@ -237,30 +296,29 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       }
 
       .logo-title {
-        font-size: 1.15rem;
-        font-weight: 900;
-        color: var(--color-primary);
-        letter-spacing: 0.5px;
+        font-size: 1.18rem;
+        font-weight: 800;
+        color: var(--color-text-title);
+        letter-spacing: 0.3px;
         line-height: 1.2;
       }
 
       .logo-subtitle {
-        font-size: 0.68rem;
-        font-weight: 600;
-        color: var(--color-accent);
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        letter-spacing: 0.6px;
       }
 
-      /* SmoothUI Center Tabs */
+      /* Center Animated Tabs */
       .smooth-tabs-nav {
         position: relative;
         display: inline-flex;
         align-items: center;
-        background: rgba(47, 102, 86, 0.06);
+        background: rgba(231, 111, 81, 0.06);
         padding: 4px;
         border-radius: 9999px;
-        border: 1px solid rgba(47, 102, 86, 0.08);
+        border: 1px solid rgba(231, 111, 81, 0.08);
       }
 
       .smooth-tab-pill {
@@ -270,7 +328,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
         height: calc(100% - 8px);
         background: #FFFFFF;
         border-radius: 9999px;
-        box-shadow: 0 2px 8px rgba(47, 102, 86, 0.14), 0 1px 3px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 14px rgba(231, 111, 81, 0.15), 0 1px 3px rgba(0, 0, 0, 0.04);
         pointer-events: none;
         z-index: 1;
         transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
@@ -280,7 +338,7 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       .smooth-tab-link {
         position: relative;
         z-index: 2;
-        padding: 7px 16px;
+        padding: 8px 18px;
         font-size: 0.92rem;
         font-weight: 700;
         color: var(--color-text-muted);
@@ -304,22 +362,22 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       .header-cta-btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        background: linear-gradient(135deg, var(--color-primary), #245244);
+        gap: 8px;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
         color: #FFFFFF;
-        padding: 8px 18px;
+        padding: 9px 20px;
         border-radius: 9999px;
-        font-size: 0.88rem;
+        font-size: 0.9rem;
         font-weight: 700;
         text-decoration: none;
-        box-shadow: 0 2px 10px rgba(47, 102, 86, 0.25);
+        box-shadow: 0 4px 14px rgba(231, 111, 81, 0.32);
         transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
         white-space: nowrap;
       }
 
       .header-cta-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(47, 102, 86, 0.35);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(231, 111, 81, 0.42);
         filter: brightness(1.05);
       }
 
@@ -329,28 +387,46 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
 
       /* Footer */
       .site-footer {
-        padding: 40px 0;
+        padding: 48px 0 36px;
         border-top: 1.5px solid var(--color-border);
         text-align: center;
         color: var(--color-text-muted);
-        font-size: 0.9rem;
+        font-size: 0.92rem;
+      }
+
+      .footer-badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+        font-weight: 700;
+        font-size: 0.84rem;
+        padding: 6px 14px;
+        border-radius: 9999px;
+        margin-bottom: 14px;
       }
 
       .footer-copy {
-        margin-top: 12px;
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: #8C9CAE;
+        max-width: 680px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       /* Responsive */
       @media (max-width: 900px) {
         .site-header-wrapper {
-          top: 8px;
-          margin-bottom: 16px;
+          top: 10px;
+          margin-bottom: 18px;
         }
         .site-header {
           flex-wrap: wrap;
-          gap: 10px;
-          padding: 10px 14px;
-          border-radius: 20px;
+          gap: 12px;
+          padding: 10px 16px;
+          border-radius: 24px;
         }
         .logo-group {
           padding: 0;
@@ -361,18 +437,18 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
           justify-content: space-around;
         }
         .header-cta-btn {
-          padding: 6px 14px;
-          font-size: 0.82rem;
+          padding: 7px 16px;
+          font-size: 0.84rem;
         }
       }
 
       @media (max-width: 600px) {
         .smooth-tab-link {
           padding: 6px 10px;
-          font-size: 0.84rem;
+          font-size: 0.85rem;
         }
         .logo-title {
-          font-size: 1.05rem;
+          font-size: 1.08rem;
         }
         .header-cta-btn {
           display: none;
@@ -381,12 +457,19 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
     </style>
   </head>
   <body>
+    <!-- Ambient Glow Orbs -->
+    <div class="ambient-glow-layer" aria-hidden="true">
+      <div class="glow-orb glow-orb-1"></div>
+      <div class="glow-orb glow-orb-2"></div>
+      <div class="glow-orb glow-orb-3"></div>
+    </div>
+
     <div class="layout-container">
       <div class="site-header-wrapper">
         <header class="site-header">
           <a href="/" class="logo-group">
             <div class="logo-badge-icon">
-              <img src="/favicon-48x48.png" alt="海龜標誌" class="logo-turtle-img" />
+              <img src="/favicon-48x48.png" alt="黃冠智醫師海龜標誌" class="logo-turtle-img" />
             </div>
             <div class="logo-text-wrap">
               <span class="logo-title">黃冠智 醫師</span>
@@ -402,14 +485,14 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
           </nav>
 
           <a href="/health-column" class="header-cta-btn">
-            <span>瀏覽衛教專欄</span>
+            <span>瀏覽衛教專欄 ❤️</span>
             <span>→</span>
           </a>
         </header>
       </div>
 
       <script is:inline>
-        // SmoothUI Header-4 Animated Tabs Interactivity
+        // Smooth Animated Tabs Interactivity
         (function initSmoothTabs() {
           const nav = document.getElementById('main-nav-tabs');
           const pill = document.getElementById('smooth-nav-pill');
@@ -465,6 +548,10 @@ const isBowelPrep = pathname.startsWith('/bowel-prep');
       </main>
 
       <footer class="site-footer">
+        <div class="footer-badge-pill">
+          <span>🩺</span>
+          <span>實證醫療 · 守護腸胃與代謝健康</span>
+        </div>
         <p>© {new Date().getFullYear()} 黃冠智醫師. All rights reserved.</p>
         <p class="footer-copy">本站內容主要為個人衛教與醫療筆記，僅供參考。若有身體不適，請務必尋求專業醫師當面諮詢與評估。</p>
       </footer>

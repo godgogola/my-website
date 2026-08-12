@@ -1,13 +1,13 @@
 ---
 /**
- * PostCard.astro — 全景圖文衛教卡片（字在圖片中，點擊直接進入文章）
+ * PostCard.astro — Pet Adoption 暖心風格衛教卡片
  *
  * Props:
  *   - title: 文章標題
  *   - href: 連結路徑
  *   - category: 分類標籤
  *   - publishDate: 發表日期
- *   - coverImage: 圖片檔名（例如 "胃食道逆流.png" / "胃食道逆流.webp"）
+ *   - coverImage: 圖片檔名（例如 "胃食道逆流.webp"）
  */
 import { Image } from 'astro:assets';
 
@@ -27,7 +27,7 @@ const formattedDate = new Intl.DateTimeFormat('zh-TW', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
-}).format(publishDate);
+}).format(new Date(publishDate));
 
 // 使用 import.meta.glob 編譯時處理圖片
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
@@ -50,9 +50,9 @@ if (coverImage && !isExternalImage) {
 }
 ---
 
-<a href={href} class="media-post-card" aria-label={`閱讀文章：${title}`}>
-  <!-- 滿版背景圖 -->
-  <div class="card-bg-layer">
+<a href={href} class="pet-adopt-card" aria-label={`閱讀文章：${title}`}>
+  <!-- 頂部圖片容器 -->
+  <div class="card-image-wrap">
     {isExternalImage ? (
       <img
         src={coverImage}
@@ -81,73 +81,72 @@ if (coverImage && !isExternalImage) {
       />
     ) : (
       <div class="card-placeholder">
-        <svg viewBox="0 0 60 60" width="48" height="48" fill="none" aria-hidden="true">
+        <svg viewBox="0 0 60 60" width="44" height="44" fill="none" aria-hidden="true">
           <rect x="4" y="14" width="52" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
           <circle cx="18" cy="28" r="5" stroke="currentColor" stroke-width="2"/>
           <path d="M4 38 L20 26 L32 36 L42 28 L56 38" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
         </svg>
       </div>
     )}
+
+    <!-- 右上角懸浮愛心/醫療徽章 -->
+    <div class="floating-heart-badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+    </div>
   </div>
 
-  <!-- 暗色多層漸層遮罩 -->
-  <div class="card-gradient-overlay" aria-hidden="true"></div>
-
-  <!-- 浮貼內容層（頂部標籤、底部標題與閱讀指示） -->
-  <div class="card-overlay-content">
-    <div class="card-top-row">
-      <span class="category-pill-badge">{category}</span>
-      <span class="date-badge">{formattedDate}</span>
+  <!-- 卡片資訊主體 -->
+  <div class="card-body">
+    <div class="card-meta-row">
+      <span class="category-pill">{category}</span>
+      <span class="date-text">{formattedDate}</span>
     </div>
 
-    <div class="card-bottom-row">
-      <h3 class="card-article-title">{title}</h3>
-      <div class="card-action-hint">
-        <span class="action-text">閱讀文章</span>
-        <div class="action-arrow-circle" aria-hidden="true">
-          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+    <h3 class="card-title">{title}</h3>
+
+    <div class="card-footer-action">
+      <span class="read-text">閱讀筆記</span>
+      <div class="action-btn-circle" aria-hidden="true">
+        <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
     </div>
   </div>
 </a>
 
 <style>
-  .media-post-card {
-    position: relative;
+  .pet-adopt-card {
     display: flex;
     flex-direction: column;
-    height: 280px;
     width: 100%;
-    border-radius: 20px;
+    background: #FFFFFF;
+    border-radius: 24px;
+    border: 1px solid var(--color-border, #EFE8DE);
+    box-shadow: 0 8px 24px -4px rgba(231, 111, 81, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02);
     overflow: hidden;
-    background-color: #1e332a;
-    border: 1px solid var(--color-border, #E2EAE6);
-    box-shadow: 0 8px 24px var(--color-shadow, rgba(47, 102, 86, 0.08));
     text-decoration: none;
-    color: #FFFFFF;
+    color: inherit;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease;
     box-sizing: border-box;
-    transition:
-      transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
-      box-shadow 0.35s ease,
-      border-color 0.35s ease;
   }
 
-  .media-post-card:hover {
+  .pet-adopt-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 18px 36px rgba(47, 102, 86, 0.2);
-    border-color: rgba(47, 102, 86, 0.4);
+    box-shadow: 0 16px 36px -6px rgba(231, 111, 81, 0.16), 0 4px 12px rgba(0, 0, 0, 0.04);
+    border-color: rgba(231, 111, 81, 0.3);
   }
 
-  /* 背景圖層 */
-  .card-bg-layer {
-    position: absolute;
-    inset: 0;
+  /* 頂部圖片 */
+  .card-image-wrap {
+    position: relative;
     width: 100%;
-    height: 100%;
-    z-index: 0;
+    aspect-ratio: 16 / 9;
+    background: #FAF6F0;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border-subtle, #F5EFEB);
   }
 
   .card-img {
@@ -155,11 +154,11 @@ if (coverImage && !isExternalImage) {
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  .media-post-card:hover .card-img {
-    transform: scale(1.06);
+  .pet-adopt-card:hover .card-img {
+    transform: scale(1.05);
   }
 
   .card-placeholder {
@@ -168,138 +167,125 @@ if (coverImage && !isExternalImage) {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--color-primary, #2F6656), #1b4332);
-    color: rgba(255, 255, 255, 0.6);
+    background: linear-gradient(135deg, #FDEEE9, #FEF6EC);
+    color: var(--color-primary, #E76F51);
+    opacity: 0.8;
   }
 
-  /* 漸層覆蓋層 */
-  .card-gradient-overlay {
+  /* 懸浮愛心圓鈕 */
+  .floating-heart-badge {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.4) 0%,
-      rgba(0, 0, 0, 0.1) 40%,
-      rgba(0, 0, 0, 0.85) 100%
-    );
-    z-index: 1;
-    pointer-events: none;
-    transition: background 0.3s ease;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary, #E76F51);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
   }
 
-  .media-post-card:hover .card-gradient-overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.45) 0%,
-      rgba(0, 0, 0, 0.15) 35%,
-      rgba(0, 0, 0, 0.9) 100%
-    );
+  .pet-adopt-card:hover .floating-heart-badge {
+    transform: scale(1.1);
+    background: var(--color-primary, #E76F51);
+    color: #FFFFFF;
   }
 
-  /* 內容層 */
-  .card-overlay-content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
+  /* 卡片主體 */
+  .card-body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 18px 20px;
-    box-sizing: border-box;
+    flex-grow: 1;
+    padding: 20px 22px;
+    gap: 12px;
   }
 
-  .card-top-row {
+  .card-meta-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
   }
 
-  .category-pill-badge {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #FFFFFF;
+  .category-pill {
+    background: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
     font-size: 0.78rem;
     font-weight: 700;
     padding: 4px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 9999px;
     letter-spacing: 0.3px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 
-  .date-badge {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.85);
+  .date-text {
+    font-size: 0.8rem;
+    color: var(--color-text-muted, #64748B);
     font-weight: 500;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   }
 
-  .card-bottom-row {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .card-article-title {
-    font-size: 1.18rem;
+  .card-title {
+    font-size: 1.15rem;
     font-weight: 800;
-    line-height: 1.35;
-    color: #FFFFFF;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    line-height: 1.45;
+    color: var(--color-text-title, #1E293B);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 0;
+    transition: color 0.2s ease;
   }
 
-  .card-action-hint {
+  .pet-adopt-card:hover .card-title {
+    color: var(--color-primary, #E76F51);
+  }
+
+  /* 底部動作列 */
+  .card-footer-action {
+    margin-top: auto;
+    padding-top: 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: rgba(255, 255, 255, 0.9);
+    justify-content: space-between;
+    border-top: 1px dashed var(--color-border, #EFE8DE);
   }
 
-  .action-text {
-    font-size: 0.82rem;
+  .read-text {
+    font-size: 0.86rem;
     font-weight: 700;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    color: var(--color-primary, #E76F51);
   }
 
-  .action-arrow-circle {
+  .action-btn-circle {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #FFFFFF;
-    transition: transform 0.25s ease, background 0.25s ease;
+    background: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
+    transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
   }
 
-  .media-post-card:hover .action-arrow-circle {
+  .pet-adopt-card:hover .action-btn-circle {
     transform: translateX(4px);
-    background: var(--color-primary, #2F6656);
-    border-color: var(--color-primary, #2F6656);
+    background: var(--color-primary, #E76F51);
+    color: #FFFFFF;
   }
 
   @media (max-width: 640px) {
-    .media-post-card {
-      height: 250px;
-      border-radius: 16px;
+    .card-body {
+      padding: 16px 18px;
     }
-    .card-overlay-content {
-      padding: 14px 16px;
-    }
-    .card-article-title {
-      font-size: 1.1rem;
+    .card-title {
+      font-size: 1.05rem;
     }
   }
 </style>

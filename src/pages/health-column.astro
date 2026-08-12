@@ -25,7 +25,6 @@ const categoryPosts = [...unDraftPosts].sort((a, b) => {
   return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
 });
 
-
 // ── 分類清單（依照指定順序排列） ──
 const CATEGORY_ORDER = [
   '內視鏡檢查', '超音波檢查', '肝膽胰疾病', '胃部疾病', '腸道疾病',
@@ -40,19 +39,6 @@ const sortedCategories = [
   ...CATEGORY_ORDER.filter(c => allCategories.includes(c)),
   ...allCategories.filter(c => !CATEGORY_ORDER.includes(c)),
 ];
-
-// ── 擷取文章摘要（去除 Markdown 符號，取前 120 字） ──
-function getSummary(body: string | undefined): string {
-  if (!body) return '點擊閱讀完整文章。';
-  return body
-    .replace(/^---[\s\S]*?---/, '')        // 移除 frontmatter
-    .replace(/#{1,6}\s+/g, '')             // 移除標題符號
-    .replace(/[*_`~>|]/g, '')             // 移除格式符號
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // 保留連結文字
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 120) + '…';
-}
 ---
 
 <Layout
@@ -63,11 +49,37 @@ function getSummary(body: string | undefined): string {
   <!-- ── 頁面 Hero 標題 ── -->
   <div class="column-hero">
     <div class="column-hero-inner">
-      <h1 class="column-hero-title">醫學筆記</h1>
+      <div class="badge badge-primary hero-badge">
+        <span>🐾</span>
+        <span>完整衛教筆記庫</span>
+      </div>
+      <h1 class="column-hero-title">臨床實證 <span class="gradient-text">醫學筆記</span></h1>
+      <p class="column-hero-desc">
+        共收錄 <strong>{posts.length}</strong> 篇專業衛教文章，為您解析胃腸鏡、慢性病防治與健康飲食
+      </p>
     </div>
   </div>
 
-  <!-- ── 分類篩選 Tab Pills ── -->
+  <!-- ── 搜尋欄 ── -->
+  <div class="search-row">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="search"
+        id="articleSearch"
+        class="search-input"
+        placeholder="搜尋文章標題、疾病或關鍵字..."
+        autocomplete="off"
+        aria-label="搜尋文章"
+      />
+    </div>
+    <p class="result-count" id="resultCount" aria-live="polite">顯示 {posts.length} 篇文章</p>
+  </div>
+
+  <!-- ── 分類篩選 Tab Pills (Pet-Adoption 風格) ── -->
   <div class="filter-bar" id="filterBar" role="tablist" aria-label="文章分類篩選">
     {sortedCategories.map((cat, i) => (
       <button
@@ -77,31 +89,12 @@ function getSummary(body: string | undefined): string {
         data-filter={cat}
         id={`tab-${cat}`}
       >
-        {cat}
+        <span>{cat}</span>
         <span class="pill-count">
           {cat === '全部' ? posts.length : posts.filter(p => p.data.category === cat).length}
         </span>
       </button>
     ))}
-  </div>
-
-  <!-- ── 搜尋欄 ── -->
-  <div class="search-row">
-    <div class="search-wrapper">
-      <svg class="search-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true">
-        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <input
-        type="search"
-        id="articleSearch"
-        class="search-input"
-        placeholder="搜尋文章標題或分類..."
-        autocomplete="off"
-        aria-label="搜尋文章"
-      />
-    </div>
-    <p class="result-count" id="resultCount" aria-live="polite">顯示 {posts.length} 篇文章</p>
   </div>
 
   <!-- ── 文章卡片網格 ── -->
@@ -127,13 +120,10 @@ function getSummary(body: string | undefined): string {
 
   <!-- ── 無結果提示 ── -->
   <div class="no-results" id="noResults" hidden aria-live="polite">
-    <svg viewBox="0 0 24 24" width="52" height="52" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-      <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-    <h3>找不到相符的文章</h3>
-    <p>請嘗試其他關鍵字，或點擊「全部」瀏覽所有文章。</p>
-    <button class="reset-btn" id="resetFilter">清除篩選</button>
+    <div class="no-results-icon">🐾</div>
+    <h3>找不到相符的衛教文章</h3>
+    <p>請嘗試其他關鍵字，或點擊「全部」瀏覽所有專欄。</p>
+    <button class="reset-btn" id="resetFilter">清除篩選條件</button>
   </div>
 
   <!-- ── 浮動選單按鈕 (FAB) ── -->
@@ -150,7 +140,7 @@ function getSummary(body: string | undefined): string {
     <div class="drawer-header">
       <div class="drawer-title-group">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-        <span>衛教文章庫目錄</span>
+        <span>衛教筆記庫目錄</span>
         <span class="drawer-badge">{posts.length}</span>
       </div>
       <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="關閉目錄">×</button>
@@ -199,8 +189,29 @@ function getSummary(body: string | undefined): string {
     const noResults = document.getElementById('noResults');
     const resetBtn = document.getElementById('resetFilter');
 
-    let activeFilter = '全部';
-    let searchQuery = '';
+    // 檢查 URL query params (例如 ?search=... 或 ?filter=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialSearch = urlParams.get('search') || urlParams.get('q') || '';
+    const initialFilter = urlParams.get('filter') || '全部';
+
+    let activeFilter = initialFilter;
+    let searchQuery = initialSearch.toLowerCase();
+
+    if (searchInput && initialSearch) {
+      searchInput.value = initialSearch;
+    }
+
+    if (initialFilter !== '全部') {
+      filterBtns.forEach(btn => {
+        if (btn.dataset.filter === initialFilter) {
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+        } else {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        }
+      });
+    }
 
     function reorderItems() {
       const postsGrid = document.getElementById('postsGrid');
@@ -208,7 +219,6 @@ function getSummary(body: string | undefined): string {
       const items = Array.from(gridItems);
       items.sort((a, b) => {
         if (activeFilter === '全部') {
-          // 「全部」分類：依 publishDate 由新到舊排序
           const dateA = new Date(a.dataset.publishDate || 0).getTime();
           const dateB = new Date(b.dataset.publishDate || 0).getTime();
           if (dateB !== dateA) return dateB - dateA;
@@ -217,7 +227,6 @@ function getSummary(body: string | undefined): string {
           if (orderA !== orderB) return orderA - orderB;
           return (a.dataset.title || '').localeCompare(b.dataset.title || '', 'zh-Hant');
         } else {
-          // 特定分類：依 order (由小到大)，次要依 publishDate 由新到舊
           const orderA = parseInt(a.dataset.order || '9999', 10);
           const orderB = parseInt(b.dataset.order || '9999', 10);
           if (orderA !== orderB) return orderA - orderB;
@@ -248,17 +257,16 @@ function getSummary(body: string | undefined): string {
       btn.addEventListener('click', () => {
         activeFilter = btn.dataset.filter || '全部';
         filterBtns.forEach(b => {
-          b.classList.toggle('active', b === btn);
-          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+          const isMe = b === btn;
+          b.classList.toggle('active', isMe);
+          b.setAttribute('aria-selected', isMe ? 'true' : 'false');
         });
         reorderItems();
         updateView();
-        // 篩選後捲回網格頂部
-        document.getElementById('postsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
 
-    searchInput?.addEventListener('input', e => {
+    searchInput?.addEventListener('input', (e) => {
       searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
       updateView();
     });
@@ -267,16 +275,19 @@ function getSummary(body: string | undefined): string {
       activeFilter = '全部';
       searchQuery = '';
       if (searchInput) searchInput.value = '';
-      filterBtns.forEach(b => {
-        const isAll = b.dataset.filter === '全部';
-        b.classList.toggle('active', isAll);
-        b.setAttribute('aria-selected', isAll ? 'true' : 'false');
+      filterBtns.forEach((b, i) => {
+        b.classList.toggle('active', i === 0);
+        b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
       });
       reorderItems();
       updateView();
     });
 
-    // ── 抽屜選單互動 ──
+    // 初始執行
+    reorderItems();
+    updateView();
+
+    // 側邊欄抽屜邏輯
     const fabBtn = document.getElementById('fabCategoryBtn');
     const drawer = document.getElementById('categoryDrawer');
     const overlay = document.getElementById('drawerOverlay');
@@ -284,12 +295,14 @@ function getSummary(body: string | undefined): string {
     const drawerSearch = document.getElementById('drawerSearch') as HTMLInputElement;
 
     function openDrawer() {
-      drawer?.classList.add('open');
+      drawer?.classList.add('active');
       overlay?.classList.add('active');
       document.body.style.overflow = 'hidden';
+      drawerSearch?.focus();
     }
+
     function closeDrawer() {
-      drawer?.classList.remove('open');
+      drawer?.classList.remove('active');
       overlay?.classList.remove('active');
       document.body.style.overflow = '';
     }
@@ -297,6 +310,10 @@ function getSummary(body: string | undefined): string {
     fabBtn?.addEventListener('click', openDrawer);
     closeBtn?.addEventListener('click', closeDrawer);
     overlay?.addEventListener('click', closeDrawer);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
 
     // 展開/收合目錄分類
     const folderBtns = document.querySelectorAll<HTMLButtonElement>('[data-toggle-cat]');
@@ -343,114 +360,39 @@ function getSummary(body: string | undefined): string {
 </script>
 
 <style>
-  /* ── Hero ── */
+  /* ── 頂部 Hero ── */
   .column-hero {
     text-align: center;
-    padding: 48px 20px 36px;
+    padding: 36px 20px 24px;
     margin-bottom: 8px;
   }
 
   .column-hero-inner {
-    max-width: 640px;
+    max-width: 680px;
     margin: 0 auto;
   }
 
-  .hero-eyebrow {
-    display: inline-block;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--color-accent);
-    background-color: var(--color-accent-light);
-    padding: 4px 14px;
-    border-radius: 999px;
+  .hero-badge {
     margin-bottom: 14px;
-    letter-spacing: 0.5px;
   }
 
   .column-hero-title {
-    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-size: clamp(2rem, 4vw, 2.6rem);
     font-weight: 900;
-    color: var(--color-primary);
+    color: var(--color-text-title, #1E293B);
     margin-bottom: 12px;
     line-height: 1.25;
   }
 
   .column-hero-desc {
-    font-size: 1rem;
-    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    color: var(--color-text-muted, #64748B);
     line-height: 1.7;
   }
 
   .column-hero-desc strong {
-    color: var(--color-primary);
-    font-weight: 700;
-  }
-
-  /* ── 分類篩選 Pill Tabs (與首頁一致的 SmoothUI 膠囊樣式) ── */
-  .filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    padding: 0 4px 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .filter-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #FFFFFF;
-    color: var(--color-text-body);
-    font-family: inherit;
-    font-size: 0.86rem;
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 9999px;
-    border: 1px solid rgba(47, 102, 86, 0.14);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-    line-height: 1.2;
-    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .filter-pill:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: var(--color-primary-light);
-    box-shadow: 0 4px 12px rgba(47, 102, 86, 0.15);
-  }
-
-  .filter-pill.active {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #FFFFFF;
-    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.28);
-    transform: translateY(-1px);
-  }
-
-  .pill-count {
-    font-size: 0.74rem;
-    font-weight: 700;
-    padding: 1px 7px;
-    border-radius: 999px;
-    line-height: 1.5;
-    background-color: rgba(47, 102, 86, 0.07);
-    color: var(--color-primary);
-    transition: all 0.2s ease;
-  }
-
-  .filter-pill:hover .pill-count {
-    background-color: rgba(47, 102, 86, 0.14);
-  }
-
-  .filter-pill.active .pill-count {
-    background-color: rgba(255, 255, 255, 0.25);
-    color: #FFFFFF;
+    color: var(--color-primary, #E76F51);
+    font-weight: 800;
   }
 
   /* ── 搜尋欄 ── */
@@ -460,73 +402,134 @@ function getSummary(body: string | undefined): string {
     justify-content: space-between;
     gap: 16px;
     max-width: 1200px;
-    margin: 0 auto 28px;
+    margin: 0 auto 24px;
     flex-wrap: wrap;
   }
 
   .search-wrapper {
     position: relative;
     flex: 1;
-    min-width: 220px;
-    max-width: 420px;
+    min-width: 260px;
+    max-width: 480px;
   }
 
   .search-icon {
     position: absolute;
-    left: 13px;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--color-text-muted);
+    color: var(--color-text-muted, #64748B);
     pointer-events: none;
   }
 
   .search-input {
     width: 100%;
-    padding: 10px 16px 10px 40px;
-    border: 1.5px solid var(--color-border);
-    border-radius: 10px;
-    background-color: var(--color-bg-card);
+    padding: 12px 20px 12px 46px;
+    border: 1.5px solid var(--color-border, #EFE8DE);
+    border-radius: 9999px;
+    background-color: #FFFFFF;
     font-family: inherit;
-    font-size: 0.9rem;
-    color: var(--color-text-body);
+    font-size: 0.95rem;
+    color: var(--color-text-body, #334155);
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgba(231, 111, 81, 0.04);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
   .search-input:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(47, 102, 86, 0.1);
+    border-color: var(--color-primary, #E76F51);
+    box-shadow: 0 6px 20px rgba(231, 111, 81, 0.16);
   }
 
   .search-input::placeholder {
-    color: var(--color-text-muted);
+    color: #94A3B8;
   }
 
   .result-count {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
+    font-size: 0.88rem;
+    color: var(--color-text-muted, #64748B);
     white-space: nowrap;
-    font-weight: 500;
+    font-weight: 600;
+  }
+
+  /* ── 分類篩選 Filter Pills ── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 0 4px 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #FFFFFF;
+    color: var(--color-text-title, #1E293B);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--color-border, #EFE8DE);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    line-height: 1.2;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .filter-pill:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary, #E76F51);
+    color: var(--color-primary, #E76F51);
+    background: var(--color-primary-light, #FDEEE9);
+    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.15);
+  }
+
+  .filter-pill.active {
+    background: linear-gradient(135deg, var(--color-primary, #E76F51), var(--color-secondary, #F4845F));
+    border-color: transparent;
+    color: #FFFFFF;
+    box-shadow: 0 4px 16px rgba(231, 111, 81, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .pill-count {
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    line-height: 1.3;
+    background-color: rgba(231, 111, 81, 0.08);
+    color: var(--color-primary, #E76F51);
+    transition: all 0.2s ease;
+  }
+
+  .filter-pill.active .pill-count {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
   }
 
   /* ── 卡片網格 ── */
   .posts-grid {
     display: grid;
-    /* 手機：1 欄 */
     grid-template-columns: 1fr;
     gap: 24px;
     max-width: 1200px;
     margin: 0 auto 48px;
   }
 
-  /* 平板：2 欄 */
   @media (min-width: 640px) {
     .posts-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* 桌面：3 欄 */
   @media (min-width: 1024px) {
     .posts-grid {
       grid-template-columns: repeat(3, 1fr);
@@ -551,50 +554,52 @@ function getSummary(body: string | undefined): string {
     justify-content: center;
     padding: 72px 24px;
     text-align: center;
-    color: var(--color-text-muted);
+    color: var(--color-text-muted, #64748B);
     gap: 12px;
     max-width: 400px;
     margin: 0 auto 48px;
+    background: #FFFFFF;
+    border-radius: 24px;
+    border: 1px solid var(--color-border, #EFE8DE);
   }
 
   .no-results[hidden] {
     display: none;
   }
 
-  .no-results svg {
-    color: #C5786E;
-    opacity: 0.8;
-    margin-bottom: 4px;
+  .no-results-icon {
+    font-size: 3rem;
   }
 
   .no-results h3 {
-    font-size: 1.15rem;
-    color: var(--color-primary);
-    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-text-title, #1E293B);
+    font-weight: 800;
   }
 
   .no-results p {
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     line-height: 1.6;
   }
 
   .reset-btn {
     margin-top: 8px;
-    padding: 9px 24px;
-    border-radius: 999px;
-    border: 1.5px solid var(--color-primary);
-    background: transparent;
-    color: var(--color-primary);
+    padding: 10px 26px;
+    border-radius: 9999px;
+    border: none;
+    background: linear-gradient(135deg, #E76F51, #F4845F);
+    color: #ffffff;
     font-family: inherit;
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .reset-btn:hover {
-    background-color: var(--color-primary);
-    color: #ffffff;
+    transform: scale(1.03);
+    box-shadow: 0 6px 18px rgba(231, 111, 81, 0.4);
   }
 
   /* ── 浮動選單按鈕 (FAB) ── */
@@ -606,30 +611,30 @@ function getSummary(body: string | undefined): string {
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-primary, #E76F51), var(--color-secondary, #F4845F));
     color: #ffffff;
     border: none;
-    padding: 12px 20px;
-    border-radius: 999px;
+    padding: 13px 22px;
+    border-radius: 9999px;
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 24px rgba(47, 102, 86, 0.38);
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.25s ease;
+    box-shadow: 0 8px 24px rgba(231, 111, 81, 0.4);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
   }
+
   .fab-category-btn:hover {
     transform: translateY(-4px) scale(1.04);
-    background-color: var(--color-primary-dark, #234d41);
-    box-shadow: 0 10px 30px rgba(47, 102, 86, 0.48);
+    box-shadow: 0 12px 30px rgba(231, 111, 81, 0.5);
   }
 
   /* ── 側滑抽屜 ── */
   .drawer-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(3px);
+    background-color: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(4px);
     z-index: 1000;
     opacity: 0;
     pointer-events: none;
@@ -645,17 +650,18 @@ function getSummary(body: string | undefined): string {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 320px;
+    width: 330px;
     max-width: 85vw;
-    background-color: #f3f0eb;
+    background-color: #FAF6F0;
+    border-right: 1px solid var(--color-border, #EFE8DE);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.12);
     z-index: 1001;
     display: flex;
     flex-direction: column;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.18);
     transform: translateX(-100%);
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
   }
-  .category-drawer.open {
+  .category-drawer.active {
     transform: translateX(0);
   }
 
@@ -664,32 +670,46 @@ function getSummary(body: string | undefined): string {
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
-    background-color: #eeeae2;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border, #EFE8DE);
+    background-color: #FFFFFF;
   }
+
   .drawer-title-group {
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 1rem;
     font-weight: 800;
-    font-size: 1.02rem;
-    color: var(--color-primary);
+    color: var(--color-text-title, #1E293B);
   }
+
   .drawer-badge {
-    background-color: var(--color-primary);
-    color: white;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    background-color: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
     padding: 2px 8px;
-    border-radius: 99px;
+    border-radius: 9999px;
   }
+
   .drawer-close-btn {
-    background: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     border: none;
-    font-size: 1.6rem;
-    line-height: 1;
-    color: var(--color-text-muted);
+    background-color: var(--color-bg-page, #FAF6F0);
+    color: var(--color-text-muted, #64748B);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    padding: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .drawer-close-btn:hover {
+    background-color: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
   }
 
   .drawer-body {
@@ -700,139 +720,108 @@ function getSummary(body: string | undefined): string {
 
   .drawer-search {
     position: relative;
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
+
   .drawer-search svg {
     position: absolute;
     left: 12px;
-    color: var(--color-text-muted);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted, #64748B);
   }
+
   .drawer-search input {
     width: 100%;
     padding: 9px 12px 9px 34px;
-    border-radius: 8px;
-    border: 1px solid var(--color-border);
-    background-color: #ffffff;
-    font-size: 0.88rem;
+    border: 1px solid var(--color-border, #EFE8DE);
+    border-radius: 12px;
+    background-color: #FFFFFF;
     font-family: inherit;
+    font-size: 0.88rem;
     outline: none;
   }
+
   .drawer-search input:focus {
-    border-color: var(--color-primary);
+    border-color: var(--color-primary, #E76F51);
   }
 
   .drawer-tree {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
+
   .drawer-folder-btn {
     width: 100%;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 12px;
-    border: none;
+    padding: 9px 12px;
     background: transparent;
+    border: none;
+    border-radius: 10px;
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 700;
-    color: var(--color-primary);
-    border-radius: 8px;
+    color: var(--color-text-title, #1E293B);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.15s ease;
+    text-align: left;
   }
+
   .drawer-folder-btn:hover {
-    background-color: rgba(47, 102, 86, 0.08);
+    background-color: rgba(231, 111, 81, 0.08);
+    color: var(--color-primary, #E76F51);
   }
+
   .drawer-folder-btn .chevron {
     transition: transform 0.2s ease;
+    color: var(--color-text-muted, #64748B);
   }
+
   .drawer-folder-btn.open .chevron {
     transform: rotate(90deg);
   }
+
+  .cat-name {
+    flex: 1;
+  }
+
   .cat-count {
-    margin-left: auto;
-    font-size: 0.76rem;
-    background-color: rgba(47, 102, 86, 0.12);
-    color: var(--color-primary);
-    padding: 1px 7px;
-    border-radius: 99px;
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #64748B);
+    background-color: rgba(0, 0, 0, 0.04);
+    padding: 1px 6px;
+    border-radius: 9999px;
   }
 
   .drawer-file-list {
     display: none;
     flex-direction: column;
+    gap: 2px;
     padding-left: 28px;
-    margin: 4px 0 8px;
+    margin-top: 2px;
   }
+
   .drawer-file-list.open {
     display: flex;
   }
+
   .drawer-file-item {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     padding: 7px 10px;
-    font-size: 0.88rem;
-    color: var(--color-text-body);
-    border-radius: 6px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--color-text-body, #334155);
     text-decoration: none;
-    line-height: 1.4;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition: all 0.15s ease;
   }
+
   .drawer-file-item:hover {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-  }
-  .drawer-file-item[hidden] {
-    display: none;
-  }
-  .drawer-folder[hidden] {
-    display: none;
-  }
-
-  /* ── 響應式微調 ── */
-  @media (max-width: 640px) {
-    .fab-category-btn {
-      bottom: 20px;
-      right: 18px;
-      padding: 10px 16px;
-      font-size: 0.88rem;
-    }
-    .filter-bar {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      justify-content: flex-start;
-      padding: 6px 16px 16px;
-      margin-left: -16px;
-      margin-right: -16px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .filter-bar::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .column-hero {
-      padding: 32px 16px 24px;
-    }
-    .filter-pill {
-      font-size: 0.95rem;
-      font-weight: 700;
-      padding: 8px 16px;
-      flex-shrink: 0;
-    }
-    .search-row {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .search-wrapper {
-      max-width: 100%;
-    }
+    background-color: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
   }
 </style>

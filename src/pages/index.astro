@@ -5,23 +5,14 @@ import { getCollection } from 'astro:content';
 
 // 取得所有未草稿的文章，並依日期排序
 const allPosts = await getCollection('posts');
-const latestPosts = allPosts
-  .filter(post => !post.data.draft)
+const unDraftPosts = allPosts.filter(post => !post.data.draft);
+const latestPosts = [...unDraftPosts]
   .sort((a, b) => {
     const dateDiff = new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
     if (dateDiff !== 0) return dateDiff;
     return a.data.title.localeCompare(b.data.title, 'zh-Hant');
   })
   .slice(0, 3); // 取最新 3 篇精選文章
-
-// 格式化日期
-const formatDate = (date: Date) => {
-  return new Date(date).toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
 ---
 
 <Layout
@@ -45,58 +36,175 @@ const formatDate = (date: Date) => {
     "image": "https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg",
     "url": "https://drhuanggi.vercel.app"
   })} />
-  <!-- 頁首海龜視覺橫幅 Banner -->
-  <section class="turtle-hero-banner">
-    <img src="/images/turtle-banner.jpg" alt="海龜悠遊海洋" class="banner-bg-img" />
+
+  <!-- ── 1. Hero 形象區 (Pet-Adoption Warm Coral Style) ── -->
+  <section class="pet-hero-section">
+    <div class="pet-hero-grid">
+      <!-- 左欄：主標題、搜尋膠囊、分類 Chips 與數據 -->
+      <div class="hero-left-content">
+        <div class="badge badge-primary">
+          <span class="badge-icon-pulse">🩺</span>
+          <span>專業醫療 · 實證衛教筆記</span>
+        </div>
+
+        <h1 class="hero-main-title">
+          守護腸胃與代謝健康<br />
+          <span class="gradient-text">黃冠智 醫師</span>
+        </h1>
+
+        <p class="hero-lead-text">
+          豐田診所院長 / 肝膽腸胃內科專科醫師。深耕胃食道逆流、無痛胃腸鏡、肝病防治、減重代謝與三高管理，以臨床經驗為您提供最安心的實證衛教。❤️
+        </p>
+
+        <!-- 搜尋膠囊列 -->
+        <form class="hero-search-box" action="/health-column" method="GET">
+          <div class="search-input-wrap">
+            <svg class="search-lens-svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              name="search"
+              placeholder="搜尋衛教文章、疾病、檢查項目..."
+              class="hero-search-input"
+              autocomplete="off"
+            />
+          </div>
+          <button type="submit" class="hero-search-btn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>搜尋筆記</span>
+          </button>
+        </form>
+
+        <!-- 專科快速標籤 Filter Chips -->
+        <div class="hero-chips-wrap">
+          <a href="/health-column?filter=內視鏡檢查" class="filter-chip active">🔬 消化胃腸鏡</a>
+          <a href="/health-column?filter=胃部疾病" class="filter-chip">🩺 胃食道逆流</a>
+          <a href="/health-column?filter=肝膽胰疾病" class="filter-chip">🌿 肝病追蹤</a>
+          <a href="/health-column?filter=減重" class="filter-chip">⚖️ 減重代謝</a>
+          <a href="/health-column?filter=超音波檢查" class="filter-chip">🌊 腹部超音波</a>
+        </div>
+
+        <!-- 數據統計膠囊 -->
+        <div class="hero-stats-row">
+          <div class="stat-item">
+            <div class="stat-number gradient-text">{unDraftPosts.length}+</div>
+            <div class="stat-label">篇實證衛教筆記</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-number gradient-text">15+</div>
+            <div class="stat-label">大專科領域分類</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-number gradient-text">100%</div>
+            <div class="stat-label">親切專業診療</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右欄：Pet-Adoption 雙欄浮動 Bento 卡片群 -->
+      <div class="hero-right-bento">
+        <!-- 欄位 1 -->
+        <div class="bento-column">
+          <!-- 醫師主卡片 -->
+          <div class="bento-doctor-card">
+            <div class="bento-img-wrap">
+              <img
+                src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg"
+                alt="黃冠智 醫師"
+                class="bento-doc-img"
+              />
+              <div class="bento-heart-btn" title="用心守護健康">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="bento-card-info">
+              <h3 class="bento-card-title">黃冠智 醫師</h3>
+              <p class="bento-card-subtitle">豐田診所院長 · 胃腸肝膽專科</p>
+            </div>
+          </div>
+
+          <!-- 浮動資訊膠囊 1 -->
+          <div class="bento-motion-pill">
+            <div class="pill-icon-circle bg-peach">🏠</div>
+            <div>
+              <div class="pill-title">豐田診所 院長</div>
+              <div class="pill-subtitle">台中市南區建成路1848號</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 欄位 2（微向下位移營造層次感） -->
+        <div class="bento-column offset-col">
+          <!-- 浮動資訊膠囊 2 -->
+          <div class="bento-motion-pill">
+            <div class="pill-icon-circle bg-coral">❤️</div>
+            <div>
+              <div class="pill-title">臨床實證筆記</div>
+              <div class="pill-subtitle">最新醫學與用藥指引</div>
+            </div>
+          </div>
+
+          <!-- 副卡片（海龜與海洋視覺） -->
+          <div class="bento-doctor-card">
+            <div class="bento-img-wrap">
+              <img
+                src="/images/turtle-banner.jpg"
+                alt="海龜悠遊海洋"
+                class="bento-doc-img"
+              />
+              <div class="bento-heart-btn" title="自在悠遊健康生活">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="bento-card-info">
+              <h3 class="bento-card-title">專業儀器設備</h3>
+              <p class="bento-card-subtitle">ELUXEO™ 6000 高解析內視鏡</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Hero Section (關於我) -->
-  <section class="about-hero">
-    <!-- SmoothUI Interactive 3D Perspective Grid -->
-    <div class="interactive-grid-container" aria-hidden="true">
-      <div class="main-3d-grid" id="about-hero-grid"></div>
+  <!-- ── 2. 醫師專長與特診領域 ── -->
+  <section class="specialty-section">
+    <div class="section-badge-center">
+      <span class="badge badge-primary">🩺 診療特色</span>
     </div>
+    <h2 class="section-title-center">專長領域與 <span class="gradient-text">特色診療</span></h2>
+    <p class="section-subtitle-center">全方位肝膽腸胃及內科診療服務，細心傾聽您的身體訊號</p>
 
-    <div class="hero-image-wrapper">
-      <img src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg" alt="黃冠智 醫師" class="hero-image" />
-    </div>
-
-    <div class="hero-text-content">
-      <div class="hero-header-info">
-        <h1 class="hero-name">關於 黃冠智 醫師</h1>
-        <p class="hero-title">豐田診所院長 / 肝膽腸胃內科主治醫師</p>
-      </div>
-      
-      <div class="hero-quote-card">
-        <span class="quote-mark">“</span>
-        <blockquote class="hero-quote-text">
-          我很喜歡肝膽腸胃科，除了病史、理學及抽血檢查之外，還有超音波和胃腸鏡，可以動手幫病患找出及解決問題。
-        </blockquote>
-      </div>
-
-      <div class="hero-meta">
-        <div class="meta-header">
-          <strong>專長領域與特色診療</strong>
-        </div>
-        <div class="specialty-pill-grid">
-          <span class="specialty-pill">消化道內視鏡</span>
-          <span class="specialty-pill">腹部超音波</span>
-          <span class="specialty-pill">胃食道逆流</span>
-          <span class="specialty-pill">肝病慢性追蹤</span>
-          <span class="specialty-pill">減重代謝門診</span>
-          <span class="specialty-pill">三高慢性病</span>
-          <span class="specialty-pill">內痔微創結紮</span>
-          <span class="specialty-pill">勞工健康檢查</span>
-        </div>
-      </div>
+    <div class="specialty-pills-container">
+      <span class="specialty-tag">🔬 消化道內視鏡檢查</span>
+      <span class="specialty-tag">🌊 腹部超音波精準檢查</span>
+      <span class="specialty-tag">🔥 胃食道逆流整合治療</span>
+      <span class="specialty-tag">🌿 B/C型肝炎慢性追蹤</span>
+      <span class="specialty-tag">⚖️ 減重代謝整合門診</span>
+      <span class="specialty-tag">💊 三高慢性病精準管理</span>
+      <span class="specialty-tag">🩹 內痔微創結紮術</span>
+      <span class="specialty-tag">📋 勞工健康檢查專責</span>
     </div>
   </section>
 
-  <!-- Profile Details (學經歷) -->
+  <!-- ── 3. 專業學歷與臨床經歷 (Bento Cards) ── -->
   <section class="profile-details">
     <div class="details-card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+      <div class="card-icon-circle">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
       </div>
       <h2>專業學歷</h2>
       <ul class="details-list">
@@ -109,8 +217,11 @@ const formatDate = (date: Date) => {
     </div>
 
     <div class="details-card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      <div class="card-icon-circle">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
       </div>
       <h2>臨床經歷</h2>
       <ul class="details-list">
@@ -122,11 +233,14 @@ const formatDate = (date: Date) => {
     </div>
   </section>
 
-  <!-- Schedule Section (門診時間表) -->
+  <!-- ── 4. 個人門診時間表 ── -->
   <section class="schedule-section">
     <div class="section-header">
-      <h2>個人門診時間表</h2>
-      <p class="section-desc">以下為黃冠智醫師的常態門診時間，如遇休診或調整，請以診所當日公告為準。</p>
+      <div>
+        <div class="badge badge-primary mb-2">📅 門診資訊</div>
+        <h2>個人門診時間表</h2>
+        <p class="section-desc">以下為黃冠智醫師常態門診時間，如遇休診或代診請以診所最新公告為準。</p>
+      </div>
     </div>
 
     <div class="table-container">
@@ -146,7 +260,7 @@ const formatDate = (date: Date) => {
         <tbody>
           <tr>
             <td class="time-header">
-              <strong>早上</strong>
+              <strong>早診</strong>
               <span>08:30 - 12:00</span>
             </td>
             <td class="exam">檢查診</td>
@@ -159,7 +273,7 @@ const formatDate = (date: Date) => {
           </tr>
           <tr>
             <td class="time-header">
-              <strong>下午</strong>
+              <strong>午診</strong>
               <span>14:00 - 17:30</span>
             </td>
             <td class="on-duty">豐田診所</td>
@@ -172,7 +286,7 @@ const formatDate = (date: Date) => {
           </tr>
           <tr>
             <td class="time-header">
-              <strong>晚上</strong>
+              <strong>晚診</strong>
               <span>18:00 - 20:30</span>
             </td>
             <td class="closed">休診</td>
@@ -188,18 +302,22 @@ const formatDate = (date: Date) => {
     </div>
     
     <div class="schedule-tips">
-      <p>💡 星期四下午於豐田仁愛診所看診，其餘時段均在豐田診所。「檢查診」為內視鏡檢查時段。</p>
+      <p>💡 備註：星期四下午於「豐田仁愛診所」看診，其餘時段均在「豐田診所」。「檢查診」為胃鏡與大腸鏡內視鏡預約檢查時段。</p>
     </div>
   </section>
 
-  <!-- Latest Articles Section (Direct Link Cards) -->
+  <!-- ── 5. 最新精選醫學筆記 ── -->
   <section class="latest-articles">
     <div class="section-header">
       <div>
+        <div class="badge badge-primary mb-2">📚 實證專欄</div>
         <h2>最新醫學筆記</h2>
-        <p class="section-desc">實證醫學衛教文章，點擊直接閱讀完整內容</p>
+        <p class="section-desc">由黃冠智醫師親筆撰寫之實證衛教文章，點擊直接閱讀完整內容</p>
       </div>
-      <a href="/health-column" class="view-all-link">查看全部文章 ({allPosts.filter(p => !p.data.draft).length} 篇) →</a>
+      <a href="/health-column" class="view-all-btn">
+        <span>查看全部專欄 ({unDraftPosts.length} 篇)</span>
+        <span>→</span>
+      </a>
     </div>
 
     <div class="articles-grid">
@@ -215,18 +333,18 @@ const formatDate = (date: Date) => {
         ))
       ) : (
         <div class="empty-articles">
-          <p>目前尚無文章，請設定並同步您的 Obsidian 筆記！</p>
+          <p>目前尚無文章，請設定並同步您的筆記！</p>
         </div>
       )}
     </div>
   </section>
 
-  <!-- 豐田診所 · 門診資訊與就醫指引專區 -->
+  <!-- ── 6. 豐田診所 · 就醫指引與 LINE 掛號 ── -->
   <section class="clinic-info-section" aria-labelledby="clinic-section-title">
     <div class="clinic-section-header">
-      <span class="clinic-section-badge">就醫指引</span>
+      <div class="badge badge-primary mb-2">🏥 診所聯絡</div>
       <h2 id="clinic-section-title" class="clinic-section-title">豐田診所 · 門診資訊</h2>
-      <p class="clinic-section-desc">歡迎來電或透過 LINE 預約掛號，我們將竭誠為您服務</p>
+      <p class="clinic-section-desc">歡迎來電或透過 LINE 官方帳號預約掛號，我們將竭誠為您服務</p>
     </div>
 
     <div class="clinic-cards-row">
@@ -239,7 +357,7 @@ const formatDate = (date: Date) => {
             <path d="M16 14v6M13 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
-        <h3 class="clinic-card-name">🏥 豐田診所 <span class="clinic-name-en">FT clinic</span></h3>
+        <h3 class="clinic-card-name">豐田診所 <span class="clinic-name-en">FT Clinic</span></h3>
 
         <ul class="clinic-detail-list">
           <li class="clinic-detail-item">
@@ -286,7 +404,7 @@ const formatDate = (date: Date) => {
             </span>
             <div>
               <span class="clinic-detail-label">醫師門診時間</span>
-              <span class="clinic-detail-value">週一至週六（請見上方時間表）</span>
+              <span class="clinic-detail-value">週一至週六（請參考上方時間表）</span>
             </div>
           </li>
         </ul>
@@ -304,7 +422,7 @@ const formatDate = (date: Date) => {
           </div>
           <h3 class="line-card-title">立即預約掛號</h3>
           <p class="line-card-desc">
-            透過 LINE 官方帳號預約，隨時隨地輕鬆安排就診，不需電話等候。
+            透過 LINE 官方帳號預約，隨時隨地輕鬆安排就診，不需現場久候。
           </p>
           <a
             href="https://lin.ee/u3yRD2d"
@@ -317,164 +435,262 @@ const formatDate = (date: Date) => {
             <svg viewBox="0 0 24 24" width="20" height="20" fill="white" aria-hidden="true">
               <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
             </svg>
-            🟢 透過 LINE 預約掛號
+            <span>🟢 透過 LINE 預約掛號</span>
           </a>
           <p class="line-notice">
-            ※ 點擊後將開啟豐田診所 LINE 官方帳號，加入好友後即可預約
+            ※ 點擊後將開啟豐田診所 LINE 官方帳號，加入好友後即可開始預約
           </p>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- SmoothUI 3D Interactive Perspective Grid Initialization -->
-  <script is:inline>
-    (function initHero3DGrid() {
-      const grid = document.getElementById('about-hero-grid');
-      if (!grid || grid.children.length > 0) return;
-      const fragment = document.createDocumentFragment();
-      const count = 28 * 28; // 784 tiles for silky 60fps interaction
-      for (let i = 0; i < count; i++) {
-        const tile = document.createElement('div');
-        tile.className = 'grid-tile';
-        fragment.appendChild(tile);
-      }
-      grid.appendChild(fragment);
-    })();
-  </script>
 </Layout>
 
 <style>
-  /* 頁首海龜視覺橫幅 Banner (純粹清澈全景版) */
-  .turtle-hero-banner {
-    position: relative;
-    width: 100%;
-    height: 320px;
-    border-radius: 24px;
-    overflow: hidden;
-    margin-bottom: 36px;
-    box-shadow: 0 10px 32px rgba(27, 67, 50, 0.1);
-    border: 1px solid var(--color-border);
-  }
-  @media (max-width: 768px) {
-    .turtle-hero-banner {
-      height: 240px;
-      border-radius: 18px;
-      margin-bottom: 24px;
-    }
-  }
-  .banner-bg-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 55%;
-    transition: transform 0.6s ease;
-  }
-  .turtle-hero-banner:hover .banner-bg-img {
-    transform: scale(1.03);
+  /* ── Universal Badges & Buttons ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
   }
 
-  /* Hero Section (關於我) + SmoothUI 3D Interactive Perspective Grid */
-  .about-hero {
+  .badge-primary {
+    background: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
+  }
+
+  .badge-icon-pulse {
+    font-size: 1rem;
+    animation: gentlePulse 2s infinite ease-in-out;
+  }
+
+  @keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.18); }
+  }
+
+  /* ── 1. Hero 形象區 (Pet-Adoption Warm Coral Style) ── */
+  .pet-hero-section {
     position: relative;
-    overflow: hidden;
+    padding: 24px 0 48px;
+    margin-bottom: 36px;
+  }
+
+  .pet-hero-grid {
     display: grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 1.15fr 0.95fr;
     gap: 48px;
     align-items: center;
-    background-color: var(--color-bg-card);
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 10px 30px var(--color-shadow);
-    margin-bottom: 40px;
-    border: 1px solid var(--color-border);
   }
 
-  .interactive-grid-container {
-    --hero-grid-hover-color-1: rgba(47, 102, 86, 0.3);
-    --hero-grid-hover-color-2: rgba(61, 128, 109, 0.3);
-    --hero-grid-hover-color-3: rgba(188, 138, 74, 0.3);
-    --hero-grid-hover-color-4: rgba(232, 242, 238, 0.7);
-    position: absolute;
-    inset: 0;
+  .hero-left-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-main-title {
+    font-size: 2.85rem;
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--color-text-title, #1E293B);
+    margin: 18px 0 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero-lead-text {
+    font-size: 1.08rem;
+    color: var(--color-text-muted, #64748B);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    max-width: 580px;
+  }
+
+  /* 搜尋膠囊 */
+  .hero-search-box {
+    display: flex;
+    align-items: center;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
-    perspective: 2000px;
-    perspective-origin: center center;
-    pointer-events: auto;
-    z-index: 0;
+    max-width: 540px;
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-border, #EFE8DE);
+    border-radius: 9999px;
+    padding: 6px 8px 6px 18px;
+    box-shadow: 0 8px 24px -4px rgba(231, 111, 81, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02);
+    margin-bottom: 22px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
-  .main-3d-grid {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+  .hero-search-box:focus-within {
+    border-color: var(--color-primary, #E76F51);
+    box-shadow: 0 10px 28px -4px rgba(231, 111, 81, 0.16);
+  }
+
+  .search-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .search-lens-svg {
+    color: var(--color-text-muted, #64748B);
+    flex-shrink: 0;
+  }
+
+  .hero-search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--color-text-body, #334155);
+    background: transparent;
+  }
+
+  .hero-search-input::placeholder {
+    color: #94A3B8;
+  }
+
+  .hero-search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #E76F51, #F4845F);
+    color: #FFFFFF;
+    border: none;
+    outline: none;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .hero-search-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 18px rgba(231, 111, 81, 0.4);
+  }
+
+  /* 專科標籤 Filter Chips */
+  .hero-chips-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFFFFF;
+    color: var(--color-text-muted, #64748B);
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border, #EFE8DE);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+  }
+
+  .filter-chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary, #E76F51);
+    color: var(--color-primary, #E76F51);
+    background: var(--color-primary-light, #FDEEE9);
+  }
+
+  .filter-chip.active {
+    background: linear-gradient(135deg, #E76F51, #F4845F);
+    color: #FFFFFF;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(231, 111, 81, 0.25);
+  }
+
+  /* 數據欄 */
+  .hero-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--color-border, #EFE8DE);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-number {
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--color-text-muted, #64748B);
+    font-weight: 600;
+    margin-top: 3px;
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--color-border, #EFE8DE);
+  }
+
+  /* ── 右欄 Bento 雙欄群 ── */
+  .hero-right-bento {
     display: grid;
-    grid-template-rows: repeat(28, 1fr);
-    grid-template-columns: repeat(28, 1fr);
-    width: 110rem;
-    aspect-ratio: 1;
-    transform: translate(-50%, -50%) rotateX(50deg) rotateY(-5deg) rotateZ(20deg) scale(1.25);
-    pointer-events: auto;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
-  .main-3d-grid::after {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-    content: "";
-    background: radial-gradient(circle, transparent 25%, #FFFFFF 78%);
+  .bento-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
-  .grid-tile {
-    border: 0.5px solid rgba(47, 102, 86, 0.08);
-    transition: background-color 1500ms cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: crosshair;
+  .bento-column.offset-col {
+    padding-top: 28px;
   }
 
-  .grid-tile:hover {
-    transition-duration: 0ms !important;
-  }
-
-  .grid-tile:nth-child(4n):hover { background-color: var(--hero-grid-hover-color-1); }
-  .grid-tile:nth-child(4n + 1):hover { background-color: var(--hero-grid-hover-color-2); }
-  .grid-tile:nth-child(4n + 2):hover { background-color: var(--hero-grid-hover-color-3); }
-  .grid-tile:nth-child(4n + 3):hover { background-color: var(--hero-grid-hover-color-4); }
-  .grid-tile:nth-child(7n):hover { background-color: var(--hero-grid-hover-color-2); }
-  .grid-tile:nth-child(7n + 3):hover { background-color: var(--hero-grid-hover-color-3); }
-  .grid-tile:nth-child(7n + 5):hover { background-color: var(--hero-grid-hover-color-4); }
-  .grid-tile:nth-child(7n + 6):hover { background-color: var(--hero-grid-hover-color-1); }
-  .grid-tile:nth-child(11n + 1):hover { background-color: var(--hero-grid-hover-color-1); }
-  .grid-tile:nth-child(11n + 4):hover { background-color: var(--hero-grid-hover-color-2); }
-  .grid-tile:nth-child(11n + 7):hover { background-color: var(--hero-grid-hover-color-3); }
-  .grid-tile:nth-child(11n + 10):hover { background-color: var(--hero-grid-hover-color-4); }
-
-  @media (prefers-reduced-motion: reduce) {
-    .main-3d-grid {
-      transform: translate(-50%, -50%) rotateZ(20deg);
-    }
-    .grid-tile {
-      transition: none;
-    }
-  }
-
-  .hero-image-wrapper {
-    position: relative;
-    z-index: 2;
-    border-radius: 20px;
+  .bento-doctor-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    border: 1px solid var(--color-border, #EFE8DE);
+    box-shadow: 0 10px 30px -4px rgba(231, 111, 81, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
     overflow: hidden;
-    aspect-ratio: 1 / 1.15;
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-bg-page));
-    box-shadow: 0 8px 24px rgba(47, 102, 86, 0.12);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
   }
 
-  .hero-image-wrapper:hover .hero-image {
-    transform: scale(1.03);
+  .bento-doctor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px -6px rgba(231, 111, 81, 0.16);
   }
 
-  .hero-image {
+  .bento-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--color-primary-light, #FDEEE9);
+  }
+
+  .bento-doc-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -482,115 +698,155 @@ const formatDate = (date: Date) => {
     transition: transform 0.5s ease;
   }
 
-  .hero-text-content {
-    position: relative;
-    z-index: 2;
+  .bento-doctor-card:hover .bento-doc-img {
+    transform: scale(1.05);
+  }
+
+  .bento-heart-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary, #E76F51);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   }
 
-  .hero-header-info {
-    margin-bottom: 16px;
+  .bento-card-info {
+    padding: 16px 18px;
   }
 
-  .hero-name {
-    font-size: 2.3rem;
-    font-weight: 900;
-    color: var(--color-primary);
-    margin-bottom: 4px;
+  .bento-card-title {
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1E293B);
+    margin-bottom: 2px;
+  }
+
+  .bento-card-subtitle {
+    font-size: 0.8rem;
+    color: var(--color-text-muted, #64748B);
+    font-weight: 500;
+  }
+
+  /* 浮動膠囊 */
+  .bento-motion-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #FFFFFF;
+    border: 1px solid var(--color-border, #EFE8DE);
+    border-radius: 20px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 20px -4px rgba(231, 111, 81, 0.06);
+    transition: transform 0.3s ease;
+  }
+
+  .bento-motion-pill:hover {
+    transform: translateY(-3px);
+  }
+
+  .pill-icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .bg-peach {
+    background: #FEF6EC;
+  }
+
+  .bg-coral {
+    background: #FDEEE9;
+  }
+
+  .pill-title {
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1E293B);
     line-height: 1.2;
   }
 
-  .hero-title {
-    font-size: 1.1rem;
-    color: var(--color-accent);
-    font-weight: 600;
-    margin-bottom: 0;
+  .pill-subtitle {
+    font-size: 0.78rem;
+    color: var(--color-text-muted, #64748B);
+    margin-top: 2px;
   }
 
-  .hero-quote-card {
-    position: relative;
-    background: rgba(188, 138, 74, 0.08);
-    border-left: 3.5px solid var(--color-accent);
-    border-radius: 14px;
-    padding: 16px 20px 16px 36px;
-    margin-bottom: 22px;
-    width: 100%;
-    box-sizing: border-box;
+  /* ── 2. 診療特色 ── */
+  .specialty-section {
+    background: #FFFFFF;
+    border-radius: 28px;
+    padding: 42px 36px;
+    border: 1px solid var(--color-border, #EFE8DE);
+    box-shadow: 0 10px 30px -4px rgba(231, 111, 81, 0.06);
+    margin-bottom: 48px;
+    text-align: center;
   }
 
-  .quote-mark {
-    position: absolute;
-    top: 6px;
-    left: 12px;
-    font-size: 2.2rem;
-    line-height: 1;
-    font-family: Georgia, serif;
-    color: var(--color-accent);
-    opacity: 0.6;
-  }
-
-  .hero-quote-text {
-    font-size: 0.98rem;
-    font-weight: 500;
-    color: var(--color-text-body);
-    line-height: 1.65;
-    margin: 0;
-  }
-
-  .hero-meta {
-    width: 100%;
-    border-top: 1.5px solid var(--color-border);
-    padding-top: 18px;
-  }
-
-  .meta-header {
+  .section-badge-center {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    justify-content: center;
     margin-bottom: 12px;
-    font-size: 0.95rem;
-    color: var(--color-primary);
   }
 
-  .meta-title-icon {
+  .section-title-center {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1E293B);
+    margin-bottom: 8px;
+  }
+
+  .section-subtitle-center {
     font-size: 1rem;
+    color: var(--color-text-muted, #64748B);
+    margin-bottom: 28px;
   }
 
-  .specialty-pill-grid {
+  .specialty-pills-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    justify-content: center;
+    gap: 12px;
+    max-width: 900px;
+    margin: 0 auto;
   }
 
-  .specialty-pill {
+  .specialty-tag {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-    background: #FFFFFF;
-    color: var(--color-text-body);
-    font-size: 0.86rem;
+    gap: 6px;
+    background: var(--color-bg-page, #FAF6F0);
+    color: var(--color-text-title, #1E293B);
+    font-size: 0.94rem;
     font-weight: 700;
-    padding: 6px 14px;
+    padding: 10px 20px;
     border-radius: 9999px;
-    border: 1px solid rgba(47, 102, 86, 0.14);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-    cursor: default;
-    user-select: none;
+    border: 1px solid var(--color-border, #EFE8DE);
+    transition: all 0.25s ease;
   }
 
-  .specialty-pill:hover {
+  .specialty-tag:hover {
     transform: translateY(-2px);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: var(--color-primary-light);
-    box-shadow: 0 4px 12px rgba(47, 102, 86, 0.15);
+    background: var(--color-primary-light, #FDEEE9);
+    border-color: var(--color-primary, #E76F51);
+    color: var(--color-primary, #E76F51);
+    box-shadow: 0 4px 14px rgba(231, 111, 81, 0.15);
   }
 
-  /* Profile Details (学经历) */
+  /* ── 3. 專業學歷與臨床經歷 ── */
   .profile-details {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -599,36 +855,36 @@ const formatDate = (date: Date) => {
   }
 
   .details-card {
-    background-color: var(--color-bg-card);
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 8px 24px var(--color-shadow);
-    border: 1px solid var(--color-border);
+    background-color: #FFFFFF;
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 10px 30px -4px rgba(231, 111, 81, 0.06);
+    border: 1px solid var(--color-border, #EFE8DE);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .details-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(47, 102, 86, 0.1);
+    box-shadow: 0 16px 36px -6px rgba(231, 111, 81, 0.14);
   }
 
-  .card-icon {
+  .card-icon-circle {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 48px;
     height: 48px;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    border-radius: 12px;
+    background-color: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
+    border-radius: 14px;
     margin-bottom: 20px;
   }
 
   .details-card h2 {
     font-size: 1.4rem;
-    color: var(--color-primary);
+    color: var(--color-text-title, #1E293B);
     margin-bottom: 18px;
-    font-weight: 700;
+    font-weight: 800;
   }
 
   .details-list {
@@ -637,53 +893,57 @@ const formatDate = (date: Date) => {
 
   .details-list li {
     position: relative;
-    padding-left: 20px;
+    padding-left: 22px;
     margin-bottom: 12px;
-    color: var(--color-text-body);
-    font-size: 1.05rem;
+    color: var(--color-text-body, #334155);
+    font-size: 1.02rem;
+    font-weight: 500;
   }
 
   .details-list li::before {
-    content: "•";
+    content: "🐾";
     position: absolute;
     left: 0;
-    color: var(--color-accent);
-    font-size: 1.2rem;
-    line-height: 1;
+    font-size: 0.85rem;
+    top: 2px;
   }
 
-  /* Schedule Section */
+  /* ── 4. 門診時間表 ── */
   .schedule-section {
-    background-color: var(--color-bg-card);
-    border-radius: 20px;
+    background-color: #FFFFFF;
+    border-radius: 28px;
     padding: 40px;
-    box-shadow: 0 10px 30px var(--color-shadow);
+    box-shadow: 0 10px 30px -4px rgba(231, 111, 81, 0.06);
     margin-bottom: 48px;
+    border: 1px solid var(--color-border, #EFE8DE);
   }
 
   .section-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 30px;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
   .section-header h2 {
-    font-size: 1.8rem;
-    color: var(--color-primary);
-    font-weight: 700;
+    font-size: 1.9rem;
+    color: var(--color-text-title, #1E293B);
+    font-weight: 800;
+    margin-top: 4px;
   }
 
   .section-desc {
-    color: var(--color-text-muted);
+    color: var(--color-text-muted, #64748B);
     font-size: 0.95rem;
     margin-top: 4px;
   }
 
   .table-container {
     overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    border: 1px solid var(--color-border, #EFE8DE);
   }
 
   .schedule-table {
@@ -693,19 +953,20 @@ const formatDate = (date: Date) => {
   }
 
   .schedule-table th, .schedule-table td {
-    padding: 18px;
+    padding: 16px 14px;
     text-align: center;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border, #EFE8DE);
   }
 
   .schedule-table th {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    font-weight: 700;
+    background-color: var(--color-bg-page, #FAF6F0);
+    color: var(--color-text-title, #1E293B);
+    font-weight: 800;
+    font-size: 0.94rem;
   }
 
   .time-header {
-    background-color: var(--color-bg-page);
+    background-color: var(--color-bg-page, #FAF6F0);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -715,260 +976,100 @@ const formatDate = (date: Date) => {
 
   .time-header strong {
     font-size: 1rem;
-    color: var(--color-primary);
+    color: var(--color-primary, #E76F51);
   }
 
   .time-header span {
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    color: var(--color-text-muted, #64748B);
   }
 
   .on-duty {
-    background-color: rgba(47, 102, 86, 0.08);
-    color: var(--color-primary);
-    font-weight: 700;
-    font-size: 1.05rem;
+    background-color: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
+    font-weight: 800;
+    font-size: 1rem;
   }
 
   .external {
-    background-color: rgba(188, 138, 74, 0.12);
-    color: var(--color-accent);
-    font-weight: 700;
+    background-color: #FEF6EC;
+    color: #F4A261;
+    font-weight: 800;
     font-size: 0.95rem;
   }
 
   .exam {
-    background-color: rgba(56, 120, 140, 0.08);
-    color: #38788C;
-    font-weight: 600;
+    background-color: #E0F2F1;
+    color: #00796B;
+    font-weight: 700;
     font-size: 0.95rem;
   }
 
-  .rotating {
-    background-color: var(--color-accent-light);
-    color: var(--color-accent);
-    font-weight: 700;
-  }
-
   .closed {
-    color: #C5786E;
-    background-color: #FAF4F4;
+    background-color: #FAFAFA;
+    color: #BDBDBD;
+    font-size: 0.9rem;
   }
 
   .schedule-tips {
     margin-top: 16px;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    text-align: right;
+    padding: 12px 18px;
+    background: var(--color-bg-page, #FAF6F0);
+    border-radius: 12px;
+    font-size: 0.88rem;
+    color: var(--color-text-muted, #64748B);
+    line-height: 1.5;
   }
 
-  /* Latest Articles */
+  /* ── 5. 最新醫學筆記 ── */
   .latest-articles {
-    margin-bottom: 40px;
+    margin-bottom: 56px;
   }
 
-  .view-all-link {
-    color: var(--color-accent);
+  .view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFFFFF;
+    color: var(--color-primary, #E76F51);
+    font-size: 0.92rem;
     font-weight: 700;
-    font-size: 1rem;
-    transition: color 0.2s ease;
+    padding: 8px 20px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--color-primary, #E76F51);
+    text-decoration: none;
+    transition: all 0.2s ease;
   }
 
-  .view-all-link:hover {
-    color: var(--color-primary);
-  }
-
-  /* Latest Articles */
-  .latest-articles {
-    margin-bottom: 48px;
-  }
-
-  .view-all-link {
-    color: var(--color-accent);
-    font-weight: 700;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
-  }
-
-  .view-all-link:hover {
-    color: var(--color-primary);
+  .view-all-btn:hover {
+    background: var(--color-primary, #E76F51);
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(231, 111, 81, 0.3);
   }
 
   .articles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
-    margin-top: 24px;
   }
 
   .empty-articles {
-    grid-column: span 3;
+    grid-column: 1 / -1;
     text-align: center;
-    padding: 48px;
-    background-color: var(--color-bg-card);
-    border-radius: 16px;
-    border: 2px dashed var(--color-border);
-    color: var(--color-text-muted);
+    padding: 40px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    color: var(--color-text-muted, #64748B);
   }
 
-  @media (max-width: 900px) {
-    .articles-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .articles-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-  }
-
-  /* Responsive Design */
-  @media (max-width: 900px) {
-    .about-hero {
-      display: grid;
-      grid-template-columns: 88px 1fr;
-      grid-template-rows: auto auto auto;
-      padding: 24px 20px;
-      gap: 16px 16px;
-      align-items: center;
-      border-radius: 20px;
-    }
-    .hero-image-wrapper {
-      grid-column: 1;
-      grid-row: 1;
-      width: 88px;
-      aspect-ratio: 1 / 1.15;
-      margin: 0;
-      border-radius: 14px;
-    }
-    .hero-text-content {
-      display: contents;
-    }
-    .hero-header-info {
-      grid-column: 2;
-      grid-row: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin-bottom: 0;
-    }
-    .hero-name {
-      font-size: 1.35rem;
-      line-height: 1.25;
-      margin-bottom: 3px;
-    }
-    .hero-title {
-      font-size: 0.85rem;
-      line-height: 1.35;
-      margin-bottom: 0;
-    }
-    .hero-quote-card {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      padding: 12px 16px 12px 30px;
-      margin-bottom: 0;
-      border-radius: 12px;
-    }
-    .quote-mark {
-      top: 4px;
-      left: 10px;
-      font-size: 1.8rem;
-    }
-    .hero-quote-text {
-      font-size: 0.88rem;
-      line-height: 1.6;
-    }
-    .hero-meta {
-      grid-column: 1 / -1;
-      grid-row: 3;
-      padding-top: 14px;
-    }
-    .meta-header {
-      font-size: 0.92rem;
-      margin-bottom: 10px;
-    }
-    .specialty-pill-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px 10px;
-      width: 100%;
-    }
-    .specialty-pill {
-      font-size: 0.82rem;
-      padding: 7px 6px;
-      text-align: center;
-      justify-content: center;
-      border-radius: 9999px;
-      background: #FFFFFF;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-      white-space: nowrap;
-    }
-    .profile-details {
-      grid-template-columns: 1fr;
-    }
-    .articles-grid {
-      grid-template-columns: 1fr;
-    }
-    .section-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .about-hero {
-      grid-template-columns: 76px 1fr;
-      padding: 18px 14px;
-      gap: 14px 12px;
-      border-radius: 16px;
-    }
-    .hero-image-wrapper {
-      width: 76px;
-      border-radius: 12px;
-    }
-    .hero-name {
-      font-size: 1.2rem;
-    }
-    .hero-title {
-      font-size: 0.76rem;
-    }
-    .hero-quote-card {
-      padding: 10px 12px 10px 24px;
-      border-radius: 10px;
-    }
-    .quote-mark {
-      top: 3px;
-      left: 6px;
-      font-size: 1.5rem;
-    }
-    .hero-quote-text {
-      font-size: 0.82rem;
-      line-height: 1.55;
-    }
-    .meta-header {
-      font-size: 0.86rem;
-      margin-bottom: 8px;
-    }
-    .specialty-pill-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px 8px;
-    }
-    .specialty-pill {
-      font-size: 0.76rem;
-      padding: 6px 3px;
-      border-radius: 9999px;
-    }
-  }
-
-  /* ═══════════════════════════════════════
-     豐田診所 · 門診資訊與就醫指引專區
-  ═══════════════════════════════════════ */
+  /* ── 6. 就醫指引專區 ── */
   .clinic-info-section {
-    margin-bottom: 56px;
+    background: #FFFFFF;
+    border-radius: 28px;
+    padding: 42px;
+    border: 1px solid var(--color-border, #EFE8DE);
+    box-shadow: 0 10px 30px -4px rgba(231, 111, 81, 0.06);
+    margin-bottom: 40px;
   }
 
   .clinic-section-header {
@@ -976,48 +1077,29 @@ const formatDate = (date: Date) => {
     margin-bottom: 32px;
   }
 
-  .clinic-section-badge {
-    display: inline-block;
-    background-color: var(--color-accent-light);
-    color: var(--color-accent);
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 4px 16px;
-    border-radius: 999px;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-  }
-
   .clinic-section-title {
-    font-size: 1.9rem;
-    font-weight: 900;
-    color: var(--color-primary);
-    margin-bottom: 8px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1E293B);
+    margin: 6px 0;
   }
 
   .clinic-section-desc {
-    font-size: 1rem;
-    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    color: var(--color-text-muted, #64748B);
   }
 
-  /* 雙欄佈局 */
   .clinic-cards-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    align-items: stretch;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
 
-  /* ── 左欄：診所資訊卡 ── */
-  .clinic-info-card {
-    background-color: var(--color-bg-card);
-    border-radius: 20px;
-    padding: 36px 32px;
-    border: 1px solid var(--color-border);
-    box-shadow: 0 8px 28px var(--color-shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  .clinic-info-card, .clinic-line-card {
+    background: var(--color-bg-page, #FAF6F0);
+    border-radius: 24px;
+    padding: 32px;
+    border: 1px solid var(--color-border, #EFE8DE);
   }
 
   .clinic-card-icon-wrap {
@@ -1026,32 +1108,31 @@ const formatDate = (date: Date) => {
     justify-content: center;
     width: 52px;
     height: 52px;
-    background: linear-gradient(135deg, var(--color-primary-light), #d6e8e1);
-    color: var(--color-primary);
-    border-radius: 14px;
+    border-radius: 16px;
+    background: var(--color-primary-light, #FDEEE9);
+    color: var(--color-primary, #E76F51);
+    margin-bottom: 18px;
   }
 
   .clinic-card-name {
-    font-size: 1.45rem;
-    font-weight: 900;
-    color: var(--color-primary);
-    line-height: 1.3;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1E293B);
+    margin-bottom: 20px;
   }
 
   .clinic-name-en {
     font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    letter-spacing: 0.5px;
-    display: block;
-    margin-top: 2px;
+    font-weight: 600;
+    color: var(--color-text-muted, #64748B);
+    margin-left: 6px;
   }
 
   .clinic-detail-list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
   }
 
   .clinic-detail-item {
@@ -1061,151 +1142,140 @@ const formatDate = (date: Date) => {
   }
 
   .clinic-detail-icon {
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    border-radius: 8px;
-    margin-top: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    color: var(--color-primary, #E76F51);
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   }
 
   .clinic-detail-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.76rem;
+    color: var(--color-text-muted, #64748B);
     font-weight: 700;
-    color: var(--color-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 3px;
   }
 
   .clinic-detail-value {
-    font-size: 1rem;
-    color: var(--color-text-body);
-    font-weight: 500;
-    line-height: 1.4;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--color-text-title, #1E293B);
   }
 
   .clinic-map-link {
-    color: var(--color-primary);
-    font-weight: 600;
-    text-decoration: underline;
-    text-underline-offset: 3px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: color 0.2s ease;
+    color: var(--color-primary, #E76F51);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  .clinic-map-link:hover {
-    color: var(--color-accent);
-  }
-
-  .clinic-phone-link {
-    color: var(--color-primary);
-    font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 0.5px;
-    transition: color 0.2s ease;
-  }
-
-  .clinic-phone-link:hover {
-    color: var(--color-accent);
-  }
-
-  /* ── 右欄：LINE 預約卡 ── */
   .clinic-line-card {
-    border-radius: 20px;
-    background: linear-gradient(145deg, #f0faf4 0%, #e8f5ec 40%, #faf6ee 100%);
-    border: 1.5px solid #b8ddc6;
-    box-shadow: 0 8px 28px rgba(47, 102, 86, 0.08);
-    display: flex;
-    align-items: stretch;
-  }
-
-  .line-card-inner {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 40px 32px;
-    gap: 16px;
-    width: 100%;
+    background: #FFFFFF;
   }
 
   .line-icon-ring {
-    width: 72px;
-    height: 72px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 16px rgba(6, 199, 85, 0.25);
+    margin: 0 auto 16px;
   }
 
   .line-card-title {
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: var(--color-primary);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1E293B);
+    margin-bottom: 8px;
   }
 
   .line-card-desc {
-    font-size: 0.97rem;
-    color: var(--color-text-muted);
-    line-height: 1.65;
-    max-width: 300px;
+    font-size: 0.94rem;
+    color: var(--color-text-muted, #64748B);
+    margin-bottom: 22px;
+    line-height: 1.6;
   }
 
   .line-booking-btn {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    background: linear-gradient(135deg, #06C755 0%, #04a847 100%);
-    color: #ffffff;
-    font-size: 1.08rem;
-    font-weight: 800;
-    padding: 16px 32px;
-    border-radius: 50px;
-    text-decoration: none;
-    letter-spacing: 0.3px;
-    box-shadow: 0 6px 24px rgba(6, 199, 85, 0.38);
-    transition:
-      transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 0.25s ease;
-    width: 100%;
     justify-content: center;
-    max-width: 320px;
+    gap: 8px;
+    background: #06C755;
+    color: #FFFFFF;
+    font-size: 1.05rem;
+    font-weight: 800;
+    padding: 14px 28px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(6, 199, 85, 0.35);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .line-booking-btn:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 36px rgba(6, 199, 85, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(6, 199, 85, 0.45);
   }
 
   .line-notice {
     font-size: 0.78rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-    max-width: 280px;
+    color: #94A3B8;
+    margin-top: 12px;
   }
 
-  /* 響應式：單欄堆疊 */
+  /* ── 響應式佈局 (Responsive) ── */
+  @media (max-width: 1024px) {
+    .pet-hero-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .hero-main-title {
+      font-size: 2.35rem;
+    }
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
   @media (max-width: 768px) {
+    .hero-main-title {
+      font-size: 2rem;
+    }
+    .hero-search-box {
+      flex-direction: column;
+      border-radius: 20px;
+      padding: 12px;
+      gap: 10px;
+    }
+    .hero-search-btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .hero-right-bento {
+      grid-template-columns: 1fr;
+    }
+    .bento-column.offset-col {
+      padding-top: 0;
+    }
+    .profile-details {
+      grid-template-columns: 1fr;
+    }
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
     .clinic-cards-row {
       grid-template-columns: 1fr;
     }
-    .clinic-section-title {
-      font-size: 1.5rem;
-    }
-    .clinic-info-card,
-    .line-card-inner {
-      padding: 28px 24px;
+    .specialty-section, .schedule-section, .clinic-info-section {
+      padding: 28px 20px;
+      border-radius: 20px;
     }
   }
 </style>
