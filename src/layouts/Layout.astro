@@ -510,8 +510,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     }
     .navbar-vet {
       flex-direction: column;
-      gap: 8px;
-      padding: 10px 14px 12px;
+      gap: 10px;
+      padding: 12px 14px 14px;
       border-radius: 24px;
     }
     .brand-row {
@@ -519,13 +519,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       justify-content: center;
     }
     .brand-logo {
-      gap: 10px;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
     }
     .brand-name {
-      font-size: 1.1rem;
+      font-size: 1.28rem;
+      font-weight: 900;
     }
     .brand-subtitle {
-      font-size: 0.72rem;
+      font-size: 0.86rem;
+      font-weight: 600;
     }
     .nav-track-wrapper {
       width: 100%;
@@ -534,12 +540,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       width: 100%;
       display: flex;
       justify-content: space-around;
-      padding: 3px;
+      padding: 4px;
     }
     .nav-item {
       flex: 1;
-      padding: 6px 8px;
-      font-size: 0.82rem;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
       text-align: center;
     }
     .nav-actions {
