@@ -1,10 +1,10 @@
 ---
-title: "【安眠藥】Erispan會嗜睡"
+title: "【安眠藥】Erispan會嗜睡嗎"
+coverImage: "【安眠藥】Erispan會嗜睡嗎.webp"
 category: "藥物介紹"
 publishDate: "2026-08-12"
 draft: false
-slug: "安眠藥erispan會嗜睡"
-coverImage: "【安眠藥】Erispan會嗜睡.webp"
+slug: "安眠藥erispan會嗜睡嗎"
 ---
 Erispan（癒利舒盼錠，學名 Fludiazepam 0.25mg）確實在臨床上常用於緩解焦慮狀態及肌肉痙攣，且**標準的成人建議劑量正是每日3次，每次0.25mg**。在腸胃科，它常被用來處理伴隨焦慮的自律神經失調或腸胃道痙攣等身心症狀（Somatic symptoms）。
 
