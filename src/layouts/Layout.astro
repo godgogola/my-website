@@ -89,40 +89,48 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     })} />
   </head>
   <body class="veterinary-theme">
-    <!-- 背景柔光氛圍層 (Veterinary Clinic Ambient Glow) -->
+    <!-- 背景柔光氛圍層 -->
     <div class="ambient-glow-layer" aria-hidden="true">
       <div class="glow-orb glow-orb-1"></div>
       <div class="glow-orb glow-orb-2"></div>
     </div>
 
-    <!-- 頂部導覽列 (Veterinary Clinic Nav) -->
+    <!-- 頂部浮動雙層導覽列 (Floating 2-Tier Capsule Header) -->
     <header class="navbar-vet-wrapper">
       <div class="navbar-vet">
-        <a href="/" class="brand-logo" aria-label="黃冠智醫師 豐田診所">
-          <div class="brand-icon">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-            </svg>
-          </div>
-          <div class="brand-text">
-            <span class="brand-name">黃冠智 醫師</span>
-            <span class="brand-subtitle">豐田診所院長 · 肝膽腸胃專科</span>
-          </div>
-        </a>
+        <!-- 品牌區塊 (第一排) -->
+        <div class="brand-row">
+          <a href="/" class="brand-logo" aria-label="黃冠智醫師 豐田診所">
+            <div class="brand-icon">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="brand-name">黃冠智 醫師</span>
+              <span class="brand-subtitle">豐田診所院長 · 肝膽腸胃專科</span>
+            </div>
+          </a>
+        </div>
 
-        <nav class="nav-links" aria-label="主導覽列">
-          <a href="/" class:list={[{ active: Astro.url.pathname === '/' }]}>首頁</a>
-          <a href="/health-column" class:list={[{ active: Astro.url.pathname.startsWith('/health-column') || Astro.url.pathname.startsWith('/posts') }]}>醫學筆記</a>
-          <a href="/bowel-prep" class:list={[{ active: Astro.url.pathname.startsWith('/bowel-prep') }]}>大腸鏡檢表單</a>
-        </nav>
+        <!-- 導覽連結 (AnimatedTabs Spring Track 灰底白膠囊) -->
+        <div class="nav-track-wrapper">
+          <nav class="nav-track" id="mainNavTrack" aria-label="主導覽列">
+            <div class="nav-indicator" id="navIndicator" aria-hidden="true"></div>
+            <a href="/" class:list={['nav-item', { active: Astro.url.pathname === '/' }]}>首頁</a>
+            <a href="/health-column" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/health-column') || Astro.url.pathname.startsWith('/posts') }]}>醫學筆記</a>
+            <a href="/bowel-prep" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/bowel-prep') }]}>大腸鏡檢表單</a>
+          </nav>
+        </div>
 
+        <!-- 桌面版動作按鈕 -->
         <div class="nav-actions">
           <a href="https://lin.ee/1Yx9bWq" target="_blank" rel="noopener noreferrer" class="btn-emergency">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             <span>門診預約</span>
           </a>
           <a href="/health-column" class="btn-primary">
-            <span>瀏覽衛教專欄</span>
+            <span>衛教專欄</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         </div>
@@ -178,74 +186,115 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
         </div>
 
         <div class="footer-bottom">
-          <p>© {new Date().getFullYear()} 黃冠智醫師. All rights reserved. 本站內容為個人醫學衛教筆記，僅供參考，若有身體不適請務必尋求專業醫師當面諮詢評估。</p>
+          <p>© 2026 黃冠智醫師. All rights reserved. 本站內容為個人醫學衛教筆記，僅供參考，若有身體不適請務必尋求專業醫師當面諮詢評估。</p>
         </div>
       </div>
     </footer>
+
+    <script>
+      // 導覽列 AnimatedTabs 彈簧滑塊邏輯
+      document.addEventListener('DOMContentLoaded', () => {
+        const track = document.getElementById('mainNavTrack');
+        const indicator = document.getElementById('navIndicator');
+        const items = track?.querySelectorAll<HTMLAnchorElement>('.nav-item');
+
+        if (track && indicator && items && items.length > 0) {
+          const updateIndicator = (target: HTMLElement, immediate = false) => {
+            const trackRect = track.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+            const left = targetRect.left - trackRect.left;
+            const top = targetRect.top - trackRect.top;
+            const width = targetRect.width;
+            const height = targetRect.height;
+
+            if (immediate) {
+              indicator.style.transition = 'none';
+            } else {
+              indicator.style.transition = 'transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            }
+
+            indicator.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+            indicator.style.width = `${width}px`;
+            indicator.style.height = `${height}px`;
+            indicator.style.opacity = '1';
+          };
+
+          const activeItem = track.querySelector<HTMLAnchorElement>('.nav-item.active') || items[0];
+          if (activeItem) {
+            updateIndicator(activeItem, true);
+          }
+
+          items.forEach(item => {
+            item.addEventListener('mouseenter', () => updateIndicator(item));
+          });
+
+          track.addEventListener('mouseleave', () => {
+            const current = track.querySelector<HTMLAnchorElement>('.nav-item.active') || items[0];
+            if (current) updateIndicator(current);
+          });
+
+          window.addEventListener('resize', () => {
+            const current = track.querySelector<HTMLAnchorElement>('.nav-item.active') || items[0];
+            if (current) updateIndicator(current, true);
+          }, { passive: true });
+        }
+      });
+    </script>
   </body>
 </html>
 
 <style is:global>
-  /* ═══════════════════════════════════════════════════════════
-     Veterinary Clinic Design Tokens & Global Styles
-     Primary: #4a90a4 (Ocean Teal)
-     Secondary: #6bb5a2 (Sage Sea Green)
-     Coral: #e76f51 (Warm Coral Accent)
-     Background: #f8fbfc (Crisp Mint Ice White)
-     Background Alt: #eef5f7
-     Dark Footer: #2c5364
-  ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════
+     全域 Design Tokens (Veterinary Clinic 乾淨醫療風格)
+  ═══════════════════════════════════════ */
   :root {
-    --color-primary: #4a90a4;
+    --color-primary: #4a90a4; /* Ocean Teal */
     --color-primary-dark: #3b7688;
     --color-primary-light: #eef7f9;
-    --color-secondary: #6bb5a2;
+    --color-secondary: #6bb5a2; /* Sage Sea Green */
     --color-secondary-light: #edf7f4;
-    --color-accent: #f4a261;
-    --color-accent-light: #fef4ec;
-    --color-coral: #e76f51;
+    --color-accent: #f4a261; /* Warm Gold / Amber */
+    --color-coral: #e76f51; /* Coral / Salmon Accent */
     --color-coral-light: #fdeee9;
-    --color-bg-page: #f8fbfc;
+    --color-bg-page: #f8fbfc; /* Crisp Clean Mint-Ice White */
     --color-bg-alt: #eef5f7;
     --color-bg-card: #ffffff;
-    --color-bg-dark: #2c5364;
-    --color-text-title: #1e3a4c;
+    --color-bg-dark: #2c5364; /* Deep Petrol Slate */
+    --color-text-title: #1e3a4c; /* Deep Petrol Navy */
     --color-text-body: #2d4f63;
     --color-text-muted: #5a7a8a;
     --color-border: #d4e5eb;
     --color-shadow: rgba(74, 144, 164, 0.08);
 
-    --font-sans: 'Plus Jakarta Sans', 'Poppins', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
   }
 
-  *, *::before, *::after {
-    box-sizing: border-box;
+  * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
   }
 
   html {
-    font-family: var(--font-sans);
+    font-family: 'Plus Jakarta Sans', 'Poppins', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--color-bg-page);
     color: var(--color-text-body);
+    line-height: 1.6;
     scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
   }
 
   body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
     position: relative;
+    overflow-x: hidden;
   }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  /* ── 氛圍柔光球 (Veterinary Mint Glow) ── */
+  /* ── 氛圍柔光球 ── */
   .ambient-glow-layer {
     position: fixed;
     inset: 0;
@@ -257,71 +306,78 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   .glow-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.35;
+    filter: blur(90px);
+    opacity: 0.45;
   }
 
   .glow-orb-1 {
-    top: -120px;
-    right: -80px;
     width: 480px;
     height: 480px;
-    background: radial-gradient(circle, rgba(74, 144, 164, 0.35) 0%, rgba(107, 181, 162, 0.1) 70%);
+    background: radial-gradient(circle, rgba(107, 181, 162, 0.22) 0%, rgba(74, 144, 164, 0.05) 70%, transparent 100%);
+    top: -120px;
+    right: -100px;
   }
 
   .glow-orb-2 {
-    top: 40%;
-    left: -120px;
-    width: 420px;
-    height: 420px;
-    background: radial-gradient(circle, rgba(107, 181, 162, 0.3) 0%, rgba(74, 144, 164, 0.08) 70%);
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(74, 144, 164, 0.18) 0%, rgba(244, 162, 97, 0.06) 70%, transparent 100%);
+    bottom: 20%;
+    left: -150px;
   }
 
-  /* ── 膠囊導覽列 (Veterinary Clinic Nav) ── */
+  /* ── 頂部導覽列 (Veterinary Clinic Floating Capsule) ── */
   .navbar-vet-wrapper {
     position: sticky;
     top: 14px;
     z-index: 100;
     padding: 0 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+    margin-bottom: 20px;
   }
 
   .navbar-vet {
+    max-width: 1200px;
+    margin: 0 auto;
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--color-border);
+    border: 1.5px solid rgba(212, 229, 235, 0.9);
     border-radius: 9999px;
-    padding: 10px 20px;
+    padding: 10px 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 8px 30px rgba(74, 144, 164, 0.08);
   }
 
+  .brand-row {
+    display: flex;
+    align-items: center;
+  }
+
   .brand-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    text-decoration: none;
   }
 
   .brand-icon {
     width: 38px;
     height: 38px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--color-primary), #5ba3b8);
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(74, 144, 164, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.25);
+    flex-shrink: 0;
   }
 
-  .icon-svg {
-    width: 22px;
-    height: 22px;
+  .brand-icon .icon-svg {
+    width: 20px;
+    height: 20px;
   }
 
   .brand-text {
@@ -330,46 +386,73 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   }
 
   .brand-name {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: var(--color-text-title);
+    letter-spacing: -0.3px;
     line-height: 1.2;
   }
 
   .brand-subtitle {
-    font-size: 0.72rem;
+    font-size: 0.76rem;
+    color: var(--color-text-muted);
     font-weight: 600;
-    color: var(--color-primary);
   }
 
-  .nav-links {
+  /* ── 導覽列 AnimatedTabs 彈簧磁吸白色膠囊 ── */
+  .nav-track-wrapper {
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: var(--color-bg-page);
-    padding: 4px 6px;
-    border-radius: 9999px;
-    border: 1px solid var(--color-border);
+    justify-content: center;
   }
 
-  .nav-links a {
+  .nav-track {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background: #eaedf0;
+    padding: 4px;
+    border-radius: 9999px;
+    border: 1px solid rgba(212, 229, 235, 0.8);
+  }
+
+  .nav-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 9999px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(30, 58, 76, 0.1), 0 1px 3px rgba(30, 58, 76, 0.05);
+    border: 1px solid rgba(212, 229, 235, 0.85);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .nav-item {
+    position: relative;
+    z-index: 2;
+    padding: 7px 18px;
+    border-radius: 9999px;
     font-size: 0.88rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--color-text-muted);
-    padding: 6px 16px;
-    border-radius: 9999px;
-    transition: all 0.2s ease;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .nav-links a:hover {
-    color: var(--color-primary);
-    background: var(--color-primary-light);
+  .nav-item:hover {
+    color: var(--color-text-title);
   }
 
-  .nav-links a.active {
-    color: #ffffff;
-    background: var(--color-primary);
-    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.3);
+  .nav-item.active {
+    color: var(--color-text-title);
+    font-weight: 800;
   }
 
   .nav-actions {
@@ -384,19 +467,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     gap: 6px;
     background: linear-gradient(135deg, var(--color-primary) 0%, #5ba3b8 100%);
     color: #ffffff;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    padding: 9px 18px;
+    padding: 8px 18px;
     border-radius: 9999px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(74, 144, 164, 0.3);
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.28);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(74, 144, 164, 0.45);
+    box-shadow: 0 6px 16px rgba(74, 144, 164, 0.4);
   }
 
   .btn-emergency {
@@ -409,8 +491,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     font-weight: 700;
     padding: 8px 16px;
     border-radius: 9999px;
-    border: none;
-    cursor: pointer;
+    text-decoration: none;
     box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -420,23 +501,49 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     box-shadow: 0 6px 16px rgba(231, 111, 81, 0.45);
   }
 
+  /* ── 手機版雙層浮動卡片導覽列 (如附圖排版) ── */
   @media (max-width: 768px) {
-    .navbar-vet {
-      padding: 8px 14px;
-      border-radius: 20px;
+    .navbar-vet-wrapper {
+      top: 8px;
+      padding: 0 10px;
+      margin-bottom: 12px;
     }
-    .nav-links {
-      display: none;
+    .navbar-vet {
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 14px 12px;
+      border-radius: 24px;
+    }
+    .brand-row {
+      width: 100%;
+      justify-content: center;
+    }
+    .brand-logo {
+      gap: 10px;
+    }
+    .brand-name {
+      font-size: 1.1rem;
     }
     .brand-subtitle {
-      display: none;
+      font-size: 0.72rem;
     }
-    .btn-emergency {
-      display: none;
+    .nav-track-wrapper {
+      width: 100%;
     }
-    .btn-primary {
-      padding: 7px 12px;
+    .nav-track {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      padding: 3px;
+    }
+    .nav-item {
+      flex: 1;
+      padding: 6px 8px;
       font-size: 0.82rem;
+      text-align: center;
+    }
+    .nav-actions {
+      display: none;
     }
   }
 
@@ -444,11 +551,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   .page-container {
     flex: 1;
     max-width: 1200px;
-    margin: 28px auto 0;
+    margin: 24px auto 0;
     padding: 0 16px 64px;
     width: 100%;
     position: relative;
     z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      margin-top: 8px;
+      padding: 0 10px 48px;
+    }
   }
 
   /* ── 通用卡片與徽章 ── */

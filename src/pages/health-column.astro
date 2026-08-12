@@ -60,7 +60,7 @@ const sortedCategories = [
     </div>
   </div>
 
-  <!-- ── 搜尋欄 ── -->
+  <!-- ── 搜尋欄與目錄按鈕 ── -->
   <div class="search-row">
     <div class="search-wrapper">
       <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
@@ -76,25 +76,39 @@ const sortedCategories = [
         aria-label="搜尋文章"
       />
     </div>
-    <p class="result-count" id="resultCount" aria-live="polite">顯示 {posts.length} 篇文章</p>
+    <div class="search-actions">
+      <button class="open-drawer-btn" id="openDrawerBtn" aria-label="展開完整分類目錄">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+        </svg>
+        <span>目錄分類</span>
+      </button>
+      <p class="result-count" id="resultCount" aria-live="polite">共 {posts.length} 篇</p>
+    </div>
   </div>
 
-  <!-- ── 分類篩選 Tab Pills (Veterinary Clinic 膠囊樣式) ── -->
-  <div class="filter-bar" id="filterBar" role="tablist" aria-label="文章分類篩選">
-    {sortedCategories.map((cat, i) => (
-      <button
-        class={`filter-pill ${i === 0 ? 'active' : ''}`}
-        role="tab"
-        aria-selected={i === 0 ? 'true' : 'false'}
-        data-filter={cat}
-        id={`tab-${cat}`}
-      >
-        <span>{cat}</span>
-        <span class="pill-count">
-          {cat === '全部' ? posts.length : posts.filter(p => p.data.category === cat).length}
-        </span>
-      </button>
-    ))}
+  <!-- ── AnimatedTabs 彈簧磁吸滑塊分類選單 (方案 A) ── -->
+  <div class="filter-bar-wrapper">
+    <div class="filter-bar-track" id="filterBarTrack" role="tablist" aria-label="文章分類篩選">
+      <!-- 彈簧磁吸滑動背景 Indicator -->
+      <div class="filter-spring-indicator" id="filterSpringIndicator" aria-hidden="true"></div>
+      
+      {sortedCategories.map((cat, i) => (
+        <button
+          class={`filter-tab-btn ${i === 0 ? 'active' : ''}`}
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          data-filter={cat}
+          id={`tab-${cat}`}
+          type="button"
+        >
+          <span class="tab-label">{cat}</span>
+          <span class="tab-count">
+            {cat === '全部' ? posts.length : posts.filter(p => p.data.category === cat).length}
+          </span>
+        </button>
+      ))}
+    </div>
   </div>
 
   <!-- ── 文章卡片網格 ── -->
@@ -125,14 +139,6 @@ const sortedCategories = [
     <p>請嘗試其他關鍵字，或點擊「全部」瀏覽所有專欄。</p>
     <button class="reset-btn" id="resetFilter">清除篩選條件</button>
   </div>
-
-  <!-- ── 浮動選單按鈕 (FAB) ── -->
-  <button class="fab-category-btn" id="fabCategoryBtn" aria-label="所有分類目錄">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
-    </svg>
-    <span>所有分類</span>
-  </button>
 
   <!-- ── 側滑分類抽屜 ── -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
@@ -179,17 +185,19 @@ const sortedCategories = [
   </aside>
 </Layout>
 
-<!-- ── 互動篩選 JS ── -->
+<!-- ── 互動篩選與 AnimatedTabs Spring 動效 JS ── -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+    const filterTrack = document.getElementById('filterBarTrack');
+    const indicator = document.getElementById('filterSpringIndicator');
+    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-tab-btn');
     const gridItems = document.querySelectorAll<HTMLElement>('.grid-item');
     const searchInput = document.getElementById('articleSearch') as HTMLInputElement;
     const resultCount = document.getElementById('resultCount');
     const noResults = document.getElementById('noResults');
     const resetBtn = document.getElementById('resetFilter');
 
-    // 檢查 URL query params (例如 ?search=... 或 ?filter=...)
+    // 檢查 URL query params
     const urlParams = new URLSearchParams(window.location.search);
     const initialSearch = urlParams.get('search') || urlParams.get('q') || '';
     const initialFilter = urlParams.get('filter') || '全部';
@@ -201,16 +209,45 @@ const sortedCategories = [
       searchInput.value = initialSearch;
     }
 
+    // ── 彈簧滑塊位置更新函數 ──
+    const updateSpringIndicator = (target: HTMLElement, immediate = false) => {
+      if (!filterTrack || !indicator || !target) return;
+      const trackRect = filterTrack.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const left = targetRect.left - trackRect.left + filterTrack.scrollLeft;
+      const top = targetRect.top - trackRect.top;
+      const width = targetRect.width;
+      const height = targetRect.height;
+
+      if (immediate) {
+        indicator.style.transition = 'none';
+      } else {
+        indicator.style.transition = 'transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
+
+      indicator.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+      indicator.style.width = `${width}px`;
+      indicator.style.height = `${height}px`;
+      indicator.style.opacity = '1';
+    };
+
     if (initialFilter !== '全部') {
       filterBtns.forEach(btn => {
         if (btn.dataset.filter === initialFilter) {
           btn.classList.add('active');
           btn.setAttribute('aria-selected', 'true');
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         } else {
           btn.classList.remove('active');
           btn.setAttribute('aria-selected', 'false');
         }
       });
+    }
+
+    // 初始化滑塊位置
+    const currentActiveBtn = document.querySelector<HTMLButtonElement>('.filter-tab-btn.active') || filterBtns[0];
+    if (currentActiveBtn) {
+      updateSpringIndicator(currentActiveBtn, true);
     }
 
     function reorderItems() {
@@ -249,7 +286,7 @@ const sortedCategories = [
         item.hidden = !show;
         if (show) visible++;
       });
-      if (resultCount) resultCount.textContent = `顯示 ${visible} 篇文章`;
+      if (resultCount) resultCount.textContent = `共 ${visible} 篇`;
       if (noResults) noResults.hidden = visible > 0;
     }
 
@@ -261,10 +298,17 @@ const sortedCategories = [
           b.classList.toggle('active', isMe);
           b.setAttribute('aria-selected', isMe ? 'true' : 'false');
         });
+        updateSpringIndicator(btn);
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         reorderItems();
         updateView();
       });
     });
+
+    window.addEventListener('resize', () => {
+      const active = document.querySelector<HTMLButtonElement>('.filter-tab-btn.active') || filterBtns[0];
+      if (active) updateSpringIndicator(active, true);
+    }, { passive: true });
 
     searchInput?.addEventListener('input', (e) => {
       searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
@@ -279,6 +323,10 @@ const sortedCategories = [
         b.classList.toggle('active', i === 0);
         b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
       });
+      if (filterBtns[0]) {
+        updateSpringIndicator(filterBtns[0]);
+        filterBtns[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
       reorderItems();
       updateView();
     });
@@ -288,7 +336,7 @@ const sortedCategories = [
     updateView();
 
     // 側邊欄抽屜邏輯
-    const fabBtn = document.getElementById('fabCategoryBtn');
+    const openDrawerBtn = document.getElementById('openDrawerBtn');
     const drawer = document.getElementById('categoryDrawer');
     const overlay = document.getElementById('drawerOverlay');
     const closeBtn = document.getElementById('drawerCloseBtn');
@@ -307,7 +355,7 @@ const sortedCategories = [
       document.body.style.overflow = '';
     }
 
-    fabBtn?.addEventListener('click', openDrawer);
+    openDrawerBtn?.addEventListener('click', openDrawer);
     closeBtn?.addEventListener('click', closeDrawer);
     overlay?.addEventListener('click', closeDrawer);
 
@@ -363,8 +411,8 @@ const sortedCategories = [
   /* ── 頂部 Hero ── */
   .column-hero {
     text-align: center;
-    padding: 36px 20px 24px;
-    margin-bottom: 8px;
+    padding: 24px 16px 14px;
+    margin-bottom: 4px;
   }
 
   .column-hero-inner {
@@ -373,21 +421,21 @@ const sortedCategories = [
   }
 
   .hero-badge {
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
 
   .column-hero-title {
-    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-size: clamp(1.8rem, 3.8vw, 2.5rem);
     font-weight: 900;
     color: var(--color-text-title, #1e3a4c);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     line-height: 1.25;
   }
 
   .column-hero-desc {
-    font-size: 1.05rem;
+    font-size: 0.98rem;
     color: var(--color-text-muted, #5a7a8a);
-    line-height: 1.7;
+    line-height: 1.6;
   }
 
   .column-hero-desc strong {
@@ -395,22 +443,21 @@ const sortedCategories = [
     font-weight: 800;
   }
 
-  /* ── 搜尋欄 ── */
+  /* ── 搜尋欄與目錄按鈕 ── */
   .search-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
     max-width: 1200px;
-    margin: 0 auto 24px;
+    margin: 0 auto 16px;
     flex-wrap: wrap;
   }
 
   .search-wrapper {
     position: relative;
     flex: 1;
-    min-width: 260px;
-    max-width: 480px;
+    min-width: 240px;
   }
 
   .search-icon {
@@ -424,12 +471,12 @@ const sortedCategories = [
 
   .search-input {
     width: 100%;
-    padding: 12px 20px 12px 46px;
+    padding: 11px 18px 11px 44px;
     border: 1.5px solid var(--color-border, #d4e5eb);
     border-radius: 9999px;
     background-color: #FFFFFF;
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--color-text-body, #2d4f63);
     outline: none;
     box-shadow: 0 4px 14px rgba(74, 144, 164, 0.04);
@@ -445,64 +492,125 @@ const sortedCategories = [
     color: #8ba5b5;
   }
 
-  .result-count {
-    font-size: 0.88rem;
-    color: var(--color-text-muted, #5a7a8a);
-    white-space: nowrap;
-    font-weight: 600;
-  }
-
-  /* ── 分類篩選 Filter Pills ── */
-  .filter-bar {
+  .search-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    padding: 0 4px 28px;
-    max-width: 1200px;
-    margin: 0 auto;
+    align-items: center;
+    gap: 12px;
   }
 
-  .filter-pill {
+  .open-drawer-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: #FFFFFF;
-    color: var(--color-text-title, #1e3a4c);
+    color: var(--color-primary, #4a90a4);
+    border: 1.5px solid var(--color-border, #d4e5eb);
+    padding: 9px 16px;
+    border-radius: 9999px;
     font-family: inherit;
     font-size: 0.88rem;
     font-weight: 700;
-    padding: 8px 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.06);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .open-drawer-btn:hover {
+    background: var(--color-primary-light, #eef7f9);
+    border-color: var(--color-primary, #4a90a4);
+    transform: translateY(-1px);
+  }
+
+  .result-count {
+    font-size: 0.86rem;
+    color: var(--color-text-muted, #5a7a8a);
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  /* ── AnimatedTabs 彈簧磁吸滑塊 (如附圖白色純淨膠囊) ── */
+  .filter-bar-wrapper {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .filter-bar-track {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 2px;
+    background: #eef2f5;
+    padding: 4px;
     border-radius: 9999px;
-    border: 1.5px solid var(--color-border, #d4e5eb);
-    box-shadow: 0 2px 6px rgba(74, 144, 164, 0.04);
+    border: 1px solid var(--color-border, #d4e5eb);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .filter-bar-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 彈簧磁吸白色膠囊 Indicator */
+  .filter-spring-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 9999px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(30, 58, 76, 0.08), 0 1px 3px rgba(30, 58, 76, 0.04);
+    border: 1px solid rgba(212, 229, 235, 0.85);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .filter-tab-btn {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 9999px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-text-muted, #5a7a8a);
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
     line-height: 1.2;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    flex-shrink: 0;
+    transition: color 0.2s ease;
   }
 
-  .filter-pill:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-primary, #4a90a4);
-    color: var(--color-primary, #4a90a4);
-    background: var(--color-primary-light, #eef7f9);
-    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.15);
+  .filter-tab-btn:hover {
+    color: var(--color-text-title, #1e3a4c);
   }
 
-  .filter-pill.active {
-    background: linear-gradient(135deg, var(--color-primary, #4a90a4), #5ba3b8);
-    border-color: transparent;
-    color: #FFFFFF;
-    box-shadow: 0 4px 16px rgba(74, 144, 164, 0.35);
-    transform: translateY(-1px);
-  }
-
-  .pill-count {
-    font-size: 0.76rem;
+  .filter-tab-btn.active {
+    color: var(--color-text-title, #1e3a4c);
     font-weight: 800;
-    padding: 2px 8px;
+  }
+
+  .tab-label {
+    position: relative;
+    z-index: 2;
+  }
+
+  .tab-count {
+    position: relative;
+    z-index: 2;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 1px 7px;
     border-radius: 9999px;
     line-height: 1.3;
     background-color: rgba(74, 144, 164, 0.1);
@@ -510,9 +618,9 @@ const sortedCategories = [
     transition: all 0.2s ease;
   }
 
-  .filter-pill.active .pill-count {
-    background-color: rgba(255, 255, 255, 0.25);
-    color: #FFFFFF;
+  .filter-tab-btn.active .tab-count {
+    background-color: var(--color-primary-light, #eef7f9);
+    color: var(--color-primary, #4a90a4);
   }
 
   /* ── 卡片網格 ── */
@@ -552,7 +660,7 @@ const sortedCategories = [
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 72px 24px;
+    padding: 60px 20px;
     text-align: center;
     color: var(--color-text-muted, #5a7a8a);
     gap: 12px;
@@ -568,65 +676,37 @@ const sortedCategories = [
   }
 
   .no-results-icon {
-    font-size: 3rem;
+    font-size: 2.6rem;
   }
 
   .no-results h3 {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     color: var(--color-text-title, #1e3a4c);
     font-weight: 800;
   }
 
   .no-results p {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     line-height: 1.6;
   }
 
   .reset-btn {
     margin-top: 8px;
-    padding: 10px 26px;
+    padding: 9px 24px;
     border-radius: 9999px;
     border: none;
     background: linear-gradient(135deg, #4a90a4, #5ba3b8);
     color: #ffffff;
     font-family: inherit;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(74, 144, 164, 0.3);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease;
   }
 
   .reset-btn:hover {
     transform: scale(1.03);
-    box-shadow: 0 6px 18px rgba(74, 144, 164, 0.4);
-  }
-
-  /* ── 浮動選單按鈕 (FAB) ── */
-  .fab-category-btn {
-    position: fixed;
-    bottom: 28px;
-    right: 24px;
-    z-index: 99;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, var(--color-primary, #4a90a4), #5ba3b8);
-    color: #ffffff;
-    border: none;
-    padding: 13px 22px;
-    border-radius: 9999px;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(74, 144, 164, 0.38);
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
-  }
-
-  .fab-category-btn:hover {
-    transform: translateY(-4px) scale(1.04);
-    box-shadow: 0 12px 30px rgba(74, 144, 164, 0.5);
   }
 
   /* ── 側滑抽屜 ── */
@@ -823,5 +903,43 @@ const sortedCategories = [
   .drawer-file-item:hover {
     background-color: var(--color-primary-light, #eef7f9);
     color: var(--color-primary, #4a90a4);
+  }
+
+  @media (max-width: 768px) {
+    .column-hero {
+      padding: 16px 10px 8px;
+    }
+    .column-hero-title {
+      font-size: 1.65rem;
+    }
+    .column-hero-desc {
+      font-size: 0.88rem;
+    }
+    .search-row {
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    .search-wrapper {
+      min-width: 180px;
+    }
+    .open-drawer-btn {
+      padding: 8px 12px;
+      font-size: 0.82rem;
+    }
+    .filter-bar-wrapper {
+      margin-bottom: 16px;
+      margin-left: -12px;
+      margin-right: -12px;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+    .filter-tab-btn {
+      padding: 6px 12px;
+      font-size: 0.82rem;
+    }
+    .posts-grid {
+      gap: 16px;
+      margin-bottom: 36px;
+    }
   }
 </style>
