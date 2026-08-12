@@ -1,560 +1,590 @@
 ---
 interface Props {
   title: string;
-  description?: string;
-  /** 覆蓋 <title> 標籤的完整文字（不會自動加上 " | 黃冠智醫師" suffix） */
   meta_title?: string;
-  /** 覆蓋 <meta name="description"> 的文字 */
-  meta_description?: string;
-  /** Open Graph 封面圖完整 URL（用於 FB / LINE 分享） */
-  ogImage?: string;
-  /** 當前頁面完整 URL（用於 og:url） */
-  canonicalUrl?: string;
+  description: string;
+  image?: string;
+  article?: boolean;
 }
 
 const {
   title,
-  description = "黃冠智醫師的個人衛教專欄與筆記。提供肝膽腸胃健康、內科醫學等實證衛教資訊。",
-  meta_title,
-  meta_description,
-  ogImage,
-  canonicalUrl,
+  meta_title = '黃冠智醫師｜肝膽腸胃科·豐田診所院長｜醫學筆記與健康指南',
+  description = '豐田診所院長黃冠智醫師的官方網站。提供胃食道逆流、大腸鏡檢查、肝病防治、減重門診等肝膽腸胃內科專業醫學筆記與健康指南。',
+  image = '/images/og-default.jpg',
+  article = false,
 } = Astro.props;
 
-// 決定最終 Open Graph / LINE 封面圖
-const defaultOgImage = "https://drhuanggi.vercel.app/images/og-turtle.jpg";
-const rawOgImage = ogImage || defaultOgImage;
-const finalOgImage = rawOgImage.startsWith('http')
-  ? rawOgImage
-  : `${Astro.site?.origin ?? 'https://drhuanggi.vercel.app'}${rawOgImage.startsWith('/') ? '' : '/'}${rawOgImage}`;
-
-// 決定最終 <title> 文字
-const finalTitle = meta_title ?? `${title} | 黃冠智醫師`;
-// 決定最終 description
-const finalDescription = meta_description ?? description;
-
-// 取得當前網址路徑以動態高亮選單
-const pathname = Astro.url.pathname;
-const isHome = pathname === '/' || pathname === '';
-const isHealthColumn = pathname.startsWith('/health-column');
-const isBowelPrep = pathname.startsWith('/bowel-prep');
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuanggi.vercel.app');
 ---
 
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- 網站圖示 Favicon (供 Google 搜尋與各大瀏覽器使用) -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="shortcut icon" href="/favicon-48x48.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="generator" content={Astro.generator} />
 
-    <!-- 基礎 SEO -->
-    <title>{finalTitle}</title>
-    <meta name="description" content={finalDescription} />
-    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-
-    <!-- Open Graph（Facebook / LINE 分享） -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={finalTitle} />
-    <meta property="og:description" content={finalDescription} />
-    <meta property="og:image" content={finalOgImage} />
-    <meta property="og:site_name" content="黃冠智醫師 醫學筆記" />
-    <meta property="og:locale" content="zh_TW" />
-    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-
-    <!-- Google 網站名稱 (Site Name) 官方結構化資料 -->
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "黃冠智醫師 醫學筆記",
-      "alternateName": ["黃冠智醫師", "豐田診所 黃冠智醫師", "黃冠智 院長", "Dr. Huang GI"],
-      "url": "https://drhuanggi.vercel.app/"
-    })} />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={finalTitle} />
-    <meta name="twitter:description" content={finalDescription} />
-    <meta name="twitter:image" content={finalOgImage} />
-    
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2P627PEG5"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-M2P627PEG5');
-    </script>
-
-    <!-- Google Fonts (Plus Jakarta Sans + Noto Sans TC) -->
+    <!-- Google Fonts: Plus Jakarta Sans & Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style is:global>
-      /* --- Pet Adoption Warm Coral & Cream Design Tokens --- */
-      :root {
-        --color-bg-page: #FAF6F0;       /* 溫暖奶油米白 */
-        --color-bg-alt: #F4EFE6;        /* 柔和沙色副背景 */
-        --color-bg-card: #FFFFFF;       /* 純白卡片 */
-        --color-primary: #E76F51;       /* 暖珊瑚橘主色 */
-        --color-primary-hover: #D65A3D; /* 珊瑚深橘 */
-        --color-primary-light: #FDEEE9; /* 柔粉珊瑚淺底 */
-        --color-secondary: #F4A261;     /* 溫暖蜜桃橘 */
-        --color-secondary-light: #FEF6EC;/* 淺蜜桃 */
-        --color-accent: #E9C46A;        /* 柔陽光金 */
-        --color-accent-light: #FFF9E6;  /* 淺金底 */
-        --color-mint: #4DB6AC;          /* 薄荷綠 */
-        --color-mint-light: #E0F2F1;    /* 淺薄荷底 */
-        --color-text-title: #1E293B;    /* 深暖炭灰標題 */
-        --color-text-body: #334155;     /* 易讀深石板灰內文 */
-        --color-text-muted: #64748B;    /* 柔和石板灰次要字 */
-        --color-border: #EFE8DE;        /* 柔和邊框 */
-        --color-border-subtle: #F5EFEB; /* 微細邊框 */
-        --color-shadow: rgba(231, 111, 81, 0.08);
-        --color-shadow-hover: rgba(231, 111, 81, 0.16);
-      }
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-      /* Base Reset */
-      *, *::before, *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
 
-      html {
-        font-size: 16px;
-        scroll-behavior: smooth;
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
-      }
+    <!-- Primary Meta Tags -->
+    <title>{meta_title}</title>
+    <meta name="title" content={meta_title} />
+    <meta name="description" content={description} />
+    <meta name="author" content="黃冠智 醫師" />
+    <meta name="keywords" content="黃冠智, 豐田診所, 肝膽腸胃科, 胃鏡, 大腸鏡, 胃食道逆流, 腹部超音波, 減重, 糖尿病, 高血壓, 慢性病管理" />
 
-      @media (max-width: 768px) {
-        html {
-          font-size: 17px;
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={meta_title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site || 'https://drhuanggi.vercel.app')} />
+    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:site_name" content="黃冠智醫師｜健康衛教指南" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={meta_title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(image, Astro.site || 'https://drhuanggi.vercel.app')} />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "name": meta_title,
+      "description": description,
+      "url": canonicalURL,
+      "author": {
+        "@type": "Physician",
+        "name": "黃冠智 醫師",
+        "jobTitle": "院長 / 肝膽腸胃科主治醫師",
+        "worksFor": {
+          "@type": "MedicalClinic",
+          "name": "豐田診所",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "建成路1848號",
+            "addressLocality": "南區",
+            "addressRegion": "台中市",
+            "addressCountry": "TW"
+          },
+          "telephone": "+886-4-2285-0066"
         }
       }
-
-      body {
-        font-family: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
-        background-color: var(--color-bg-page);
-        color: var(--color-text-body);
-        line-height: 1.65;
-        -webkit-font-smoothing: antialiased;
-        position: relative;
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
-
-      /* Background Ambient Light Glow Orbs */
-      .ambient-glow-layer {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        overflow: hidden;
-      }
-
-      .glow-orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(100px);
-        opacity: 0.18;
-      }
-
-      .glow-orb-1 {
-        top: -100px;
-        right: -80px;
-        width: 500px;
-        height: 500px;
-        background: #E76F51;
-      }
-
-      .glow-orb-2 {
-        top: 40%;
-        left: -150px;
-        width: 450px;
-        height: 450px;
-        background: #F4A261;
-      }
-
-      .glow-orb-3 {
-        bottom: 10%;
-        right: -100px;
-        width: 400px;
-        height: 400px;
-        background: #E9C46A;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      /* Universal Gradient Text */
-      .gradient-text {
-        background: linear-gradient(135deg, #E76F51 0%, #F4845F 50%, #FF8A65 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-      }
-
-      /* Layout Container */
-      .layout-container {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        max-width: 1240px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-
-      @media (max-width: 600px) {
-        .layout-container {
-          padding: 0 12px;
-        }
-      }
-
-      main {
-        flex-grow: 1;
-        padding: 30px 0 60px;
-      }
-
-      /* Header (Pill Glassmorphism) */
-      .site-header-wrapper {
-        position: sticky;
-        top: 16px;
-        z-index: 100;
-        width: 100%;
-        margin: 0 0 24px 0;
-      }
-
-      .site-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 16px;
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(231, 111, 81, 0.14);
-        border-radius: 9999px;
-        box-shadow: 0 10px 30px -4px rgba(231, 111, 81, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.03);
-        transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
-      }
-
-      .site-header:hover {
-        box-shadow: 0 14px 36px -4px rgba(231, 111, 81, 0.14), 0 4px 12px -1px rgba(0, 0, 0, 0.05);
-        border-color: rgba(231, 111, 81, 0.25);
-      }
-
-      .logo-group {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 4px 8px;
-        border-radius: 9999px;
-        transition: opacity 0.2s ease;
-      }
-
-      .logo-group:hover {
-        opacity: 0.9;
-      }
-
-      .logo-badge-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #E76F51, #F4845F);
-        box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
-        border: 2px solid #FFFFFF;
-        overflow: hidden;
-        flex-shrink: 0;
-      }
-
-      .logo-turtle-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-      }
-
-      .logo-text-wrap {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .logo-title {
-        font-size: 1.18rem;
-        font-weight: 800;
-        color: var(--color-text-title);
-        letter-spacing: 0.3px;
-        line-height: 1.2;
-      }
-
-      .logo-subtitle {
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: var(--color-primary);
-        letter-spacing: 0.6px;
-      }
-
-      /* Center Animated Tabs */
-      .smooth-tabs-nav {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        background: rgba(231, 111, 81, 0.06);
-        padding: 4px;
-        border-radius: 9999px;
-        border: 1px solid rgba(231, 111, 81, 0.08);
-      }
-
-      .smooth-tab-pill {
-        position: absolute;
-        top: 4px;
-        left: 0;
-        height: calc(100% - 8px);
-        background: #FFFFFF;
-        border-radius: 9999px;
-        box-shadow: 0 4px 14px rgba(231, 111, 81, 0.15), 0 1px 3px rgba(0, 0, 0, 0.04);
-        pointer-events: none;
-        z-index: 1;
-        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
-        opacity: 0;
-      }
-
-      .smooth-tab-link {
-        position: relative;
-        z-index: 2;
-        padding: 8px 18px;
-        font-size: 0.92rem;
-        font-weight: 700;
-        color: var(--color-text-muted);
-        text-decoration: none;
-        border-radius: 9999px;
-        transition: color 0.2s ease;
-        white-space: nowrap;
-        user-select: none;
-      }
-
-      .smooth-tab-link:hover {
-        color: var(--color-primary);
-      }
-
-      .smooth-tab-link.active {
-        color: var(--color-primary);
-        font-weight: 800;
-      }
-
-      /* Right CTA Button */
-      .header-cta-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-        color: #FFFFFF;
-        padding: 9px 20px;
-        border-radius: 9999px;
-        font-size: 0.9rem;
-        font-weight: 700;
-        text-decoration: none;
-        box-shadow: 0 4px 14px rgba(231, 111, 81, 0.32);
-        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-        white-space: nowrap;
-      }
-
-      .header-cta-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(231, 111, 81, 0.42);
-        filter: brightness(1.05);
-      }
-
-      .header-cta-btn:active {
-        transform: scale(0.97);
-      }
-
-      /* Footer */
-      .site-footer {
-        padding: 48px 0 36px;
-        border-top: 1.5px solid var(--color-border);
-        text-align: center;
-        color: var(--color-text-muted);
-        font-size: 0.92rem;
-      }
-
-      .footer-badge-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: var(--color-primary-light);
-        color: var(--color-primary);
-        font-weight: 700;
-        font-size: 0.84rem;
-        padding: 6px 14px;
-        border-radius: 9999px;
-        margin-bottom: 14px;
-      }
-
-      .footer-copy {
-        margin-top: 10px;
-        font-size: 0.85rem;
-        color: #8C9CAE;
-        max-width: 680px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      /* Responsive */
-      @media (max-width: 900px) {
-        .site-header-wrapper {
-          top: 10px;
-          margin-bottom: 18px;
-        }
-        .site-header {
-          flex-wrap: wrap;
-          gap: 12px;
-          padding: 10px 16px;
-          border-radius: 24px;
-        }
-        .logo-group {
-          padding: 0;
-        }
-        .smooth-tabs-nav {
-          order: 3;
-          width: 100%;
-          justify-content: space-around;
-        }
-        .header-cta-btn {
-          padding: 7px 16px;
-          font-size: 0.84rem;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .smooth-tab-link {
-          padding: 6px 10px;
-          font-size: 0.85rem;
-        }
-        .logo-title {
-          font-size: 1.08rem;
-        }
-        .header-cta-btn {
-          display: none;
-        }
-      }
-    </style>
+    })} />
   </head>
-  <body>
-    <!-- Ambient Glow Orbs -->
+  <body class="veterinary-theme">
+    <!-- 背景柔光氛圍層 (Veterinary Clinic Ambient Glow) -->
     <div class="ambient-glow-layer" aria-hidden="true">
       <div class="glow-orb glow-orb-1"></div>
       <div class="glow-orb glow-orb-2"></div>
-      <div class="glow-orb glow-orb-3"></div>
     </div>
 
-    <div class="layout-container">
-      <div class="site-header-wrapper">
-        <header class="site-header">
-          <a href="/" class="logo-group">
-            <div class="logo-badge-icon">
-              <img src="/favicon-48x48.png" alt="黃冠智醫師海龜標誌" class="logo-turtle-img" />
-            </div>
-            <div class="logo-text-wrap">
-              <span class="logo-title">黃冠智 醫師</span>
-              <span class="logo-subtitle">豐田診所院長 · 肝膽腸胃專科</span>
-            </div>
+    <!-- 頂部導覽列 (Veterinary Clinic Nav) -->
+    <header class="navbar-vet-wrapper">
+      <div class="navbar-vet">
+        <a href="/" class="brand-logo" aria-label="黃冠智醫師 豐田診所">
+          <div class="brand-icon">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">黃冠智 醫師</span>
+            <span class="brand-subtitle">豐田診所院長 · 肝膽腸胃專科</span>
+          </div>
+        </a>
+
+        <nav class="nav-links" aria-label="主導覽列">
+          <a href="/" class:list={[{ active: Astro.url.pathname === '/' }]}>首頁</a>
+          <a href="/health-column" class:list={[{ active: Astro.url.pathname.startsWith('/health-column') || Astro.url.pathname.startsWith('/posts') }]}>醫學筆記</a>
+          <a href="/bowel-prep" class:list={[{ active: Astro.url.pathname.startsWith('/bowel-prep') }]}>大腸鏡檢表單</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a href="https://lin.ee/1Yx9bWq" target="_blank" rel="noopener noreferrer" class="btn-emergency">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>門診預約</span>
           </a>
-
-          <nav class="smooth-tabs-nav" id="main-nav-tabs" aria-label="主要導覽">
-            <div class="smooth-tab-pill" id="smooth-nav-pill"></div>
-            <a href="/" class={`smooth-tab-link ${isHome ? 'active' : ''}`}>首頁</a>
-            <a href="/health-column" class={`smooth-tab-link ${isHealthColumn ? 'active' : ''}`}>醫學筆記</a>
-            <a href="/bowel-prep" class={`smooth-tab-link ${isBowelPrep ? 'active' : ''}`}>大腸鏡檢表單</a>
-          </nav>
-
-          <a href="/health-column" class="header-cta-btn">
-            <span>瀏覽衛教專欄 ❤️</span>
-            <span>→</span>
+          <a href="/health-column" class="btn-primary">
+            <span>瀏覽衛教專欄</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
-        </header>
-      </div>
-
-      <script is:inline>
-        // Smooth Animated Tabs Interactivity
-        (function initSmoothTabs() {
-          const nav = document.getElementById('main-nav-tabs');
-          const pill = document.getElementById('smooth-nav-pill');
-          if (!nav || !pill) return;
-
-          const links = Array.from(nav.querySelectorAll('.smooth-tab-link'));
-          const activeLink = nav.querySelector('.smooth-tab-link.active') || links[0];
-
-          function movePillTo(target, smooth = true) {
-            if (!target) return;
-            const navRect = nav.getBoundingClientRect();
-            const targetRect = target.getBoundingClientRect();
-            
-            const left = targetRect.left - navRect.left;
-            const width = targetRect.width;
-
-            if (!smooth) {
-              pill.style.transition = 'none';
-            } else {
-              pill.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease';
-            }
-
-            pill.style.transform = `translateX(${left}px)`;
-            pill.style.width = `${width}px`;
-            pill.style.opacity = '1';
-          }
-
-          // Initial position
-          requestAnimationFrame(() => {
-            movePillTo(activeLink, false);
-            setTimeout(() => movePillTo(activeLink, false), 60);
-          });
-
-          // Hover events on links
-          links.forEach((link) => {
-            link.addEventListener('mouseenter', () => movePillTo(link, true));
-          });
-
-          // Reset to active tab when mouse leaves nav
-          nav.addEventListener('mouseleave', () => {
-            movePillTo(activeLink, true);
-          });
-
-          // Handle window resize
-          window.addEventListener('resize', () => {
-            movePillTo(activeLink, false);
-          });
-        })();
-      </script>
-
-      <main>
-        <slot />
-      </main>
-
-      <footer class="site-footer">
-        <div class="footer-badge-pill">
-          <span>🩺</span>
-          <span>實證醫療 · 守護腸胃與代謝健康</span>
         </div>
-        <p>© {new Date().getFullYear()} 黃冠智醫師. All rights reserved.</p>
-        <p class="footer-copy">本站內容主要為個人衛教與醫療筆記，僅供參考。若有身體不適，請務必尋求專業醫師當面諮詢與評估。</p>
-      </footer>
-    </div>
+      </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="page-container">
+      <slot />
+    </main>
+
+    <!-- 頁尾 (Veterinary Clinic Dark Navy Footer) -->
+    <footer class="footer-vet">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand-col">
+            <div class="footer-logo">
+              <div class="footer-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+              </div>
+              <span class="footer-title">黃冠智 醫師</span>
+            </div>
+            <p class="footer-desc">
+              豐田診所院長 · 肝膽腸胃內科專科醫師。致力於普及胃腸內視鏡、肝病防治與代謝慢性病實證醫學衛教。
+            </p>
+          </div>
+
+          <div class="footer-links-col">
+            <h4>快速連結</h4>
+            <ul>
+              <li><a href="/">首頁總覽</a></li>
+              <li><a href="/health-column">實證衛教專欄</a></li>
+              <li><a href="/bowel-prep">大腸鏡檢前衛教</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-links-col">
+            <h4>特色專長</h4>
+            <ul>
+              <li><a href="/health-column?filter=內視鏡檢查">無痛胃鏡·大腸鏡</a></li>
+              <li><a href="/health-column?filter=超音波檢查">腹部超音波檢查</a></li>
+              <li><a href="/health-column?filter=胃部疾病">胃食道逆流整合治療</a></li>
+              <li><a href="/health-column?filter=減重">減重代謝管理門診</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-contact-col">
+            <h4>豐田診所資訊</h4>
+            <p>📍 台中市南區建成路1848號</p>
+            <p>📞 (04) 2285-0066</p>
+            <p>⏰ 週一至週六（看診時間請見門診表）</p>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© {new Date().getFullYear()} 黃冠智醫師. All rights reserved. 本站內容為個人醫學衛教筆記，僅供參考，若有身體不適請務必尋求專業醫師當面諮詢評估。</p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
+
+<style is:global>
+  /* ═══════════════════════════════════════════════════════════
+     Veterinary Clinic Design Tokens & Global Styles
+     Primary: #4a90a4 (Ocean Teal)
+     Secondary: #6bb5a2 (Sage Sea Green)
+     Coral: #e76f51 (Warm Coral Accent)
+     Background: #f8fbfc (Crisp Mint Ice White)
+     Background Alt: #eef5f7
+     Dark Footer: #2c5364
+  ═══════════════════════════════════════════════════════════ */
+  :root {
+    --color-primary: #4a90a4;
+    --color-primary-dark: #3b7688;
+    --color-primary-light: #eef7f9;
+    --color-secondary: #6bb5a2;
+    --color-secondary-light: #edf7f4;
+    --color-accent: #f4a261;
+    --color-accent-light: #fef4ec;
+    --color-coral: #e76f51;
+    --color-coral-light: #fdeee9;
+    --color-bg-page: #f8fbfc;
+    --color-bg-alt: #eef5f7;
+    --color-bg-card: #ffffff;
+    --color-bg-dark: #2c5364;
+    --color-text-title: #1e3a4c;
+    --color-text-body: #2d4f63;
+    --color-text-muted: #5a7a8a;
+    --color-border: #d4e5eb;
+    --color-shadow: rgba(74, 144, 164, 0.08);
+
+    --font-sans: 'Plus Jakarta Sans', 'Poppins', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-page);
+    color: var(--color-text-body);
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ── 氛圍柔光球 (Veterinary Mint Glow) ── */
+  .ambient-glow-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+  }
+
+  .glow-orb-1 {
+    top: -120px;
+    right: -80px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(74, 144, 164, 0.35) 0%, rgba(107, 181, 162, 0.1) 70%);
+  }
+
+  .glow-orb-2 {
+    top: 40%;
+    left: -120px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(107, 181, 162, 0.3) 0%, rgba(74, 144, 164, 0.08) 70%);
+  }
+
+  /* ── 膠囊導覽列 (Veterinary Clinic Nav) ── */
+  .navbar-vet-wrapper {
+    position: sticky;
+    top: 14px;
+    z-index: 100;
+    padding: 0 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .navbar-vet {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 30px rgba(74, 144, 164, 0.08);
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--color-primary), #5ba3b8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(74, 144, 164, 0.3);
+  }
+
+  .icon-svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--color-text-title);
+    line-height: 1.2;
+  }
+
+  .brand-subtitle {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-bg-page);
+    padding: 4px 6px;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+  }
+
+  .nav-links a {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    padding: 6px 16px;
+    border-radius: 9999px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+  }
+
+  .nav-links a.active {
+    color: #ffffff;
+    background: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.3);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, #5ba3b8 100%);
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(74, 144, 164, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(74, 144, 164, 0.45);
+  }
+
+  .btn-emergency {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--color-coral) 0%, #f07c5f 100%);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn-emergency:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(231, 111, 81, 0.45);
+  }
+
+  @media (max-width: 768px) {
+    .navbar-vet {
+      padding: 8px 14px;
+      border-radius: 20px;
+    }
+    .nav-links {
+      display: none;
+    }
+    .brand-subtitle {
+      display: none;
+    }
+    .btn-emergency {
+      display: none;
+    }
+    .btn-primary {
+      padding: 7px 12px;
+      font-size: 0.82rem;
+    }
+  }
+
+  /* ── 頁面主要容器 ── */
+  .page-container {
+    flex: 1;
+    max-width: 1200px;
+    margin: 28px auto 0;
+    padding: 0 16px 64px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── 通用卡片與徽章 ── */
+  .soft-card {
+    background: var(--color-bg-card);
+    border-radius: 20px;
+    border: 1px solid var(--color-border);
+    box-shadow: 6px 6px 16px rgba(74, 144, 164, 0.06), -6px -6px 16px #ffffff;
+    transition: all 0.3s ease;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+
+  .badge-primary {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border: 1px solid rgba(74, 144, 164, 0.2);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── 頁尾 (Veterinary Clinic Dark Navy Footer) ── */
+  .footer-vet {
+    background-color: var(--color-bg-dark);
+    color: #ffffff;
+    padding: 56px 20px 32px;
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 36px;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 900px) {
+    .footer-top {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .footer-top {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .footer-brand-col .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .footer-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+  }
+
+  .footer-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+
+  .footer-desc {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.65;
+    max-width: 320px;
+  }
+
+  .footer-links-col h4,
+  .footer-contact-col h4 {
+    font-size: 0.98rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: #ffffff;
+  }
+
+  .footer-links-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links-col a {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.2s ease;
+  }
+
+  .footer-links-col a:hover {
+    color: var(--color-secondary);
+  }
+
+  .footer-contact-col p {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 24px;
+    text-align: center;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.6;
+  }
+</style>

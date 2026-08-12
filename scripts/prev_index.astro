@@ -45,13 +45,12 @@ const formatDate = (date: Date) => {
     "image": "https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg",
     "url": "https://drhuanggi.vercel.app"
   })} />
-
   <!-- 頁首海龜視覺橫幅 Banner -->
   <section class="turtle-hero-banner">
     <img src="/images/turtle-banner.jpg" alt="海龜悠遊海洋" class="banner-bg-img" />
   </section>
 
-  <!-- Hero Section (關於我 - 專業醫師介紹) -->
+  <!-- Hero Section (關於我) -->
   <section class="about-hero">
     <!-- SmoothUI Interactive 3D Perspective Grid -->
     <div class="interactive-grid-container" aria-hidden="true">
@@ -64,11 +63,7 @@ const formatDate = (date: Date) => {
 
     <div class="hero-text-content">
       <div class="hero-header-info">
-        <div class="badge badge-primary hero-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-          <span>院長親自診療 · 臨床實證醫學</span>
-        </div>
-        <h1 class="hero-name">關於 <span class="gradient-text">黃冠智 醫師</span></h1>
+        <h1 class="hero-name">關於 黃冠智 醫師</h1>
         <p class="hero-title">豐田診所院長 / 肝膽腸胃內科主治醫師</p>
       </div>
       
@@ -84,24 +79,24 @@ const formatDate = (date: Date) => {
           <strong>專長領域與特色診療</strong>
         </div>
         <div class="specialty-pill-grid">
-          <a href="/health-column?filter=內視鏡檢查" class="specialty-pill">消化道內視鏡</a>
-          <a href="/health-column?filter=超音波檢查" class="specialty-pill">腹部超音波</a>
-          <a href="/health-column?filter=胃部疾病" class="specialty-pill">胃食道逆流</a>
-          <a href="/health-column?filter=肝病特區" class="specialty-pill">肝病慢性追蹤</a>
-          <a href="/health-column?filter=減重" class="specialty-pill">減重代謝門診</a>
-          <a href="/health-column?filter=慢性病" class="specialty-pill">三高慢性病</a>
-          <a href="/health-column?filter=腸道疾病" class="specialty-pill">內痔微創結紮</a>
-          <a href="/health-column?filter=各種檢驗檢查" class="specialty-pill">勞工健康檢查</a>
+          <span class="specialty-pill">消化道內視鏡</span>
+          <span class="specialty-pill">腹部超音波</span>
+          <span class="specialty-pill">胃食道逆流</span>
+          <span class="specialty-pill">肝病慢性追蹤</span>
+          <span class="specialty-pill">減重代謝門診</span>
+          <span class="specialty-pill">三高慢性病</span>
+          <span class="specialty-pill">內痔微創結紮</span>
+          <span class="specialty-pill">勞工健康檢查</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Profile Details (專業學歷 & 臨床經歷) -->
+  <!-- Profile Details (學經歷) -->
   <section class="profile-details">
     <div class="details-card">
       <div class="card-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
       </div>
       <h2>專業學歷</h2>
       <ul class="details-list">
@@ -115,7 +110,7 @@ const formatDate = (date: Date) => {
 
     <div class="details-card">
       <div class="card-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       </div>
       <h2>臨床經歷</h2>
       <ul class="details-list">
@@ -130,11 +125,8 @@ const formatDate = (date: Date) => {
   <!-- Schedule Section (門診時間表) -->
   <section class="schedule-section">
     <div class="section-header">
-      <div>
-        <div class="badge badge-primary mb-2">門診資訊</div>
-        <h2>個人門診時間表</h2>
-        <p class="section-desc">以下為黃冠智醫師的常態門診時間，如遇休診或調整，請以診所當日公告為準。</p>
-      </div>
+      <h2>個人門診時間表</h2>
+      <p class="section-desc">以下為黃冠智醫師的常態門診時間，如遇休診或調整，請以診所當日公告為準。</p>
     </div>
 
     <div class="table-container">
@@ -196,17 +188,16 @@ const formatDate = (date: Date) => {
     </div>
     
     <div class="schedule-tips">
-      <p>💡 星期四下午於豐田仁愛診所看診，其餘時段均在豐田診所。「檢查診」為胃鏡與大腸鏡內視鏡預約檢查時段。</p>
+      <p>💡 星期四下午於豐田仁愛診所看診，其餘時段均在豐田診所。「檢查診」為內視鏡檢查時段。</p>
     </div>
   </section>
 
-  <!-- Latest Articles Section (最新醫學筆記) -->
+  <!-- Latest Articles Section (Direct Link Cards) -->
   <section class="latest-articles">
     <div class="section-header">
       <div>
-        <div class="badge badge-primary mb-2">實證專欄</div>
         <h2>最新醫學筆記</h2>
-        <p class="section-desc">由黃冠智醫師親筆撰寫之實證衛教文章，點擊直接閱讀完整內容</p>
+        <p class="section-desc">實證醫學衛教文章，點擊直接閱讀完整內容</p>
       </div>
       <a href="/health-column" class="view-all-link">查看全部文章 ({allPosts.filter(p => !p.data.draft).length} 篇) →</a>
     </div>
@@ -233,22 +224,22 @@ const formatDate = (date: Date) => {
   <!-- 豐田診所 · 門診資訊與就醫指引專區 -->
   <section class="clinic-info-section" aria-labelledby="clinic-section-title">
     <div class="clinic-section-header">
-      <span class="badge badge-primary clinic-section-badge">就醫指引</span>
+      <span class="clinic-section-badge">就醫指引</span>
       <h2 id="clinic-section-title" class="clinic-section-title">豐田診所 · 門診資訊</h2>
-      <p class="clinic-section-desc">歡迎來電或透過 LINE 官方帳號預約掛號，我們將竭誠為您服務</p>
+      <p class="clinic-section-desc">歡迎來電或透過 LINE 預約掛號，我們將竭誠為您服務</p>
     </div>
 
     <div class="clinic-cards-row">
       <!-- 左欄：診所基本資訊 -->
       <div class="clinic-info-card">
         <div class="clinic-card-icon-wrap">
-          <svg viewBox="0 0 32 32" width="26" height="26" fill="none" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28" fill="none" aria-hidden="true">
             <rect x="4" y="8" width="24" height="20" rx="3" stroke="currentColor" stroke-width="2"/>
             <path d="M10 8V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3" stroke="currentColor" stroke-width="2"/>
             <path d="M16 14v6M13 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
-        <h3 class="clinic-card-name">🏥 豐田診所 <span class="clinic-name-en">FT Clinic</span></h3>
+        <h3 class="clinic-card-name">🏥 豐田診所 <span class="clinic-name-en">FT clinic</span></h3>
 
         <ul class="clinic-detail-list">
           <li class="clinic-detail-item">
@@ -307,169 +298,180 @@ const formatDate = (date: Date) => {
           <div class="line-icon-ring">
             <svg viewBox="0 0 40 40" width="40" height="40" fill="none" aria-hidden="true">
               <circle cx="20" cy="20" r="20" fill="#06C755"/>
-              <path d="M30 18.5c0-4.7-4.5-8.5-10-8.5S10 13.8 10 18.5c0 4.2 3.7 7.7 8.7 8.3.3.1.8.2.9.6.1.3.1.8 0 1.1l-.3 1.8c-.1.5-.4 1.8 1.6 1 2-.8 5.4-3.2 7.4-5.5 1.1-1.3 1.7-2.6 1.7-4.3z" fill="white"/>
+              <path d="M20 8C13.373 8 8 12.477 8 18c0 3.48 2.093 6.545 5.28 8.432-.234.857-.881 3.115-.993 3.568 0 0 1.136-.45 4.374-2.26A14.91 14.91 0 0 0 20 28c6.627 0 12-4.477 12-10S26.627 8 20 8z" fill="white"/>
+              <path d="M15.5 20.5h2M18.5 20.5h2M21.5 20.5h2" stroke="#06C755" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </div>
           <h3 class="line-card-title">立即預約掛號</h3>
           <p class="line-card-desc">
-            透過 LINE 官方帳號預約，隨時隨地輕鬆安排就診，不需現場久候。
+            透過 LINE 官方帳號預約，隨時隨地輕鬆安排就診，不需電話等候。
           </p>
           <a
-            href="https://lin.ee/1Yx9bWq"
+            href="https://lin.ee/u3yRD2d"
             target="_blank"
             rel="noopener noreferrer"
             class="line-booking-btn"
+            id="clinic-line-booking-btn"
+            aria-label="透過 LINE 預約豐田診所掛號"
           >
-            <span>透過 LINE 預約掛號</span>
-            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
-              <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="white" aria-hidden="true">
+              <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
             </svg>
+            🟢 透過 LINE 預約掛號
           </a>
-          <p class="line-notice">※ 點擊後將開啟豐田診所 LINE 官方帳號，加入好友後即可開始預約</p>
+          <p class="line-notice">
+            ※ 點擊後將開啟豐田診所 LINE 官方帳號，加入好友後即可預約
+          </p>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- SmoothUI 3D Interactive Perspective Grid Initialization -->
+  <script is:inline>
+    (function initHero3DGrid() {
+      const grid = document.getElementById('about-hero-grid');
+      if (!grid || grid.children.length > 0) return;
+      const fragment = document.createDocumentFragment();
+      const count = 28 * 28; // 784 tiles for silky 60fps interaction
+      for (let i = 0; i < count; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'grid-tile';
+        fragment.appendChild(tile);
+      }
+      grid.appendChild(fragment);
+    })();
+  </script>
 </Layout>
 
-<script>
-  // SmoothUI Interactive 3D Grid Dynamic Mouse Perspective Tracking
-  document.addEventListener('DOMContentLoaded', () => {
-    const heroCard = document.querySelector('.about-hero') as HTMLElement;
-    const grid = document.getElementById('about-hero-grid') as HTMLElement;
-
-    if (!heroCard || !grid) return;
-
-    let rafId: number | null = null;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        const rect = heroCard.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const xPercent = (x / rect.width - 0.5) * 2;
-        const yPercent = (y / rect.height - 0.5) * 2;
-
-        const rotX = 65 - yPercent * 14;
-        const rotY = xPercent * 10;
-        const rotZ = -xPercent * 8;
-
-        grid.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg) scale(1.15)`;
-      });
-    };
-
-    const handleMouseLeave = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      grid.style.transform = `perspective(1000px) rotateX(65deg) rotateY(0deg) rotateZ(0deg) scale(1)`;
-    };
-
-    heroCard.addEventListener('mousemove', handleMouseMove, { passive: true });
-    heroCard.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-  });
-</script>
-
 <style>
-  /* ═══════════════════════════════════════
-     頁首海龜視覺橫幅 Banner (滿版置頂)
-  ═══════════════════════════════════════ */
+  /* 頁首海龜視覺橫幅 Banner (純粹清澈全景版) */
   .turtle-hero-banner {
     position: relative;
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    margin-top: -28px;
-    margin-bottom: 24px;
-    height: 380px;
+    width: 100%;
+    height: 320px;
+    border-radius: 24px;
     overflow: hidden;
+    margin-bottom: 36px;
+    box-shadow: 0 10px 32px rgba(27, 67, 50, 0.1);
+    border: 1px solid var(--color-border);
   }
-
-  @media (max-width: 1024px) {
-    .turtle-hero-banner {
-      height: 300px;
-      margin-top: -20px;
-      margin-bottom: 20px;
-    }
-  }
-
   @media (max-width: 768px) {
     .turtle-hero-banner {
-      height: 220px;
-      margin-top: -16px;
-      margin-bottom: 16px;
+      height: 240px;
+      border-radius: 18px;
+      margin-bottom: 24px;
     }
   }
-
-  @media (max-width: 480px) {
-    .turtle-hero-banner {
-      height: 170px;
-      margin-top: -12px;
-      margin-bottom: 12px;
-    }
-  }
-
   .banner-bg-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 38%;
-    display: block;
+    object-position: center 55%;
+    transition: transform 0.6s ease;
+  }
+  .turtle-hero-banner:hover .banner-bg-img {
+    transform: scale(1.03);
   }
 
-  /* ═══════════════════════════════════════
-     Hero Section (關於我 - 專業醫師介紹)
-  ═══════════════════════════════════════ */
+  /* Hero Section (關於我) + SmoothUI 3D Interactive Perspective Grid */
   .about-hero {
     position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 48px;
+    align-items: center;
     background-color: var(--color-bg-card);
     border-radius: 24px;
-    padding: 38px 42px;
-    margin-bottom: 48px;
-    box-shadow: 6px 6px 20px rgba(74, 144, 164, 0.08), -6px -6px 20px #ffffff;
-    border: 1.5px solid var(--color-border);
-    display: flex;
-    gap: 36px;
-    align-items: center;
-    overflow: hidden;
-    isolation: isolate;
+    padding: 40px;
+    box-shadow: 0 10px 30px var(--color-shadow);
+    margin-bottom: 40px;
+    border: 1px solid var(--color-border);
   }
 
   .interactive-grid-container {
+    --hero-grid-hover-color-1: rgba(47, 102, 86, 0.3);
+    --hero-grid-hover-color-2: rgba(61, 128, 109, 0.3);
+    --hero-grid-hover-color-3: rgba(188, 138, 74, 0.3);
+    --hero-grid-hover-color-4: rgba(232, 242, 238, 0.7);
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    pointer-events: none;
-    z-index: -1;
-    border-radius: inherit;
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 80%);
-    opacity: 0.75;
+    perspective: 2000px;
+    perspective-origin: center center;
+    pointer-events: auto;
+    z-index: 0;
   }
 
   .main-3d-grid {
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background-image: 
-      linear-gradient(to right, rgba(74, 144, 164, 0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(74, 144, 164, 0.08) 1px, transparent 1px);
-    background-size: 36px 36px;
-    transform: perspective(1000px) rotateX(65deg) scale(1);
-    transform-origin: center center;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    top: 50%;
+    left: 50%;
+    display: grid;
+    grid-template-rows: repeat(28, 1fr);
+    grid-template-columns: repeat(28, 1fr);
+    width: 110rem;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%) rotateX(50deg) rotateY(-5deg) rotateZ(20deg) scale(1.25);
+    pointer-events: auto;
+  }
+
+  .main-3d-grid::after {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    content: "";
+    background: radial-gradient(circle, transparent 25%, #FFFFFF 78%);
+  }
+
+  .grid-tile {
+    border: 0.5px solid rgba(47, 102, 86, 0.08);
+    transition: background-color 1500ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: crosshair;
+  }
+
+  .grid-tile:hover {
+    transition-duration: 0ms !important;
+  }
+
+  .grid-tile:nth-child(4n):hover { background-color: var(--hero-grid-hover-color-1); }
+  .grid-tile:nth-child(4n + 1):hover { background-color: var(--hero-grid-hover-color-2); }
+  .grid-tile:nth-child(4n + 2):hover { background-color: var(--hero-grid-hover-color-3); }
+  .grid-tile:nth-child(4n + 3):hover { background-color: var(--hero-grid-hover-color-4); }
+  .grid-tile:nth-child(7n):hover { background-color: var(--hero-grid-hover-color-2); }
+  .grid-tile:nth-child(7n + 3):hover { background-color: var(--hero-grid-hover-color-3); }
+  .grid-tile:nth-child(7n + 5):hover { background-color: var(--hero-grid-hover-color-4); }
+  .grid-tile:nth-child(7n + 6):hover { background-color: var(--hero-grid-hover-color-1); }
+  .grid-tile:nth-child(11n + 1):hover { background-color: var(--hero-grid-hover-color-1); }
+  .grid-tile:nth-child(11n + 4):hover { background-color: var(--hero-grid-hover-color-2); }
+  .grid-tile:nth-child(11n + 7):hover { background-color: var(--hero-grid-hover-color-3); }
+  .grid-tile:nth-child(11n + 10):hover { background-color: var(--hero-grid-hover-color-4); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .main-3d-grid {
+      transform: translate(-50%, -50%) rotateZ(20deg);
+    }
+    .grid-tile {
+      transition: none;
+    }
   }
 
   .hero-image-wrapper {
-    flex-shrink: 0;
-    width: 200px;
-    aspect-ratio: 1 / 1.18;
+    position: relative;
+    z-index: 2;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(74, 144, 164, 0.14);
-    border: 2px solid var(--color-border);
-    background-color: var(--color-bg-alt);
+    aspect-ratio: 1 / 1.15;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-bg-page));
+    box-shadow: 0 8px 24px rgba(47, 102, 86, 0.12);
+  }
+
+  .hero-image-wrapper:hover .hero-image {
+    transform: scale(1.03);
   }
 
   .hero-image {
@@ -477,337 +479,354 @@ const formatDate = (date: Date) => {
     height: 100%;
     object-fit: cover;
     object-position: top center;
-    display: block;
-    transition: transform 0.4s ease;
-  }
-
-  .about-hero:hover .hero-image {
-    transform: scale(1.03);
+    transition: transform 0.5s ease;
   }
 
   .hero-text-content {
-    flex: 1;
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    align-items: flex-start;
   }
 
-  .hero-badge {
-    margin-bottom: 8px;
+  .hero-header-info {
+    margin-bottom: 16px;
   }
 
   .hero-name {
-    font-size: 2.15rem;
+    font-size: 2.3rem;
     font-weight: 900;
-    color: var(--color-text-title);
+    color: var(--color-primary);
     margin-bottom: 4px;
-    letter-spacing: -0.5px;
+    line-height: 1.2;
   }
 
   .hero-title {
-    font-size: 1.02rem;
-    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    color: var(--color-accent);
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 0;
   }
 
   .hero-quote-card {
     position: relative;
-    background-color: var(--color-primary-light);
-    border-radius: 16px;
-    padding: 14px 20px 14px 44px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(74, 144, 164, 0.2);
+    background: rgba(188, 138, 74, 0.08);
+    border-left: 3.5px solid var(--color-accent);
+    border-radius: 14px;
+    padding: 16px 20px 16px 36px;
+    margin-bottom: 22px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .quote-mark {
     position: absolute;
     top: 6px;
-    left: 14px;
-    font-family: Georgia, serif;
-    font-size: 2.4rem;
-    color: var(--color-primary);
+    left: 12px;
+    font-size: 2.2rem;
     line-height: 1;
-    opacity: 0.75;
+    font-family: Georgia, serif;
+    color: var(--color-accent);
+    opacity: 0.6;
   }
 
   .hero-quote-text {
-    font-size: 0.96rem;
-    line-height: 1.65;
+    font-size: 0.98rem;
+    font-weight: 500;
     color: var(--color-text-body);
-    font-style: italic;
+    line-height: 1.65;
     margin: 0;
   }
 
   .hero-meta {
-    border-top: 1px solid var(--color-border);
-    padding-top: 16px;
+    width: 100%;
+    border-top: 1.5px solid var(--color-border);
+    padding-top: 18px;
   }
 
   .meta-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
     font-size: 0.95rem;
     color: var(--color-primary);
-    margin-bottom: 10px;
-    font-weight: 800;
+  }
+
+  .meta-title-icon {
+    font-size: 1rem;
   }
 
   .specialty-pill-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px 10px;
-    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .specialty-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
+    gap: 5px;
+    background: #FFFFFF;
+    color: var(--color-text-body);
     font-size: 0.86rem;
     font-weight: 700;
-    padding: 8px 14px;
+    padding: 6px 14px;
     border-radius: 9999px;
-    border: 1px solid rgba(74, 144, 164, 0.2);
-    transition: all 0.22s ease;
-    white-space: nowrap;
-    text-decoration: none;
+    border: 1px solid rgba(47, 102, 86, 0.14);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: default;
+    user-select: none;
   }
 
   .specialty-pill:hover {
-    background: linear-gradient(135deg, var(--color-primary), #5ba3b8);
-    color: #ffffff;
-    border-color: transparent;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.3);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    box-shadow: 0 4px 12px rgba(47, 102, 86, 0.15);
   }
 
-  /* ═══════════════════════════════════════
-     Profile Details (學經歷)
-  ═══════════════════════════════════════ */
+  /* Profile Details (学经历) */
   .profile-details {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
     margin-bottom: 48px;
   }
 
   .details-card {
     background-color: var(--color-bg-card);
     border-radius: 20px;
-    padding: 30px;
-    border: 1.5px solid var(--color-border);
-    box-shadow: 6px 6px 18px rgba(74, 144, 164, 0.06), -6px -6px 18px #ffffff;
+    padding: 32px;
+    box-shadow: 0 8px 24px var(--color-shadow);
+    border: 1px solid var(--color-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .details-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(47, 102, 86, 0.1);
   }
 
   .card-icon {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
     background-color: var(--color-primary-light);
     color: var(--color-primary);
-    border-radius: 14px;
-    margin-bottom: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
   }
 
   .details-card h2 {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--color-text-title);
-    margin-bottom: 16px;
+    font-size: 1.4rem;
+    color: var(--color-primary);
+    margin-bottom: 18px;
+    font-weight: 700;
   }
 
   .details-list {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
   }
 
   .details-list li {
     position: relative;
     padding-left: 20px;
-    font-size: 0.95rem;
+    margin-bottom: 12px;
     color: var(--color-text-body);
-    line-height: 1.5;
+    font-size: 1.05rem;
   }
 
   .details-list li::before {
     content: "•";
     position: absolute;
-    left: 4px;
-    color: var(--color-secondary);
-    font-weight: bold;
+    left: 0;
+    color: var(--color-accent);
     font-size: 1.2rem;
     line-height: 1;
-    top: 0;
   }
 
-  /* ═══════════════════════════════════════
-     Schedule Section (門診時間表)
-  ═══════════════════════════════════════ */
+  /* Schedule Section */
   .schedule-section {
     background-color: var(--color-bg-card);
-    border-radius: 24px;
-    padding: 34px;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px var(--color-shadow);
     margin-bottom: 48px;
-    border: 1.5px solid var(--color-border);
-    box-shadow: 6px 6px 20px rgba(74, 144, 164, 0.06), -6px -6px 20px #ffffff;
   }
 
   .section-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 24px;
+    margin-bottom: 30px;
   }
 
   .section-header h2 {
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: var(--color-text-title);
-    margin-bottom: 6px;
+    font-size: 1.8rem;
+    color: var(--color-primary);
+    font-weight: 700;
   }
 
   .section-desc {
-    font-size: 0.94rem;
     color: var(--color-text-muted);
-  }
-
-  .view-all-link {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--color-primary);
-    text-decoration: none;
-    transition: color 0.2s ease, transform 0.2s ease;
-    display: inline-block;
-  }
-
-  .view-all-link:hover {
-    color: var(--color-primary-dark);
-    transform: translateX(3px);
+    font-size: 0.95rem;
+    margin-top: 4px;
   }
 
   .table-container {
     overflow-x: auto;
-    border-radius: 16px;
+    border-radius: 12px;
     border: 1px solid var(--color-border);
-    margin-bottom: 16px;
   }
 
   .schedule-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 650px;
+  }
+
+  .schedule-table th, .schedule-table td {
+    padding: 18px;
     text-align: center;
-    font-size: 0.92rem;
-    min-width: 600px;
+    border: 1px solid var(--color-border);
   }
 
-  .schedule-table th, 
-  .schedule-table td {
-    padding: 14px 10px;
-    border-bottom: 1px solid var(--color-border);
-    border-right: 1px solid var(--color-border);
-  }
-
-  .schedule-table th:last-child,
-  .schedule-table td:last-child {
-    border-right: none;
-  }
-
-  .schedule-table thead th {
-    background-color: var(--color-bg-alt);
-    color: var(--color-text-title);
-    font-weight: 800;
+  .schedule-table th {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 700;
   }
 
   .time-header {
-    background-color: var(--color-bg-alt);
-    width: 110px;
+    background-color: var(--color-bg-page);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: none !important;
   }
 
   .time-header strong {
-    display: block;
-    color: var(--color-text-title);
-    font-size: 0.95rem;
+    font-size: 1rem;
+    color: var(--color-primary);
   }
 
   .time-header span {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--color-text-muted);
   }
 
   .on-duty {
-    background-color: var(--color-primary-light);
+    background-color: rgba(47, 102, 86, 0.08);
     color: var(--color-primary);
-    font-weight: 800;
-  }
-
-  .exam {
-    background-color: #fef7ee;
-    color: #c07028;
-    font-weight: 800;
+    font-weight: 700;
+    font-size: 1.05rem;
   }
 
   .external {
-    background-color: #edf4fb;
-    color: #2b6cb0;
-    font-weight: 800;
+    background-color: rgba(188, 138, 74, 0.12);
+    color: var(--color-accent);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .exam {
+    background-color: rgba(56, 120, 140, 0.08);
+    color: #38788C;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .rotating {
+    background-color: var(--color-accent-light);
+    color: var(--color-accent);
+    font-weight: 700;
   }
 
   .closed {
-    color: #94a3b8;
-    font-size: 0.85rem;
+    color: #C5786E;
+    background-color: #FAF4F4;
   }
 
   .schedule-tips {
-    font-size: 0.86rem;
+    margin-top: 16px;
+    font-size: 0.85rem;
     color: var(--color-text-muted);
-    background-color: var(--color-bg-alt);
-    padding: 12px 18px;
-    border-radius: 12px;
-    border-left: 3px solid var(--color-primary);
+    text-align: right;
   }
 
-  .schedule-tips p {
-    margin: 0;
-  }
-
-  /* ═══════════════════════════════════════
-     Latest Articles Section
-  ═══════════════════════════════════════ */
+  /* Latest Articles */
   .latest-articles {
-    margin-bottom: 56px;
+    margin-bottom: 40px;
+  }
+
+  .view-all-link {
+    color: var(--color-accent);
+    font-weight: 700;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+  }
+
+  .view-all-link:hover {
+    color: var(--color-primary);
+  }
+
+  /* Latest Articles */
+  .latest-articles {
+    margin-bottom: 48px;
+  }
+
+  .view-all-link {
+    color: var(--color-accent);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+  }
+
+  .view-all-link:hover {
+    color: var(--color-primary);
   }
 
   .articles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
+    margin-top: 24px;
   }
 
   .empty-articles {
-    grid-column: 1 / -1;
-    background-color: var(--color-bg-card);
-    border-radius: 20px;
-    padding: 40px 20px;
+    grid-column: span 3;
     text-align: center;
+    padding: 48px;
+    background-color: var(--color-bg-card);
+    border-radius: 16px;
+    border: 2px dashed var(--color-border);
     color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
   }
 
-  /* ═══════════════════════════════════════
-     響應式設計 (RWD Breakpoints)
-  ═══════════════════════════════════════ */
   @media (max-width: 900px) {
-    .specialty-pill-grid {
-      grid-template-columns: repeat(3, 1fr);
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
+    .articles-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 900px) {
     .about-hero {
       display: grid;
       grid-template-columns: 88px 1fr;
@@ -883,7 +902,7 @@ const formatDate = (date: Date) => {
       text-align: center;
       justify-content: center;
       border-radius: 9999px;
-      background: var(--color-primary-light);
+      background: #FFFFFF;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
       white-space: nowrap;
     }
@@ -958,13 +977,21 @@ const formatDate = (date: Date) => {
   }
 
   .clinic-section-badge {
-    margin-bottom: 10px;
+    display: inline-block;
+    background-color: var(--color-accent-light);
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 999px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
   }
 
   .clinic-section-title {
     font-size: 1.9rem;
     font-weight: 900;
-    color: var(--color-text-title);
+    color: var(--color-primary);
     margin-bottom: 8px;
   }
 
@@ -986,8 +1013,8 @@ const formatDate = (date: Date) => {
     background-color: var(--color-bg-card);
     border-radius: 20px;
     padding: 36px 32px;
-    border: 1.5px solid var(--color-border);
-    box-shadow: 6px 6px 18px rgba(74, 144, 164, 0.06), -6px -6px 18px #ffffff;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 8px 28px var(--color-shadow);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -999,7 +1026,7 @@ const formatDate = (date: Date) => {
     justify-content: center;
     width: 52px;
     height: 52px;
-    background: var(--color-primary-light);
+    background: linear-gradient(135deg, var(--color-primary-light), #d6e8e1);
     color: var(--color-primary);
     border-radius: 14px;
   }
@@ -1007,13 +1034,13 @@ const formatDate = (date: Date) => {
   .clinic-card-name {
     font-size: 1.45rem;
     font-weight: 900;
-    color: var(--color-text-title);
+    color: var(--color-primary);
     line-height: 1.3;
   }
 
   .clinic-name-en {
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--color-text-muted);
     letter-spacing: 0.5px;
     display: block;
@@ -1065,7 +1092,7 @@ const formatDate = (date: Date) => {
 
   .clinic-map-link {
     color: var(--color-primary);
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 3px;
     display: inline-flex;
@@ -1075,27 +1102,27 @@ const formatDate = (date: Date) => {
   }
 
   .clinic-map-link:hover {
-    color: var(--color-primary-dark);
+    color: var(--color-accent);
   }
 
   .clinic-phone-link {
     color: var(--color-primary);
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
     transition: color 0.2s ease;
   }
 
   .clinic-phone-link:hover {
-    color: var(--color-primary-dark);
+    color: var(--color-accent);
   }
 
   /* ── 右欄：LINE 預約卡 ── */
   .clinic-line-card {
     border-radius: 20px;
-    background: linear-gradient(145deg, #f0faf8 0%, #e6f6f2 40%, #ffffff 100%);
-    border: 1.5px solid #c2e5dc;
-    box-shadow: 6px 6px 18px rgba(74, 144, 164, 0.06), -6px -6px 18px #ffffff;
+    background: linear-gradient(145deg, #f0faf4 0%, #e8f5ec 40%, #faf6ee 100%);
+    border: 1.5px solid #b8ddc6;
+    box-shadow: 0 8px 28px rgba(47, 102, 86, 0.08);
     display: flex;
     align-items: stretch;
   }
@@ -1125,7 +1152,7 @@ const formatDate = (date: Date) => {
   .line-card-title {
     font-size: 1.5rem;
     font-weight: 900;
-    color: var(--color-text-title);
+    color: var(--color-primary);
   }
 
   .line-card-desc {
@@ -1143,11 +1170,11 @@ const formatDate = (date: Date) => {
     color: #ffffff;
     font-size: 1.08rem;
     font-weight: 800;
-    padding: 15px 32px;
+    padding: 16px 32px;
     border-radius: 50px;
     text-decoration: none;
     letter-spacing: 0.3px;
-    box-shadow: 0 6px 24px rgba(6, 199, 85, 0.35);
+    box-shadow: 0 6px 24px rgba(6, 199, 85, 0.38);
     transition:
       transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 0.25s ease;
@@ -1168,6 +1195,7 @@ const formatDate = (date: Date) => {
     max-width: 280px;
   }
 
+  /* 響應式：單欄堆疊 */
   @media (max-width: 768px) {
     .clinic-cards-row {
       grid-template-columns: 1fr;

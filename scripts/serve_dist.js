@@ -6,10 +6,11 @@ const distDir = path.resolve('dist');
 
 const server = http.createServer((req, res) => {
   let reqPath = decodeURIComponent(req.url.split('?')[0]);
-  if (reqPath.endsWith('/')) reqPath += 'index.html';
   let filePath = path.join(distDir, reqPath);
 
-  if (!fs.existsSync(filePath) && fs.existsSync(filePath + '.html')) {
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+    filePath = path.join(filePath, 'index.html');
+  } else if (!fs.existsSync(filePath) && fs.existsSync(filePath + '.html')) {
     filePath += '.html';
   } else if (!fs.existsSync(filePath) && fs.existsSync(path.join(filePath, 'index.html'))) {
     filePath = path.join(filePath, 'index.html');

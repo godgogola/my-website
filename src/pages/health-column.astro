@@ -50,7 +50,7 @@ const sortedCategories = [
   <div class="column-hero">
     <div class="column-hero-inner">
       <div class="badge badge-primary hero-badge">
-        <span>🐾</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         <span>完整衛教筆記庫</span>
       </div>
       <h1 class="column-hero-title">臨床實證 <span class="gradient-text">醫學筆記</span></h1>
@@ -79,7 +79,7 @@ const sortedCategories = [
     <p class="result-count" id="resultCount" aria-live="polite">顯示 {posts.length} 篇文章</p>
   </div>
 
-  <!-- ── 分類篩選 Tab Pills (Pet-Adoption 風格) ── -->
+  <!-- ── 分類篩選 Tab Pills (Veterinary Clinic 膠囊樣式) ── -->
   <div class="filter-bar" id="filterBar" role="tablist" aria-label="文章分類篩選">
     {sortedCategories.map((cat, i) => (
       <button
@@ -120,7 +120,7 @@ const sortedCategories = [
 
   <!-- ── 無結果提示 ── -->
   <div class="no-results" id="noResults" hidden aria-live="polite">
-    <div class="no-results-icon">🐾</div>
+    <div class="no-results-icon">🩺</div>
     <h3>找不到相符的衛教文章</h3>
     <p>請嘗試其他關鍵字，或點擊「全部」瀏覽所有專欄。</p>
     <button class="reset-btn" id="resetFilter">清除篩選條件</button>
@@ -379,19 +379,19 @@ const sortedCategories = [
   .column-hero-title {
     font-size: clamp(2rem, 4vw, 2.6rem);
     font-weight: 900;
-    color: var(--color-text-title, #1E293B);
+    color: var(--color-text-title, #1e3a4c);
     margin-bottom: 12px;
     line-height: 1.25;
   }
 
   .column-hero-desc {
     font-size: 1.05rem;
-    color: var(--color-text-muted, #64748B);
+    color: var(--color-text-muted, #5a7a8a);
     line-height: 1.7;
   }
 
   .column-hero-desc strong {
-    color: var(--color-primary, #E76F51);
+    color: var(--color-primary, #4a90a4);
     font-weight: 800;
   }
 
@@ -418,36 +418,36 @@ const sortedCategories = [
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--color-text-muted, #64748B);
+    color: var(--color-text-muted, #5a7a8a);
     pointer-events: none;
   }
 
   .search-input {
     width: 100%;
     padding: 12px 20px 12px 46px;
-    border: 1.5px solid var(--color-border, #EFE8DE);
+    border: 1.5px solid var(--color-border, #d4e5eb);
     border-radius: 9999px;
     background-color: #FFFFFF;
     font-family: inherit;
     font-size: 0.95rem;
-    color: var(--color-text-body, #334155);
+    color: var(--color-text-body, #2d4f63);
     outline: none;
-    box-shadow: 0 4px 14px rgba(231, 111, 81, 0.04);
+    box-shadow: 0 4px 14px rgba(74, 144, 164, 0.04);
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
   .search-input:focus {
-    border-color: var(--color-primary, #E76F51);
-    box-shadow: 0 6px 20px rgba(231, 111, 81, 0.16);
+    border-color: var(--color-primary, #4a90a4);
+    box-shadow: 0 6px 20px rgba(74, 144, 164, 0.18);
   }
 
   .search-input::placeholder {
-    color: #94A3B8;
+    color: #8ba5b5;
   }
 
   .result-count {
     font-size: 0.88rem;
-    color: var(--color-text-muted, #64748B);
+    color: var(--color-text-muted, #5a7a8a);
     white-space: nowrap;
     font-weight: 600;
   }
@@ -468,14 +468,14 @@ const sortedCategories = [
     align-items: center;
     gap: 8px;
     background: #FFFFFF;
-    color: var(--color-text-title, #1E293B);
+    color: var(--color-text-title, #1e3a4c);
     font-family: inherit;
     font-size: 0.88rem;
     font-weight: 700;
     padding: 8px 16px;
     border-radius: 9999px;
-    border: 1.5px solid var(--color-border, #EFE8DE);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    border: 1.5px solid var(--color-border, #d4e5eb);
+    box-shadow: 0 2px 6px rgba(74, 144, 164, 0.04);
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
@@ -485,17 +485,17 @@ const sortedCategories = [
 
   .filter-pill:hover {
     transform: translateY(-2px);
-    border-color: var(--color-primary, #E76F51);
-    color: var(--color-primary, #E76F51);
-    background: var(--color-primary-light, #FDEEE9);
-    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.15);
+    border-color: var(--color-primary, #4a90a4);
+    color: var(--color-primary, #4a90a4);
+    background: var(--color-primary-light, #eef7f9);
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.15);
   }
 
   .filter-pill.active {
-    background: linear-gradient(135deg, var(--color-primary, #E76F51), var(--color-secondary, #F4845F));
+    background: linear-gradient(135deg, var(--color-primary, #4a90a4), #5ba3b8);
     border-color: transparent;
     color: #FFFFFF;
-    box-shadow: 0 4px 16px rgba(231, 111, 81, 0.3);
+    box-shadow: 0 4px 16px rgba(74, 144, 164, 0.35);
     transform: translateY(-1px);
   }
 
@@ -505,8 +505,8 @@ const sortedCategories = [
     padding: 2px 8px;
     border-radius: 9999px;
     line-height: 1.3;
-    background-color: rgba(231, 111, 81, 0.08);
-    color: var(--color-primary, #E76F51);
+    background-color: rgba(74, 144, 164, 0.1);
+    color: var(--color-primary, #4a90a4);
     transition: all 0.2s ease;
   }
 
@@ -554,13 +554,13 @@ const sortedCategories = [
     justify-content: center;
     padding: 72px 24px;
     text-align: center;
-    color: var(--color-text-muted, #64748B);
+    color: var(--color-text-muted, #5a7a8a);
     gap: 12px;
     max-width: 400px;
     margin: 0 auto 48px;
     background: #FFFFFF;
-    border-radius: 24px;
-    border: 1px solid var(--color-border, #EFE8DE);
+    border-radius: 20px;
+    border: 1.5px solid var(--color-border, #d4e5eb);
   }
 
   .no-results[hidden] {
@@ -573,7 +573,7 @@ const sortedCategories = [
 
   .no-results h3 {
     font-size: 1.25rem;
-    color: var(--color-text-title, #1E293B);
+    color: var(--color-text-title, #1e3a4c);
     font-weight: 800;
   }
 
@@ -587,19 +587,19 @@ const sortedCategories = [
     padding: 10px 26px;
     border-radius: 9999px;
     border: none;
-    background: linear-gradient(135deg, #E76F51, #F4845F);
+    background: linear-gradient(135deg, #4a90a4, #5ba3b8);
     color: #ffffff;
     font-family: inherit;
     font-size: 0.92rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .reset-btn:hover {
     transform: scale(1.03);
-    box-shadow: 0 6px 18px rgba(231, 111, 81, 0.4);
+    box-shadow: 0 6px 18px rgba(74, 144, 164, 0.4);
   }
 
   /* ── 浮動選單按鈕 (FAB) ── */
@@ -611,7 +611,7 @@ const sortedCategories = [
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, var(--color-primary, #E76F51), var(--color-secondary, #F4845F));
+    background: linear-gradient(135deg, var(--color-primary, #4a90a4), #5ba3b8);
     color: #ffffff;
     border: none;
     padding: 13px 22px;
@@ -620,20 +620,20 @@ const sortedCategories = [
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(231, 111, 81, 0.4);
+    box-shadow: 0 8px 24px rgba(74, 144, 164, 0.38);
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
   }
 
   .fab-category-btn:hover {
     transform: translateY(-4px) scale(1.04);
-    box-shadow: 0 12px 30px rgba(231, 111, 81, 0.5);
+    box-shadow: 0 12px 30px rgba(74, 144, 164, 0.5);
   }
 
   /* ── 側滑抽屜 ── */
   .drawer-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(30, 41, 59, 0.4);
+    background-color: rgba(30, 58, 76, 0.4);
     backdrop-filter: blur(4px);
     z-index: 1000;
     opacity: 0;
@@ -652,8 +652,8 @@ const sortedCategories = [
     bottom: 0;
     width: 330px;
     max-width: 85vw;
-    background-color: #FAF6F0;
-    border-right: 1px solid var(--color-border, #EFE8DE);
+    background-color: #f8fbfc;
+    border-right: 1px solid var(--color-border, #d4e5eb);
     box-shadow: 8px 0 32px rgba(0, 0, 0, 0.12);
     z-index: 1001;
     display: flex;
@@ -670,7 +670,7 @@ const sortedCategories = [
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
-    border-bottom: 1px solid var(--color-border, #EFE8DE);
+    border-bottom: 1px solid var(--color-border, #d4e5eb);
     background-color: #FFFFFF;
   }
 
@@ -680,14 +680,14 @@ const sortedCategories = [
     gap: 8px;
     font-size: 1rem;
     font-weight: 800;
-    color: var(--color-text-title, #1E293B);
+    color: var(--color-text-title, #1e3a4c);
   }
 
   .drawer-badge {
     font-size: 0.75rem;
     font-weight: 800;
-    background-color: var(--color-primary-light, #FDEEE9);
-    color: var(--color-primary, #E76F51);
+    background-color: var(--color-primary-light, #eef7f9);
+    color: var(--color-primary, #4a90a4);
     padding: 2px 8px;
     border-radius: 9999px;
   }
@@ -697,8 +697,8 @@ const sortedCategories = [
     height: 32px;
     border-radius: 50%;
     border: none;
-    background-color: var(--color-bg-page, #FAF6F0);
-    color: var(--color-text-muted, #64748B);
+    background-color: var(--color-bg-page, #f8fbfc);
+    color: var(--color-text-muted, #5a7a8a);
     font-size: 1.2rem;
     display: flex;
     align-items: center;
@@ -708,8 +708,8 @@ const sortedCategories = [
   }
 
   .drawer-close-btn:hover {
-    background-color: var(--color-primary-light, #FDEEE9);
-    color: var(--color-primary, #E76F51);
+    background-color: var(--color-primary-light, #eef7f9);
+    color: var(--color-primary, #4a90a4);
   }
 
   .drawer-body {
@@ -728,13 +728,13 @@ const sortedCategories = [
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--color-text-muted, #64748B);
+    color: var(--color-text-muted, #5a7a8a);
   }
 
   .drawer-search input {
     width: 100%;
     padding: 9px 12px 9px 34px;
-    border: 1px solid var(--color-border, #EFE8DE);
+    border: 1px solid var(--color-border, #d4e5eb);
     border-radius: 12px;
     background-color: #FFFFFF;
     font-family: inherit;
@@ -743,7 +743,7 @@ const sortedCategories = [
   }
 
   .drawer-search input:focus {
-    border-color: var(--color-primary, #E76F51);
+    border-color: var(--color-primary, #4a90a4);
   }
 
   .drawer-tree {
@@ -764,20 +764,20 @@ const sortedCategories = [
     font-family: inherit;
     font-size: 0.92rem;
     font-weight: 700;
-    color: var(--color-text-title, #1E293B);
+    color: var(--color-text-title, #1e3a4c);
     cursor: pointer;
     transition: background-color 0.15s ease;
     text-align: left;
   }
 
   .drawer-folder-btn:hover {
-    background-color: rgba(231, 111, 81, 0.08);
-    color: var(--color-primary, #E76F51);
+    background-color: rgba(74, 144, 164, 0.08);
+    color: var(--color-primary, #4a90a4);
   }
 
   .drawer-folder-btn .chevron {
     transition: transform 0.2s ease;
-    color: var(--color-text-muted, #64748B);
+    color: var(--color-text-muted, #5a7a8a);
   }
 
   .drawer-folder-btn.open .chevron {
@@ -790,7 +790,7 @@ const sortedCategories = [
 
   .cat-count {
     font-size: 0.75rem;
-    color: var(--color-text-muted, #64748B);
+    color: var(--color-text-muted, #5a7a8a);
     background-color: rgba(0, 0, 0, 0.04);
     padding: 1px 6px;
     border-radius: 9999px;
@@ -815,13 +815,13 @@ const sortedCategories = [
     padding: 7px 10px;
     border-radius: 8px;
     font-size: 0.85rem;
-    color: var(--color-text-body, #334155);
+    color: var(--color-text-body, #2d4f63);
     text-decoration: none;
     transition: all 0.15s ease;
   }
 
   .drawer-file-item:hover {
-    background-color: var(--color-primary-light, #FDEEE9);
-    color: var(--color-primary, #E76F51);
+    background-color: var(--color-primary-light, #eef7f9);
+    color: var(--color-primary, #4a90a4);
   }
 </style>
