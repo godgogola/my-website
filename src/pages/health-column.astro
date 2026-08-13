@@ -27,9 +27,9 @@ const categoryPosts = [...unDraftPosts].sort((a, b) => {
 
 // ── 分類清單（依照指定順序排列） ──
 const CATEGORY_ORDER = [
-  '內視鏡檢查', '超音波檢查', '肝膽胰疾病', '胃部疾病', '腸道疾病',
+  '內視鏡檢查', '肝膽胰疾病', '胃部疾病', '腸道疾病',
   '慢性病', '高血壓', '高血脂', '糖尿病', '減重',
-  '健康飲食', '各種檢驗檢查', '藥物介紹', '肝病特區'
+  '健康飲食', '各種檢驗檢查', '藥物介紹', '肝病特區', '超音波檢查'
 ];
 
 // ── 取得所有出現的分類（含未在 CATEGORY_ORDER 裡的） ──
@@ -530,6 +530,20 @@ const sortedCategories = [
     max-width: 1200px;
     margin: 0 auto 24px;
     position: relative;
+  }
+
+  /* 右側漸層提示：表示可以左右滑動看更多分類 */
+  .filter-bar-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 48px;
+    height: 100%;
+    background: linear-gradient(to right, transparent, #f0f4f6 90%);
+    border-radius: 0 9999px 9999px 0;
+    pointer-events: none;
+    z-index: 10;
   }
 
   .filter-bar-track {
