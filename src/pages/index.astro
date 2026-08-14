@@ -96,9 +96,6 @@ const formatDate = (date: Date) => {
   <!-- Profile Details (專業學歷 & 臨床經歷) -->
   <section class="profile-details">
     <div class="details-card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-      </div>
       <h2>專業學歷</h2>
       <ul class="details-list">
         <li>中山醫學大學醫學系學士</li>
@@ -111,9 +108,6 @@ const formatDate = (date: Date) => {
     </div>
 
     <div class="details-card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      </div>
       <h2>臨床經歷</h2>
       <ul class="details-list">
         <li>中山醫學大學附設醫院胃腸肝膽科主治醫師</li>
@@ -235,66 +229,74 @@ const formatDate = (date: Date) => {
     </div>
 
     <div class="clinic-cards-row">
-      <!-- 左欄：診所基本資訊 -->
+      <!-- 左欄：診所基本資訊 (以針織診所照片為底圖 + 白色文字) -->
       <div class="clinic-info-card">
-        <div class="clinic-card-icon-wrap">
-          <svg viewBox="0 0 32 32" width="26" height="26" fill="none" aria-hidden="true">
-            <rect x="4" y="8" width="24" height="20" rx="3" stroke="currentColor" stroke-width="2"/>
-            <path d="M10 8V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3" stroke="currentColor" stroke-width="2"/>
-            <path d="M16 14v6M13 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <h3 class="clinic-card-name">🏥 豐田診所 <span class="clinic-name-en">FT Clinic</span></h3>
+        <div class="clinic-card-glass-overlay"></div>
+        <div class="clinic-card-content">
+          <div class="clinic-card-header-row">
+            <div class="clinic-card-icon-wrap">
+              <svg viewBox="0 0 32 32" width="24" height="24" fill="none" aria-hidden="true">
+                <rect x="4" y="8" width="24" height="20" rx="3" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 8V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3" stroke="currentColor" stroke-width="2"/>
+                <path d="M16 14v6M13 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="clinic-card-name">🏥 豐田診所</h3>
+              <span class="clinic-name-en">FT Clinic</span>
+            </div>
+          </div>
 
-        <ul class="clinic-detail-list">
-          <li class="clinic-detail-item">
-            <span class="clinic-detail-icon" aria-hidden="true">
-              <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
-                <path d="M10 1C6.686 1 4 3.686 4 7c0 4.418 6 12 6 12s6-7.582 6-12c0-3.314-2.686-6-6-6z" stroke="currentColor" stroke-width="1.6"/>
-                <circle cx="10" cy="7" r="2" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-            </span>
-            <div>
-              <span class="clinic-detail-label">診所地址</span>
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=豐田診所+台中市南區建成路1848號"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="clinic-detail-value clinic-map-link"
-              >
-                台中市南區建成路1848號
-                <svg viewBox="0 0 12 12" width="11" height="11" fill="none" aria-label="開啟 Google 地圖">
-                  <path d="M2 2h8v8M10 2 2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <ul class="clinic-detail-list">
+            <li class="clinic-detail-item">
+              <span class="clinic-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+                  <path d="M10 1C6.686 1 4 3.686 4 7c0 4.418 6 12 6 12s6-7.582 6-12c0-3.314-2.686-6-6-6z" stroke="currentColor" stroke-width="1.6"/>
+                  <circle cx="10" cy="7" r="2" stroke="currentColor" stroke-width="1.6"/>
                 </svg>
-              </a>
-            </div>
-          </li>
-          <li class="clinic-detail-item">
-            <span class="clinic-detail-icon" aria-hidden="true">
-              <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
-                <path d="M3 3.5A1.5 1.5 0 0 1 4.5 2h1.879a.5.5 0 0 1 .471.337l1 2.8a.5.5 0 0 1-.156.554L6.5 6.7a9.006 9.006 0 0 0 6.8 6.8l1.009-1.194a.5.5 0 0 1 .554-.156l2.8 1a.5.5 0 0 1 .337.471V15.5A1.5 1.5 0 0 1 16.5 17C9.044 17 3 10.956 3 3.5z" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-            </span>
-            <div>
-              <span class="clinic-detail-label">診所電話</span>
-              <a href="tel:+886422850066" class="clinic-detail-value clinic-phone-link">
-                (04) 2285-0066
-              </a>
-            </div>
-          </li>
-          <li class="clinic-detail-item">
-            <span class="clinic-detail-icon" aria-hidden="true">
-              <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
-                <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M2 8l8 5 8-5" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-            </span>
-            <div>
-              <span class="clinic-detail-label">醫師門診時間</span>
-              <span class="clinic-detail-value">週一至週六（請見上方時間表）</span>
-            </div>
-          </li>
-        </ul>
+              </span>
+              <div>
+                <span class="clinic-detail-label">診所地址</span>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=豐田診所+台中市南區建成路1848號"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="clinic-detail-value clinic-map-link"
+                >
+                  台中市南區建成路1848號
+                  <svg viewBox="0 0 12 12" width="11" height="11" fill="none" aria-label="開啟 Google 地圖">
+                    <path d="M2 2h8v8M10 2 2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </a>
+              </div>
+            </li>
+            <li class="clinic-detail-item">
+              <span class="clinic-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+                  <path d="M3 3.5A1.5 1.5 0 0 1 4.5 2h1.879a.5.5 0 0 1 .471.337l1 2.8a.5.5 0 0 1-.156.554L6.5 6.7a9.006 9.006 0 0 0 6.8 6.8l1.009-1.194a.5.5 0 0 1 .554-.156l2.8 1a.5.5 0 0 1 .337.471V15.5A1.5 1.5 0 0 1 16.5 17C9.044 17 3 10.956 3 3.5z" stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+              </span>
+              <div>
+                <span class="clinic-detail-label">診所電話</span>
+                <a href="tel:+886422850066" class="clinic-detail-value clinic-phone-link">
+                  (04) 2285-0066
+                </a>
+              </div>
+            </li>
+            <li class="clinic-detail-item">
+              <span class="clinic-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+                  <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M2 8l8 5 8-5" stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+              </span>
+              <div>
+                <span class="clinic-detail-label">醫師門診時間</span>
+                <span class="clinic-detail-value">週一至週六（請見上方時間表）</span>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- 右欄：LINE 掛號預約 -->
@@ -977,43 +979,79 @@ const formatDate = (date: Date) => {
     align-items: stretch;
   }
 
-  /* ── 左欄：診所資訊卡 ── */
+  /* ── 左欄：診所資訊卡 (針織相片底圖 + 純白字體) ── */
   .clinic-info-card {
-    background-color: var(--color-bg-card);
+    position: relative;
     border-radius: 20px;
     padding: 36px 32px;
-    border: 1.5px solid var(--color-border);
-    box-shadow: 6px 6px 18px rgba(74, 144, 164, 0.06), -6px -6px 18px #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 14px 34px rgba(15, 30, 40, 0.16);
+    background-image: url('/images/toyota-clinic-counter.jpg');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: space-between;
+    color: #ffffff;
+  }
+
+  .clinic-card-glass-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, rgba(14, 30, 38, 0.82) 0%, rgba(20, 44, 56, 0.86) 60%, rgba(10, 22, 28, 0.92) 100%);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 1;
+  }
+
+  .clinic-card-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    height: 100%;
+    justify-content: space-between;
+  }
+
+  .clinic-card-header-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
 
   .clinic-card-icon-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 52px;
-    height: 52px;
-    background: var(--color-primary-light);
-    color: var(--color-primary);
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
   }
 
   .clinic-card-name {
-    font-size: 1.45rem;
+    font-size: 1.55rem;
     font-weight: 900;
-    color: var(--color-text-title);
-    line-height: 1.3;
+    color: #ffffff;
+    line-height: 1.2;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   }
 
   .clinic-name-en {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--color-text-muted);
-    letter-spacing: 0.5px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.8px;
     display: block;
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
   .clinic-detail-list {
@@ -1026,7 +1064,7 @@ const formatDate = (date: Date) => {
   .clinic-detail-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 14px;
   }
 
   .clinic-detail-icon {
@@ -1034,56 +1072,60 @@ const formatDate = (date: Date) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
     margin-top: 2px;
   }
 
   .clinic-detail-label {
     display: block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--color-text-muted);
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.75);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 3px;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
   }
 
   .clinic-detail-value {
-    font-size: 1rem;
-    color: var(--color-text-body);
-    font-weight: 500;
+    font-size: 1.05rem;
+    color: #ffffff;
+    font-weight: 600;
     line-height: 1.4;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
   .clinic-map-link {
-    color: var(--color-primary);
-    font-weight: 700;
+    color: #ffffff;
+    font-weight: 800;
     text-decoration: underline;
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    transition: color 0.2s ease;
+    gap: 6px;
+    transition: all 0.2s ease;
   }
 
   .clinic-map-link:hover {
-    color: var(--color-primary-dark);
+    color: #a7f3d0;
   }
 
   .clinic-phone-link {
-    color: var(--color-primary);
-    font-weight: 800;
-    font-size: 1.1rem;
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 1.25rem;
     letter-spacing: 0.5px;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
 
   .clinic-phone-link:hover {
-    color: var(--color-primary-dark);
+    color: #a7f3d0;
   }
 
   /* ── 右欄：LINE 預約卡 ── */
