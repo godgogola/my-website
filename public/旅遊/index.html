@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Family Wanderlust | 黃冠智醫師 家庭專屬旅遊手冊</title>
+    <title>家庭專屬旅遊手冊 | 黃冠智醫師</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -36,9 +36,9 @@
                         sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
                     },
                     boxShadow: {
-                        'soft': '0 20px 40px -15px rgba(0, 0, 0, 0.05)',
+                        'soft': '0 20px 40px -15px rgba(0, 0, 0, 0.06)',
                         'floating': '0 25px 50px -12px rgba(15, 23, 42, 0.12)',
-                        'card-hover': '0 30px 60px -15px rgba(2, 132, 199, 0.18)',
+                        'card-hover': '0 30px 60px -15px rgba(2, 132, 199, 0.22)',
                     }
                 }
             }
@@ -49,26 +49,27 @@
             font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
             background-color: #fdfbf9;
             color: #1e293b;
+            font-size: 16px;
         }
 
         /* Subtle animated gradient background */
         .bg-mesh {
             background-color: #fdfbf9;
             background-image: 
-                radial-gradient(at 10% 10%, rgba(255, 237, 213, 0.6) 0px, transparent 50%),
-                radial-gradient(at 90% 15%, rgba(224, 242, 254, 0.7) 0px, transparent 50%),
-                radial-gradient(at 50% 80%, rgba(254, 243, 199, 0.5) 0px, transparent 50%),
-                radial-gradient(at 80% 90%, rgba(240, 253, 244, 0.6) 0px, transparent 50%);
+                radial-gradient(at 10% 10%, rgba(255, 237, 213, 0.65) 0px, transparent 50%),
+                radial-gradient(at 90% 15%, rgba(224, 242, 254, 0.75) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(254, 243, 199, 0.55) 0px, transparent 50%),
+                radial-gradient(at 80% 90%, rgba(240, 253, 244, 0.65) 0px, transparent 50%);
             background-attachment: fixed;
         }
 
         /* Floating glass header */
         .floating-nav {
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.03);
         }
 
         /* Destination card image zoom */
@@ -85,61 +86,53 @@
             transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* Bento Grid rounded styles */
-        .bento-img {
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .bento-item:hover .bento-img {
-            transform: scale(1.06);
-        }
-
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 9px;
         }
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 4px;
+            border-radius: 5px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
     </style>
 </head>
-<body class="bg-mesh min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+<body class="bg-mesh min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white text-slate-800">
 
     <!-- Top Floating Pill Navbar -->
     <div class="fixed top-4 sm:top-6 inset-x-0 z-50 px-4 sm:px-6 max-w-6xl mx-auto pointer-events-none">
-        <nav class="floating-nav pointer-events-auto rounded-full py-2.5 px-4 sm:px-6 flex items-center justify-between transition-all duration-300">
+        <nav class="floating-nav pointer-events-auto rounded-full py-3 px-5 sm:px-7 flex items-center justify-between transition-all duration-300">
             <!-- Brand Logo -->
-            <a href="/trip" class="flex items-center gap-2.5 group">
-                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-white shadow-md shadow-sky-500/20 group-hover:rotate-12 transition-transform">
-                    <i class="fa-solid fa-paper-plane text-sm"></i>
+            <a href="/trip" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-white text-base shadow-md shadow-sky-500/20 group-hover:rotate-12 transition-transform">
+                    <i class="fa-solid fa-paper-plane"></i>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-base font-black tracking-tight text-slate-900 flex items-center gap-1.5">
-                        Wanderlust <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 hidden sm:inline">Family</span>
+                    <span class="text-base sm:text-lg font-black tracking-tight text-slate-900 flex items-center gap-1.5">
+                        Family Travel <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700 hidden sm:inline">專屬手冊</span>
                     </span>
-                    <span class="text-[10px] text-slate-400 font-medium -mt-1 hidden sm:block">黃冠智醫師 · 家庭旅遊手冊</span>
+                    <span class="text-xs text-slate-400 font-medium hidden sm:block">黃冠智醫師 · 出國行程手冊</span>
                 </div>
             </a>
 
             <!-- Navigation Links -->
-            <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+            <div class="hidden md:flex items-center gap-9 text-sm sm:text-base font-bold text-slate-600">
                 <a href="#destinations" class="hover:text-sky-600 transition-colors">精選行程</a>
-                <a href="#timeline" class="hover:text-sky-600 transition-colors">行程時間表</a>
+                <a href="#timeline" class="hover:text-sky-600 transition-colors">出遊特色</a>
                 <a href="#tools" class="hover:text-sky-600 transition-colors">旅遊工具箱</a>
-                <a href="/" class="text-slate-400 hover:text-slate-700 transition-colors flex items-center gap-1">
-                    <i class="fa-solid fa-house text-xs"></i> 醫師首頁
+                <a href="/" class="text-slate-400 hover:text-slate-700 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-house text-sm"></i> 醫師首頁
                 </a>
             </div>
 
             <!-- CTA Button -->
             <div class="flex items-center gap-3">
-                <a href="/2026暑假" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-orange-500/25 transition-all hover:scale-105 active:scale-95">
+                <a href="/2026暑假" class="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white text-xs sm:text-sm font-extrabold shadow-lg shadow-orange-500/25 transition-all hover:scale-105 active:scale-95">
                     <span>最新手冊 · 墨爾本</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
@@ -148,397 +141,245 @@
     </div>
 
     <!-- Main Content Container -->
-    <main class="flex-grow pt-24 sm:pt-28 pb-16 px-4 sm:px-6 max-w-6xl mx-auto w-full space-y-20">
-
-        <!-- ================= HERO SECTION ================= -->
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center pt-4 sm:pt-8">
-            
-            <!-- Left Hero Content (7 Cols) -->
-            <div class="lg:col-span-7 space-y-6 sm:space-y-8 text-left">
-                
-                <!-- Badge -->
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100/80 border border-sky-200/80 text-sky-700 text-xs font-bold shadow-sm">
-                    <i class="fa-solid fa-star text-amber-500"></i>
-                    <span>Family Travel Guide · 冠智 & 家人專屬</span>
-                </div>
-
-                <!-- Main Heading -->
-                <div class="space-y-3">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
-                        Discover Your <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600">
-                            Next Adventure
-                        </span>
-                    </h1>
-                    <p class="text-slate-500 text-sm sm:text-base font-normal max-w-lg leading-relaxed">
-                        探索令人屏息的壯麗景點，珍藏每一刻溫馨回憶。專為全家人量身規劃的自由行手冊，完整收錄澳洲雙城、墨爾本、雪梨每日動線、機票交通與景點攻略。
-                    </p>
-                </div>
-
-                <!-- Floating Search / Filter Bar Card -->
-                <div class="bg-white/95 backdrop-blur-xl p-3 sm:p-4 rounded-3xl sm:rounded-full border border-slate-200/80 shadow-floating flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <!-- Field 1: Where to -->
-                    <div class="flex-1 px-4 py-2 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-slate-100">
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-location-dot text-sky-500"></i> 目的地 Where to?
-                        </label>
-                        <select id="filterDestination" class="text-xs sm:text-sm font-bold text-slate-800 bg-transparent outline-none cursor-pointer pt-0.5">
-                            <option value="all">全部精選行程 (All Trips)</option>
-                            <option value="melbourne">2026 暑假 · 墨爾本 12 天</option>
-                            <option value="queensland">2026 寒假 · 澳洲昆士蘭雙城</option>
-                            <option value="sydney">2025 暑假 · 雪梨 8 天</option>
-                        </select>
-                    </div>
-
-                    <!-- Field 2: Departure Season -->
-                    <div class="flex-1 px-4 py-2 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-slate-100">
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                            <i class="fa-regular fa-calendar text-orange-500"></i> 出發季節 Check In
-                        </label>
-                        <div class="text-xs sm:text-sm font-bold text-slate-800 pt-0.5">
-                            寒暑假定期出遊
-                        </div>
-                    </div>
-
-                    <!-- Field 3: Travelers -->
-                    <div class="flex-1 px-4 py-2 flex flex-col justify-center">
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-group text-emerald-500"></i> 成員 Travelers
-                        </label>
-                        <div class="text-xs sm:text-sm font-bold text-slate-800 pt-0.5">
-                            全家同行 (2-4人)
-                        </div>
-                    </div>
-
-                    <!-- Search Button -->
-                    <button onclick="handleSearchJump()" class="px-6 py-3.5 rounded-2xl sm:rounded-full bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white text-xs sm:text-sm font-extrabold shadow-md shadow-orange-500/25 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <span>Search</span>
-                    </button>
-                </div>
-
-                <!-- Stats Row -->
-                <div class="grid grid-cols-3 gap-4 pt-2 border-t border-slate-200/60 max-w-lg">
-                    <div>
-                        <div class="text-2xl sm:text-3xl font-black text-slate-900">3+</div>
-                        <div class="text-xs font-semibold text-slate-400">Curated Trips · 精選行程</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl sm:text-3xl font-black text-slate-900">28+</div>
-                        <div class="text-xs font-semibold text-slate-400">Days Planned · 精彩天數</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl sm:text-3xl font-black text-amber-500 flex items-center gap-1">
-                            <span>★</span> 5.0
-                        </div>
-                        <div class="text-xs font-semibold text-slate-400">Rating · 滿分家庭回憶</div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Right Hero Bento Collage (5 Cols) -->
-            <div class="lg:col-span-5 relative">
-                <div class="grid grid-cols-2 gap-3.5 sm:gap-4 relative">
-                    
-                    <!-- Bento Item 1: Top Left (Landscape) -->
-                    <div class="bento-item rounded-3xl overflow-hidden aspect-[4/3] shadow-lg relative group">
-                        <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=700&q=85" 
-                             alt="雪梨歌劇院與達令港" 
-                             class="bento-img w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-3 left-3 text-white text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md">
-                            🇦🇺 雪梨經典
-                        </span>
-                    </div>
-
-                    <!-- Bento Item 2: Top Right (Portrait) -->
-                    <div class="bento-item rounded-3xl overflow-hidden row-span-2 aspect-[3/4] shadow-lg relative group">
-                        <img src="https://images.unsplash.com/photo-1514395462725-fb4566210144?auto=format&fit=crop&w=800&q=85" 
-                             alt="墨爾本市區與亞拉河" 
-                             class="bento-img w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-4 left-4 text-white text-xs font-bold px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md">
-                            🌆 墨爾本市景
-                        </span>
-                    </div>
-
-                    <!-- Bento Item 3: Bottom Left (Square / Landmark) -->
-                    <div class="bento-item rounded-3xl overflow-hidden aspect-[4/3] shadow-lg relative group">
-                        <img src="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&w=700&q=85" 
-                             alt="黃金海岸衝浪者天堂" 
-                             class="bento-img w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-3 left-3 text-white text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md">
-                            🏖️ 黃金海岸
-                        </span>
-                    </div>
-
-                    <!-- Bento Item 4: Bottom Right (Nature) -->
-                    <div class="bento-item rounded-3xl overflow-hidden aspect-[4/3] shadow-lg relative group">
-                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=85" 
-                             alt="蔚藍海岸大洋路" 
-                             class="bento-img w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-3 left-3 text-white text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md">
-                            🌊 大洋路十二使徒
-                        </span>
-                    </div>
-
-                </div>
-
-                <!-- Floating "Next Trip" Badge Card -->
-                <a href="/2026暑假" class="absolute -bottom-6 left-6 z-20 bg-white/95 backdrop-blur-xl p-3.5 pr-5 rounded-2xl border border-white/80 shadow-floating flex items-center gap-3.5 hover:scale-105 transition-transform group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-base shadow-sm">
-                        <i class="fa-solid fa-plane-departure"></i>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600">Next Upcoming Trip</div>
-                        <div class="text-xs sm:text-sm font-black text-slate-900 group-hover:text-sky-600 transition-colors">
-                            2026 暑假 · 墨爾本 12 天
-                        </div>
-                    </div>
-                </a>
-
-            </div>
-
-        </section>
+    <main class="flex-grow pt-28 sm:pt-36 pb-20 px-4 sm:px-6 max-w-6xl mx-auto w-full space-y-20">
 
         <!-- ================= POPULAR DESTINATIONS SECTION ================= -->
-        <section id="destinations" class="space-y-8 pt-6">
+        <section id="destinations" class="space-y-9">
             
             <!-- Section Header -->
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                <div class="space-y-1">
-                    <div class="text-xs font-black uppercase tracking-widest text-sky-600">
-                        EXPLORE · 探索家庭足跡
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-5 border-b border-slate-200/90 pb-7">
+                <div class="space-y-2.5">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 border border-sky-200 text-sky-800 text-xs sm:text-sm font-bold shadow-sm">
+                        <i class="fa-solid fa-crown text-amber-500 text-sm"></i>
+                        <span>Family Travel Manual · 冠智 & 家人專屬</span>
                     </div>
-                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
-                        Popular <span class="text-sky-600">Destinations</span>
-                    </h2>
+                    <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                        家庭年度旅遊行程手冊
+                    </h1>
+                    <p class="text-slate-600 text-sm sm:text-base font-semibold leading-relaxed">
+                        每日景點導航 · 交通機票總覽 · 醫療常備指引 · 即時地圖導航
+                    </p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-xs font-semibold text-slate-400">共收錄 3 部完整自由行指南</span>
-                    <a href="#destinations" class="px-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                        View All Trips
-                    </a>
+                <div class="flex items-center gap-2 text-xs sm:text-sm font-extrabold text-slate-700 bg-white px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm self-start sm:self-auto">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>共收錄 3 部完整自由行手冊</span>
                 </div>
             </div>
 
             <!-- Destinations Grid (Cards) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 sm:gap-8">
                 
                 <!-- Card 1: 2026 暑假 墨爾本 -->
-                <div class="dest-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft hover:shadow-card-hover flex flex-col" data-trip="melbourne">
+                <div class="dest-card bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-soft hover:shadow-card-hover flex flex-col" data-trip="melbourne">
                     <!-- Card Top Image -->
-                    <div class="relative h-56 overflow-hidden">
+                    <div class="relative h-60 sm:h-64 overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1514395462725-fb4566210144?auto=format&fit=crop&w=900&q=85" 
                              alt="墨爾本 12 天親子遊" 
                              class="dest-img w-full h-full object-cover">
                         
                         <!-- Top Badges -->
-                        <div class="absolute top-3.5 left-3.5 flex items-center gap-1.5">
-                            <span class="px-3 py-1 rounded-full bg-sky-600/90 text-white text-[11px] font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+                        <div class="absolute top-4 left-4 flex items-center gap-2">
+                            <span class="px-3.5 py-1.5 rounded-full bg-sky-600 text-white text-xs sm:text-sm font-black uppercase tracking-wider backdrop-blur-md shadow-md">
                                 🌟 最新企劃
                             </span>
-                            <span class="px-2.5 py-1 rounded-full bg-black/40 text-white text-[11px] font-mono backdrop-blur-md">
+                            <span class="px-3 py-1.5 rounded-full bg-black/50 text-white text-xs sm:text-sm font-mono font-bold backdrop-blur-md">
                                 2026 暑假
                             </span>
                         </div>
 
                         <!-- Rating Badge -->
-                        <div class="absolute top-3.5 right-3.5">
-                            <span class="px-2.5 py-1 rounded-full bg-white/95 text-slate-900 text-xs font-bold flex items-center gap-1 shadow-md">
-                                <i class="fa-solid fa-star text-amber-500 text-[10px]"></i> 5.0
+                        <div class="absolute top-4 right-4">
+                            <span class="px-3 py-1.5 rounded-full bg-white/95 text-slate-900 text-xs sm:text-sm font-black flex items-center gap-1 shadow-md">
+                                <i class="fa-solid fa-star text-amber-500"></i> 5.0
                             </span>
                         </div>
 
                         <!-- Days Pill -->
-                        <div class="absolute bottom-3.5 left-3.5">
-                            <span class="px-3 py-1 rounded-full bg-black/60 text-white text-xs font-semibold backdrop-blur-md flex items-center gap-1.5">
-                                <i class="fa-regular fa-clock text-[10px]"></i> 12 Days · 8/15 - 8/26
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-3.5 py-1.5 rounded-full bg-black/65 text-white text-xs sm:text-sm font-bold backdrop-blur-md flex items-center gap-2">
+                                <i class="fa-regular fa-clock"></i> 12 Days · 8/15 - 8/26
                             </span>
                         </div>
                     </div>
 
                     <!-- Card Body -->
-                    <div class="p-5 sm:p-6 flex-grow flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg sm:text-xl font-black text-slate-900 hover:text-sky-600 transition-colors">
+                    <div class="p-6 sm:p-7 flex-grow flex flex-col justify-between space-y-5">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 hover:text-sky-600 transition-colors leading-snug">
                                     <a href="/2026暑假">墨爾本 12 天親子深度遊</a>
                                 </h3>
-                                <button onclick="toggleFavorite(this, 'melbourne')" class="w-8 h-8 rounded-full bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 flex items-center justify-center transition-colors">
+                                <button onclick="toggleFavorite(this, 'melbourne')" class="w-9 h-9 rounded-full bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 flex items-center justify-center text-base transition-colors shrink-0">
                                     <i class="fa-regular fa-heart"></i>
                                 </button>
                             </div>
-                            <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                            <p class="text-sm sm:text-base text-slate-600 line-clamp-2 leading-relaxed">
                                 普芬比利蒸汽火車、菲利普島企鵝歸巢、大洋路十二使徒岩、疏芬山淘金鎮、華航直飛 CI57/58。
                             </p>
                         </div>
 
                         <!-- Highlight Tags -->
-                        <div class="flex flex-wrap gap-1.5 pt-1">
-                            <span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 text-[11px] font-medium border border-sky-100">🚂 蒸汽火車</span>
-                            <span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 text-[11px] font-medium border border-sky-100">🐧 神仙企鵝</span>
-                            <span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 text-[11px] font-medium border border-sky-100">🚗 自駕大洋路</span>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 rounded-lg bg-sky-50 text-sky-800 text-xs sm:text-sm font-semibold border border-sky-100">🚂 蒸汽火車</span>
+                            <span class="px-3 py-1 rounded-lg bg-sky-50 text-sky-800 text-xs sm:text-sm font-semibold border border-sky-100">🐧 神仙企鵝</span>
+                            <span class="px-3 py-1 rounded-lg bg-sky-50 text-sky-800 text-xs sm:text-sm font-semibold border border-sky-100">🚗 自駕大洋路</span>
                         </div>
 
                         <!-- Card Footer Action -->
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
                             <div>
-                                <span class="text-[11px] text-slate-400 block font-medium">出發狀態</span>
-                                <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 機票住宿已完成
+                                <span class="text-xs text-slate-400 block font-semibold">出發狀態</span>
+                                <span class="text-xs sm:text-sm font-extrabold text-emerald-600 flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> 機票住宿已完成
                                 </span>
                             </div>
-                            <a href="/2026暑假" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md shadow-sky-600/20 transition-transform active:scale-95">
+                            <a href="/2026暑假" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-black shadow-md shadow-sky-600/25 transition-transform hover:scale-105 active:scale-95">
                                 <span>開啟手冊</span>
-                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 2: 2026 寒假 昆士蘭雙城 -->
-                <div class="dest-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft hover:shadow-card-hover flex flex-col" data-trip="queensland">
+                <div class="dest-card bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-soft hover:shadow-card-hover flex flex-col" data-trip="queensland">
                     <!-- Card Top Image -->
-                    <div class="relative h-56 overflow-hidden">
+                    <div class="relative h-60 sm:h-64 overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&w=900&q=85" 
                              alt="2026 寒假 澳洲昆士蘭雙城自由行" 
                              class="dest-img w-full h-full object-cover">
                         
                         <!-- Top Badges -->
-                        <div class="absolute top-3.5 left-3.5 flex items-center gap-1.5">
-                            <span class="px-3 py-1 rounded-full bg-amber-500 text-white text-[11px] font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+                        <div class="absolute top-4 left-4 flex items-center gap-2">
+                            <span class="px-3.5 py-1.5 rounded-full bg-amber-500 text-white text-xs sm:text-sm font-black uppercase tracking-wider backdrop-blur-md shadow-md">
                                 🏖️ 陽光海岸
                             </span>
-                            <span class="px-2.5 py-1 rounded-full bg-black/40 text-white text-[11px] font-mono backdrop-blur-md">
+                            <span class="px-3 py-1.5 rounded-full bg-black/50 text-white text-xs sm:text-sm font-mono font-bold backdrop-blur-md">
                                 2026 寒假
                             </span>
                         </div>
 
                         <!-- Rating Badge -->
-                        <div class="absolute top-3.5 right-3.5">
-                            <span class="px-2.5 py-1 rounded-full bg-white/95 text-slate-900 text-xs font-bold flex items-center gap-1 shadow-md">
-                                <i class="fa-solid fa-star text-amber-500 text-[10px]"></i> 4.9
+                        <div class="absolute top-4 right-4">
+                            <span class="px-3 py-1.5 rounded-full bg-white/95 text-slate-900 text-xs sm:text-sm font-black flex items-center gap-1 shadow-md">
+                                <i class="fa-solid fa-star text-amber-500"></i> 4.9
                             </span>
                         </div>
 
                         <!-- Days Pill -->
-                        <div class="absolute bottom-3.5 left-3.5">
-                            <span class="px-3 py-1 rounded-full bg-black/60 text-white text-xs font-semibold backdrop-blur-md flex items-center gap-1.5">
-                                <i class="fa-regular fa-clock text-[10px]"></i> 8 Days · 2/16 - 2/24
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-3.5 py-1.5 rounded-full bg-black/65 text-white text-xs sm:text-sm font-bold backdrop-blur-md flex items-center gap-2">
+                                <i class="fa-regular fa-clock"></i> 8 Days · 2/16 - 2/24
                             </span>
                         </div>
                     </div>
 
                     <!-- Card Body -->
-                    <div class="p-5 sm:p-6 flex-grow flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg sm:text-xl font-black text-slate-900 hover:text-sky-600 transition-colors">
+                    <div class="p-6 sm:p-7 flex-grow flex flex-col justify-between space-y-5">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 hover:text-sky-600 transition-colors leading-snug">
                                     <a href="/2026寒假">昆士蘭與雪梨雙城自由行</a>
                                 </h3>
-                                <button onclick="toggleFavorite(this, 'queensland')" class="w-8 h-8 rounded-full bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 flex items-center justify-center transition-colors">
+                                <button onclick="toggleFavorite(this, 'queensland')" class="w-9 h-9 rounded-full bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 flex items-center justify-center text-base transition-colors shrink-0">
                                     <i class="fa-regular fa-heart"></i>
                                 </button>
                             </div>
-                            <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                            <p class="text-sm sm:text-base text-slate-600 line-clamp-2 leading-relaxed">
                                 布里斯本故事橋、黃金海岸華納電影世界與海洋世界、可倫賓野生動物保護區抱無尾熊、雪梨藍山景觀纜車。
                             </p>
                         </div>
 
                         <!-- Highlight Tags -->
-                        <div class="flex flex-wrap gap-1.5 pt-1">
-                            <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[11px] font-medium border border-amber-100">🐨 抱無尾熊</span>
-                            <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[11px] font-medium border border-amber-100">🎢 雙主題樂園</span>
-                            <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[11px] font-medium border border-amber-100">🚡 藍山纜車</span>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 rounded-lg bg-amber-50 text-amber-900 text-xs sm:text-sm font-semibold border border-amber-100">🐨 抱無尾熊</span>
+                            <span class="px-3 py-1 rounded-lg bg-amber-50 text-amber-900 text-xs sm:text-sm font-semibold border border-amber-100">🎢 雙主題樂園</span>
+                            <span class="px-3 py-1 rounded-lg bg-amber-50 text-amber-900 text-xs sm:text-sm font-semibold border border-amber-100">🚡 藍山纜車</span>
                         </div>
 
                         <!-- Card Footer Action -->
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
                             <div>
-                                <span class="text-[11px] text-slate-400 block font-medium">出發狀態</span>
-                                <span class="text-xs font-bold text-sky-600 flex items-center gap-1">
+                                <span class="text-xs text-slate-400 block font-semibold">出發狀態</span>
+                                <span class="text-xs sm:text-sm font-extrabold text-sky-700 flex items-center gap-1.5">
                                     <i class="fa-solid fa-circle-check text-emerald-500"></i> 行程手冊上線
                                 </span>
                             </div>
-                            <a href="/2026寒假" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-md shadow-amber-500/20 transition-transform active:scale-95">
+                            <a href="/2026寒假" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white text-xs sm:text-sm font-black shadow-md shadow-amber-500/25 transition-transform hover:scale-105 active:scale-95">
                                 <span>開啟手冊</span>
-                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 3: 2025 暑假 雪梨 -->
-                <div class="dest-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft hover:shadow-card-hover flex flex-col" data-trip="sydney">
+                <div class="dest-card bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-soft hover:shadow-card-hover flex flex-col" data-trip="sydney">
                     <!-- Card Top Image -->
-                    <div class="relative h-56 overflow-hidden">
+                    <div class="relative h-60 sm:h-64 overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=900&q=85" 
                              alt="2025 暑假 雪梨八天七夜自由行" 
                              class="dest-img w-full h-full object-cover">
                         
                         <!-- Top Badges -->
-                        <div class="absolute top-3.5 left-3.5 flex items-center gap-1.5">
-                            <span class="px-3 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+                        <div class="absolute top-4 left-4 flex items-center gap-2">
+                            <span class="px-3.5 py-1.5 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-black uppercase tracking-wider backdrop-blur-md shadow-md">
                                 🇦🇺 經典回顧
                             </span>
-                            <span class="px-2.5 py-1 rounded-full bg-black/40 text-white text-[11px] font-mono backdrop-blur-md">
+                            <span class="px-3 py-1.5 rounded-full bg-black/50 text-white text-xs sm:text-sm font-mono font-bold backdrop-blur-md">
                                 2025 暑假
                             </span>
                         </div>
 
                         <!-- Rating Badge -->
-                        <div class="absolute top-3.5 right-3.5">
-                            <span class="px-2.5 py-1 rounded-full bg-white/95 text-slate-900 text-xs font-bold flex items-center gap-1 shadow-md">
-                                <i class="fa-solid fa-star text-amber-500 text-[10px]"></i> 4.9
+                        <div class="absolute top-4 right-4">
+                            <span class="px-3 py-1.5 rounded-full bg-white/95 text-slate-900 text-xs sm:text-sm font-black flex items-center gap-1 shadow-md">
+                                <i class="fa-solid fa-star text-amber-500"></i> 4.9
                             </span>
                         </div>
 
                         <!-- Days Pill -->
-                        <div class="absolute bottom-3.5 left-3.5">
-                            <span class="px-3 py-1 rounded-full bg-black/60 text-white text-xs font-semibold backdrop-blur-md flex items-center gap-1.5">
-                                <i class="fa-regular fa-clock text-[10px]"></i> 8 Days · 8/16 - 8/23
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-3.5 py-1.5 rounded-full bg-black/65 text-white text-xs sm:text-sm font-bold backdrop-blur-md flex items-center gap-2">
+                                <i class="fa-regular fa-clock"></i> 8 Days · 8/16 - 8/23
                             </span>
                         </div>
                     </div>
 
                     <!-- Card Body -->
-                    <div class="p-5 sm:p-6 flex-grow flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg sm:text-xl font-black text-slate-900 hover:text-sky-600 transition-colors">
+                    <div class="p-6 sm:p-7 flex-grow flex flex-col justify-between space-y-5">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 hover:text-sky-600 transition-colors leading-snug">
                                     <a href="/2025暑假">雪梨八天七夜自由行手冊</a>
                                 </h3>
-                                <button onclick="toggleFavorite(this, 'sydney')" class="w-8 h-8 rounded-full bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 flex items-center justify-center transition-colors">
+                                <button onclick="toggleFavorite(this, 'sydney')" class="w-9 h-9 rounded-full bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 flex items-center justify-center text-base transition-colors shrink-0">
                                     <i class="fa-regular fa-heart"></i>
                                 </button>
                             </div>
-                            <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                            <p class="text-sm sm:text-base text-slate-600 line-clamp-2 leading-relaxed">
                                 雪梨歌劇院中文導覽、達令港水族館、塔龍加動物園渡輪、藍山景觀世界、華航 CI51/52 航班行程。
                             </p>
                         </div>
 
                         <!-- Highlight Tags -->
-                        <div class="flex flex-wrap gap-1.5 pt-1">
-                            <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-medium border border-emerald-100">🎭 歌劇院導覽</span>
-                            <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-medium border border-emerald-100">⛴️ 達令港遊船</span>
-                            <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-medium border border-emerald-100">🏨 Rydges Central</span>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-900 text-xs sm:text-sm font-semibold border border-emerald-100">🎭 歌劇院導覽</span>
+                            <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-900 text-xs sm:text-sm font-semibold border border-emerald-100">⛴️ 達令港遊船</span>
+                            <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-900 text-xs sm:text-sm font-semibold border border-emerald-100">🏨 Rydges Central</span>
                         </div>
 
                         <!-- Card Footer Action -->
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
                             <div>
-                                <span class="text-[11px] text-slate-400 block font-medium">手冊版本</span>
-                                <span class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                                <span class="text-xs text-slate-400 block font-semibold">手冊版本</span>
+                                <span class="text-xs sm:text-sm font-extrabold text-slate-700 flex items-center gap-1.5">
                                     <i class="fa-solid fa-book text-emerald-500"></i> 完整歸檔
                                 </span>
                             </div>
-                            <a href="/2025暑假" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-transform active:scale-95">
+                            <a href="/2025暑假" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-black shadow-md shadow-emerald-600/25 transition-transform hover:scale-105 active:scale-95">
                                 <span>開啟手冊</span>
-                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </a>
                         </div>
                     </div>
@@ -549,56 +390,56 @@
         </section>
 
         <!-- ================= TIMELINE & FEATURES SECTION ================= -->
-        <section id="timeline" class="space-y-8 pt-4">
+        <section id="timeline" class="space-y-9 pt-4">
             
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-                <div class="text-xs font-black uppercase tracking-widest text-sky-600">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <div class="text-xs sm:text-sm font-black uppercase tracking-widest text-sky-600">
                     WHY CHOOSE US · 出遊特色
                 </div>
-                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
                     Travel with <span class="text-sky-600">Confidence</span>
                 </h2>
-                <p class="text-slate-500 text-xs sm:text-sm">
+                <p class="text-slate-600 text-sm sm:text-base font-medium leading-relaxed">
                     由醫師全盤規劃，兼具深度探索、充足休息、醫療安全與家庭樂趣的頂級自由行指南。
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
                 
                 <!-- Feature 1 -->
-                <div class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200/80 shadow-soft space-y-4 hover:shadow-card-hover transition-all">
-                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl shadow-sm">
+                <div class="p-7 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-soft space-y-4 hover:shadow-card-hover transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl shadow-sm">
                         <i class="fa-solid fa-route"></i>
                     </div>
-                    <div class="space-y-2">
-                        <h3 class="text-lg font-black text-slate-900">精準景點動線規劃</h3>
-                        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    <div class="space-y-2.5">
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900">精準景點動線規劃</h3>
+                        <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
                             每日行程依據地理位置與交通順暢度精心排定，並備妥晴雨天備案，免除舟車勞頓與迷路風險。
                         </p>
                     </div>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200/80 shadow-soft space-y-4 hover:shadow-card-hover transition-all">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-sm">
+                <div class="p-7 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-soft space-y-4 hover:shadow-card-hover transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl shadow-sm">
                         <i class="fa-solid fa-kit-medical"></i>
                     </div>
-                    <div class="space-y-2">
-                        <h3 class="text-lg font-black text-slate-900">家庭醫師專屬藥箱</h3>
-                        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    <div class="space-y-2.5">
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900">家庭醫師專屬藥箱</h3>
+                        <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
                             出國隨身配備常備藥品清單（腸胃藥、止痛退燒、過敏舒緩），並標註當地緊急醫療諮詢管道。
                         </p>
                     </div>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200/80 shadow-soft space-y-4 hover:shadow-card-hover transition-all">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shadow-sm">
+                <div class="p-7 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-soft space-y-4 hover:shadow-card-hover transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shadow-sm">
                         <i class="fa-solid fa-mobile-screen-button"></i>
                     </div>
-                    <div class="space-y-2">
-                        <h3 class="text-lg font-black text-slate-900">手機隨身離線檢索</h3>
-                        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    <div class="space-y-2.5">
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900">手機隨身離線檢索</h3>
+                        <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
                             響應式設計完美適配各型手機，登機憑證、飯店地圖、預約代碼一鍵出示，旅程零負擔。
                         </p>
                     </div>
@@ -609,50 +450,50 @@
         </section>
 
         <!-- ================= TRAVEL UTILITIES SECTION ================= -->
-        <section id="tools" class="p-7 sm:p-9 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl space-y-6 relative overflow-hidden">
+        <section id="tools" class="p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl space-y-7 relative overflow-hidden">
             <!-- Background Glow -->
             <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -left-20 -top-20 w-80 h-80 bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="space-y-1">
-                    <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sky-400">
+                <div class="space-y-1.5">
+                    <div class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-wider text-sky-400">
                         <i class="fa-solid fa-toolbox"></i> 實用工具箱
                     </div>
-                    <h3 class="text-xl sm:text-2xl font-black tracking-tight text-white">
+                    <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
                         出國旅遊快捷查詢
                     </h3>
                 </div>
-                <div class="text-xs text-slate-400">
+                <div class="text-sm text-slate-300 font-medium">
                     一鍵開啟即時天氣與匯率服務
                 </div>
             </div>
 
             <!-- Utility Buttons Grid -->
-            <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
                 
-                <a href="https://www.google.com/search?q=Melbourne+weather" target="_blank" rel="noopener" class="p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
-                    <i class="fa-solid fa-cloud-sun text-amber-400 text-2xl group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white">墨爾本即時天氣</span>
-                    <span class="text-[10px] text-slate-400">8/15-8/26 氣候</span>
+                <a href="https://www.google.com/search?q=Melbourne+weather" target="_blank" rel="noopener" class="p-5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
+                    <i class="fa-solid fa-cloud-sun text-amber-400 text-3xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm sm:text-base font-bold text-white">墨爾本即時天氣</span>
+                    <span class="text-xs text-slate-300">8/15-8/26 氣候</span>
                 </a>
 
-                <a href="https://www.google.com/search?q=Sydney+weather" target="_blank" rel="noopener" class="p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
-                    <i class="fa-solid fa-cloud-rain text-sky-400 text-2xl group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white">雪梨即時天氣</span>
-                    <span class="text-[10px] text-slate-400">市區與藍山氣溫</span>
+                <a href="https://www.google.com/search?q=Sydney+weather" target="_blank" rel="noopener" class="p-5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
+                    <i class="fa-solid fa-cloud-rain text-sky-400 text-3xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm sm:text-base font-bold text-white">雪梨即時天氣</span>
+                    <span class="text-xs text-slate-300">市區與藍山氣溫</span>
                 </a>
 
-                <a href="https://www.google.com/search?q=Brisbane+weather" target="_blank" rel="noopener" class="p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
-                    <i class="fa-solid fa-sun text-orange-400 text-2xl group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white">布里斯本天氣</span>
-                    <span class="text-[10px] text-slate-400">昆士蘭陽光海岸</span>
+                <a href="https://www.google.com/search?q=Brisbane+weather" target="_blank" rel="noopener" class="p-5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
+                    <i class="fa-solid fa-sun text-orange-400 text-3xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm sm:text-base font-bold text-white">布里斯本天氣</span>
+                    <span class="text-xs text-slate-300">昆士蘭陽光海岸</span>
                 </a>
 
-                <a href="https://www.google.com/search?q=AUD+to+TWD" target="_blank" rel="noopener" class="p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
-                    <i class="fa-solid fa-money-bill-transfer text-emerald-400 text-2xl group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white">澳幣即時匯率</span>
-                    <span class="text-[10px] text-slate-400">AUD / TWD 換算</span>
+                <a href="https://www.google.com/search?q=AUD+to+TWD" target="_blank" rel="noopener" class="p-5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex flex-col items-center justify-center text-center space-y-2 group">
+                    <i class="fa-solid fa-money-bill-transfer text-emerald-400 text-3xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm sm:text-base font-bold text-white">澳幣即時匯率</span>
+                    <span class="text-xs text-slate-300">AUD / TWD 換算</span>
                 </a>
 
             </div>
@@ -662,18 +503,18 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200/80 py-10 px-4 sm:px-6">
+    <footer class="bg-white border-t border-slate-200/90 py-10 px-4 sm:px-6">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-sky-600 flex items-center justify-center text-white text-xs">
+            <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-sky-600 flex items-center justify-center text-white text-sm">
                     <i class="fa-solid fa-heart"></i>
                 </div>
-                <div class="text-xs text-slate-500">
-                    <p class="font-bold text-slate-700">黃冠智醫師 · 家庭專屬出國旅遊手冊</p>
-                    <p>© 2025-2026 Family Wanderlust. All Rights Reserved.</p>
+                <div class="text-sm text-slate-600">
+                    <p class="font-bold text-slate-800">黃冠智醫師 · 家庭專屬出國旅遊手冊</p>
+                    <p class="text-xs text-slate-400">© 2025-2026 Family Wanderlust. All Rights Reserved.</p>
                 </div>
             </div>
-            <div class="flex items-center gap-4 text-xs font-semibold text-slate-500">
+            <div class="flex items-center gap-5 text-sm font-bold text-slate-600">
                 <a href="/" class="hover:text-sky-600 transition-colors">醫師個人網站</a>
                 <span class="text-slate-300">·</span>
                 <a href="/health-column" class="hover:text-sky-600 transition-colors">衛教專欄</a>
@@ -683,34 +524,8 @@
         </div>
     </footer>
 
-    <!-- Interactive Search Jump Script -->
+    <!-- Interactive Scripts -->
     <script>
-        function handleSearchJump() {
-            const selectVal = document.getElementById('filterDestination').value;
-            const destCards = document.querySelectorAll('.dest-card');
-            
-            if (selectVal === 'all') {
-                destCards.forEach(c => c.style.display = 'flex');
-                document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
-
-            destCards.forEach(c => {
-                if (c.getAttribute('data-trip') === selectVal) {
-                    c.style.display = 'flex';
-                } else {
-                    c.style.display = 'none';
-                }
-            });
-
-            document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Dropdown change filter
-        document.getElementById('filterDestination').addEventListener('change', function() {
-            handleSearchJump();
-        });
-
         // Favorite Toggle
         function toggleFavorite(btn, tripKey) {
             const icon = btn.querySelector('i');
