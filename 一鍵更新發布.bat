@@ -23,19 +23,19 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-echo [2/7] Syncing Google Drive images...
-echo [2/7] Syncing Drive images >> "%LOGFILE%"
-node scripts/sync-drive-images.js
-echo.
-
-echo [3/7] Applying manual cover image mappings...
-echo [3/7] Applying cover mappings >> "%LOGFILE%"
+echo [2/7] Applying manual cover image mappings...
+echo [2/7] Applying cover mappings >> "%LOGFILE%"
 node scripts/apply-mapping.js
 echo.
 
-echo [4/7] Matching remaining cover images...
-echo [4/7] Matching cover images >> "%LOGFILE%"
+echo [3/7] Matching remaining cover images...
+echo [3/7] Matching cover images >> "%LOGFILE%"
 node scripts/auto-cover-image-v2.js
+echo.
+
+echo [4/7] Syncing Google Drive images (final authority)...
+echo [4/7] Syncing Drive images >> "%LOGFILE%"
+node scripts/sync-drive-images.js
 echo.
 
 echo [5/7] Building website...
