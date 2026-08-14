@@ -45,6 +45,8 @@
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: #f8fafc;
             color: #1e293b;
+            font-size: 16px;
+            line-height: 1.65;
         }
         .glass-card {
             background: rgba(255, 255, 255, 0.92);
@@ -75,13 +77,13 @@
                     <i class="fa-solid fa-plane-departure text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg sm:text-xl text-slate-800 leading-tight">墨爾本 12 天親子遊</h1>
-                    <p class="text-xs text-slate-500 font-medium">8/15 (六) ➔ 8/26 (三) 完整接駁與景點導航</p>
+                    <h1 class="font-black text-xl sm:text-2xl text-slate-900 leading-tight">墨爾本 12 天親子遊</h1>
+                    <p class="text-sm sm:text-base text-slate-600 font-medium">8/15 (六) ➔ 8/26 (三) 完整接駁與景點導航</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-2">
-                <button onclick="toggleVoucherModal()" class="px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1.5 border border-amber-200">
+                <button onclick="toggleVoucherModal()" class="px-4 py-2.5 text-sm sm:text-base font-bold rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1.5 border border-amber-200">
                     <i class="fa-solid fa-ticket"></i>
                     <span class="hidden sm:inline">預訂憑證</span>速查
                 </button>
@@ -92,7 +94,7 @@
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
         <!-- Banner & Quick Info Panel -->
         <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-brand-900 to-sky-900 text-white p-6 sm:p-8 shadow-xl">
@@ -101,17 +103,17 @@
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-sky-200 text-xs font-medium border border-white/10">
                         <i class="fa-solid fa-child-reaching"></i> 2026 最新親子極致優化版
                     </div>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug">
+                    <h2 class="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
                         墨爾本 12 天親子每日行程與交通接駁推薦表
                     </h2>
-                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+                    <p class="text-slate-200 text-base sm:text-lg leading-relaxed max-w-2xl">
                         全程搭配大眾運輸與共構商場，含免費電車區、火車直達站點、預約編號與 Google Maps 導航地標，專為帶孩子出遊量身規劃。
                     </p>
                     <div class="flex flex-wrap gap-2 pt-2">
-                        <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs flex items-center gap-1">
+                        <span class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-sm sm:text-base font-semibold flex items-center gap-1.5">
                             <i class="fa-solid fa-circle-check text-emerald-400"></i> 青少年(18歲以下)大眾運輸免費
                         </span>
-                        <span class="px-2.5 py-1 rounded-md bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs flex items-center gap-1">
+                        <span class="px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 text-sm sm:text-base font-semibold flex items-center gap-1.5">
                             <i class="fa-solid fa-hotel"></i> 全程住 Brady Apartment Flinders St
                         </span>
                     </div>
@@ -119,17 +121,17 @@
 
                 <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between space-y-3">
                     <div class="space-y-2">
-                        <h3 class="text-xs font-semibold text-sky-200 tracking-wider uppercase flex items-center gap-1.5">
+                        <h3 class="text-sm sm:text-base font-bold text-sky-200 tracking-wider uppercase flex items-center gap-1.5">
                             <i class="fa-solid fa-circle-info"></i> 行程快捷檢視
                         </h3>
-                        <div class="text-xs space-y-1.5 text-slate-200">
+                        <div class="text-sm sm:text-base space-y-2 text-slate-100 font-medium">
                             <p class="flex justify-between"><span class="text-slate-400">去程航班:</span> 華航 CI 57 (23:30 起飛)</p>
                             <p class="flex justify-between"><span class="text-slate-400">回程航班:</span> 華航 CI 58 (21:50 起飛)</p>
                             <p class="flex justify-between"><span class="text-slate-400">飛機餐點:</span> 2x 無牛餐 + 2x 兒童餐</p>
                             <p class="flex justify-between"><span class="text-slate-400">住處地址:</span> 550 Flinders St</p>
                         </div>
                     </div>
-                    <button onclick="toggleTransportModal()" class="w-full py-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs rounded-xl shadow transition text-center flex items-center justify-center gap-2">
+                    <button onclick="toggleTransportModal()" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm sm:text-base rounded-xl shadow transition text-center flex items-center justify-center gap-2">
                         <i class="fa-solid fa-bus"></i> 查看 2026 Myki 與交通規則攻略
                     </button>
                 </div>
@@ -145,25 +147,25 @@
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                     <input type="text" id="searchInput" oninput="filterDays()" placeholder="搜尋景點、餐點、交通或訂單號 (例: 企鵝, 樂高, Puffing Billy)..." 
-                        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
                 </div>
 
                 <!-- Filter Chips -->
                 <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-1">
-                    <button onclick="setCategoryFilter('all')" class="cat-btn active px-3 py-1.5 text-xs font-medium rounded-xl whitespace-nowrap transition bg-brand-600 text-white shadow-sm" data-category="all">全部行程</button>
-                    <button onclick="setCategoryFilter('animal')" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="animal">🐨 動物觀察</button>
-                    <button onclick="setCategoryFilter('shopping')" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="shopping">🛍️ 採買購物</button>
-                    <button onclick="setCategoryFilter('tour')" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="tour">🚂 預訂行程/一日遊</button>
-                    <button onclick="setCategoryFilter('play')" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="play">🚀 室內樂園/科學</button>
+                    <button onclick="setCategoryFilter('all')" class="cat-btn active px-4 py-2 text-sm sm:text-base font-bold rounded-xl whitespace-nowrap transition bg-brand-600 text-white shadow-sm" data-category="all">全部行程</button>
+                    <button onclick="setCategoryFilter('animal')" class="cat-btn px-4 py-2 text-sm sm:text-base font-bold rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="animal">🐨 動物觀察</button>
+                    <button onclick="setCategoryFilter('shopping')" class="cat-btn px-4 py-2 text-sm sm:text-base font-bold rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="shopping">🛍️ 採買購物</button>
+                    <button onclick="setCategoryFilter('tour')" class="cat-btn px-4 py-2 text-sm sm:text-base font-bold rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="tour">🚂 預訂行程/一日遊</button>
+                    <button onclick="setCategoryFilter('play')" class="cat-btn px-4 py-2 text-sm sm:text-base font-bold rounded-xl whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="play">🚀 室內樂園/科學</button>
                 </div>
             </div>
 
             <!-- Day Selector Bar -->
             <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1 px-1">
-                <button onclick="scrollToDay('all')" class="day-tab px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-semibold whitespace-nowrap shadow-sm hover:bg-slate-700 transition">全天檢視</button>
+                <button onclick="scrollToDay('all')" class="day-tab px-4 py-2 rounded-xl bg-slate-800 text-white text-sm sm:text-base font-bold whitespace-nowrap shadow-sm hover:bg-slate-700 transition">全天檢視</button>
                 <script>
                     for(let i=1; i<=12; i++) {
-                        document.write(`<button onclick="scrollToDay(${i})" class="day-tab px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium whitespace-nowrap hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition">Day ${i}</button>`);
+                        document.write(`<button onclick="scrollToDay(${i})" class="day-tab px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm sm:text-base font-bold whitespace-nowrap hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition">Day ${i}</button>`);
                     }
                 </script>
             </div>
@@ -175,48 +177,48 @@
             <div id="day-1" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="tour">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D1</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D1</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/15 (六) 台灣出發 ➔ 桃園機場 ➔ 飛往墨爾本</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-100 text-sky-700">飛行起航</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/15 (六) 台灣出發 ➔ 桃園機場 ➔ 飛往墨爾本</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-sky-100 text-sky-700">飛行起航</span>
                             </div>
-                            <p class="text-xs text-slate-500">台灣接送專車直達機場 ➔ 搭乘中華航空夜航班機</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">台灣接送專車直達機場 ➔ 搭乘中華航空夜航班機</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(1)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(1)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
                     <!-- Event Item -->
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">17:30</span>
-                            <span class="text-xs text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">專車預約：F15385365</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">17:30</span>
+                            <span class="text-sm sm:text-base text-amber-800 font-bold bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">專車預約：F15385365</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【台灣去程接送】專車啟程</h4>
-                        <p class="text-xs text-slate-600">豪華專車（預約編號：<code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">F15385365</code>）至台中市潭子區興北路家中接您們全家，直達桃園國際機場第二航廈（預計 19:30 抵達，時間充裕）。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【台灣去程接送】專車啟程</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">豪華專車（預約編號：<code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">F15385365</code>）至台中市潭子區興北路家中接您們全家，直達桃園國際機場第二航廈（預計 19:30 抵達，時間充裕）。</p>
                         <div class="pt-1 flex gap-2">
-                            <a href="https://maps.google.com/?cid=12140508027786443350&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                            <a href="https://maps.google.com/?cid=12140508027786443350&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                                 <i class="fa-solid fa-location-dot"></i> 桃園國際機場第二航廈 Google Map
                             </a>
                         </div>
                     </div>
 
                     <!-- Event Item -->
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">23:30</span>
-                            <span class="text-xs text-indigo-700 font-semibold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">班機：CI 57</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">23:30</span>
+                            <span class="text-sm sm:text-base text-indigo-800 font-bold bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">班機：CI 57</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【起飛】中華航空直飛墨爾本</h4>
-                        <p class="text-xs text-slate-600">搭乘 CI 57 班機直飛墨爾本（飛行時間：9 小時 10 分鐘）。</p>
-                        <div class="p-2.5 rounded-lg bg-sky-50 border border-sky-100 text-xs text-sky-800 space-y-1">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【起飛】中華航空直飛墨爾本</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">搭乘 CI 57 班機直飛墨爾本（飛行時間：9 小時 10 分鐘）。</p>
+                        <div class="p-4 rounded-xl bg-sky-50 border border-sky-200 text-sm sm:text-base text-sky-900 space-y-1.5">
                             <p class="font-semibold"><i class="fa-solid fa-utensils text-sky-600"></i> 機上特殊餐點已備妥：</p>
-                            <ul class="list-disc list-inside text-[11px] space-y-0.5 text-sky-900">
+                            <ul class="list-disc list-inside text-sm sm:text-base space-y-1 text-sky-900">
                                 <li>CHANG 女士與 HUANG 先生：無牛肉餐（NBML）</li>
                                 <li>兩位小朋友：兒童餐（CHML）</li>
                             </ul>
@@ -229,67 +231,67 @@
             <div id="day-2" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="shopping">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D2</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D2</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/16 (日) 抵達墨爾本 ➔ 辦理入住 ➔ DFO 大肆採購日 🛍️</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">購物 & 補給</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/16 (日) 抵達墨爾本 ➔ 辦理入住 ➔ DFO 大肆採購日 🛍️</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-700">購物 & 補給</span>
                             </div>
-                            <p class="text-xs text-slate-500">辦理購卡與入住 ➔ DFO Outlet 與 Spencer 超商購物 ➔ 享用唐人街美食</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">辦理購卡與入住 ➔ DFO Outlet 與 Spencer 超商購物 ➔ 享用唐人街美食</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(2)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(2)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">10:40 ~ 13:30</span>
-                            <span class="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">辦理卡片與接駁</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">10:40 ~ 13:30</span>
+                            <span class="text-sm sm:text-base text-emerald-800 font-bold bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">辦理卡片與接駁</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【抵達機場 & 購買 Myki 卡】</h4>
-                        <p class="text-xs text-slate-600">降落<a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">墨爾本機場第二航廈 (T2)</a>。在航廈內一次購齊 2 張成人 Myki 卡與 2 張 Youth Myki 卡。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【抵達機場 & 購買 Myki 卡】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">降落<a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">墨爾本機場第二航廈 (T2)</a>。在航廈內一次購齊 2 張成人 Myki 卡與 2 張 Youth Myki 卡。</p>
                         <div class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-100 text-xs text-emerald-900 space-y-1">
                             <p class="font-bold"><i class="fa-solid fa-gift"></i> 2026 年交通福利提醒：</p>
                             <p class="text-[11px] leading-relaxed">18 歲以下青少年在維多利亞州搭乘大眾運輸完全免費（只需持 Youth Myki 卡感應，卡片僅收 $5 澳幣工本費，不扣車資）。大人平日扣款上限 $11.40 澳幣，週末只要 $8.00 澳幣！搭乘 SkyBus 巴士或叫大型 Uber 直達市區飯店。</p>
                         </div>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">14:00</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">14:00</span>
                             <span class="text-xs text-slate-600 bg-slate-200 px-2 py-0.5 rounded">飯店入住</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【辦理入住】Brady Apartment Hotel Flinders Street</h4>
-                        <p class="text-xs text-slate-600">抵達飯店 (550 Flinders St) 辦理入住（預訂 2 間臥室公寓：一特大雙人床 + 兩張單人床）。</p>
-                        <a href="https://maps.google.com/?cid=15963621079303497397&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【辦理入住】Brady Apartment Hotel Flinders Street</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">抵達飯店 (550 Flinders St) 辦理入住（預訂 2 間臥室公寓：一特大雙人床 + 兩張單人床）。</p>
+                        <a href="https://maps.google.com/?cid=15963621079303497397&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-location-dot"></i> Brady Apartment Hotel 地圖
                         </a>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">14:30 ~ 17:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">14:30 ~ 17:30</span>
                             <span class="text-xs text-purple-700 font-semibold bg-purple-50 px-2 py-0.5 rounded border border-purple-200">雙商場採買</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【下午】放完行李直接逛 DFO 與 Spencer Outlet</h4>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【下午】放完行李直接逛 DFO 與 Spencer Outlet</h4>
                         <ul class="list-disc list-inside text-xs text-slate-600 space-y-1">
                             <li><strong class="text-slate-800">DFO South Wharf：</strong>從飯店往南散步 5~10 分鐘越過亞拉河即可抵達。擁有 170 多家暢貨店（Kmart 與 Target 也在周邊），折扣高達 70% off，適合買禦寒衣物。 <a href="https://maps.google.com/?cid=7128538725947013101&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">地圖</a></li>
                             <li><strong class="text-slate-800">Spencer Outlet Centre：</strong>飯店轉角（Southern Cross 車站旁）走路 2 分鐘，有 TK Maxx 與 Coles 超商，可採買牛奶零食回公寓冰著。 <a href="https://maps.google.com/?cid=17665600074812530690&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">地圖</a></li>
                         </ul>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">18:00</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">18:00</span>
                             <span class="text-xs text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded">晚餐時間</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【晚餐】胡同餃子館 (HuTong Dumpling Bar)</h4>
-                        <p class="text-xs text-slate-600">搭乘免費電車前往市區 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Chinatown 唐人街</a>，享用熱騰騰的傳統小籠包與水餃。</p>
-                        <a href="https://maps.google.com/?cid=6668680643276731941&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【晚餐】胡同餃子館 (HuTong Dumpling Bar)</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">搭乘免費電車前往市區 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Chinatown 唐人街</a>，享用熱騰騰的傳統小籠包與水餃。</p>
+                        <a href="https://maps.google.com/?cid=6668680643276731941&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-utensils"></i> 胡同餃子館 Google Map
                         </a>
                     </div>
@@ -300,43 +302,43 @@
             <div id="day-3" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="animal play">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D3</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D3</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/17 (一) 交通極便利線 ➔ 鐵路直達「墨爾本動物園」🐨 ➔ 直通 Melbourne Central</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">可愛動物 & 市區共構</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/17 (一) 交通極便利線 ➔ 鐵路直達「墨爾本動物園」🐨 ➔ 直通 Melbourne Central</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-amber-100 text-amber-700">可愛動物 & 市區共構</span>
                             </div>
-                            <p class="text-xs text-slate-500">Upfield 火車直達動物園 Rail Gate ➔ 回程共構直通 Melbourne Central & ACMI</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">Upfield 火車直達動物園 Rail Gate ➔ 回程共構直通 Melbourne Central & ACMI</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(3)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(3)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">09:30 ~ 14:30</span>
-                            <span class="text-xs text-sky-700 font-semibold bg-sky-50 px-2 py-0.5 rounded border border-sky-200">火車直達站點</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:30 ~ 14:30</span>
+                            <span class="text-sm sm:text-base text-sky-800 font-bold bg-sky-50 px-3 py-1 rounded-lg border border-sky-200">火車直達站點</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【墨爾本動物園 (Melbourne Zoo)】</h4>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">交通（推推車最省力）：</strong>從 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Flinders Street Station</a> 搭乘 Upfield Line 火車，在 <a href="https://maps.google.com/?cid=927270666681872109&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Royal Park Station</a> 下車。</p>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">優勢：</strong>出站 0 分鐘就是動物園專屬的鐵路閘口（Rail Gate）！不需繞遠路，悠閒看無尾熊、大象與袋鼠。</p>
-                        <a href="https://maps.google.com/?cid=13123452498510594954&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【墨爾本動物園 (Melbourne Zoo)】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">交通（推推車最省力）：</strong>從 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Flinders Street Station</a> 搭乘 Upfield Line 火車，在 <a href="https://maps.google.com/?cid=927270666681872109&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Royal Park Station</a> 下車。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">優勢：</strong>出站 0 分鐘就是動物園專屬的鐵路閘口（Rail Gate）！不需繞遠路，悠閒看無尾熊、大象與袋鼠。</p>
+                        <a href="https://maps.google.com/?cid=13123452498510594954&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-paw"></i> 墨爾本動物園 Google Map
                         </a>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">14:30 ~ 17:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">14:30 ~ 17:30</span>
                             <span class="text-xs text-indigo-700 font-semibold bg-indigo-50 px-2 py-0.5 rounded">共構商場</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【下午】火車回程直通 Melbourne Central</h4>
-                        <p class="text-xs text-slate-600">搭乘 Upfield 火車直接在 <a href="https://maps.google.com/?cid=6432349951510892566&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Melbourne Central 站</a> 下車。火車站與商場完全共構，電扶梯上樓即可開逛！5 層樓 300 多家商店，可觀賞巨大玻璃錐與歷史「子彈工廠（Coop's Shot Tower）」，免吹風。</p>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">晚餐與晚間：</strong>在 Melbourne Central 內用餐，或至聯邦廣場散步順道參觀免費的 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">ACMI（澳洲移動影像博物館）</a> 體驗互動影像。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【下午】火車回程直通 Melbourne Central</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">搭乘 Upfield 火車直接在 <a href="https://maps.google.com/?cid=6432349951510892566&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Melbourne Central 站</a> 下車。火車站與商場完全共構，電扶梯上樓即可開逛！5 層樓 300 多家商店，可觀賞巨大玻璃錐與歷史「子彈工廠（Coop's Shot Tower）」，免吹風。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">晚餐與晚間：</strong>在 Melbourne Central 內用餐，或至聯邦廣場散步順道參觀免費的 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">ACMI（澳洲移動影像博物館）</a> 體驗互動影像。</p>
                     </div>
                 </div>
             </div>
@@ -345,45 +347,45 @@
             <div id="day-4" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="shopping play">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D4</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D4</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/18 (二) 經典歷史市集 ➔ 南半球最大 Chadstone 樂高館 🧱</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-100 text-purple-700">市集美食 & 樂高探索</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/18 (二) 經典歷史市集 ➔ 南半球最大 Chadstone 樂高館 🧱</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-purple-100 text-purple-700">市集美食 & 樂高探索</span>
                             </div>
-                            <p class="text-xs text-slate-500">女王市場吃美食 ➔ 前往 Chadstone 樂高探索館放電</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">女王市場吃美食 ➔ 前往 Chadstone 樂高探索館放電</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(4)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(4)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">09:00 ~ 11:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:00 ~ 11:30</span>
                             <span class="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">美食探索</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【維多利亞女王市場 (Queen Victoria Market)】</h4>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">交通：</strong>飯店搭乘 19、57、58 或 59 路電車直達。</p>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">體驗：</strong>避開週一/週三休息日，早上帶孩子來熟食區享用現開新鮮生蠔、西西里甜甜圈與極香鬆軟的荷蘭小鬆餅 (Poffertjes)。</p>
-                        <a href="https://maps.google.com/?cid=1082084875369108560&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【維多利亞女王市場 (Queen Victoria Market)】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">交通：</strong>飯店搭乘 19、57、58 或 59 路電車直達。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">體驗：</strong>避開週一/週三休息日，早上帶孩子來熟食區享用現開新鮮生蠔、西西里甜甜圈與極香鬆軟的荷蘭小鬆餅 (Poffertjes)。</p>
+                        <a href="https://maps.google.com/?cid=1082084875369108560&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-store"></i> 維多利亞女王市場 Google Map
                         </a>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">12:30 ~ 16:30</span>
-                            <span class="text-xs text-rose-700 font-semibold bg-rose-50 px-2 py-0.5 rounded border border-rose-200">室內放電</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">12:30 ~ 16:30</span>
+                            <span class="text-sm sm:text-base text-rose-800 font-bold bg-rose-50 px-3 py-1 rounded-lg border border-rose-200">室內放電</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【Chadstone & LEGOLAND® 樂高探索館】</h4>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">交通：</strong>搭乘火車或商場免費接駁車前往 <a href="https://maps.google.com/?cid=1082084875369108576&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Chadstone Shopping Centre</a>。</p>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">體驗：</strong>進入樂高探索館，觀賞樂高積木重現的墨爾本迷你世界，讓孩子在室內樂園動手拼積木放電（適合 3~10 歲，限時約 2.5 小時，需提早預約入場時段）。</p>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">晚餐：</strong>直接在 Chadstone 商場內美食街用餐。</p>
-                        <a href="https://maps.google.com/?cid=14701508373375192836&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【Chadstone & LEGOLAND® 樂高探索館】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">交通：</strong>搭乘火車或商場免費接駁車前往 <a href="https://maps.google.com/?cid=1082084875369108576&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Chadstone Shopping Centre</a>。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">體驗：</strong>進入樂高探索館，觀賞樂高積木重現的墨爾本迷你世界，讓孩子在室內樂園動手拼積木放電（適合 3~10 歲，限時約 2.5 小時，需提早預約入場時段）。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">晚餐：</strong>直接在 Chadstone 商場內美食街用餐。</p>
+                        <a href="https://maps.google.com/?cid=14701508373375192836&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-cubes"></i> 樂高探索館 Google Map
                         </a>
                     </div>
@@ -394,38 +396,38 @@
             <div id="day-5" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="tour">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D5</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D5</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/19 (三) 【預訂行程】蒸汽火車夢幻之旅 🚂</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">預約號: 810047</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/19 (三) 【預訂行程】蒸汽火車夢幻之旅 🚂</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-amber-100 text-amber-700">預約號: 810047</span>
                             </div>
-                            <p class="text-xs text-slate-500">Belgrave 火車直達 ➔ 帕芬比利蒸汽火車 ➔ Lakeside 溫暖餐廳午餐</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">Belgrave 火車直達 ➔ 帕芬比利蒸汽火車 ➔ Lakeside 溫暖餐廳午餐</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(5)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(5)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">08:30 ~ 10:00</span>
-                            <span class="text-xs text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">報到須知</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">08:30 ~ 10:00</span>
+                            <span class="text-sm sm:text-base text-amber-800 font-bold bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">報到須知</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【前往 Belgrave & 報到換票】</h4>
-                        <p class="text-xs text-slate-600">08:30 從 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Flinders Street Station</a> 搭乘 Belgrave Line 車程約 1 小時直達終點站 Belgrave Station。</p>
-                        <p class="text-xs text-slate-600">出站 0 分鐘即達 <a href="https://maps.google.com/?cid=16283097049739718254&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">帕芬比利蒸汽火車車站 (Puffing Billy)</a>。須於 10:00 發車前 60 分鐘（09:00 AM）抵達報到櫃台，出示預約號 <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">810047</code> 兌換實體車票。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【前往 Belgrave & 報到換票】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">08:30 從 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Flinders Street Station</a> 搭乘 Belgrave Line 車程約 1 小時直達終點站 Belgrave Station。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">出站 0 分鐘即達 <a href="https://maps.google.com/?cid=16283097049739718254&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">帕芬比利蒸汽火車車站 (Puffing Billy)</a>。須於 10:00 發車前 60 分鐘（09:00 AM）抵達報到櫃台，出示預約號 <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">810047</code> 兌換實體車票。</p>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">10:00 ~ 13:20</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">10:00 ~ 13:20</span>
                             <span class="text-xs text-sky-700 font-semibold bg-sky-50 px-2 py-0.5 rounded">搭乘體驗</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【Belgrave ↔ Lakeside 蒸汽火車雙向體驗】</h4>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【Belgrave ↔ Lakeside 蒸汽火車雙向體驗】</h4>
                         <ul class="list-disc list-inside text-xs text-slate-600 space-y-1">
                             <li><strong class="text-slate-800">10:00~11:00 去程：</strong>坐在車窗上（2026年開放腳掛車窗外），穿過尤加利樹林與木棧橋。</li>
                             <li><strong class="text-slate-800">11:00~12:20 Lakeside 放風午餐：</strong>在溫暖防寒的 Lakeside 旅客服務中心 Railway Café 用餐（有暖氣、育嬰室與兒童餐）。順道至 Emerald Lake 散步玩遊樂場。</li>
@@ -439,43 +441,43 @@
             <div id="day-6" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="animal play">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D6</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D6</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/20 (四) Box Hill 太空遊戲區 🚀 ➔ 下午 SEA LIFE 水族館 🐧</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-100 text-indigo-700">室內避寒放電</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/20 (四) Box Hill 太空遊戲區 🚀 ➔ 下午 SEA LIFE 水族館 🐧</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-indigo-100 text-indigo-700">室內避寒放電</span>
                             </div>
-                            <p class="text-xs text-slate-500">Box Hill 航太主題遊戲區 & 亞洲補給 ➔ SEA LIFE 水族館</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">Box Hill 航太主題遊戲區 & 亞洲補給 ➔ SEA LIFE 水族館</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(6)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(6)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">09:30 ~ 12:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:30 ~ 12:30</span>
                             <span class="text-xs text-indigo-700 font-semibold bg-indigo-50 px-2 py-0.5 rounded">免費航太遊樂場</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【Box Hill Central 太空遊戲區 & 亞洲美食補貨】</h4>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">交通：</strong>Flinders St 搭乘 Belgrave / Lilydale Line 火車直達 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Box Hill Station</a>，電扶梯直達商場內部。</p>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">體驗：</strong>直奔北區美食街旁 Space Playground，擁有火箭溜滑梯、觸控螢幕與童書閱讀角。順道享用熱騰騰中式點心與補給孩子熟悉的食物。</p>
-                        <a href="https://maps.google.com/?cid=10885023742197140335&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【Box Hill Central 太空遊戲區 & 亞洲美食補貨】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">交通：</strong>Flinders St 搭乘 Belgrave / Lilydale Line 火車直達 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Box Hill Station</a>，電扶梯直達商場內部。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">體驗：</strong>直奔北區美食街旁 Space Playground，擁有火箭溜滑梯、觸控螢幕與童書閱讀角。順道享用熱騰騰中式點心與補給孩子熟悉的食物。</p>
+                        <a href="https://maps.google.com/?cid=10885023742197140335&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-rocket"></i> Box Hill Central Google Map
                         </a>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">13:30 ~ 16:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">13:30 ~ 16:30</span>
                             <span class="text-xs text-cyan-700 font-semibold bg-cyan-50 px-2 py-0.5 rounded">水族館控溫</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【SEA LIFE 墨爾本水族館】</h4>
-                        <p class="text-xs text-slate-600">搭火車回 Flinders St，走回飯店旁水族館（或搭免費電車 1 站）。全室內溫控，看鯊魚隧道、魟魚與極具人氣的企鵝家族。</p>
-                        <a href="https://maps.google.com/?cid=16301919767074749430&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:underline">
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【SEA LIFE 墨爾本水族館】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">搭火車回 Flinders St，走回飯店旁水族館（或搭免費電車 1 站）。全室內溫控，看鯊魚隧道、魟魚與極具人氣的企鵝家族。</p>
+                        <a href="https://maps.google.com/?cid=16301919767074749430&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-fish"></i> SEA LIFE 水族館 Google Map
                         </a>
                     </div>
@@ -486,39 +488,39 @@
             <div id="day-7" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="tour animal">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D7</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D7</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/21 (五) 【預訂行程】市區甜點 ➔ 企鵝歸巢一日遊 🐧</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">訂單: ARM634927</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/21 (五) 【預訂行程】市區甜點 ➔ 企鵝歸巢一日遊 🐧</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-amber-100 text-amber-700">訂單: ARM634927</span>
                             </div>
-                            <p class="text-xs text-slate-500">Brunetti 甜點咖啡 ➔ 下午菲利浦島企鵝歸巢 ( Go West Tours )</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">Brunetti 甜點咖啡 ➔ 下午菲利浦島企鵝歸巢 ( Go West Tours )</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(7)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(7)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">09:30 ~ 12:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:30 ~ 12:30</span>
                             <span class="text-xs text-rose-700 font-semibold bg-rose-50 px-2 py-0.5 rounded">慢活甜點</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【上午】Brunetti Classico 享用咖啡與甜點</h4>
-                        <p class="text-xs text-slate-600">散步至義式甜點咖啡廳 <a href="https://maps.google.com/?cid=15984613490439328251&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Brunetti Classico Carlton</a>，點 Baby Chino 配蛋糕，享受墨爾本世界級拿鐵。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【上午】Brunetti Classico 享用咖啡與甜點</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">散步至義式甜點咖啡廳 <a href="https://maps.google.com/?cid=15984613490439328251&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Brunetti Classico Carlton</a>，點 Baby Chino 配蛋糕，享受墨爾本世界級拿鐵。</p>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">13:35 集合 ~ 23:59 回程</span>
-                            <span class="text-xs text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">極致便利：離飯店150m</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">13:35 集合 ~ 23:59 回程</span>
+                            <span class="text-sm sm:text-base text-amber-800 font-bold bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">極致便利：離飯店150m</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【菲利浦島企鵝歸巢一日遊】</h4>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">集合地點：</strong>Flinders St 與 Market St 拐角 (400 Flinders St，移民博物館旁)，離飯店僅 150 公尺（步行 2 分鐘）。</p>
-                        <p class="text-xs text-slate-600"><strong class="text-slate-800">行程標籤：</strong>造訪<a href="https://maps.google.com/?cid=1082405035368966032&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">考拉保育保護區</a>、<a href="https://maps.google.com/?cid=5892487851053684251&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">諾比司中心</a>觀賞海豹岩，傍晚至<a href="https://maps.google.com/?cid=11269609292128250407&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">菲利浦島企鵝歸巢 (Penguin Parade)</a>。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【菲利浦島企鵝歸巢一日遊】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">集合地點：</strong>Flinders St 與 Market St 拐角 (400 Flinders St，移民博物館旁)，離飯店僅 150 公尺（步行 2 分鐘）。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">行程標籤：</strong>造訪<a href="https://maps.google.com/?cid=1082405035368966032&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">考拉保育保護區</a>、<a href="https://maps.google.com/?cid=5892487851053684251&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">諾比司中心</a>觀賞海豹岩，傍晚至<a href="https://maps.google.com/?cid=11269609292128250407&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">菲利浦島企鵝歸巢 (Penguin Parade)</a>。</p>
                         <div class="p-2.5 rounded-lg bg-rose-50 border border-rose-100 text-xs text-rose-900 space-y-1">
                             <p class="font-bold"><i class="fa-solid fa-triangle-exclamation"></i> 重要行前規定：</p>
                             <p class="text-[11px]">大巴嚴禁攜帶嬰兒車/輪椅！行李限 5kg 以下背包。企鵝歸巢全程嚴禁攝影拍照！請備足防寒毛帽手套。</p>
@@ -531,39 +533,39 @@
             <div id="day-8" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="play shopping">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D8</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D8</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/22 (六) 西區鐵路黃金線：威廉斯鎮 ➔ 科學館 ➔ Grazeland 美食市集 🚢⚡🍔</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">海港美食 & 科技市集</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/22 (六) 西區鐵路黃金線：威廉斯鎮 ➔ 科學館 ➔ Grazeland 美食市集 🚢⚡🍔</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-700">海港美食 & 科技市集</span>
                             </div>
-                            <p class="text-xs text-slate-500">威廉斯鎮植物園與現撈龍蝦堡 ➔ Scienceworks 科學館 ➔ Grazeland 貨櫃美食</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">威廉斯鎮植物園與現撈龍蝦堡 ➔ Scienceworks 科學館 ➔ Grazeland 貨櫃美食</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(8)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(8)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">09:30 ~ 13:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:30 ~ 13:30</span>
                             <span class="text-xs text-sky-700 font-semibold bg-sky-50 px-2 py-0.5 rounded">海港風情與龍蝦堡</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【威廉斯鎮 (Williamstown) 散步與海鮮午餐】</h4>
-                        <p class="text-xs text-slate-600">搭火車直達 Williamstown Beach Station，步行至 <a href="https://maps.google.com/?cid=1082084875368996416&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Williamstown Botanic Gardens</a> 棕櫚大道。散步至 Gem Pier 碼頭享用 Gem Pier Seafood 現撈龍蝦堡與 Lukumades 希臘甜甜圈。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【威廉斯鎮 (Williamstown) 散步與海鮮午餐】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">搭火車直達 Williamstown Beach Station，步行至 <a href="https://maps.google.com/?cid=1082084875368996416&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Williamstown Botanic Gardens</a> 棕櫚大道。散步至 Gem Pier 碼頭享用 Gem Pier Seafood 現撈龍蝦堡與 Lukumades 希臘甜甜圈。</p>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">13:30 ~ 19:30</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">13:30 ~ 19:30</span>
                             <span class="text-xs text-purple-700 font-semibold bg-purple-50 px-2 py-0.5 rounded border border-purple-200">科學館 & 貨櫃市集</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【Scienceworks 科學館 ➔ Grazeland 美食市集】</h4>
-                        <p class="text-xs text-slate-600">坐火車 3 站至 Spotswood Station，步行至 <a href="https://maps.google.com/?cid=12768970299470811053&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Scienceworks 科學館</a> 體驗互動展區與天文館。</p>
-                        <p class="text-xs text-slate-600">閉館後直接走至正隔壁 <a href="https://maps.google.com/?cid=14057453834205170699&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Grazeland Melbourne</a> 貨櫃市集，享用 50 多家各國美食與現場樂團。回程搭火車 15 分鐘直達市區。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【Scienceworks 科學館 ➔ Grazeland 美食市集】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">坐火車 3 站至 Spotswood Station，步行至 <a href="https://maps.google.com/?cid=12768970299470811053&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Scienceworks 科學館</a> 體驗互動展區與天文館。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">閉館後直接走至正隔壁 <a href="https://maps.google.com/?cid=14057453834205170699&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Grazeland Melbourne</a> 貨櫃市集，享用 50 多家各國美食與現場樂團。回程搭火車 15 分鐘直達市區。</p>
                     </div>
                 </div>
             </div>
@@ -572,30 +574,30 @@
             <div id="day-9" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="shopping">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D9</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D9</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/23 (日) 「週末 Loophole」 ➔ Ringwood 瘋狂購物與 Costco 🛍️</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">週末上限 $8.00 澳幣</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/23 (日) 「週末 Loophole」 ➔ Ringwood 瘋狂購物與 Costco 🛍️</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-700">週末上限 $8.00 澳幣</span>
                             </div>
-                            <p class="text-xs text-slate-500">Eastland 購物中心 & Realm 圖書館兒童區 ➔ Costco 直達採購</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">Eastland 購物中心 & Realm 圖書館兒童區 ➔ Costco 直達採購</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(9)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(9)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">09:30 ~ 15:00</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:30 ~ 15:00</span>
                             <span class="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">大眾運輸天橋直達</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【Eastland Shopping Centre & Costco Ringwood】</h4>
-                        <p class="text-xs text-slate-600">Flinders St 搭乘火車直達 Ringwood Station (約 40 分鐘)。出站經加蓋天橋 2 分鐘直通 <a href="https://maps.google.com/?cid=1082084875369107664&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Eastland 購物中心</a>，內有 Realm 圖書館（2 樓兒童閱讀區）、Kmart、Target、Big W。</p>
-                        <p class="text-xs text-slate-600">從商場步行 530 公尺至 <a href="https://maps.google.com/?cid=15172423073671600535&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Costco Wholesale Ringwood</a>（墨爾本唯一火車直達 Costco），買完後搭火車輕鬆回市區。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【Eastland Shopping Centre & Costco Ringwood】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">Flinders St 搭乘火車直達 Ringwood Station (約 40 分鐘)。出站經加蓋天橋 2 分鐘直通 <a href="https://maps.google.com/?cid=1082084875369107664&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Eastland 購物中心</a>，內有 Realm 圖書館（2 樓兒童閱讀區）、Kmart、Target、Big W。</p>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">從商場步行 530 公尺至 <a href="https://maps.google.com/?cid=15172423073671600535&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Costco Wholesale Ringwood</a>（墨爾本唯一火車直達 Costco），買完後搭火車輕鬆回市區。</p>
                     </div>
                 </div>
             </div>
@@ -604,28 +606,28 @@
             <div id="day-10" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="tour">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D10</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D10</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/24 (一) 【預訂行程】布勒山賞雪一日遊 ❄️</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">憑證: BAC-T141417813</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/24 (一) 【預訂行程】布勒山賞雪一日遊 ❄️</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-amber-100 text-amber-700">憑證: BAC-T141417813</span>
                             </div>
-                            <p class="text-xs text-slate-500">早起 Uber 直達集合點 ➔ Mt Buller 玩雪 5 小時 ➔ 免費電車載回飯店</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">早起 Uber 直達集合點 ➔ Mt Buller 玩雪 5 小時 ➔ 免費電車載回飯店</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(10)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(10)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">05:00 集合 ~ 19:30 回程</span>
-                            <span class="text-xs text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">訂單: KHR602847</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">05:00 集合 ~ 19:30 回程</span>
+                            <span class="text-sm sm:text-base text-amber-800 font-bold bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">訂單: KHR602847</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【布勒山冰雪大冒險 ( Mount Buller )】</h4>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【布勒山冰雪大冒險 ( Mount Buller )】</h4>
                         <ul class="list-disc list-inside text-xs text-slate-600 space-y-1">
                             <li><strong class="text-slate-800">05:00 清晨 Uber 出發：</strong>預約 05:00 AM 車程 5 分鐘直達集合點 <a href="https://maps.google.com/?cid=6020839629261581176&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Grand Hyatt Melbourne (42 Russell St)</a>。</li>
                             <li><strong class="text-slate-800">05:25 報到：</strong>出示主要乘客 HUANG KUAN CHIH 憑證號碼 <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">BAC-T141417813</code>。</li>
@@ -640,38 +642,38 @@
             <div id="day-11" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="shopping tour">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D11</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D11</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/25 (二) 市區最後巡禮 & 花園野餐 ➔ 晚班機回台</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-100 text-sky-700">退房與回程</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/25 (二) 市區最後巡禮 & 花園野餐 ➔ 晚班機回台</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-sky-100 text-sky-700">退房與回程</span>
                             </div>
-                            <p class="text-xs text-slate-500">Fitzroy Gardens 野餐 ➔ QV 採買伴手禮 ➔ 前往機場搭乘 CI 58</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">Fitzroy Gardens 野餐 ➔ QV 採買伴手禮 ➔ 前往機場搭乘 CI 58</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(11)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(11)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">10:00 退房 ~ 15:30 巡禮</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">10:00 退房 ~ 15:30 巡禮</span>
                             <span class="text-xs text-slate-600 bg-slate-200 px-2 py-0.5 rounded">寄放行李</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【退房、花園野餐與伴手禮採買】</h4>
-                        <p class="text-xs text-slate-600">10:00 辦理退房並寄放四大箱行李。前往 <a href="https://maps.google.com/?cid=1082084875369022992&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">斐茲洛伊花園 (Fitzroy Gardens)</a> 觀賞 <a href="https://maps.google.com/?cid=17634353739278063087&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">庫克小屋</a> 並野餐。下午至 <a href="https://maps.google.com/?cid=971226310403842287&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">QV Melbourne</a> 買伴手禮與飛機小點心。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【退房、花園野餐與伴手禮採買】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">10:00 辦理退房並寄放四大箱行李。前往 <a href="https://maps.google.com/?cid=1082084875369022992&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">斐茲洛伊花園 (Fitzroy Gardens)</a> 觀賞 <a href="https://maps.google.com/?cid=17634353739278063087&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">庫克小屋</a> 並野餐。下午至 <a href="https://maps.google.com/?cid=971226310403842287&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">QV Melbourne</a> 買伴手禮與飛機小點心。</p>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">17:30 ~ 21:50</span>
-                            <span class="text-xs text-indigo-700 font-semibold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">班機：CI 58</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">17:30 ~ 21:50</span>
+                            <span class="text-sm sm:text-base text-indigo-800 font-bold bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">班機：CI 58</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【前往機場 & 登機回台】</h4>
-                        <p class="text-xs text-slate-600">17:30 回飯店拿行李搭 SkyBus 或大型 Uber 至機場 T2。21:50 搭乘 CI 58 直飛回台（飛行時間 9 小時 25 分鐘，備妥 NBML 無牛餐與 CHML 兒童餐）。</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【前往機場 & 登機回台】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">17:30 回飯店拿行李搭 SkyBus 或大型 Uber 至機場 T2。21:50 搭乘 CI 58 直飛回台（飛行時間 9 小時 25 分鐘，備妥 NBML 無牛餐與 CHML 兒童餐）。</p>
                     </div>
                 </div>
             </div>
@@ -680,29 +682,29 @@
             <div id="day-12" class="day-card glass-card rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4 print-break-inside" data-categories="tour">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-sm">D12</span>
+                        <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D12</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-base sm:text-lg text-slate-800">8/26 (三) 降落台灣 ➔ 專車接送回台中溫暖的家</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">平安歸家</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/26 (三) 降落台灣 ➔ 專車接送回台中溫暖的家</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-700">平安歸家</span>
                             </div>
-                            <p class="text-xs text-slate-500">專車接送 F15385382 直達台中潭子家中</p>
+                            <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">專車接送 F15385382 直達台中潭子家中</p>
                         </div>
                     </div>
-                    <label class="no-print flex items-center gap-2 text-xs font-medium text-slate-500 cursor-pointer">
-                        <input type="checkbox" onchange="toggleDone(12)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                    <label class="no-print flex items-center gap-2 text-sm sm:text-base font-bold text-slate-600 cursor-pointer">
+                        <input type="checkbox" onchange="toggleDone(12)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500">
                         <span>標記完成</span>
                     </label>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">05:15 ~ 06:15</span>
-                            <span class="text-xs text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">專車預約：F15385382</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">05:15 ~ 06:15</span>
+                            <span class="text-sm sm:text-base text-amber-800 font-bold bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">專車預約：F15385382</span>
                         </div>
-                        <h4 class="font-bold text-sm text-slate-800">【抵達台灣 & 專車返家】</h4>
-                        <p class="text-xs text-slate-600">航班 CI 58 於 05:15 降落桃園機場第二航廈。司機於 06:15 配合抵達時間在機場以專車（預約編號：<code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">F15385382</code>）等候，載全家返回台中市潭子區興北路家中，圓滿結束墨爾本親子之旅！</p>
+                        <h4 class="font-black text-lg sm:text-xl text-slate-900">【抵達台灣 & 專車返家】</h4>
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed">航班 CI 58 於 05:15 降落桃園機場第二航廈。司機於 06:15 配合抵達時間在機場以專車（預約編號：<code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">F15385382</code>）等候，載全家返回台中市潭子區興北路家中，圓滿結束墨爾本親子之旅！</p>
                     </div>
                 </div>
             </div>
@@ -929,7 +931,7 @@
 
     <!-- Floating Back to Hub Button -->
     <div class="fixed bottom-6 right-6 z-50 no-print">
-        <a href="/trip" class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white text-xs font-semibold shadow-lg backdrop-blur-md transition-transform hover:scale-105 border border-white/20">
+        <a href="/trip" class="flex items-center gap-2 px-5 py-3 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white text-sm sm:text-base font-bold shadow-lg backdrop-blur-md transition-transform hover:scale-105 border border-white/20">
             <i class="fa-solid fa-arrow-left"></i> 回行程總覽
         </a>
     </div>
