@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -305,8 +305,8 @@
                         <span class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black text-base sm:text-lg shrink-0">D3</span>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/17 (一) 交通極便利線 ➔ 鐵路直達「墨爾本動物園」🐨 ➔ 直通 Melbourne Central</h3>
-                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-amber-100 text-amber-700">可愛動物 & 市區共構</span>
+                                <h3 class="font-black text-xl sm:text-2xl text-slate-900">8/17 (一) 【預訂行程】交通極便利線 ➔ 鐵路直達「墨爾本動物園」🐨 ➔ 直通 Melbourne Central</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-amber-100 text-amber-700">09:00 入場 · 訂單: ZJE127800</span>
                             </div>
                             <p class="text-sm sm:text-base text-slate-600 font-medium mt-0.5">Upfield 火車直達動物園 Rail Gate ➔ 回程共構直通 Melbourne Central & ACMI</p>
                         </div>
@@ -318,12 +318,54 @@
                 </div>
 
                 <div class="space-y-3">
-                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
+                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:30 ~ 14:30</span>
-                            <span class="text-sm sm:text-base text-sky-800 font-bold bg-sky-50 px-3 py-1 rounded-lg border border-sky-200">火車直達站點</span>
+                            <span class="text-sm sm:text-base font-extrabold text-brand-800 bg-brand-100/70 px-3 py-1 rounded-lg">09:00 入場 ~ 14:30</span>
+                            <span class="text-sm sm:text-base text-amber-800 font-bold bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">Klook 訂單: ZJE127800</span>
                         </div>
                         <h4 class="font-black text-lg sm:text-xl text-slate-900">【墨爾本動物園 (Melbourne Zoo)】</h4>
+                        
+                        <!-- 預訂憑證資訊卡片 -->
+                        <div class="p-4 bg-amber-50/80 rounded-xl border border-amber-200 space-y-2.5">
+                            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/70 pb-2">
+                                <div class="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
+                                    <i class="fa-solid fa-ticket text-amber-600"></i>
+                                    <span>預訂憑證資訊 (Klook ID: <code class="font-mono bg-white px-2 py-0.5 rounded text-amber-900 border border-amber-300 font-bold">ZJE127800</code>)</span>
+                                </div>
+                                <span class="text-xs sm:text-sm font-bold text-amber-900 bg-amber-200/80 px-2.5 py-1 rounded-full">入場時間：09:00 AM</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+                                <div class="flex items-center justify-between bg-white/95 p-2.5 rounded-lg border border-amber-100 shadow-xs">
+                                    <span class="text-slate-600 font-bold">🧑 成人 1 憑證</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <code class="font-mono font-bold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-xs sm:text-sm">GSE1K12QF007M9</code>
+                                        <button onclick="copyToClipboard('GSE1K12QF007M9')" class="text-brand-600 hover:text-brand-800 text-xs p-1" title="複製憑證"><i class="fa-regular fa-copy"></i></button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between bg-white/95 p-2.5 rounded-lg border border-amber-100 shadow-xs">
+                                    <span class="text-slate-600 font-bold">🧑 成人 2 憑證</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <code class="font-mono font-bold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-xs sm:text-sm">XSE1K12QF007RW</code>
+                                        <button onclick="copyToClipboard('XSE1K12QF007RW')" class="text-brand-600 hover:text-brand-800 text-xs p-1" title="複製憑證"><i class="fa-regular fa-copy"></i></button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between bg-white/95 p-2.5 rounded-lg border border-amber-100 shadow-xs">
+                                    <span class="text-slate-600 font-bold">🧒 兒童 1 憑證</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <code class="font-mono font-bold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-xs sm:text-sm">PSE1K12QF007XK</code>
+                                        <button onclick="copyToClipboard('PSE1K12QF007XK')" class="text-brand-600 hover:text-brand-800 text-xs p-1" title="複製憑證"><i class="fa-regular fa-copy"></i></button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between bg-white/95 p-2.5 rounded-lg border border-amber-100 shadow-xs">
+                                    <span class="text-slate-600 font-bold">🧒 兒童 2 憑證</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <code class="font-mono font-bold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-xs sm:text-sm">ZSE1K12QF00848</code>
+                                        <button onclick="copyToClipboard('ZSE1K12QF00848')" class="text-brand-600 hover:text-brand-800 text-xs p-1" title="複製憑證"><i class="fa-regular fa-copy"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">交通（推推車最省力）：</strong>從 <a href="https://maps.google.com/?cid=1234567890" target="_blank" class="text-brand-600 hover:underline">Flinders Street Station</a> 搭乘 Upfield Line 火車，在 <a href="https://maps.google.com/?cid=927270666681872109&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-brand-600 hover:underline">Royal Park Station</a> 下車。</p>
                         <p class="text-base sm:text-lg text-slate-700 leading-relaxed"><strong class="text-slate-800">優勢：</strong>出站 0 分鐘就是動物園專屬的鐵路閘口（Rail Gate）！不需繞遠路，悠閒看無尾熊、大象與袋鼠。</p>
                         <a href="https://maps.google.com/?cid=13123452498510594954&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="no-print inline-flex items-center gap-1 text-sm sm:text-base font-bold text-brand-600 hover:underline inline-flex items-center gap-1.5">
@@ -731,6 +773,32 @@
                         <button onclick="copyToClipboard('F15385365')" class="text-brand-600 hover:underline">複製編號</button>
                     </div>
                     <p class="text-slate-600">預約編號：<span class="font-mono bg-amber-100 px-1 rounded">F15385365</span></p>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <div class="flex justify-between font-semibold text-slate-800">
+                        <span>Day 3 墨爾本動物園 (09:00 AM)</span>
+                        <button onclick="copyToClipboard('ZJE127800')" class="text-brand-600 hover:underline">複製訂單號</button>
+                    </div>
+                    <p class="text-slate-600">Klook 訂單：<span class="font-mono bg-amber-100 px-1 rounded font-bold">ZJE127800</span> | 入場：<span class="font-bold text-amber-800">09:00 AM</span></p>
+                    <div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px]">
+                        <div class="bg-white p-1.5 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="text-slate-500 font-medium">成人 1:</span>
+                            <button onclick="copyToClipboard('GSE1K12QF007M9')" class="font-mono font-bold text-slate-800 hover:text-brand-600" title="點擊複製">GSE1K12QF007M9</button>
+                        </div>
+                        <div class="bg-white p-1.5 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="text-slate-500 font-medium">成人 2:</span>
+                            <button onclick="copyToClipboard('XSE1K12QF007RW')" class="font-mono font-bold text-slate-800 hover:text-brand-600" title="點擊複製">XSE1K12QF007RW</button>
+                        </div>
+                        <div class="bg-white p-1.5 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="text-slate-500 font-medium">兒童 1:</span>
+                            <button onclick="copyToClipboard('PSE1K12QF007XK')" class="font-mono font-bold text-slate-800 hover:text-brand-600" title="點擊複製">PSE1K12QF007XK</button>
+                        </div>
+                        <div class="bg-white p-1.5 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="text-slate-500 font-medium">兒童 2:</span>
+                            <button onclick="copyToClipboard('ZSE1K12QF00848')" class="font-mono font-bold text-slate-800 hover:text-brand-600" title="點擊複製">ZSE1K12QF00848</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
