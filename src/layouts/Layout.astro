@@ -21,6 +21,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
 <!doctype html>
 <html lang="zh-Hant">
   <head>
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2P627PEG5"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-M2P627PEG5');
+    </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Favicon -->
