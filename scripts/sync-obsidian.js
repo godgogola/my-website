@@ -40,6 +40,9 @@ function slugify(text) {
 // 頂層根目錄名稱（不應被視為分類的資料夾）
 const ROOT_LEVEL_FOLDERS = new Set(['Wix衛教文章', 'Wix衛教文章庫']);
 
+// 應跳過不需匯入網站的特殊資料夾（模板、設定、範本等）
+const IGNORED_FOLDERS = new Set(['.obsidian', '.git', 'node_modules', 'templates', 'template', '模板', '範本']);
+
 // 遞迴尋找 Markdown 檔案，並記錄每個檔案的資料夾分類
 function getFilesRecursively(dir, fileList = [], vaultRoot = '') {
   if (!fs.existsSync(dir)) return fileList;
@@ -49,16 +52,17 @@ function getFilesRecursively(dir, fileList = [], vaultRoot = '') {
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {
-      if (file !== '.obsidian' && file !== '.git' && file !== 'node_modules') {
+      const lowerFile = file.toLowerCase();
+      if (!IGNORED_FOLDERS.has(lowerFile) && !file.startsWith('.')) {
         getFilesRecursively(filePath, fileList, vaultRoot);
       }
     } else if (file.endsWith('.md')) {
       const parentDir = path.dirname(filePath);
       const parentName = path.basename(parentDir);
       let category;
-      // 根目錄或根層資料夾的檔案一律跳過，只處理放在「分類資料夾」內部的文章
-      if (parentDir === vaultRoot || ROOT_LEVEL_FOLDERS.has(parentName)) {
-        console.log(`[Sync] 跳過根目錄文章（未分類）: ${file}`);
+      // 根目錄或根層資料夾、模板資料夾的檔案一律跳過，只處理放在「分類資料夾」內部的文章
+      if (parentDir === vaultRoot || ROOT_LEVEL_FOLDERS.has(parentName) || IGNORED_FOLDERS.has(parentName.toLowerCase())) {
+        console.log(`[Sync] 跳過非衛教文章（根目錄或模板）: ${file}`);
         continue;
       }
       category = parentName;
