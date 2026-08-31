@@ -240,13 +240,8 @@ function sync() {
       const orderLine = (order !== null && !isNaN(order)) ? `\norder: ${order}` : '';
       const finalFrontmatter = `---\ntitle: "${title}"\ncategory: "${category}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slugify(fileName)}"${orderLine}${coverLine}\n---\n`;
 
-      let processedBody = body.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, noteTarget, display) => {
-        const targetSlug = slugify(noteTarget.trim());
-        const displayText = display ? display.trim() : noteTarget.trim();
-        return `[${displayText}](/posts/${targetSlug})`;
-      });
-
-      processedBody = processedBody.replace(/!\[\[([^\]]+)\]\]/g, (match, imageName) => {
+      // 1. 先處理圖片嵌入 ![[...]]
+      let processedBody = body.replace(/!\[\[([^\]]+)\]\]/g, (match, imageName) => {
         imageName = imageName.trim();
         const originImgPath = findImageInVault(obsidianVaultPath, imageName);
         if (originImgPath && fs.existsSync(originImgPath)) {
@@ -263,6 +258,13 @@ function sync() {
         } else {
           return `[圖片: ${imageName}]`;
         }
+      });
+
+      // 2. 再處理雙向文章內部連結 [[...]]
+      processedBody = processedBody.replace(/(?<!\!)\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, noteTarget, display) => {
+        const targetSlug = slugify(noteTarget.trim());
+        const displayText = display ? display.trim() : noteTarget.trim();
+        return `[${displayText}](/posts/${targetSlug})`;
       });
 
       fs.writeFileSync(outputPath, finalFrontmatter + processedBody, 'utf8');
