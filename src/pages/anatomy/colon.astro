@@ -1,0 +1,1801 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="大腸與直腸 3D 互動解剖暨內視鏡巡航系統 | 互動解剖圖鑑 - 黃冠智醫師" 
+  description="大腸直腸 3D 空間立體解剖系統。包含大腸鏡進鏡深度模擬（0-100cm）、息肉/憩室/痔瘡病灶標記、結腸袋構造與各腸段病歷片語產生器。"
+  fullWidth={true}
+  hideFooter={true}
+>
+  <!-- Three.js CDN dependencies -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+  <div class="colon-app-wrapper" id="colonAppWrapper">
+    <!-- Subheader with breadcrumb & action controls -->
+    <div class="anatomy-subnav">
+      <div class="subnav-left">
+        <a href="/anatomy" class="back-link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>返回圖鑑總覽</span>
+        </a>
+        <div class="divider">/</div>
+        <div class="current-badge">
+          <span class="pulse-dot"></span>
+          <span>大腸與直腸 (Colon & Rectum 3D 實體模型)</span>
+        </div>
+      </div>
+      
+      <div class="subnav-right">
+        <!-- Fullscreen Button -->
+        <button class="btn btn-fullscreen" id="btn-fullscreen-toggle" onclick="toggleFullScreen()" title="進入/退出全螢幕診間衛教模式">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="icon-fs"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <span id="txt-fs-label">全螢幕模式</span>
+        </button>
+        <button class="btn btn-outline" id="btn-toggle-quiz" onclick="toggleQuizMode()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          3D 測驗模式
+        </button>
+        <button class="btn btn-primary" onclick="reset3DCamera()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          重設視角
+        </button>
+      </div>
+    </div>
+
+    <!-- Main 3-Column Workspace Grid -->
+    <div class="workspace-grid">
+      
+      <!-- Left Panel: Scope Navigation, Pathologies & Controls -->
+      <div class="glass-panel left-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M4 14c0 3.5 3 6 8 6s8-2.5 8-6-3-6-8-6-8 2.5-8 6Z"/><path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/></svg>
+            大腸鏡巡航與病灶標記
+          </div>
+        </div>
+        
+        <div class="panel-body">
+          
+          <!-- Endoscopy Scope Navigation Slider (0 - 100 cm) -->
+          <div class="control-row scope-card">
+            <div class="control-label-group">
+              <span style="color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                大腸鏡進鏡深度 (Scope Depth)
+              </span>
+              <span id="txt-scope-cm" class="scope-cm-badge">0 cm</span>
+            </div>
+            <input type="range" id="slider-scope" min="0" max="100" value="0" step="1" oninput="onScopeSlider(this.value)">
+            <div class="scope-milestones">
+              <span>肛門 (0cm)</span>
+              <span>乙狀結腸 (35cm)</span>
+              <span>脾曲 (55cm)</span>
+              <span>盲腸 (100cm)</span>
+            </div>
+            <div class="scope-status-box" id="scope-status-box">
+              <span class="scope-status-icon">📍</span>
+              <span id="scope-status-text">內視鏡位於肛門口，準備進入直腸。</span>
+            </div>
+          </div>
+
+          <!-- Pathology Marker Toggles (息肉 / 憩室 / 痔瘡) -->
+          <div class="control-row">
+            <div class="section-label" style="margin-bottom: 0.45rem;">
+              常見病灶標記 (點擊在 3D 腸道顯示)
+            </div>
+            <div class="pathology-btn-group">
+              <button class="btn btn-pathology" id="btn-path-polyp" onclick="togglePathology('polyp')">
+                <span class="path-dot dot-polyp"></span>
+                大腸息肉 (Polyps)
+              </button>
+              <button class="btn btn-pathology" id="btn-path-diverticulum" onclick="togglePathology('diverticulum')">
+                <span class="path-dot dot-diverticulum"></span>
+                大腸憩室 (Diverticula)
+              </button>
+              <button class="btn btn-pathology" id="btn-path-hemorrhoid" onclick="togglePathology('hemorrhoid')">
+                <span class="path-dot dot-hemorrhoid"></span>
+                痔瘡 (Hemorrhoids)
+              </button>
+            </div>
+            <div class="pathology-info-text" id="pathology-info-text">
+              點選上方按鈕可即時切換病灶位置與臨床處置說明。
+            </div>
+          </div>
+
+          <!-- 3D Explode Slider -->
+          <div class="control-row">
+            <div class="control-label-group">
+              <span>3D 腸段立體炸開 (Explosion)</span>
+              <span id="txt-explode-val" class="slider-val">0%</span>
+            </div>
+            <input type="range" id="slider-explode" min="0" max="100" value="0" oninput="onExplodeSlider(this.value)">
+            <div class="slider-subtext">
+              <span>0% (緊密天然走向)</span>
+              <span>100% (完全炸開)</span>
+            </div>
+          </div>
+
+          <!-- Tissue Opacity Slider -->
+          <div class="control-row">
+            <div class="control-label-group">
+              <span>腸壁透明度 (Wall Opacity)</span>
+              <span id="txt-opacity-val" class="slider-val">90%</span>
+            </div>
+            <input type="range" id="slider-opacity" min="20" max="100" value="90" oninput="onOpacitySlider(this.value)">
+            <div class="slider-subtext-single">
+              調低透明度可透視內部管腔與大腸鏡推進路徑
+            </div>
+          </div>
+
+          <!-- Segment List -->
+          <div class="section-label">
+            點選解剖腸段 (COLONIC SEGMENTS)
+          </div>
+          <div class="segment-grid-list">
+            <div class="seg-card-btn" onclick="selectSegment('rectum')" id="btn-seg-rectum">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">0~15cm</span>
+                <span class="seg-loc-tag">盆腔最底</span>
+              </div>
+              <div class="seg-card-name">直腸與肛門 (Rectum)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('sigmoid')" id="btn-seg-sigmoid">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">15~40cm</span>
+                <span class="seg-loc-tag">彎曲拉扯區</span>
+              </div>
+              <div class="seg-card-name">乙狀結腸 (Sigmoid)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('descending')" id="btn-seg-descending">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">40~55cm</span>
+                <span class="seg-loc-tag">左側腹後壁</span>
+              </div>
+              <div class="seg-card-name">降結腸與脾曲 (Descending)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('transverse')" id="btn-seg-transverse">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">55~80cm</span>
+                <span class="seg-loc-tag">上腹游離段</span>
+              </div>
+              <div class="seg-card-name">橫結腸 (Transverse)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('ascending')" id="btn-seg-ascending">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">80~95cm</span>
+                <span class="seg-loc-tag">右側腹後壁</span>
+              </div>
+              <div class="seg-card-name">升結腸與肝曲 (Ascending)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('cecum')" id="btn-seg-cecum">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">95~100+cm</span>
+                <span class="seg-loc-tag">檢查終點標記</span>
+              </div>
+              <div class="seg-card-name">盲腸與闌尾 (Cecum)</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Center Stage: Three.js True 3D Colorectal WebGL Canvas -->
+      <div class="glass-panel canvas-panel">
+        <!-- Preset View Angles Toolbar -->
+        <div class="view-angles-toolbar">
+          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面全覽 (Anterior)</button>
+          <button class="view-btn" id="view-btn-left-colon" onclick="setPresetView('left_colon')">左側大腸觀 (直腸/乙狀/降結)</button>
+          <button class="view-btn" id="view-btn-right-colon" onclick="setPresetView('right_colon')">右側盲腸觀 (升結/盲腸/闌尾)</button>
+          <button class="view-btn" id="view-btn-splenic" onclick="setPresetView('splenic')">脾曲高位視角</button>
+          <button class="view-btn" id="view-btn-pelvis" onclick="setPresetView('pelvis')">骨盆底直腸仰視</button>
+        </div>
+
+        <!-- ThreeJS Canvas Container -->
+        <div id="threejs-canvas-container"></div>
+
+        <!-- Orbit Controls Guidance Hint -->
+        <div class="orbit-hint">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          <span><strong>滑鼠左鍵拖曳</strong>：360° 真 3D 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>滑動進鏡深度</strong>：模擬內視鏡推進</span>
+        </div>
+      </div>
+
+      <!-- Right Panel: Clinical Information & Endoscopy Guide -->
+      <div class="glass-panel right-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            大腸鏡判讀與臨床指引
+          </div>
+        </div>
+        
+        <div class="panel-body" id="detail-panel">
+          
+          <!-- Header Title Info -->
+          <div class="detail-title-group">
+            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.3rem;">
+              <span id="det-pill" class="seg-badge-pill">15 ~ 40 cm</span>
+              <span id="det-sector" class="sector-tag">Left Lower Quadrant (Sigmoid)</span>
+            </div>
+            <div id="det-title-zh" class="main-title">乙狀結腸 (Sigmoid Colon)</div>
+            <div id="det-title-en" class="sub-title">Colon sigmoideum · Pelvic Intestinal Loop</div>
+          </div>
+
+          <!-- Metric Grid -->
+          <div class="metric-grid">
+            <div class="metric-box">
+              <div class="metric-label">常規進鏡距離</div>
+              <div id="det-distance" class="metric-value">15 ～ 40 cm</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">內視鏡操作難度</div>
+              <div id="det-difficulty" class="metric-value">高 (易扭曲成環/Loop)</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">息肉好發類型</div>
+              <div id="det-polyp-type" class="metric-value">腺瘤 (Tubular)、增生性</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">常見疾病好發</div>
+              <div id="det-disease" class="metric-value">大腸憩室、息肉、憩室炎</div>
+            </div>
+          </div>
+
+          <!-- Endoscopy Pearls -->
+          <div class="surgical-pearls" id="det-pearls-box">
+            <strong>大腸鏡檢查重點：</strong> 乙狀結腸由腸繫膜懸吊，活動度極大且彎曲度最高。檢查過程中最常產生拉扯感（Looping），熟練的內視鏡醫師會透過「抽吸氣（De-aeration）」與「右旋後拉（Right torque & hook）」技術解環，以無痛安全通過。
+          </div>
+
+          <!-- Ultrasound & Endoscopic Clinical Pearls -->
+          <div class="detail-card">
+            <h3>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              內視鏡判讀與衛教指引 (Clinical Pearls)
+            </h3>
+            <div id="det-pearls-list">
+              <div class="pearl-item">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>大腸癌與息肉好發區</strong>：統計上超過 50% 以上的大腸腺瘤與大腸癌好發於乙狀結腸與直腸（左側大腸）。</span>
+              </div>
+              <div class="pearl-item">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>微創冷剪/電燒切除 (Polypectomy)</strong>：檢查當下若發現息肉，可立即透過內視鏡切除並送病理化驗，阻斷癌變途徑。</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Automatic Medical Phrase Generator -->
+          <div class="phrase-box">
+            <div class="phrase-header">
+              <span class="phrase-title">大腸鏡檢查報告片語 (點擊即複製)</span>
+              <button class="btn btn-outline" style="padding: 0.18rem 0.5rem; font-size: 0.68rem;" onclick="copyPhrase()">複製片語</button>
+            </div>
+            <div id="det-phrase-text" class="phrase-content">
+              Colonoscopy: Total colonoscopy to cecum. A 0.6cm sessile polyp noted at Sigmoid colon (approx. 25cm from anal verge), successfully removed by cold snare polypectomy.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+    <span id="toast-msg">已複製片語至剪貼簿！</span>
+  </div>
+
+  <script is:inline>
+    // Colorectal Anatomical Knowledge Database
+    const colonData = {
+      rectum: {
+        titleZh: '直腸與肛門 (Rectum & Anus)',
+        titleEn: 'Rectum & Canalis analis',
+        distance: '0 ～ 15 cm',
+        difficulty: '低 (進鏡起點與倒轉觀察 Retroflexion)',
+        polypType: '管狀腺瘤 (Tubular)、神經內分泌腫瘤 (NET)',
+        disease: '內外痔瘡、直腸炎、早期直腸癌、潰瘍',
+        sector: 'Pelvic Cavity / Perineum',
+        pearlsBox: '<strong>大腸鏡檢查重點：</strong> 直腸長度約 12-15 cm，內有 3 個休斯頓橫襞（Houston valves）。進鏡起點與退鏡時必須於直腸壺腹（Rectal ampulla）進行 <strong>倒轉觀察（U-turn / Retroflexion）</strong>，以防漏看肛門齒狀線邊緣之微小病灶或痔瘡。',
+        pearls: [
+          '<strong>齒狀線 (Dentate line)</strong>：為內痔（無痛神經）與外痔（劇痛神經）之解剖分界線。',
+          '<strong>下消化道上皮下腫瘤好發</strong>：直腸是消化道類癌（NET / Carcinoid）最常偶發發現之部位。'
+        ],
+        phrase: 'Colonoscopy: Rectum shows smooth mucosa with mild internal hemorrhoids on retroflexion view. No ulcerative lesion.'
+      },
+      sigmoid: {
+        titleZh: '乙狀結腸 (Sigmoid Colon)',
+        titleEn: 'Colon sigmoideum',
+        distance: '15 ～ 40 cm',
+        difficulty: '高 (易扭曲成環 / Looping 處)',
+        polypType: '腺瘤性息肉 (Adenoma)、增生性息肉',
+        disease: '大腸憩室 (Diverticula)、大腸息肉、憩室炎、腺癌',
+        sector: 'Left Lower Quadrant (Pelvis)',
+        pearlsBox: '<strong>大腸鏡檢查重點：</strong> 乙狀結腸由長繫膜懸吊，管徑較窄且轉折劇烈，為檢查中最易引起腹脹或疼痛之處。專業醫師採取「短縮法與右旋後拉（Right-torque withdrawal）」能將腸道套疊拉直，減少受檢者不適。',
+        pearls: [
+          '<strong>大腸癌與息肉第一好發段</strong>：臨床約 50% 大腸惡性腫瘤集中於乙狀結腸與直腸。',
+          '<strong>大腸憩室好發區</strong>：長期便秘與排便壓力常導致乙狀結腸黏膜向外突出形成憩室。'
+        ],
+        phrase: 'Colonoscopy: Sigmoid colon shows multiple tiny diverticula without active bleeding or inflammation. A 0.5cm polyp removed by cold snare.'
+      },
+      descending: {
+        titleZh: '降結腸與脾曲 (Descending Colon & Splenic Flexure)',
+        titleEn: 'Colon descendens & Flexura coli sinistra',
+        distance: '40 ～ 55 cm',
+        difficulty: '中 (脾曲為全大腸最高轉折點)',
+        polypType: '管狀腺瘤、鋸齒狀病灶',
+        disease: '缺血性腸炎 (Ischemic colitis)、黑腸症、息肉',
+        sector: 'Left Flank / Subphrenic Area',
+        pearlsBox: '<strong>大腸鏡檢查重點：</strong> 降結腸為腹膜後固定器官，直行向上抵達脾曲（Splenic flexure）。脾曲為全結腸最高點且鄰近脾臟，進鏡時需溫和調整角度，配合病患深吸氣或左側臥位以順利跨越。',
+        pearls: [
+          '<strong>缺血性腸炎好發（Griffith\'s point）</strong>：脾曲為腸繫膜上動脈與下動脈末梢交界處（分水嶺區），老年人低血壓時易引發缺血性結腸炎。',
+          '<strong>脾曲解剖標誌</strong>：透過管壁可隱約透視深青藍色的脾臟陰影。'
+        ],
+        phrase: 'Colonoscopy: Descending colon and splenic flexure were successfully traversed with clear mucosal visualization.'
+      },
+      transverse: {
+        titleZh: '橫結腸 (Transverse Colon)',
+        titleEn: 'Colon transversum',
+        distance: '55 ～ 80 cm',
+        difficulty: '中 (呈典型三角管腔特徵)',
+        polypType: '管狀腺瘤、鋸齒狀腺瘤',
+        disease: '結腸瘜肉、橫結腸下垂 (Ptosis)',
+        sector: 'Upper Abdomen / Epigastrium',
+        pearlsBox: '<strong>大腸鏡檢查重點：</strong> 橫結腸為由大網膜懸吊之游離腸段，內視鏡視野下呈現極具辨識度的 <strong>「三角形管腔（Triangular lumen）」</strong> 與清晰的結腸袋（Haustra）。',
+        pearls: [
+          '<strong>三角形黏膜特徵</strong>：鏡檢時辨識橫結腸的核心地標，常呈下垂 U 型走向。',
+          '<strong>肝曲前轉折</strong>：橫結腸向右上方延伸至肝曲（Hepatic flexure），與右側肝臟相鄰。'
+        ],
+        phrase: 'Colonoscopy: Transverse colon shows typical triangular haustration with clean lumen and healthy mucosa.'
+      },
+      ascending: {
+        titleZh: '升結腸與肝曲 (Ascending Colon & Hepatic Flexure)',
+        titleEn: 'Colon ascendens & Flexura coli dextra',
+        distance: '80 ～ 95 cm',
+        difficulty: '中 (右側大腸，需仔細沖洗清腸殘渣)',
+        polypType: '鋸齒狀腺瘤 (SSA/P，扁平型)',
+        disease: '平坦型息肉 (Flat polyp)、右側大腸癌、血管異常增生 (Angiodysplasia)',
+        sector: 'Right Flank / Hepatic Bed',
+        pearlsBox: '<strong>大腸鏡檢查重點：</strong> 升結腸管徑寬大，緊貼後腹壁。右側大腸之息肉多屬 <strong>「無蒂鋸齒狀腺瘤 (SSA/P)」</strong>，外觀扁平且常覆蓋黏液帽，若清腸不佳極易漏看，需搭配高解析度染色與充足沖洗。',
+        pearls: [
+          '<strong>鋸齒狀腺瘤溫床</strong>：右側大腸癌多由鋸齒狀路徑（BRAF 突變/MSI-H）快速演變而來。',
+          '<strong>血管發育不良 (Angiodysplasia)</strong>：老年人不明原因無痛性下消化道出血之常見病灶。'
+        ],
+        phrase: 'Colonoscopy: Ascending colon carefully examined with mucosal washing; no flat or serrated lesion.'
+      },
+      cecum: {
+        titleZh: '盲腸與闌尾 (Cecum & Appendix)',
+        titleEn: 'Caecum & Appendix vermiformis',
+        distance: '95 ～ 100+ cm',
+        difficulty: '指標點 (全大腸鏡抵達終點認證地標)',
+        polypType: '闌尾口息肉、盲腸腺瘤',
+        disease: '闌尾炎 (Appendicitis)、糞石 (Fecalith)、迴盲瓣潰瘍',
+        sector: 'Right Lower Quadrant (Iliac Fossa)',
+        pearlsBox: '<strong>大腸鏡檢查終點品質指標（Cecal Intubation）：</strong> 必須完整目視 <strong>「闌尾開口（Appendiceal orifice / 奔馳標誌）」</strong> 與 <strong>「迴盲瓣（Ileocecal valve, IC valve）」</strong>，方能確立為「完整高品質大腸鏡檢查」。',
+        pearls: [
+          '<strong>闌尾開口（三叉裂隙）</strong>：形似賓士標誌（Mercedes-Benz sign），為確認抵達大腸底端之黃金標準。',
+          '<strong>迴腸末端探查 (Terminal ileoscopy)</strong>：可進一步深入迴腸末端 10-15cm，排查克隆氏症 (Crohn\'s disease) 或腸結核。'
+        ],
+        phrase: 'Colonoscopy: Complete colonoscopy to cecum. Appendiceal orifice and IC valve well identified. Cecal intubation time: min.'
+      }
+    };
+
+    // Global 3D Variables
+    let scene, camera, renderer, controls;
+    let colonSegments = {};
+    let segmentLabelSprites = {};
+    let explodeVectors = {};
+    let scopeGroup, scopeHeadLight, scopeTipMesh, scopeTubeMesh;
+    let pathologyGroup;
+    let activePathology = { polyp: false, diverticulum: false, hemorrhoid: false };
+    let selectedId = 'sigmoid';
+    let isQuizMode = false, quizTarget = null;
+    let raycaster, mouse;
+    let currentOpacity = 0.90;
+    let colonSplineCurve;
+
+    // Colon Centerline Keypoints (From Anus to Cecum in 3D Space)
+    const colonPathPoints = [
+      new THREE.Vector3(0.0, -2.6, 0.0),    // Anus / Lower Rectum (0 cm)
+      new THREE.Vector3(0.0, -1.9, 0.1),    // Mid-upper Rectum (12 cm)
+      new THREE.Vector3(0.6, -1.6, 0.4),    // Rectosigmoid Junction (18 cm)
+      new THREE.Vector3(1.5, -2.2, 0.6),    // Sigmoid Loop Bottom (25 cm)
+      new THREE.Vector3(1.8, -1.4, 0.3),    // Sigmoid Ascending (32 cm)
+      new THREE.Vector3(1.8, -0.6, 0.0),    // Sigmoid-Descending Junction (40 cm)
+      new THREE.Vector3(1.9, 0.4, -0.2),    // Mid Descending Colon (48 cm)
+      new THREE.Vector3(1.7, 1.3, -0.1),    // Splenic Flexure Top (55 cm)
+      new THREE.Vector3(1.0, 1.1, 0.3),     // Left Transverse (62 cm)
+      new THREE.Vector3(0.0, 0.6, 0.7),     // Mid Transverse Colon Dip (70 cm)
+      new THREE.Vector3(-1.1, 0.9, 0.3),    // Right Transverse (78 cm)
+      new THREE.Vector3(-1.7, 1.2, -0.1),   // Hepatic Flexure (85 cm)
+      new THREE.Vector3(-1.9, 0.2, -0.2),   // Mid Ascending Colon (90 cm)
+      new THREE.Vector3(-1.8, -1.2, 0.0),   // Lower Ascending (95 cm)
+      new THREE.Vector3(-1.8, -1.8, 0.2),   // Cecum Pole (100 cm)
+      new THREE.Vector3(-1.4, -2.3, 0.3)    // Vermiform Appendix Tip (Bonus)
+    ];
+
+    // Segment Subdivision Configurations for Haustra Meshes
+    const segmentConfigs = {
+      rectum: {
+        tRange: [0.0, 0.12],
+        label: '直腸',
+        labelPos: [0.0, -2.2, 0.5],
+        explodeDir: new THREE.Vector3(0.0, -0.6, 0.0),
+        baseColor: 0xd97768,
+        radius: 0.36
+      },
+      sigmoid: {
+        tRange: [0.12, 0.35],
+        label: '乙狀結腸',
+        labelPos: [1.6, -1.8, 0.8],
+        explodeDir: new THREE.Vector3(0.7, -0.4, 0.4),
+        baseColor: 0xd97768,
+        radius: 0.30
+      },
+      descending: {
+        tRange: [0.35, 0.52],
+        label: '降結腸/脾曲',
+        labelPos: [2.2, 0.5, 0.3],
+        explodeDir: new THREE.Vector3(0.8, 0.3, -0.2),
+        baseColor: 0xd97768,
+        radius: 0.32
+      },
+      transverse: {
+        tRange: [0.52, 0.74],
+        label: '橫結腸',
+        labelPos: [0.0, 0.9, 0.9],
+        explodeDir: new THREE.Vector3(0.0, 0.8, 0.5),
+        baseColor: 0xd97768,
+        radius: 0.35
+      },
+      ascending: {
+        tRange: [0.74, 0.90],
+        label: '升結腸/肝曲',
+        labelPos: [-2.2, 0.2, 0.3],
+        explodeDir: new THREE.Vector3(-0.8, 0.2, -0.2),
+        baseColor: 0xd97768,
+        radius: 0.36
+      },
+      cecum: {
+        tRange: [0.90, 1.0],
+        label: '盲腸/闌尾',
+        labelPos: [-1.8, -2.2, 0.7],
+        explodeDir: new THREE.Vector3(-0.7, -0.5, 0.3),
+        baseColor: 0xd97768,
+        radius: 0.40
+      }
+    };
+
+    function init3D() {
+      const container = document.getElementById('threejs-canvas-container');
+      if (!container) return;
+
+      const width = container.clientWidth || (window.innerWidth > 1150 ? window.innerWidth - 720 : window.innerWidth);
+      const height = container.clientHeight || (window.innerHeight - 130);
+
+      // 1. Scene & Camera
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      camera.position.set(0, -0.3, 7.5);
+
+      // 2. WebGL Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // 3. Orbit Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 3.2;
+      controls.maxDistance = 16;
+      controls.target.set(0, -0.5, 0);
+
+      // 4. Studio Medical Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.68);
+      scene.add(ambientLight);
+
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.15);
+      mainLight.position.set(6, 8, 8);
+      scene.add(mainLight);
+
+      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.8);
+      rimLight.position.set(-8, -4, -6);
+      scene.add(rimLight);
+
+      const bottomLight = new THREE.DirectionalLight(0xa7f3d0, 0.6);
+      bottomLight.position.set(0, -8, 6);
+      scene.add(bottomLight);
+
+      // 5. Build Spline Curve
+      colonSplineCurve = new THREE.CatmullRomCurve3(colonPathPoints);
+
+      // 6. Build 3D Segment Meshes with Haustra Modulations
+      build3DColonSegments();
+
+      // 7. Build Dynamic 3D Endoscope System
+      build3DColonoscope();
+
+      // 8. Build 3D Pathologies (Polyps, Diverticula, Hemorrhoids)
+      build3DPathologies();
+
+      // 9. Raycasting Setup
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+      renderer.domElement.addEventListener('pointerdown', onPointerDown);
+
+      // 10. Auto-Resize Observer
+      const resizeObserver = new ResizeObserver(() => onWindowResize());
+      resizeObserver.observe(container);
+      window.addEventListener('resize', onWindowResize);
+
+      // Initialize default selection
+      selectSegment('sigmoid');
+      onScopeSlider(0);
+
+      setTimeout(onWindowResize, 100);
+
+      // Animation Loop
+      animate();
+    }
+
+    // Build 3D Colon Segments with periodic Haustra (結腸袋) & Tenia Coli (結腸帶)
+    function build3DColonSegments() {
+      const gutMatConfig = {
+        color: 0xd97768,
+        roughness: 0.35,
+        metalness: 0.05,
+        clearcoat: 0.65,
+        clearcoatRoughness: 0.3,
+        transparent: true,
+        opacity: currentOpacity,
+        side: THREE.DoubleSide
+      };
+
+      Object.keys(segmentConfigs).forEach(key => {
+        const conf = segmentConfigs[key];
+        const geom = createHaustratedSegmentGeometry(conf.tRange[0], conf.tRange[1], conf.radius, key);
+        const mat = new THREE.MeshPhysicalMaterial(gutMatConfig);
+        
+        const mesh = new THREE.Mesh(geom, mat);
+        mesh.userData = { segmentId: key };
+
+        explodeVectors[key] = conf.explodeDir.clone();
+        colonSegments[key] = mesh;
+        scene.add(mesh);
+
+        // 3D Billboard Text Label
+        const sprite = createTextSprite(conf.label);
+        sprite.position.set(conf.labelPos[0], conf.labelPos[1], conf.labelPos[2]);
+        mesh.add(sprite);
+        segmentLabelSprites[key] = sprite;
+      });
+    }
+
+    function createHaustratedSegmentGeometry(tStart, tEnd, baseR, key) {
+      const numRings = 40;
+      const radialSegs = 24;
+      const positions = [];
+      const normals = [];
+      const uvs = [];
+      const indices = [];
+
+      for (let i = 0; i <= numRings; i++) {
+        const u = i / numRings;
+        const t = tStart + u * (tEnd - tStart);
+        const pt = colonSplineCurve.getPoint(t);
+        const tangent = colonSplineCurve.getTangent(t).normalize();
+
+        // Normal and Binormal vectors for circular cross section
+        let normalVec = new THREE.Vector3(0, 0, 1).cross(tangent).normalize();
+        if (normalVec.lengthSq() < 0.01) normalVec = new THREE.Vector3(1, 0, 0).cross(tangent).normalize();
+        const binormalVec = new THREE.Vector3().crossVectors(tangent, normalVec).normalize();
+
+        // Haustra Sacculation Modulation Frequency along tube
+        const numPockets = (tEnd - tStart) * 35;
+        const haustraMod = 1.0 + 0.22 * Math.sin(u * Math.PI * 2 * numPockets);
+
+        for (let j = 0; j <= radialSegs; j++) {
+          const v = j / radialSegs;
+          const theta = v * Math.PI * 2;
+
+          // 3 Teniae Coli longitudinal bands (triradiate indentations)
+          const teniaMod = 1.0 + 0.08 * Math.cos(3 * theta);
+          const r = baseR * haustraMod * teniaMod;
+
+          const cx = Math.cos(theta) * r;
+          const cy = Math.sin(theta) * r;
+
+          const vx = pt.x + normalVec.x * cx + binormalVec.x * cy;
+          const vy = pt.y + normalVec.y * cx + binormalVec.y * cy;
+          const vz = pt.z + normalVec.z * cx + binormalVec.z * cy;
+
+          positions.push(vx, vy, vz);
+          uvs.push(u, v);
+        }
+      }
+
+      for (let i = 0; i < numRings; i++) {
+        for (let j = 0; j < radialSegs; j++) {
+          const a = i * (radialSegs + 1) + j;
+          const b = (i + 1) * (radialSegs + 1) + j;
+          const c = (i + 1) * (radialSegs + 1) + (j + 1);
+          const d = i * (radialSegs + 1) + (j + 1);
+
+          indices.push(a, b, d);
+          indices.push(b, c, d);
+        }
+      }
+
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geom.setIndex(indices);
+      geom.computeVertexNormals();
+
+      return geom;
+    }
+
+    function createTextSprite(text) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'rgba(10, 18, 36, 0.85)';
+      ctx.beginPath();
+      ctx.roundRect(16, 16, 224, 96, 24);
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 5;
+      ctx.stroke();
+
+      ctx.font = 'bold 52px Plus Jakarta Sans, sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 128, 64);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(0.85, 0.42, 1);
+      return sprite;
+    }
+
+    // Build 3D Endoscope (Black flexible tube with bright LED illumination tip)
+    function build3DColonoscope() {
+      scopeGroup = new THREE.Group();
+
+      // Endoscope Glowing Optical Tip
+      const tipGeom = new THREE.SphereGeometry(0.12, 16, 16);
+      const tipMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+      scopeTipMesh = new THREE.Mesh(tipGeom, tipMat);
+      scopeGroup.add(scopeTipMesh);
+
+      // Forward Light Cone Beam
+      const coneGeom = new THREE.ConeGeometry(0.4, 0.8, 16, 1, true);
+      coneGeom.translate(0, 0.4, 0);
+      coneGeom.rotateX(Math.PI / 2);
+      const coneMat = new THREE.MeshBasicMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.4,
+        side: THREE.DoubleSide
+      });
+      const lightBeamMesh = new THREE.Mesh(coneGeom, coneMat);
+      scopeTipMesh.add(lightBeamMesh);
+
+      // PointLight on Scope Head
+      scopeHeadLight = new THREE.PointLight(0x00e5ff, 2.5, 3.5);
+      scopeGroup.add(scopeHeadLight);
+
+      scene.add(scopeGroup);
+    }
+
+    // Update 3D Endoscope Position and In-Lumen Tube Curve along progress
+    function updateColonoscopePosition(progressT) {
+      if (!colonSplineCurve || !scopeGroup) return;
+
+      const tClamped = Math.max(0.001, Math.min(0.999, progressT));
+      const pt = colonSplineCurve.getPoint(tClamped);
+      const tangent = colonSplineCurve.getTangent(tClamped).normalize();
+
+      scopeGroup.position.copy(pt);
+      scopeTipMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tangent);
+
+      // Rebuild the black scope insertion tube up to current t
+      if (scopeTubeMesh) scene.remove(scopeTubeMesh);
+
+      const numPoints = Math.max(8, Math.floor(tClamped * 50));
+      const subPoints = [];
+      for (let i = 0; i <= numPoints; i++) {
+        subPoints.push(colonSplineCurve.getPoint((i / numPoints) * tClamped));
+      }
+
+      if (subPoints.length >= 2) {
+        const subCurve = new THREE.CatmullRomCurve3(subPoints);
+        const tubeGeom = new THREE.TubeGeometry(subCurve, numPoints * 2, 0.08, 10, false);
+        const tubeMat = new THREE.MeshStandardMaterial({
+          color: 0x111827,
+          roughness: 0.2,
+          metalness: 0.8
+        });
+        scopeTubeMesh = new THREE.Mesh(tubeGeom, tubeMat);
+        scene.add(scopeTubeMesh);
+      }
+    }
+
+    // Build 3D Pathologies (Polyps, Diverticula, Hemorrhoids)
+    function build3DPathologies() {
+      pathologyGroup = new THREE.Group();
+
+      // 1. Polyps (3 Distinct Locations & Morphologies)
+      const polypMat = new THREE.MeshPhysicalMaterial({
+        color: 0xf43f5e,
+        roughness: 0.2,
+        clearcoat: 0.8,
+        emissive: 0xe11d48,
+        emissiveIntensity: 0.6
+      });
+
+      // Sigmoid Pedunculated Polyp
+      const p1StalkGeom = new THREE.CylinderGeometry(0.04, 0.05, 0.25, 8);
+      const p1HeadGeom = new THREE.SphereGeometry(0.14, 16, 16);
+      p1HeadGeom.translate(0, 0.16, 0);
+      const p1Mesh = new THREE.Mesh(p1HeadGeom, polypMat);
+      p1Mesh.add(new THREE.Mesh(p1StalkGeom, polypMat));
+      p1Mesh.position.set(1.5, -2.1, 0.7);
+      p1Mesh.userData = { type: 'polyp', name: '乙狀結腸有蒂腺瘤 (Pedunculated Polyp, 0.8cm)' };
+      pathologyGroup.add(p1Mesh);
+
+      // Ascending Flat Serrated Polyp (SSA/P)
+      const p2Geom = new THREE.CylinderGeometry(0.18, 0.22, 0.08, 16);
+      const p2Mesh = new THREE.Mesh(p2Geom, polypMat);
+      p2Mesh.position.set(-1.85, 0.1, 0.1);
+      p2Mesh.rotation.z = Math.PI / 3;
+      p2Mesh.userData = { type: 'polyp', name: '升結腸無蒂鋸齒狀腺瘤 (Flat SSA, 1.2cm)' };
+      pathologyGroup.add(p2Mesh);
+
+      // Transverse Small Polyp
+      const p3Geom = new THREE.SphereGeometry(0.1, 12, 12);
+      const p3Mesh = new THREE.Mesh(p3Geom, polypMat);
+      p3Mesh.position.set(0.2, 0.65, 0.95);
+      p3Mesh.userData = { type: 'polyp', name: '橫結腸管狀腺瘤 (Tubular Adenoma, 0.5cm)' };
+      pathologyGroup.add(p3Mesh);
+
+      // 2. Diverticula (Multiple Outpouchings in Sigmoid & Descending)
+      const divertMat = new THREE.MeshStandardMaterial({
+        color: 0x7c3aed,
+        roughness: 0.4,
+        emissive: 0x6d28d9,
+        emissiveIntensity: 0.5
+      });
+
+      const divPositions = [
+        new THREE.Vector3(1.65, -1.9, 0.85),
+        new THREE.Vector3(1.75, -2.2, 0.45),
+        new THREE.Vector3(1.9, -1.2, 0.5),
+        new THREE.Vector3(2.0, -0.8, 0.2),
+        new THREE.Vector3(2.05, 0.2, -0.3)
+      ];
+
+      divPositions.forEach((pos, idx) => {
+        const dMesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), divertMat);
+        dMesh.position.copy(pos);
+        dMesh.userData = { type: 'diverticulum', name: `乙狀結腸憩室 (${idx + 1})` };
+        pathologyGroup.add(dMesh);
+      });
+
+      // 3. Hemorrhoids (Clusters at Anorectal Junction)
+      const hemMat = new THREE.MeshPhysicalMaterial({
+        color: 0x9333ea,
+        roughness: 0.25,
+        clearcoat: 0.7,
+        emissive: 0x7e22ce,
+        emissiveIntensity: 0.65
+      });
+
+      const hemPositions = [
+        new THREE.Vector3(0.12, -2.48, 0.15),
+        new THREE.Vector3(-0.14, -2.45, 0.12),
+        new THREE.Vector3(0.02, -2.52, -0.16)
+      ];
+
+      hemPositions.forEach(pos => {
+        const hMesh = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), hemMat);
+        hMesh.position.copy(pos);
+        hMesh.userData = { type: 'hemorrhoid', name: '肛門齒狀線內痔血管叢 (Hemorrhoid)' };
+        pathologyGroup.add(hMesh);
+      });
+
+      // Initially hide all pathologies
+      pathologyGroup.children.forEach(child => child.visible = false);
+      scene.add(pathologyGroup);
+    }
+
+    // Toggle Pathology Layers (Polyp / Diverticulum / Hemorrhoid)
+    function togglePathology(type) {
+      activePathology[type] = !activePathology[type];
+      const btn = document.getElementById(`btn-path-${type}`);
+      if (btn) btn.classList.toggle('active', activePathology[type]);
+
+      pathologyGroup.children.forEach(child => {
+        if (child.userData && child.userData.type === type) {
+          child.visible = activePathology[type];
+        }
+      });
+
+      const infoEl = document.getElementById('pathology-info-text');
+      if (type === 'polyp') {
+        if (activePathology.polyp) {
+          infoEl.innerHTML = '🔴 <strong>已顯示大腸息肉</strong>：分布於乙狀結腸（有蒂）、升結腸（扁平 SSA）與橫結腸，可藉由內視鏡息肉切除術（EMR / Polypectomy）切除。';
+          selectSegment('sigmoid');
+        } else {
+          infoEl.textContent = '已隱藏息肉病灶。';
+        }
+      } else if (type === 'diverticulum') {
+        if (activePathology.diverticulum) {
+          infoEl.innerHTML = '🟣 <strong>已顯示大腸憩室</strong>：主要分布於乙狀結腸與降結腸，為黏膜向外突出之囊袋，需注意高纖飲食預防憩室炎。';
+          selectSegment('sigmoid');
+        } else {
+          infoEl.textContent = '已隱藏憩室病灶。';
+        }
+      } else if (type === 'hemorrhoid') {
+        if (activePathology.hemorrhoid) {
+          infoEl.innerHTML = '🟣 <strong>已顯示痔瘡病灶</strong>：位於肛門直腸交界齒狀線周圍，分為內痔與外痔。';
+          selectSegment('rectum');
+        } else {
+          infoEl.textContent = '已隱藏痔瘡病灶。';
+        }
+      }
+    }
+
+    // Scope Slider (0 - 100 cm)
+    function onScopeSlider(val) {
+      const cm = parseInt(val, 10);
+      const progressT = cm / 100.0;
+      
+      const badge = document.getElementById('txt-scope-cm');
+      if (badge) badge.textContent = `${cm} cm`;
+
+      updateColonoscopePosition(progressT);
+
+      // Auto-update segment info based on scope cm
+      const statusBox = document.getElementById('scope-status-text');
+      if (cm <= 15) {
+        if (statusBox) statusBox.textContent = `📍 直腸段 (${cm}cm)：剛通過肛門口，觀察直腸壺腹與齒狀線。`;
+        selectSegment('rectum');
+      } else if (cm <= 40) {
+        if (statusBox) statusBox.textContent = `📍 乙狀結腸 (${cm}cm)：進入骨盆腔彎曲段，常規解環右旋後拉技巧處。`;
+        selectSegment('sigmoid');
+      } else if (cm <= 55) {
+        if (statusBox) statusBox.textContent = `📍 降結腸/脾曲 (${cm}cm)：抵達左側大腸最高點脾曲，穿透左上腹。`;
+        selectSegment('descending');
+      } else if (cm <= 80) {
+        if (statusBox) statusBox.textContent = `📍 橫結腸 (${cm}cm)：典型的三角形管腔與清晰結腸袋波紋。`;
+        selectSegment('transverse');
+      } else if (cm <= 95) {
+        if (statusBox) statusBox.textContent = `📍 升結腸/肝曲 (${cm}cm)：跨越右肝曲，仔細沖洗排查扁平鋸齒狀腺瘤。`;
+        selectSegment('ascending');
+      } else {
+        if (statusBox) statusBox.textContent = `🎯 盲腸達標 (100cm)：成功目視闌尾開口（奔馳標誌）與迴盲瓣！`;
+        selectSegment('cecum');
+      }
+    }
+
+    // 3D Explode Slider Action
+    function onExplodeSlider(val) {
+      const factor = val / 100.0;
+      const txt = document.getElementById('txt-explode-val');
+      if (txt) txt.textContent = `${val}%`;
+
+      Object.keys(colonSegments).forEach(key => {
+        const mesh = colonSegments[key];
+        const dir = explodeVectors[key];
+        mesh.position.x = dir.x * factor * 1.5;
+        mesh.position.y = dir.y * factor * 1.5;
+        mesh.position.z = dir.z * factor * 1.5;
+      });
+    }
+
+    // Opacity Slider Action
+    function onOpacitySlider(val) {
+      currentOpacity = val / 100.0;
+      const txt = document.getElementById('txt-opacity-val');
+      if (txt) txt.textContent = `${val}%`;
+      Object.keys(colonSegments).forEach(key => {
+        colonSegments[key].material.opacity = currentOpacity;
+      });
+    }
+
+    // Segment Selection
+    function selectSegment(id) {
+      if (isQuizMode) {
+        handleQuizClick(id);
+        return;
+      }
+
+      selectedId = id;
+      const data = colonData[id];
+      if (!data) return;
+
+      document.querySelectorAll('.seg-card-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`btn-seg-${id}`)?.classList.add('active');
+
+      Object.keys(colonSegments).forEach(key => {
+        const mesh = colonSegments[key];
+        if (key === id) {
+          mesh.material.emissive.setHex(0x10b981);
+          mesh.material.emissiveIntensity = 0.45;
+          mesh.material.opacity = Math.max(currentOpacity, 0.95);
+        } else {
+          mesh.material.emissive.setHex(0x000000);
+          mesh.material.emissiveIntensity = 0.0;
+          mesh.material.opacity = currentOpacity;
+        }
+      });
+
+      const pill = document.getElementById('det-pill');
+      if (pill) pill.textContent = data.distance;
+      document.getElementById('det-sector').textContent = data.sector;
+      document.getElementById('det-title-zh').textContent = data.titleZh;
+      document.getElementById('det-title-en').textContent = data.titleEn;
+      document.getElementById('det-distance').textContent = data.distance;
+      document.getElementById('det-difficulty').textContent = data.difficulty;
+      document.getElementById('det-polyp-type').textContent = data.polypType;
+      document.getElementById('det-disease').textContent = data.disease;
+      document.getElementById('det-pearls-box').innerHTML = data.pearlsBox;
+      document.getElementById('det-phrase-text').textContent = data.phrase;
+
+      const pearlsList = document.getElementById('det-pearls-list');
+      if (pearlsList) {
+        pearlsList.innerHTML = '';
+        data.pearls.forEach(text => {
+          const item = document.createElement('div');
+          item.className = 'pearl-item';
+          item.innerHTML = `
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            <span>${text}</span>
+          `;
+          pearlsList.appendChild(item);
+        });
+      }
+    }
+
+    // Preset Views
+    function setPresetView(preset) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`view-btn-${preset}`)?.classList.add('active');
+
+      let targetPos = new THREE.Vector3(0, -0.3, 7.5);
+      let targetLook = new THREE.Vector3(0, -0.5, 0);
+
+      switch(preset) {
+        case 'anterior': targetPos.set(0, -0.3, 7.5); targetLook.set(0, -0.5, 0); break;
+        case 'left_colon': targetPos.set(4.8, -0.5, 4.2); targetLook.set(1.2, -0.8, 0.2); break;
+        case 'right_colon': targetPos.set(-4.8, -0.5, 4.2); targetLook.set(-1.2, -0.8, 0.2); break;
+        case 'splenic': targetPos.set(3.5, 3.2, 4.5); targetLook.set(1.5, 1.2, 0.0); break;
+        case 'pelvis': targetPos.set(0, -6.5, 3.5); targetLook.set(0, -2.0, 0.2); break;
+      }
+
+      new TWEEN.Tween(camera.position).to(targetPos, 850).easing(TWEEN.Easing.Cubic.Out).start();
+      new TWEEN.Tween(controls.target).to(targetLook, 850).easing(TWEEN.Easing.Cubic.Out).start();
+    }
+
+    function reset3DCamera() {
+      setPresetView('anterior');
+      const slider = document.getElementById('slider-explode');
+      if (slider) slider.value = 0;
+      onExplodeSlider(0);
+      selectSegment('sigmoid');
+      showToast('已重設為大腸 3D 正面全覽視角');
+    }
+
+    // Fullscreen Toggle
+    function toggleFullScreen() {
+      const wrapper = document.getElementById('colonAppWrapper');
+      if (!document.fullscreenElement) {
+        if (wrapper && wrapper.requestFullscreen) {
+          wrapper.requestFullscreen();
+        } else if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const isFs = !!document.fullscreenElement;
+      const label = document.getElementById('txt-fs-label');
+      const btn = document.getElementById('btn-fullscreen-toggle');
+      if (label) label.textContent = isFs ? '退出全螢幕' : '全螢幕模式';
+      if (btn) btn.classList.toggle('active', isFs);
+      setTimeout(onWindowResize, 150);
+    });
+
+    function onPointerDown(e) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const meshes = Object.values(colonSegments);
+      const intersects = raycaster.intersectObjects(meshes, false);
+
+      if (intersects.length > 0) {
+        const clickedMesh = intersects[0].object;
+        if (clickedMesh.userData && clickedMesh.userData.segmentId) {
+          selectSegment(clickedMesh.userData.segmentId);
+        }
+      }
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('threejs-canvas-container');
+      if (!container || !renderer || !camera) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (width > 0 && height > 0) {
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }
+    }
+
+    function copyPhrase() {
+      const text = document.getElementById('det-phrase-text')?.textContent.trim();
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('已複製大腸鏡病歷片語至剪貼簿！');
+        });
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      if (!toast || !msgEl) return;
+      msgEl.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    const quizCandidates = ['rectum', 'sigmoid', 'descending', 'transverse', 'ascending', 'cecum'];
+    function toggleQuizMode() {
+      isQuizMode = !isQuizMode;
+      const btn = document.getElementById('btn-toggle-quiz');
+      if (isQuizMode) {
+        btn.classList.add('btn-primary');
+        btn.classList.remove('btn-outline');
+        btn.textContent = '結束測驗';
+        nextQuizQuestion();
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+        btn.innerHTML = `
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          3D 測驗模式
+        `;
+        selectSegment(selectedId);
+      }
+    }
+
+    function nextQuizQuestion() {
+      const idx = Math.floor(Math.random() * quizCandidates.length);
+      quizTarget = quizCandidates[idx];
+      const data = colonData[quizTarget];
+      showToast(`🎯 請在 3D 空間中找出並點擊：【${data.titleZh}】`);
+    }
+
+    function handleQuizClick(clickedId) {
+      if (clickedId === quizTarget) {
+        showToast('🎉 答對了！非常優秀！');
+        selectSegment(clickedId);
+        setTimeout(nextQuizQuestion, 1400);
+      } else {
+        const clickedName = colonData[clickedId] ? colonData[clickedId].titleZh : clickedId;
+        showToast(`❌ 答錯囉！您點到的是【${clickedName}】，旋轉一下角度再試一次！`);
+      }
+    }
+
+    function animate(time) {
+      requestAnimationFrame(animate);
+      TWEEN.update();
+      if (controls) controls.update();
+
+      // Subtle pulse on scope light
+      if (scopeHeadLight) {
+        const pulse = 2.0 + Math.sin((time || performance.now()) * 0.005) * 0.5;
+        scopeHeadLight.intensity = pulse;
+      }
+
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init3D);
+    } else {
+      init3D();
+    }
+  </script>
+</Layout>
+
+<style>
+  :root {
+    --bg-dark: #060b14;
+    --bg-panel: rgba(11, 20, 38, 0.92);
+    --bg-glass: rgba(16, 28, 52, 0.78);
+    --border-color: rgba(16, 185, 129, 0.18);
+    --border-bright: rgba(16, 185, 129, 0.5);
+    
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --text-muted: #64748b;
+    
+    --accent-emerald: #10b981;
+    --accent-cyan: #38bdf8;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-purple: #c084fc;
+  }
+
+  .colon-app-wrapper {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    width: 100vw;
+    max-width: 100%;
+    min-height: calc(100vh - 72px);
+    display: flex;
+    flex-direction: column;
+    background-image: 
+      radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, #0a1720 0%, var(--bg-dark) 100%);
+    overflow-x: hidden;
+  }
+
+  /* Fullscreen Mode Overrides */
+  .colon-app-wrapper:fullscreen,
+  .colon-app-wrapper:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Sub Navigation Bar */
+  .anatomy-subnav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1.75rem;
+    background: rgba(10, 20, 32, 0.95);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .subnav-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--accent-emerald);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .back-link:hover {
+    color: #6ee7b7;
+    transform: translateX(-2px);
+  }
+
+  .divider {
+    color: #475569;
+    font-size: 0.85rem;
+  }
+
+  .current-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+  }
+
+  .subnav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    border: none;
+  }
+
+  .btn-fullscreen {
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+    font-weight: 700;
+  }
+  .btn-fullscreen:hover {
+    background: rgba(16, 185, 129, 0.22);
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-fullscreen.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+  }
+
+  .btn-outline {
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+  }
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--border-bright);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.35);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #34d399, #10b981);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  }
+
+  /* Main Workspace Grid */
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr 380px;
+    height: calc(100vh - 128px);
+    width: 100vw;
+    max-width: 100%;
+    gap: 0.85rem;
+    padding: 0.75rem 1.25rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .colon-app-wrapper:fullscreen .workspace-grid,
+  .colon-app-wrapper:-webkit-full-screen .workspace-grid {
+    height: calc(100vh - 56px);
+  }
+
+  @media (max-width: 1400px) {
+    .workspace-grid {
+      grid-template-columns: 290px 1fr 350px;
+      padding: 0.5rem 0.75rem;
+      gap: 0.65rem;
+    }
+  }
+
+  @media (max-width: 1150px) {
+    .workspace-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .glass-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .panel-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .panel-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #e2e8f0;
+  }
+
+  .panel-body {
+    padding: 0.85rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* Scope Depth Navigator Card */
+  .scope-card {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(16, 185, 129, 0.08));
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  }
+
+  .scope-cm-badge {
+    font-family: monospace;
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #00e5ff;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+  }
+
+  .scope-milestones {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  .scope-status-box {
+    margin-top: 0.5rem;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.73rem;
+    line-height: 1.45;
+    color: #e2e8f0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  /* Pathology Button Group */
+  .pathology-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .btn-pathology {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .btn-pathology:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .btn-pathology.active {
+    background: rgba(244, 63, 94, 0.18);
+    border-color: #f43f5e;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.35);
+    color: #fecdd3;
+  }
+
+  .path-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .dot-polyp { background: #f43f5e; box-shadow: 0 0 6px #f43f5e; }
+  .dot-diverticulum { background: #a855f7; box-shadow: 0 0 6px #a855f7; }
+  .dot-hemorrhoid { background: #c084fc; box-shadow: 0 0 6px #c084fc; }
+
+  .pathology-info-text {
+    font-size: 0.68rem;
+    color: var(--text-sub);
+    line-height: 1.45;
+  }
+
+  .control-row {
+    margin-bottom: 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .control-label-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #cbd5e1;
+  }
+
+  .slider-val {
+    font-family: monospace;
+    color: #10b981;
+    font-size: 0.8rem;
+  }
+
+  .slider-subtext {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  .slider-subtext-single {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #10b981;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+    border: 2px solid #ffffff;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.05em;
+  }
+
+  .segment-grid-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .seg-card-btn {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+  }
+  .seg-card-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+  }
+  .seg-card-btn.active {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+  }
+
+  .seg-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.15rem;
+  }
+  .seg-num-pill {
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: #34d399;
+  }
+  .seg-loc-tag {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .seg-card-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 3D Canvas Center Stage */
+  .canvas-panel {
+    position: relative;
+    background: radial-gradient(circle at 50% 50%, #0d1e2b 0%, #060b14 100%);
+    min-height: 520px;
+    user-select: none;
+  }
+
+  #threejs-canvas-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    outline: none;
+    cursor: grab;
+  }
+  #threejs-canvas-container:active {
+    cursor: grabbing;
+  }
+
+  .view-angles-toolbar {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    background: rgba(10, 20, 32, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 0.3rem 0.45rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+  }
+
+  .view-btn {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+  .view-btn.active {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    font-weight: 700;
+  }
+
+  .orbit-hint {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 0.85rem;
+    z-index: 10;
+    background: rgba(10, 20, 32, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 0.72rem;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    pointer-events: none;
+  }
+  .orbit-hint svg {
+    color: #10b981;
+  }
+
+  /* Right Details Panel */
+  .detail-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+  .detail-card h3 {
+    font-size: 0.78rem;
+    color: var(--accent-emerald);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .detail-title-group {
+    margin-bottom: 0.85rem;
+  }
+  .seg-badge-pill {
+    font-family: monospace;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+  }
+  .sector-tag {
+    font-size: 0.68rem;
+    color: #34d399;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .main-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .sub-title {
+    font-size: 0.72rem;
+    color: var(--text-sub);
+    font-style: italic;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
+  }
+  .metric-box {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .metric-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 0.15rem;
+    font-weight: 600;
+  }
+  .metric-value {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .pearl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  .pearl-item svg {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    color: var(--accent-amber);
+  }
+
+  .surgical-pearls {
+    border-left: 3px solid #10b981;
+    background: rgba(16, 185, 129, 0.06);
+    padding: 0.6rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+
+  .phrase-box {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px dashed rgba(16, 185, 129, 0.4);
+    border-radius: 8px;
+    padding: 0.6rem;
+    margin-top: 0.6rem;
+  }
+  .phrase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+  }
+  .phrase-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-emerald);
+  }
+  .phrase-content {
+    font-size: 0.75rem;
+    color: #e2e8f0;
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 0.45rem;
+    border-radius: 6px;
+    user-select: all;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
