@@ -5,13 +5,15 @@ import Layout from '../../layouts/Layout.astro';
 <Layout 
   title="肝臟 Couinaud 8分段 3D 互動解剖系統 | 互動解剖圖鑑 - 黃冠智醫師" 
   description="Couinaud 肝臟 8 分段高擬真 3D 實體解剖系統。包含 360 度空間旋轉、3 條縱向肝靜脈、橫向門靜脈樹與超音波掃描切面指引。"
+  fullWidth={true}
+  hideFooter={true}
 >
   <!-- Three.js CDN dependencies -->
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
 
-  <div class="liver-app-wrapper">
+  <div class="liver-app-wrapper" id="liverAppWrapper">
     <!-- Subheader with breadcrumb & action controls -->
     <div class="anatomy-subnav">
       <div class="subnav-left">
@@ -27,6 +29,11 @@ import Layout from '../../layouts/Layout.astro';
       </div>
       
       <div class="subnav-right">
+        <!-- Fullscreen Button -->
+        <button class="btn btn-fullscreen" id="btn-fullscreen-toggle" onclick="toggleFullScreen()" title="進入/退出全螢幕診間衛教模式">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="icon-fs"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <span id="txt-fs-label">全螢幕模式</span>
+        </button>
         <button class="btn btn-outline" id="btn-toggle-quiz" onclick="toggleQuizMode()">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
           3D 測驗模式
@@ -38,7 +45,7 @@ import Layout from '../../layouts/Layout.astro';
       </div>
     </div>
 
-    <!-- Main 3-Column Workspace Grid -->
+    <!-- Main 3-Column Workspace Grid (Edge-to-edge full width) -->
     <div class="workspace-grid">
       
       <!-- Left Panel: 3D Sliders, Toggles & Structure List -->
@@ -462,8 +469,8 @@ import Layout from '../../layouts/Layout.astro';
       const container = document.getElementById('threejs-canvas-container');
       if (!container) return;
 
-      const width = container.clientWidth || (window.innerWidth > 1150 ? window.innerWidth - 680 : window.innerWidth);
-      const height = container.clientHeight || (window.innerHeight - 150);
+      const width = container.clientWidth || (window.innerWidth > 1150 ? window.innerWidth - 720 : window.innerWidth);
+      const height = container.clientHeight || (window.innerHeight - 130);
 
       // 1. Scene & Camera
       scene = new THREE.Scene();
@@ -512,7 +519,7 @@ import Layout from '../../layouts/Layout.astro';
       mouse = new THREE.Vector2();
       renderer.domElement.addEventListener('pointerdown', onPointerDown);
 
-      // 7. Auto-Resize Observer (Guarantees perfect sizing immediately)
+      // 7. Auto-Resize Observer
       const resizeObserver = new ResizeObserver(() => onWindowResize());
       resizeObserver.observe(container);
       window.addEventListener('resize', onWindowResize);
@@ -521,7 +528,6 @@ import Layout from '../../layouts/Layout.astro';
       onExplodeSlider(30);
       selectSegment('s6');
 
-      // Trigger initial resize after DOM settling
       setTimeout(onWindowResize, 100);
 
       // Animation Loop
@@ -877,6 +883,31 @@ import Layout from '../../layouts/Layout.astro';
       showToast('已重設為 3D 正面標準視角');
     }
 
+    // Fullscreen Toggle
+    function toggleFullScreen() {
+      const wrapper = document.getElementById('liverAppWrapper');
+      if (!document.fullscreenElement) {
+        if (wrapper && wrapper.requestFullscreen) {
+          wrapper.requestFullscreen();
+        } else if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const isFs = !!document.fullscreenElement;
+      const label = document.getElementById('txt-fs-label');
+      const btn = document.getElementById('btn-fullscreen-toggle');
+      if (label) label.textContent = isFs ? '退出全螢幕' : '全螢幕模式';
+      if (btn) btn.classList.toggle('active', isFs);
+      setTimeout(onWindowResize, 150);
+    });
+
     function onPointerDown(e) {
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -981,7 +1012,6 @@ import Layout from '../../layouts/Layout.astro';
       }
     }
 
-    // Initialize on DOM ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init3D);
     } else {
@@ -1011,6 +1041,8 @@ import Layout from '../../layouts/Layout.astro';
   .liver-app-wrapper {
     background-color: var(--bg-dark);
     color: var(--text-main);
+    width: 100vw;
+    max-width: 100%;
     min-height: calc(100vh - 72px);
     display: flex;
     flex-direction: column;
@@ -1018,6 +1050,17 @@ import Layout from '../../layouts/Layout.astro';
       radial-gradient(circle at 10% 10%, rgba(0, 229, 255, 0.08) 0%, transparent 45%),
       radial-gradient(circle at 90% 90%, rgba(37, 99, 235, 0.12) 0%, transparent 50%),
       radial-gradient(circle at 50% 50%, #0a1324 0%, var(--bg-dark) 100%);
+    overflow-x: hidden;
+  }
+
+  /* Fullscreen Mode Overrides */
+  .liver-app-wrapper:fullscreen,
+  .liver-app-wrapper:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
   }
 
   /* Sub Navigation Bar */
@@ -1025,7 +1068,7 @@ import Layout from '../../layouts/Layout.astro';
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.65rem 1.5rem;
+    padding: 0.65rem 1.75rem;
     background: rgba(10, 18, 36, 0.95);
     border-bottom: 1px solid var(--border-color);
   }
@@ -1093,6 +1136,23 @@ import Layout from '../../layouts/Layout.astro';
     border: none;
   }
 
+  .btn-fullscreen {
+    border: 1px solid rgba(0, 229, 255, 0.4);
+    background: rgba(0, 229, 255, 0.1);
+    color: #38bdf8;
+    font-weight: 700;
+  }
+  .btn-fullscreen:hover {
+    background: rgba(0, 229, 255, 0.22);
+    border-color: #00e5ff;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-fullscreen.active {
+    background: linear-gradient(135deg, #00e5ff, #2563eb);
+    color: #fff;
+  }
+
   .btn-outline {
     border: 1px solid var(--border-color);
     background: rgba(255, 255, 255, 0.05);
@@ -1128,20 +1188,28 @@ import Layout from '../../layouts/Layout.astro';
     color: #38bdf8;
   }
 
-  /* Main Workspace Grid */
+  /* Main Workspace Grid - Full Width & Height */
   .workspace-grid {
     display: grid;
-    grid-template-columns: 310px 1fr 370px;
+    grid-template-columns: 310px 1fr 380px;
     height: calc(100vh - 128px);
-    gap: 1rem;
-    padding: 1rem 1.5rem;
+    width: 100vw;
+    max-width: 100%;
+    gap: 0.85rem;
+    padding: 0.75rem 1.25rem 1rem;
     box-sizing: border-box;
+  }
+
+  .liver-app-wrapper:fullscreen .workspace-grid,
+  .liver-app-wrapper:-webkit-full-screen .workspace-grid {
+    height: calc(100vh - 56px);
   }
 
   @media (max-width: 1400px) {
     .workspace-grid {
       grid-template-columns: 280px 1fr 340px;
-      padding: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      gap: 0.65rem;
     }
   }
 
@@ -1159,7 +1227,7 @@ import Layout from '../../layouts/Layout.astro';
     border: 1px solid var(--border-color);
     border-radius: 16px;
     backdrop-filter: blur(20px);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1167,7 +1235,7 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   .panel-header {
-    padding: 0.8rem 1.1rem;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
@@ -1185,7 +1253,7 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   .panel-body {
-    padding: 1rem;
+    padding: 0.85rem;
     overflow-y: auto;
     flex: 1;
   }
@@ -1194,9 +1262,9 @@ import Layout from '../../layouts/Layout.astro';
     background: linear-gradient(135deg, rgba(0, 210, 255, 0.08), rgba(37, 99, 235, 0.08));
     border: 1px solid rgba(0, 210, 255, 0.25);
     border-radius: 10px;
-    padding: 0.85rem;
-    margin-bottom: 1rem;
-    font-size: 0.76rem;
+    padding: 0.75rem;
+    margin-bottom: 0.85rem;
+    font-size: 0.75rem;
     line-height: 1.5;
   }
   .concept-title {
@@ -1211,10 +1279,10 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   .control-row {
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.75rem;
     background: rgba(0, 0, 0, 0.25);
     border-radius: 10px;
-    padding: 0.75rem 0.9rem;
+    padding: 0.65rem 0.8rem;
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
@@ -1222,8 +1290,8 @@ import Layout from '../../layouts/Layout.astro';
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.4rem;
-    font-size: 0.76rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #cbd5e1;
   }
@@ -1272,21 +1340,21 @@ import Layout from '../../layouts/Layout.astro';
     font-weight: 700;
     color: var(--text-sub);
     text-transform: uppercase;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.35rem;
     letter-spacing: 0.05em;
   }
 
   .segment-grid-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.45rem;
-    margin-bottom: 1rem;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
   }
 
   .seg-card-btn {
     display: flex;
     flex-direction: column;
-    padding: 0.55rem 0.7rem;
+    padding: 0.5rem 0.65rem;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1315,11 +1383,11 @@ import Layout from '../../layouts/Layout.astro';
   .seg-num-pill {
     font-family: monospace;
     font-weight: 800;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: #38bdf8;
   }
   .seg-loc-tag {
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     color: var(--text-muted);
     font-weight: 600;
   }
@@ -1360,21 +1428,21 @@ import Layout from '../../layouts/Layout.astro';
 
   .view-angles-toolbar {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
+    top: 0.85rem;
+    left: 0.85rem;
     z-index: 10;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.35rem;
     background: rgba(10, 18, 36, 0.85);
     backdrop-filter: blur(12px);
-    padding: 0.35rem 0.5rem;
+    padding: 0.3rem 0.45rem;
     border-radius: 10px;
     border: 1px solid var(--border-color);
   }
 
   .view-btn {
-    padding: 0.35rem 0.65rem;
+    padding: 0.3rem 0.6rem;
     border-radius: 6px;
     border: 1px solid transparent;
     background: transparent;
@@ -1397,19 +1465,19 @@ import Layout from '../../layouts/Layout.astro';
 
   .orbit-hint {
     position: absolute;
-    bottom: 1rem;
-    left: 1rem;
+    bottom: 0.85rem;
+    left: 0.85rem;
     z-index: 10;
     background: rgba(10, 18, 36, 0.85);
     backdrop-filter: blur(10px);
-    padding: 0.45rem 0.85rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     font-size: 0.72rem;
     color: var(--text-sub);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
     pointer-events: none;
   }
   .orbit-hint svg {
@@ -1421,45 +1489,45 @@ import Layout from '../../layouts/Layout.astro';
     background: rgba(0, 0, 0, 0.3);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 0.85rem;
-    margin-bottom: 0.85rem;
+    padding: 0.8rem;
+    margin-bottom: 0.75rem;
   }
   .detail-card h3 {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--accent-cyan);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.45rem;
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
 
   .detail-title-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.85rem;
   }
   .seg-badge-pill {
     font-family: monospace;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 800;
-    padding: 0.2rem 0.55rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 6px;
     background: linear-gradient(135deg, #00e5ff, #2563eb);
     color: #000;
   }
   .sector-tag {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: #38bdf8;
     font-weight: 700;
     text-transform: uppercase;
   }
   .main-title {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 800;
     color: #ffffff;
   }
   .sub-title {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-sub);
     font-style: italic;
   }
@@ -1467,12 +1535,12 @@ import Layout from '../../layouts/Layout.astro';
   .metric-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-bottom: 0.85rem;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
   }
   .metric-box {
     background: rgba(255, 255, 255, 0.03);
-    padding: 0.55rem 0.7rem;
+    padding: 0.5rem 0.65rem;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
@@ -1483,7 +1551,7 @@ import Layout from '../../layouts/Layout.astro';
     font-weight: 600;
   }
   .metric-value {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: #f8fafc;
   }
@@ -1492,8 +1560,8 @@ import Layout from '../../layouts/Layout.astro';
     display: flex;
     align-items: flex-start;
     gap: 0.45rem;
-    margin-bottom: 0.55rem;
-    font-size: 0.78rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.76rem;
     line-height: 1.5;
     color: #cbd5e1;
   }
@@ -1506,10 +1574,10 @@ import Layout from '../../layouts/Layout.astro';
   .surgical-pearls {
     border-left: 3px solid #f43f5e;
     background: rgba(244, 63, 94, 0.06);
-    padding: 0.65rem;
+    padding: 0.6rem;
     border-radius: 0 8px 8px 0;
-    margin-bottom: 0.85rem;
-    font-size: 0.76rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
     line-height: 1.45;
   }
 
@@ -1517,8 +1585,8 @@ import Layout from '../../layouts/Layout.astro';
     background: rgba(16, 185, 129, 0.08);
     border: 1px dashed rgba(16, 185, 129, 0.4);
     border-radius: 8px;
-    padding: 0.65rem;
-    margin-top: 0.65rem;
+    padding: 0.6rem;
+    margin-top: 0.6rem;
   }
   .phrase-header {
     display: flex;

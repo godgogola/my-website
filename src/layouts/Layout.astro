@@ -5,6 +5,8 @@ interface Props {
   description: string;
   image?: string;
   article?: boolean;
+  fullWidth?: boolean;
+  hideFooter?: boolean;
 }
 
 const {
@@ -13,6 +15,8 @@ const {
   description = '豐田診所院長黃冠智醫師的官方網站。提供胃食道逆流、大腸鏡檢查、肝病防治、減重門診等肝膽腸胃內科專業醫學筆記與健康指南。',
   image = '/images/og-default.jpg',
   article = false,
+  fullWidth = false,
+  hideFooter = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuanggi.vercel.app');
@@ -143,11 +147,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     </header>
 
     <!-- 主要內容區 -->
-    <main class="page-container">
+    <main class:list={['page-container', { 'page-container-full': fullWidth }]}>
       <slot />
     </main>
 
     <!-- 頁尾 (Veterinary Clinic Dark Navy Footer) -->
+    { !hideFooter && (
     <footer class="footer-vet">
       <div class="footer-inner">
         <div class="footer-top">
@@ -196,6 +201,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
         </div>
       </div>
     </footer>
+    )}
 
     <script>
       // 導覽列 AnimatedTabs 彈簧滑塊邏輯
@@ -574,10 +580,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     z-index: 1;
   }
 
+  .page-container-full {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+  }
+
   @media (max-width: 768px) {
     .page-container {
       margin-top: 8px;
       padding: 0 10px 48px;
+    }
+    .page-container-full {
+      margin: 0 !important;
+      padding: 0 !important;
     }
   }
 
