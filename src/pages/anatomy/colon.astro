@@ -1248,7 +1248,7 @@ import Layout from '../../layouts/Layout.astro';
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.65rem 1.75rem;
+    padding: 0.75rem 1.5rem;
     background: rgba(10, 20, 32, 0.95);
     border-bottom: 1px solid var(--border-color);
   }
@@ -1262,9 +1262,9 @@ import Layout from '../../layouts/Layout.astro';
   .back-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.45rem;
     color: var(--accent-emerald);
-    font-size: 0.85rem;
+    font-size: 1.05rem;
     font-weight: 700;
     text-decoration: none;
     transition: all 0.2s;
@@ -1276,14 +1276,14 @@ import Layout from '../../layouts/Layout.astro';
 
   .divider {
     color: #475569;
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
 
   .current-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    font-size: 0.82rem;
+    font-size: 1rem;
     color: #e2e8f0;
     font-weight: 600;
   }
@@ -1306,10 +1306,10 @@ import Layout from '../../layouts/Layout.astro';
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    padding: 0.45rem 0.85rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    padding: 0.55rem 1rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
@@ -1358,7 +1358,7 @@ import Layout from '../../layouts/Layout.astro';
   /* Main Workspace Grid */
   .workspace-grid {
     display: grid;
-    grid-template-columns: 320px 1fr 380px;
+    grid-template-columns: 340px 1fr 400px;
     height: calc(100vh - 128px);
     width: 100vw;
     max-width: 100%;
@@ -1375,31 +1375,35 @@ import Layout from '../../layouts/Layout.astro';
   /* Mobile Tabs Navigation Bar */
   .mobile-tabs-nav {
     display: none;
-    gap: 0.4rem;
+    gap: 0.5rem;
     padding: 0.2rem 0;
     margin-bottom: 0.2rem;
   }
 
   .mobile-tab-btn {
     flex: 1;
-    padding: 0.55rem 0.35rem;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    background: rgba(16, 28, 52, 0.85);
-    color: var(--text-sub);
-    font-size: 0.78rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    background: rgba(16, 28, 52, 0.92);
+    color: #cbd5e1;
+    font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
     text-align: center;
     transition: all 0.2s;
     white-space: nowrap;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .mobile-tab-btn.active {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.25));
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0.35));
     border-color: #10b981;
     color: #34d399;
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
   }
 
   .scope-control-panel {
@@ -1413,7 +1417,7 @@ import Layout from '../../layouts/Layout.astro';
       display: flex;
       flex-direction: column;
       padding: 0.5rem;
-      gap: 0.65rem;
+      gap: 0.75rem;
     }
 
     .canvas-panel {
@@ -1426,7 +1430,7 @@ import Layout from '../../layouts/Layout.astro';
     .scope-control-panel {
       order: 2;
       display: block;
-      padding: 0.75rem;
+      padding: 0.85rem;
     }
 
     .mobile-tabs-nav {
@@ -1453,7 +1457,7 @@ import Layout from '../../layouts/Layout.astro';
       max-width: calc(100% - 1rem);
       overflow-x: auto;
       flex-wrap: nowrap;
-      padding: 0.25rem 0.35rem;
+      padding: 0.35rem 0.5rem;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
@@ -1463,19 +1467,19 @@ import Layout from '../../layouts/Layout.astro';
 
     .view-btn {
       white-space: nowrap;
-      font-size: 0.7rem;
-      padding: 0.25rem 0.45rem;
+      font-size: 0.95rem;
+      padding: 0.45rem 0.8rem;
     }
 
     .anatomy-subnav {
-      padding: 0.5rem 0.75rem;
+      padding: 0.6rem 0.85rem;
       flex-direction: row;
       flex-wrap: nowrap;
-      gap: 0.35rem;
+      gap: 0.5rem;
     }
 
     .subnav-left {
-      gap: 0.35rem;
+      gap: 0.4rem;
       min-width: 0;
       flex-shrink: 1;
     }
@@ -1489,15 +1493,14 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     .subnav-right {
-      gap: 0.35rem;
+      gap: 0.4rem;
       flex-shrink: 0;
     }
 
     .subnav-right .btn {
-      padding: 0.35rem 0.5rem;
-      font-size: 0.72rem;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.95rem;
       white-space: nowrap !important;
-      letter-spacing: -0.2px;
     }
   }
 
@@ -1554,7 +1557,7 @@ import Layout from '../../layouts/Layout.astro';
 
   .scope-cm-badge {
     font-family: monospace;
-    font-size: 0.95rem;
+    font-size: 1.3rem;
     font-weight: 900;
     color: #00e5ff;
     text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
@@ -1563,61 +1566,62 @@ import Layout from '../../layouts/Layout.astro';
   .scope-milestones {
     display: flex;
     justify-content: space-between;
-    font-size: 0.62rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin-top: 0.35rem;
   }
 
   .scope-status-box {
-    margin-top: 0.5rem;
+    margin-top: 0.65rem;
     background: rgba(0, 0, 0, 0.35);
-    border-radius: 8px;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.73rem;
-    line-height: 1.45;
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+    font-size: 1.05rem;
+    line-height: 1.55;
     color: #e2e8f0;
     display: flex;
     align-items: flex-start;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
   /* Pathology Button Group */
   .pathology-btn-group {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 0.45rem;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
   .btn-pathology {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.65rem 0.8rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: var(--text-main);
-    font-size: 0.76rem;
+    font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
     text-align: left;
+    min-height: 48px;
   }
   .btn-pathology:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
   }
   .btn-pathology.active {
-    background: rgba(244, 63, 94, 0.18);
+    background: rgba(244, 63, 94, 0.25);
     border-color: #f43f5e;
-    box-shadow: 0 0 12px rgba(244, 63, 94, 0.35);
-    color: #fecdd3;
+    box-shadow: 0 0 14px rgba(244, 63, 94, 0.4);
+    color: #ffffff;
   }
 
   .path-dot {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
   }
   .dot-polyp { background: #f43f5e; box-shadow: 0 0 6px #f43f5e; }
@@ -1625,120 +1629,122 @@ import Layout from '../../layouts/Layout.astro';
   .dot-hemorrhoid { background: #c084fc; box-shadow: 0 0 6px #c084fc; }
 
   .pathology-info-text {
-    font-size: 0.68rem;
-    color: var(--text-sub);
-    line-height: 1.45;
+    font-size: 1rem;
+    color: #cbd5e1;
+    line-height: 1.6;
   }
 
   .control-row {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.85rem;
     background: rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
-    padding: 0.65rem 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .control-label-group {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.35rem;
-    font-size: 0.75rem;
+    margin-bottom: 0.45rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #cbd5e1;
+    color: #f1f5f9;
   }
 
   .slider-val {
     font-family: monospace;
     color: #10b981;
-    font-size: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 800;
   }
 
   .slider-subtext-single {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
+    font-size: 0.92rem;
+    color: #94a3b8;
+    margin-top: 0.3rem;
   }
 
   input[type=range] {
     -webkit-appearance: none;
     width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.15);
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.18);
     outline: none;
   }
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: #10b981;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
-    border: 2px solid #ffffff;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.9);
+    border: 2.5px solid #ffffff;
   }
 
   .section-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--text-sub);
+    font-size: 1rem;
+    font-weight: 800;
+    color: #34d399;
     text-transform: uppercase;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.45rem;
     letter-spacing: 0.05em;
   }
 
   .segment-grid-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.4rem;
+    gap: 0.5rem;
     margin-bottom: 0.85rem;
   }
 
   .seg-card-btn {
     display: flex;
     flex-direction: column;
-    padding: 0.5rem 0.65rem;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.65rem 0.8rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-main);
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: left;
+    min-height: 52px;
   }
   .seg-card-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--border-bright);
     transform: translateY(-2px);
   }
   .seg-card-btn.active {
-    background: rgba(16, 185, 129, 0.15);
+    background: rgba(16, 185, 129, 0.2);
     border-color: #10b981;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
   }
 
   .seg-card-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.2rem;
   }
   .seg-num-pill {
     font-family: monospace;
     font-weight: 800;
-    font-size: 0.82rem;
+    font-size: 1rem;
     color: #34d399;
   }
   .seg-loc-tag {
-    font-size: 0.6rem;
-    color: var(--text-muted);
+    font-size: 0.88rem;
+    color: #94a3b8;
     font-weight: 600;
   }
   .seg-card-name {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #f1f5f9;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1772,34 +1778,34 @@ import Layout from '../../layouts/Layout.astro';
     z-index: 10;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
-    background: rgba(10, 20, 32, 0.85);
+    gap: 0.45rem;
+    background: rgba(10, 20, 32, 0.9);
     backdrop-filter: blur(12px);
-    padding: 0.3rem 0.45rem;
-    border-radius: 10px;
+    padding: 0.45rem 0.6rem;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
   }
 
   .view-btn {
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
     border: 1px solid transparent;
     background: transparent;
-    color: var(--text-sub);
-    font-size: 0.75rem;
-    font-weight: 600;
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
   }
   .view-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
   }
   .view-btn.active {
-    background: rgba(16, 185, 129, 0.2);
-    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.5);
     color: #34d399;
-    font-weight: 700;
+    font-weight: 800;
   }
 
   .orbit-hint {
@@ -1809,11 +1815,11 @@ import Layout from '../../layouts/Layout.astro';
     z-index: 10;
     background: rgba(10, 20, 32, 0.85);
     backdrop-filter: blur(10px);
-    padding: 0.4rem 0.75rem;
+    padding: 0.5rem 0.85rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    font-size: 0.72rem;
-    color: var(--text-sub);
+    font-size: 0.95rem;
+    color: #cbd5e1;
     display: flex;
     align-items: center;
     gap: 0.45rem;
@@ -1826,126 +1832,130 @@ import Layout from '../../layouts/Layout.astro';
   /* Right Details Panel */
   .detail-card {
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 0.8rem;
-    margin-bottom: 0.75rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1rem;
+    margin-bottom: 0.85rem;
   }
   .detail-card h3 {
-    font-size: 0.78rem;
+    font-size: 1rem;
     color: var(--accent-emerald);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.55rem;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.45rem;
+    font-weight: 800;
   }
 
   .detail-title-group {
-    margin-bottom: 0.85rem;
+    margin-bottom: 1rem;
   }
   .seg-badge-pill {
     font-family: monospace;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 800;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
+    padding: 0.25rem 0.65rem;
+    border-radius: 8px;
     background: linear-gradient(135deg, #10b981, #059669);
     color: #fff;
   }
   .sector-tag {
-    font-size: 0.68rem;
+    font-size: 0.95rem;
     color: #34d399;
     font-weight: 700;
     text-transform: uppercase;
   }
   .main-title {
-    font-size: 1.2rem;
-    font-weight: 800;
+    font-size: 1.45rem;
+    font-weight: 900;
     color: #ffffff;
+    margin-top: 0.2rem;
   }
   .sub-title {
-    font-size: 0.72rem;
-    color: var(--text-sub);
+    font-size: 1rem;
+    color: #94a3b8;
     font-style: italic;
   }
 
   .metric-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.45rem;
-    margin-bottom: 0.75rem;
+    gap: 0.55rem;
+    margin-bottom: 0.85rem;
   }
   .metric-box {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 0.5rem 0.65rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.65rem 0.8rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .metric-label {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-bottom: 0.15rem;
-    font-weight: 600;
+    font-size: 0.92rem;
+    color: #94a3b8;
+    margin-bottom: 0.2rem;
+    font-weight: 700;
   }
   .metric-value {
-    font-size: 0.76rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 800;
     color: #f8fafc;
   }
 
   .pearl-item {
     display: flex;
     align-items: flex-start;
-    gap: 0.45rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.76rem;
-    line-height: 1.5;
-    color: #cbd5e1;
+    gap: 0.55rem;
+    margin-bottom: 0.65rem;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: #e2e8f0;
   }
   .pearl-item svg {
     flex-shrink: 0;
-    margin-top: 0.2rem;
+    margin-top: 0.3rem;
     color: var(--accent-amber);
   }
 
   .surgical-pearls {
-    border-left: 3px solid #10b981;
-    background: rgba(16, 185, 129, 0.06);
-    padding: 0.6rem;
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 0.75rem;
-    font-size: 0.75rem;
-    line-height: 1.45;
+    border-left: 4px solid #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 0.85rem;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 0.85rem;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: #f1f5f9;
   }
 
   .phrase-box {
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px dashed rgba(16, 185, 129, 0.4);
-    border-radius: 8px;
-    padding: 0.6rem;
-    margin-top: 0.6rem;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1.5px dashed rgba(16, 185, 129, 0.5);
+    border-radius: 10px;
+    padding: 0.85rem;
+    margin-top: 0.75rem;
   }
   .phrase-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.45rem;
   }
   .phrase-title {
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 800;
     color: var(--accent-emerald);
   }
   .phrase-content {
-    font-size: 0.75rem;
+    font-size: 1.05rem;
     color: #e2e8f0;
     font-family: monospace;
-    background: rgba(0, 0, 0, 0.35);
-    padding: 0.45rem;
-    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.65rem;
+    border-radius: 8px;
     user-select: all;
+    line-height: 1.5;
   }
 
   /* Toast */
@@ -1955,10 +1965,10 @@ import Layout from '../../layouts/Layout.astro';
     right: 2rem;
     background: linear-gradient(135deg, #10b981, #059669);
     color: #fff;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 0.75rem 1.25rem;
-    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    padding: 0.85rem 1.4rem;
+    border-radius: 12px;
     box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
     opacity: 0;
     transform: translateY(20px);

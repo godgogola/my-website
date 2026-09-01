@@ -291,10 +291,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   }
 
   html {
+    font-size: 18px; /* 全站 18px 基礎字級 (1rem = 18px，老花與長輩閱讀友善) */
     font-family: 'Plus Jakarta Sans', 'Poppins', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--color-bg-page);
     color: var(--color-text-body);
-    line-height: 1.6;
+    line-height: 1.75;
     scroll-behavior: smooth;
   }
 
@@ -401,7 +402,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   }
 
   .brand-name {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--color-text-title);
     letter-spacing: -0.3px;
@@ -409,7 +410,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   }
 
   .brand-subtitle {
-    font-size: 0.76rem;
+    font-size: 1rem;
     color: var(--color-text-muted);
     font-weight: 600;
   }
@@ -448,10 +449,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   .nav-item {
     position: relative;
     z-index: 2;
-    padding: 7px 18px;
+    padding: 8px 20px;
     border-radius: 9999px;
-    font-size: 0.88rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--color-text-muted);
     text-decoration: none;
     transition: color 0.2s ease;
@@ -482,9 +483,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     gap: 6px;
     background: linear-gradient(135deg, var(--color-primary) 0%, #5ba3b8 100%);
     color: #ffffff;
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 700;
-    padding: 8px 18px;
+    padding: 9px 20px;
     border-radius: 9999px;
     text-decoration: none;
     box-shadow: 0 4px 12px rgba(74, 144, 164, 0.28);
@@ -502,9 +503,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     gap: 6px;
     background: linear-gradient(135deg, var(--color-coral) 0%, #f07c5f 100%);
     color: #ffffff;
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 700;
-    padding: 8px 16px;
+    padding: 9px 18px;
     border-radius: 9999px;
     text-decoration: none;
     box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
@@ -516,17 +517,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     box-shadow: 0 6px 16px rgba(231, 111, 81, 0.45);
   }
 
-  /* ── 手機版雙層浮動卡片導覽列 (如附圖排版) ── */
+  /* ── 手機版 2x2 大字號長輩友善觸控導覽列 ── */
   @media (max-width: 768px) {
     .navbar-vet-wrapper {
       top: 8px;
       padding: 0 10px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .navbar-vet {
       flex-direction: column;
-      gap: 10px;
-      padding: 12px 14px 14px;
+      gap: 12px;
+      padding: 14px 16px 16px;
       border-radius: 24px;
     }
     .brand-row {
@@ -537,44 +538,56 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       gap: 12px;
     }
     .brand-icon {
-      width: 42px;
-      height: 42px;
+      width: 48px;
+      height: 48px;
     }
     .brand-name {
-      font-size: 1.28rem;
+      font-size: 1.45rem;
       font-weight: 900;
     }
     .brand-subtitle {
-      font-size: 0.86rem;
+      font-size: 1.02rem;
       font-weight: 600;
     }
     .nav-track-wrapper {
       width: 100%;
-      overflow: hidden;
     }
     .nav-track {
       width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 3px;
-      box-sizing: border-box;
-      border-radius: 9999px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+    }
+    .nav-indicator {
+      display: none;
     }
     .nav-item {
-      flex: 1;
-      min-width: 0;
-      padding: 6px 3px;
-      font-size: 0.8rem;
+      font-size: 1.05rem; /* ~19px 大字號 */
       font-weight: 700;
-      letter-spacing: -0.3px;
+      padding: 11px 8px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1.5px solid var(--color-border);
+      box-shadow: 0 2px 8px rgba(74, 144, 164, 0.08);
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      color: var(--color-text-title);
       white-space: nowrap;
+      transition: all 0.2s ease;
     }
-    @media (max-width: 380px) {
-      .nav-item {
-        font-size: 0.74rem;
-        padding: 5px 2px;
-      }
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--color-primary), #3b7688);
+      color: #ffffff;
+      border-color: var(--color-primary);
+      box-shadow: 0 4px 14px rgba(74, 144, 164, 0.35);
+      font-weight: 800;
     }
     .nav-actions {
       display: none;
