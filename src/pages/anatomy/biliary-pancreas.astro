@@ -4,7 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout 
   title="肝膽胰與十二指腸 3D 互動解剖系統 | 互動解剖圖鑑 - 黃冠智醫師" 
-  description="教科書級肝膽胰與十二指腸 3D 實體模型。展示肝臟、膽囊、膽道系統 (CBD)、胰臟與主胰管、十二指腸壺腹 (Ampulla of Vater) 以及膽結石/胰臟炎病灶標記。"
+  description="醫學教科書標準 3D 肝膽胰與十二指腸解剖模型。完整呈現肝右葉左葉與鐮狀韌帶、膽囊與膽囊管、總膽管 (CBD)、小葉腺泡質地胰臟與主副胰管、十二指腸壺腹 (Ampulla of Vater) 以及臨床病灶標記。"
   fullWidth={true}
   hideFooter={true}
 >
@@ -24,7 +24,7 @@ import Layout from '../../layouts/Layout.astro';
         <div class="divider">/</div>
         <div class="current-badge">
           <span class="pulse-dot"></span>
-          <span>肝膽胰與十二指腸系統 (Hepatobiliary-Pancreatic System)</span>
+          <span>肝膽胰與十二指腸 (教科書標準 3D 解剖模型)</span>
         </div>
       </div>
       
@@ -91,9 +91,9 @@ import Layout from '../../layouts/Layout.astro';
           <div class="control-row">
             <div class="control-label-group">
               <span>肝臟透明度 (Liver Opacity)</span>
-              <span id="txt-liver-opacity-val" class="slider-val">80%</span>
+              <span id="txt-liver-opacity-val" class="slider-val">85%</span>
             </div>
-            <input type="range" id="slider-liver-opacity" min="0" max="100" value="80" oninput="onLiverOpacitySlider(this.value)">
+            <input type="range" id="slider-liver-opacity" min="0" max="100" value="85" oninput="onLiverOpacitySlider(this.value)">
             <div class="slider-subtext-single">
               降低透明度可直接透視下方膽管樹 (CBD) 與胰管走向
             </div>
@@ -106,7 +106,7 @@ import Layout from '../../layouts/Layout.astro';
           <div class="segment-grid-list">
             <div class="seg-card-btn" onclick="selectSegment('liver')" id="btn-seg-liver">
               <div class="seg-card-top">
-                <span class="seg-num-pill">人體最大腺體</span>
+                <span class="seg-num-pill">左葉/右葉/鐮狀韌帶</span>
                 <span class="seg-loc-tag">右上腹穹隆</span>
               </div>
               <div class="seg-card-name">肝臟 (Liver / Hepar)</div>
@@ -114,7 +114,7 @@ import Layout from '../../layouts/Layout.astro';
 
             <div class="seg-card-btn" onclick="selectSegment('gallbladder')" id="btn-seg-gallbladder">
               <div class="seg-card-top">
-                <span class="seg-num-pill">膽汁濃縮庫</span>
+                <span class="seg-num-pill">底/體/頸/螺旋管</span>
                 <span class="seg-loc-tag">肝下膽囊窩</span>
               </div>
               <div class="seg-card-name">膽囊與膽囊管 (Gallbladder)</div>
@@ -122,15 +122,15 @@ import Layout from '../../layouts/Layout.astro';
 
             <div class="seg-card-btn" onclick="selectSegment('biliary_tree')" id="btn-seg-biliary_tree">
               <div class="seg-card-top">
-                <span class="seg-num-pill">總膽管 (CBD)</span>
-                <span class="seg-loc-tag">膽管匯流通路</span>
+                <span class="seg-num-pill">左右肝管/總膽管</span>
+                <span class="seg-loc-tag">膽道匯流通路</span>
               </div>
               <div class="seg-card-name">膽道系統 (Biliary Tree)</div>
             </div>
 
             <div class="seg-card-btn active" onclick="selectSegment('pancreas')" id="btn-seg-pancreas">
               <div class="seg-card-top">
-                <span class="seg-num-pill">內外分泌腺</span>
+                <span class="seg-num-pill">腺泡小葉顆粒質地</span>
                 <span class="seg-loc-tag">腹膜後橫行</span>
               </div>
               <div class="seg-card-name">胰臟 (Pancreas)</div>
@@ -138,15 +138,15 @@ import Layout from '../../layouts/Layout.astro';
 
             <div class="seg-card-btn" onclick="selectSegment('pancreatic_duct')" id="btn-seg-pancreatic_duct">
               <div class="seg-card-top">
-                <span class="seg-num-pill">Wirsung 管</span>
+                <span class="seg-num-pill">主胰管與副胰管</span>
                 <span class="seg-loc-tag">胰液排泄主幹</span>
               </div>
-              <div class="seg-card-name">主胰管 (Pancreatic Duct)</div>
+              <div class="seg-card-name">胰管系統 (Pancreatic Ducts)</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('ampulla')" id="btn-seg-ampulla">
               <div class="seg-card-top">
-                <span class="seg-num-pill">膽胰匯流樞紐</span>
+                <span class="seg-num-pill">奧狄氏括約肌/乳頭</span>
                 <span class="seg-loc-tag">十二指腸降段</span>
               </div>
               <div class="seg-card-name">十二指腸壺腹 (Ampulla)</div>
@@ -162,10 +162,10 @@ import Layout from '../../layouts/Layout.astro';
 
             <div class="seg-card-btn" onclick="selectSegment('vessels')" id="btn-seg-vessels">
               <div class="seg-card-top">
-                <span class="seg-num-pill">下腔靜脈/主動脈</span>
-                <span class="seg-loc-tag">後腹腔大血管</span>
+                <span class="seg-num-pill">下腔靜脈/脾動脈</span>
+                <span class="seg-loc-tag">大血管供應</span>
               </div>
-              <div class="seg-card-name">下腔靜脈與腹主動脈</div>
+              <div class="seg-card-name">後腹腔血管 (Vessels)</div>
             </div>
           </div>
 
@@ -179,7 +179,7 @@ import Layout from '../../layouts/Layout.astro';
           <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面全覽 (Coronal View)</button>
           <button class="view-btn" id="view-btn-ampulla" onclick="setPresetView('ampulla')">十二指腸壺腹與膽胰匯流特寫</button>
           <button class="view-btn" id="view-btn-gallbladder" onclick="setPresetView('gallbladder')">膽囊與肝門膽管特寫</button>
-          <button class="view-btn" id="view-btn-pancreas" onclick="setPresetView('pancreas')">胰臟體部與主胰管視角</button>
+          <button class="view-btn" id="view-btn-pancreas" onclick="setPresetView('pancreas')">胰臟腺體與主副胰管視角</button>
           <button class="view-btn" id="view-btn-posterior" onclick="setPresetView('posterior')">後腹膜大血管關係視角</button>
         </div>
 
@@ -207,18 +207,18 @@ import Layout from '../../layouts/Layout.astro';
           <!-- Header Title Info -->
           <div class="detail-title-group">
             <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.3rem;">
-              <span id="det-pill" class="seg-badge-pill">腹膜後深層器官</span>
+              <span id="det-pill" class="seg-badge-pill">腹膜後深層腺體</span>
               <span id="det-sector" class="sector-tag">Pancreas · Duct of Wirsung</span>
             </div>
             <div id="det-title-zh" class="main-title">胰臟 (Pancreas)</div>
-            <div id="det-title-en" class="sub-title">Pancreas · Caput, Corpus, Cauda</div>
+            <div id="det-title-en" class="sub-title">Pancreas · Caput, Corpus, Cauda · Islets</div>
           </div>
 
           <!-- Metric Grid -->
           <div class="metric-grid">
             <div class="metric-box">
               <div class="metric-label">解剖分區</div>
-              <div id="det-regions" class="metric-value">胰頭 (Head)、胰體 (Body)、胰尾 (Tail)</div>
+              <div id="det-regions" class="metric-value">胰頭 (Head)、胰頸 (Neck)、胰體 (Body)、胰尾 (Tail)</div>
             </div>
             <div class="metric-box">
               <div class="metric-label">主要生理功能</div>
@@ -226,17 +226,17 @@ import Layout from '../../layouts/Layout.astro';
             </div>
             <div class="metric-box">
               <div class="metric-label">超音波掃描特徵</div>
-              <div id="det-endofeature" class="metric-value">逗號形 (Comma shape)，回音略高於肝臟</div>
+              <div id="det-endofeature" class="metric-value">逗號形 (Comma shape)，小葉顆粒狀均勻質地</div>
             </div>
             <div class="metric-box">
               <div class="metric-label">常見疾病好發</div>
-              <div id="det-disease" class="metric-value">急性/慢性胰臟炎、胰臟囊腫、胰臟頭部癌</div>
+              <div id="det-disease" class="metric-value">急性/慢性胰臟炎、胰臟囊腫、胰臟頭部腺癌</div>
             </div>
           </div>
 
           <!-- Clinical Pearls Box -->
           <div class="surgical-pearls" id="det-pearls-box">
-            <strong>臨床診療重點：</strong> 胰臟深居後腹膜腔，橫臥於脊椎前方。胰頭被十二指腸 C-loop 緊密環抱，胰尾則指向脾門。主胰管（Duct of Wirsung）直徑正常小於 2~3mm，若伴隨總膽管同時擴張（雙管徵象 Double-duct sign），需高度警惕胰頭部腫瘤！
+            <strong>臨床診療重點：</strong> 胰臟深居後腹膜腔，橫臥於脊椎前方。表面覆蓋豐富的腺泡小葉（Acinar lobules）。胰頭被十二指腸 C-loop 緊密環抱，胰尾則指向脾門。主胰管（Duct of Wirsung）直徑正常小於 2~3mm，若伴隨總膽管同時擴張（雙管徵象 Double-duct sign），需高度警惕胰頭部腫瘤！
           </div>
 
           <!-- Clinical Pearls List -->
@@ -285,30 +285,30 @@ import Layout from '../../layouts/Layout.astro';
     const hbpData = {
       liver: {
         titleZh: '肝臟 (Liver / Hepar)',
-        titleEn: 'Hepar · Right & Left Lobes · Porta Hepatis',
-        pill: '人體最大實質腺體',
-        regions: '右葉 (Right lobe)、左葉 (Left lobe)、尾狀葉/方葉',
+        titleEn: 'Hepar · Right & Left Lobes · Falciform Ligament',
+        pill: '右葉、左葉與鐮狀韌帶',
+        regions: '肝右葉 (Right lobe)、肝左葉 (Left lobe)、鐮狀韌帶 (Falciform ligament)',
         function: '製造膽汁 (Bile)、代謝合成、解毒、儲存肝醣',
         endofeature: '細緻均勻中等回音，下緣緊鄰膽囊窩與肝門部',
         disease: '脂肪肝、病毒性肝炎、肝硬化、肝細胞癌 (HCC)、血管瘤',
         sector: 'Right Hypochondrium & Epigastrium',
-        pearlsBox: '<strong>臨床超音波重點：</strong> 肝臟為膽汁製造源頭，每天分泌約 600~1000ml 膽汁經由左右肝管匯流排出。肝門部（Porta hepatis）為門靜脈、肝動脈與總肝管共同進出之解剖三合體（Portal triad）。',
+        pearlsBox: '<strong>臨床超音波重點：</strong> 肝臟分為較大的右葉與較扁平的左葉，由前方的 <strong>鐮狀韌帶 (Falciform ligament)</strong> 清晰分隔。肝細胞製造膽汁後，經由左右肝管在肝門部匯流入總肝管。',
         pearls: [
           '<strong>超音波肝門三合體（Mickey Mouse sign）</strong>：短軸切面可見門靜脈（頭）、肝動脈（右耳）與總膽管（左耳）。',
           '<strong>膽汁排泄通路</strong>：肝細胞製造膽汁 $\\to$ 膽微管 $\\to$ 左右肝管 $\\to$ 總肝管 $\\to$ 膽囊儲存濃縮。'
         ],
-        phrase: 'Abdominal Sonography: Liver parenchymal echogenicity is homogeneous. No focal hyperechoic or hypoechoic space-occupying lesion. Portal triad is unremarkable.'
+        phrase: 'Abdominal Sonography: Liver right and left lobes visualized with homogeneous parenchymal echogenicity. Falciform ligament and portal triad are unremarkable. No focal space-occupying lesion.'
       },
       gallbladder: {
         titleZh: '膽囊與膽囊管 (Gallbladder & Cystic Duct)',
         titleEn: 'Vesica biliaris & Ductus cysticus',
-        pill: '膽汁濃縮與儲存囊袋',
-        regions: '膽囊底部 (Fundus)、體部 (Body)、頸部 (Neck)、螺旋膽囊管',
+        pill: '梨形膽汁濃縮庫',
+        regions: '膽囊底部 (Fundus)、體部 (Body)、頸部 (Neck)、螺旋膽囊管 (Cystic duct)',
         function: '貯存並濃縮膽汁 (達 5~10 倍)，進食油脂時收縮排空',
         endofeature: '無回音液體腔（Anechoic），薄壁 (< 3mm)',
         disease: '膽囊結石 (Gallstones)、膽囊息肉 (GB Polyp)、急性/慢性膽囊炎、膽囊腺肌增生症',
         sector: 'Subhepatic Fossa',
-        pearlsBox: '<strong>臨床超音波重點：</strong> 膽囊長約 7~10cm，位於肝臟第 4/5 分段交界下方的膽囊窩。膽囊管內具有螺旋狀的 <strong>Heister 螺旋瓣（Spiral valves of Heister）</strong>，微小結石通過時容易卡在膽囊頸（Hartmann\'s pouch）引發急性膽絞痛。',
+        pearlsBox: '<strong>臨床超音波重點：</strong> 膽囊呈典型梨形，懸掛於肝右葉下方的膽囊窩。膽囊底部常微微突出於肝臟前下緣。膽囊管內具有螺旋狀的 <strong>Heister 螺旋瓣（Spiral valves of Heister）</strong>，微小結石通過時容易卡在膽囊頸（Hartmann\'s pouch）引發急性膽絞痛。',
         pearls: [
           '<strong>膽結石三大超音波特徵 (WES triad)</strong>：強回音亮點 (Bright echo)、後方聲影 (Acoustic shadow)、隨體位移動 (Gravity-dependent shift)。',
           '<strong>超音波墨菲氏徵象 (Sonographic Murphy\'s sign)</strong>：探頭直接壓迫發炎之膽囊時引發劇烈疼痛與吸氣中斷，為急性膽囊炎之特異指標。'
@@ -319,7 +319,7 @@ import Layout from '../../layouts/Layout.astro';
         titleZh: '膽道系統與總膽管 (Biliary Tree & CBD)',
         titleEn: 'Ductus hepaticus & Ductus choledochus (CBD)',
         pill: '膽汁輸送高速公路',
-        regions: '左/右肝管、總肝管 (CHD)、膽囊管 (Cystic duct)、總膽管 (CBD)',
+        regions: '左/右肝管 (LHD/RHD)、總肝管 (CHD)、膽囊管 (Cystic duct)、總膽管 (CBD)',
         function: '輸送肝臟與膽囊之膽汁至十二指腸進行脂肪乳化',
         endofeature: '內徑正常小於 6~7mm（膽囊切除後可代償性擴張至 8-10mm）',
         disease: '總膽管結石 (Choledocholithiasis)、急性化膿性膽管炎 (Cholangitis)、膽管癌 (Klatskin tumor)',
@@ -333,32 +333,32 @@ import Layout from '../../layouts/Layout.astro';
       },
       pancreas: {
         titleZh: '胰臟 (Pancreas)',
-        titleEn: 'Pancreas · Caput, Corpus, Cauda',
-        pill: '腹膜後深層腺體',
+        titleEn: 'Pancreas · Caput, Corpus, Cauda · Islets',
+        pill: '腺泡小葉顆粒質地',
         regions: '胰頭 (Head / Uncinate)、胰頸 (Neck)、胰體 (Body)、胰尾 (Tail)',
         function: '分泌胰蛋白酶/脂肪酶/澱粉酶 (外分泌) 及胰島素/昇糖素 (內分泌)',
-        endofeature: '逗號形 (Comma shape)，正常回音略高於肝臟質地',
+        endofeature: '小葉顆粒狀表面，逗號形 (Comma shape)，正常回音略高於肝臟質地',
         disease: '急性胰臟炎 (Pancreatitis)、慢性胰臟炎、胰臟頭部腺癌、神經內分泌瘤 (pNET)、黏液性囊腫 (IPMN)',
         sector: 'Retroperitoneum (L1-L2 Level)',
-        pearlsBox: '<strong>臨床超音波重點：</strong> 胰臟深居後腹膜腔，橫臥於脊椎前方。胰頭被十二指腸 C-loop 緊密環抱，胰尾則指向脾門。主胰管（Duct of Wirsung）直徑正常小於 2~3mm，若伴隨總膽管同時擴張（雙管徵象 Double-duct sign），需高度警惕胰頭部腫瘤！',
+        pearlsBox: '<strong>臨床超音波重點：</strong> 胰臟表面由無數如卵石般的 <strong>外分泌腺泡小葉（Acinar lobules / Islands）</strong> 緊密組成。胰頭緊嵌於十二指腸 C-loop，胰尾指向脾門。主胰管與副胰管貫穿其中，收集消化酵素排入十二指腸。',
         pearls: [
-          '<strong>後腹膜深層死角</strong>：常因胃腸道氣體遮蔽不易完整掃描，可囑患者飲水（Water-fill method）建立超音波透亮窗觀察。',
+          '<strong>雙管徵象 (Double-duct sign)</strong>：總膽管與主胰管同時擴張，強烈暗示胰頭部腫瘤或壺腹癌。',
           '<strong>急性胰臟炎核心病因</strong>：以「膽結石掉落阻塞壺腹（40%）」與「酒精過量（35%）」為前兩大主因。'
         ],
-        phrase: 'Abdominal Sonography: Pancreas body and head visualized with homogeneous parenchymal echogenicity. No focal mass, calcification or peripancreatic fluid accumulation.'
+        phrase: 'Abdominal Sonography: Pancreas body and head visualized with homogeneous parenchymal echogenicity and fine lobular architecture. No focal mass, calcification or ductal dilatation.'
       },
       pancreatic_duct: {
-        titleZh: '主胰管 (Main Pancreatic Duct / Duct of Wirsung)',
-        titleEn: 'Ductus pancreaticus major (Wirsung)',
-        pill: '胰液排泄主幹道',
-        regions: '胰尾走向胰頭贯穿全腺體，副胰管 (Santorini duct)',
+        titleZh: '主胰管與副胰管 (Pancreatic Ducts: Wirsung & Santorini)',
+        titleEn: 'Ductus pancreaticus major (Wirsung) & accessorius (Santorini)',
+        pill: '主胰管與副胰管雙排泄系統',
+        regions: '主胰管 (Duct of Wirsung, 貫穿體尾部匯入壺腹)、副胰管 (Duct of Santorini, 開口於小乳頭)',
         function: '收集全胰臟各腺泡分泌之高活性消化酵素原並排入十二指腸',
-        endofeature: '極細管狀無回音管，管徑正常 < 2.5mm',
+        endofeature: '管狀無回音管，主胰管正常管徑 < 2.5mm',
         disease: '胰管結石 (Pancreatic stone)、胰管狹窄、主胰管型 IPMN、慢性胰臟炎串珠狀擴張',
         sector: 'Intrapancreatic Core',
-        pearlsBox: '<strong>臨床診療重點：</strong> 主胰管自胰尾貫穿至胰頭，管徑自尾向頭逐漸由 1mm 增至 2~3mm。當主胰管發生局部斷裂（Cut-off sign）且遠端管徑顯著擴張時，為早期胰臟癌極具診斷價值之影像指標。',
+        pearlsBox: '<strong>臨床診療重點：</strong> 胰臟具有主胰管（Wirsung，匯入大乳頭）與副胰管（Santorini，匯入上方小乳頭）。當主胰管發生局部斷裂（Cut-off sign）且遠端管徑顯著擴張時，為早期胰臟癌極具診斷價值之影像指標。',
         pearls: [
-          '<strong>雙管徵象 (Double-duct sign)</strong>：總膽管與主胰管同時擴張，強烈暗示壺腹周圍癌（Ampullary cancer）或胰頭癌。',
+          '<strong>胰臟分裂症 (Pancreas Divisum)</strong>：主副胰管未正常融合，大部分胰液經由微小的副乳頭排出，易引發反覆性胰臟炎。',
           '<strong>管內乳頭狀黏液性腫瘤 (IPMN)</strong>：胰管上皮大量分泌黏液導致胰管擴張與十二指腸乳頭呈「魚眼徵（Fish-mouth sign）」。'
         ],
         phrase: 'Abdominal Sonography: Main pancreatic duct is smooth and slender without focal dilatation (caliber 1.8mm). No intraductal stone identified.'
@@ -396,27 +396,27 @@ import Layout from '../../layouts/Layout.astro';
         phrase: 'Panendoscopy: Duodenal bulb is intact. Second portion (D2) reveals regular circular folds and healthy mucosal lining.'
       },
       vessels: {
-        titleZh: '後腹腔大血管 (IVC & Abdominal Aorta)',
-        titleEn: 'Vena Cava Inferior & Aorta Abdominalis',
-        pill: '後腹膜血管主幹',
-        regions: '下腔靜脈 (IVC, 藍色)、腹主動脈 (Aorta, 紅色)、門靜脈主幹',
-        function: '下腔靜脈收集下半身與肝靜脈回流血液；腹主動脈供應腹腔臟器動脈血',
+        titleZh: '後腹腔大血管 (IVC, Aorta & Splenic Vessels)',
+        titleEn: 'Vena Cava Inferior, Aorta & Vasa Splenica',
+        pill: '大血管與脾動靜脈',
+        regions: '下腔靜脈 (IVC, 藍色)、腹主動脈 (Aorta, 紅色)、脾動脈 (Splenic artery, 蜿蜒紅色)、脾靜脈 (藍色)',
+        function: '下腔靜脈收集下半身回流血；腹主動脈與脾動脈供應胰臟、脾臟與胃部血流',
         endofeature: '超音波重要定位解剖地標（Landmarks）',
-        disease: '腹主動脈瘤 (AAA)、門靜脈栓塞 (PV thrombosis)、下腔靜脈壓迫',
+        disease: '腹主動脈瘤 (AAA)、脾動脈瘤 (Splenic artery aneurysm)、門靜脈栓塞',
         sector: 'Retroperitoneal Vascular Axis',
-        pearlsBox: '<strong>超音波定位地標：</strong> 掃描胰臟時，下腔靜脈（IVC）位於胰頭後方，腹主動脈（Aorta）與上腸繫膜動脈（SMA）位於胰體後方，為超音波確認胰臟解剖層次最關鍵的「黃金地標」。',
+        pearlsBox: '<strong>超音波定位地標：</strong> 脾動脈（Splenic artery）沿著胰臟上緣蜿蜒走形，脾靜脈（Splenic vein）緊貼胰臟後緣橫行，為超音波確認胰臟體尾部邊界最關鍵的解剖血管標誌。',
         pearls: [
           '<strong>上腸繫膜動脈 (SMA)</strong>：超音波橫切面呈圓形「貓眼狀」，上方跨越的組織即為胰臟體部。',
           '<strong>脾靜脈 (Splenic vein)</strong>：緊貼胰臟後緣橫行，匯入門靜脈主幹。'
         ],
-        phrase: 'Abdominal Sonography: Abdominal aorta is normal in caliber (< 2.0cm) without aneurysmal dilatation. Inferior vena cava (IVC) is patent with normal respiratory collapse.'
+        phrase: 'Abdominal Sonography: Abdominal aorta is normal in caliber (< 2.0cm). Splenic artery and vein trace smoothly along pancreatic superior and posterior borders without aneurysm.'
       }
     };
 
     // Global 3D Variables
     let scene, camera, renderer, controls;
     let hbpMasterGroup;
-    let liverMesh, liverMaterial;
+    let liverRightMesh, liverLeftMesh, liverMaterial;
     let segmentLabelSprites = {};
     let pathologyGroup;
     let focusBeaconGroup, focusBeaconMesh;
@@ -424,49 +424,49 @@ import Layout from '../../layouts/Layout.astro';
     let selectedId = 'pancreas';
     let isQuizMode = false, quizTarget = null;
     let raycaster, mouse;
-    let currentLiverOpacity = 0.80;
+    let currentLiverOpacity = 0.85;
 
     // Landmark Target Coordinates for Focus Beacon & Labels
     const segmentConfigs = {
       liver: {
-        label: '肝臟 (Liver)',
-        targetPos: new THREE.Vector3(-0.3, 1.8, 0.0),
-        labelPos: [-1.8, 2.4, 0.6]
+        label: '肝臟 (Liver: 右葉與左葉)',
+        targetPos: new THREE.Vector3(-0.35, 1.85, 0.0),
+        labelPos: [-2.1, 2.6, 0.6]
       },
       gallbladder: {
         label: '膽囊與膽囊管',
-        targetPos: new THREE.Vector3(-1.4, 0.2, 0.5),
-        labelPos: [-2.4, 0.3, 0.8]
+        targetPos: new THREE.Vector3(-1.45, 0.05, 0.5),
+        labelPos: [-2.4, 0.0, 0.8]
       },
       biliary_tree: {
-        label: '總膽管 (CBD)',
-        targetPos: new THREE.Vector3(-0.55, 0.3, 0.2),
-        labelPos: [-1.4, 0.9, 0.7]
+        label: '膽道系統 (CBD)',
+        targetPos: new THREE.Vector3(-0.55, 0.45, 0.18),
+        labelPos: [-1.6, 1.1, 0.7]
       },
       pancreas: {
-        label: '胰臟 (Pancreas)',
-        targetPos: new THREE.Vector3(0.6, -0.4, 0.1),
-        labelPos: [2.0, -0.2, 0.7]
+        label: '胰臟小葉 (Pancreas)',
+        targetPos: new THREE.Vector3(0.8, -0.4, 0.15),
+        labelPos: [2.2, -0.3, 0.7]
       },
       pancreatic_duct: {
-        label: '主胰管 (Wirsung)',
-        targetPos: new THREE.Vector3(0.8, -0.45, 0.2),
-        labelPos: [1.8, -0.9, 0.8]
+        label: '主胰管與副胰管',
+        targetPos: new THREE.Vector3(-0.45, -0.5, 0.2),
+        labelPos: [1.7, -0.95, 0.8]
       },
       ampulla: {
         label: '十二指腸壺腹 (Ampulla)',
-        targetPos: new THREE.Vector3(-0.65, -0.9, 0.1),
+        targetPos: new THREE.Vector3(-0.65, -0.9, 0.12),
         labelPos: [-1.7, -1.1, 0.8]
       },
       duodenum: {
         label: '十二指腸 (Duodenum)',
-        targetPos: new THREE.Vector3(-0.7, -1.3, 0.0),
+        targetPos: new THREE.Vector3(-0.7, -1.35, 0.0),
         labelPos: [-0.6, -2.2, 0.7]
       },
       vessels: {
-        label: '下腔靜脈與主動脈',
-        targetPos: new THREE.Vector3(0.05, 0.2, -0.6),
-        labelPos: [0.3, 2.2, -0.3]
+        label: '血管與脾動靜脈',
+        targetPos: new THREE.Vector3(0.1, 0.15, -0.5),
+        labelPos: [0.5, 2.2, -0.2]
       }
     };
 
@@ -480,7 +480,7 @@ import Layout from '../../layouts/Layout.astro';
       // 1. Scene & Camera
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-      camera.position.set(0, 0.0, 8.5);
+      camera.position.set(0, 0.1, 8.5);
 
       // 2. WebGL Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -496,26 +496,26 @@ import Layout from '../../layouts/Layout.astro';
       controls.dampingFactor = 0.06;
       controls.minDistance = 3.5;
       controls.maxDistance = 16;
-      controls.target.set(0, 0.0, 0);
+      controls.target.set(0.0, 0.05, 0);
 
       // 4. Studio Medical Lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
       scene.add(ambientLight);
 
-      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.4);
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.45);
       mainLight.position.set(6, 8, 8);
       scene.add(mainLight);
 
-      const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.7);
+      const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.75);
       fillLight.position.set(-6, -4, 6);
       scene.add(fillLight);
 
-      const bottomLight = new THREE.DirectionalLight(0xfef08a, 0.5);
+      const bottomLight = new THREE.DirectionalLight(0xfef08a, 0.55);
       bottomLight.position.set(0, -6, 6);
       scene.add(bottomLight);
 
-      // 5. Build Comprehensive Textbook 3D Hepatobiliary-Pancreatic Model
-      buildHepatobiliaryPancreaticModel();
+      // 5. Build Textbook-Exact 3D Hepatobiliary-Pancreatic Anatomy Model
+      buildTextbookHBPModel();
 
       // 6. Build 3D Pathologies (Gallstones, CBD Stones, Ampulla Impaction, Pancreatitis)
       build3DPathologies();
@@ -542,238 +542,301 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
-    // Build Comprehensive Textbook 3D Model matching Reference Images 1, 2, 3
-    function buildHepatobiliaryPancreaticModel() {
+    // Build Textbook-Exact 3D Hepatobiliary-Pancreatic Model matching User's Illustration
+    function buildTextbookHBPModel() {
       hbpMasterGroup = new THREE.Group();
 
-      // --- 1. Materials for Hepatobiliary Organs ---
-      // A. Liver Material (Reddish Brown with smooth sheen)
+      // --- Materials ---
+      // 1. Liver Material (Deep Mahogany Red with glossy surface)
       liverMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0x9b3c34,
-        roughness: 0.32,
-        metalness: 0.05,
-        clearcoat: 0.7,
+        color: 0x8b322a,
+        roughness: 0.30,
+        metalness: 0.04,
+        clearcoat: 0.75,
         clearcoatRoughness: 0.25,
         transparent: true,
         opacity: currentLiverOpacity,
         side: THREE.DoubleSide
       });
 
-      // B. Gallbladder Material (Emerald Olive Green with translucent bile glow)
-      const gbMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0x22c55e,
-        roughness: 0.22,
+      // 2. Gallbladder Material (Olive Green / Jade with bile translucency)
+      const gbMat = new THREE.MeshPhysicalMaterial({
+        color: 0x5a8738,
+        roughness: 0.26,
         metalness: 0.05,
-        clearcoat: 0.9,
-        clearcoatRoughness: 0.15,
+        clearcoat: 0.85,
+        clearcoatRoughness: 0.2,
         side: THREE.DoubleSide
       });
 
-      // C. Biliary Ducts Material (Bright Lime/Green Emerald Tubes)
-      const ductMaterial = new THREE.MeshStandardMaterial({
-        color: 0x16a34a,
-        roughness: 0.3,
+      // 3. Bile Duct Material (Bright Emerald Green)
+      const ductMat = new THREE.MeshStandardMaterial({
+        color: 0x15803d,
+        roughness: 0.35,
         metalness: 0.1
       });
 
-      // D. Pancreas Material (Warm Golden Yellow Lobulated texture)
-      const pancreasMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xeab308,
-        roughness: 0.45,
+      // 4. Pancreas Islands Glandular Material (Warm Golden Yellow Acinar Lobules)
+      const acinarLobuleMat = new THREE.MeshPhysicalMaterial({
+        color: 0xf3ba38,
+        roughness: 0.35,
         metalness: 0.02,
-        clearcoat: 0.5,
-        side: THREE.DoubleSide
-      });
-
-      // E. Pancreatic Duct (Clean White / Translucent Tube inside pancreas)
-      const wDuctMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.2,
-        emissive: 0x38bdf8,
-        emissiveIntensity: 0.45
-      });
-
-      // F. Duodenum C-Loop Material (Warm Fleshy Pink)
-      const duodenumMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xe07a6d,
-        roughness: 0.3,
         clearcoat: 0.65,
         side: THREE.DoubleSide
       });
 
-      // G. Duodenum Interior Mucosal Folds (Deep Coral with Circular Plicae)
-      const duodCutMaterial = new THREE.MeshStandardMaterial({
-        color: 0xb94943,
-        roughness: 0.4,
+      // 5. Pancreatic Head Core (Warm Peach Yellow for cutaway window)
+      const pancCutMat = new THREE.MeshStandardMaterial({
+        color: 0xfae092,
+        roughness: 0.45,
         side: THREE.DoubleSide
       });
 
-      // H. Major Vessels (IVC Blue & Aorta Red)
-      const ivcMaterial = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.3 });
-      const aortaMaterial = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.3 });
+      // 6. Pancreatic Duct Material (Clean White / Light Blue Duct of Wirsung)
+      const wDuctMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.25,
+        emissive: 0x38bdf8,
+        emissiveIntensity: 0.4
+      });
 
-      // --- 2. Build Major Vessels (IVC & Aorta behind the organs) ---
-      const ivcGeom = new THREE.CylinderGeometry(0.18, 0.18, 5.5, 20);
-      const ivcMesh = new THREE.Mesh(ivcGeom, ivcMaterial);
+      // 7. Duodenum C-Loop Material (Fleshy Pink)
+      const duodenumMat = new THREE.MeshPhysicalMaterial({
+        color: 0xde7b6e,
+        roughness: 0.32,
+        clearcoat: 0.65,
+        side: THREE.DoubleSide
+      });
+
+      // 8. Vessels
+      const arteryMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.3 }); // Red
+      const veinMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.3 });   // Blue
+
+      // --- A. Build Vessels (IVC, Aorta & Splenic Vessels running along Pancreas top) ---
+      const vesselsGroup = new THREE.Group();
+      
+      // Inferior Vena Cava (IVC)
+      const ivcMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 5.5, 20), veinMat);
       ivcMesh.position.set(-0.15, 0.2, -0.65);
-      hbpMasterGroup.add(ivcMesh);
+      vesselsGroup.add(ivcMesh);
 
-      const aortaGeom = new THREE.CylinderGeometry(0.16, 0.16, 5.5, 20);
-      const aortaMesh = new THREE.Mesh(aortaGeom, aortaMaterial);
-      aortaMesh.position.set(0.28, 0.2, -0.65);
-      hbpMasterGroup.add(aortaMesh);
+      // Abdominal Aorta
+      const aortaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 5.5, 20), arteryMat);
+      aortaMesh.position.set(0.26, 0.2, -0.65);
+      vesselsGroup.add(aortaMesh);
 
-      // --- 3. Build Liver (Anatomical Upper Right Dome with Falciform Ligament) ---
+      // Tortuous Splenic Artery (Red vessel waving along upper border of pancreas)
+      const saPoints = [
+        new THREE.Vector3(0.2, -0.2, 0.05),
+        new THREE.Vector3(0.5, 0.0, 0.08),
+        new THREE.Vector3(0.9, -0.12, 0.12),
+        new THREE.Vector3(1.3, 0.05, 0.08),
+        new THREE.Vector3(1.7, -0.05, 0.0),
+        new THREE.Vector3(2.1, 0.15, -0.15)
+      ];
+      const saCurve = new THREE.CatmullRomCurve3(saPoints);
+      const saMesh = new THREE.Mesh(new THREE.TubeGeometry(saCurve, 32, 0.035, 10, false), arteryMat);
+      vesselsGroup.add(saMesh);
+
+      // Splenic Vein (Blue vessel along upper/posterior border of pancreas)
+      const svPoints = [
+        new THREE.Vector3(2.0, 0.05, -0.12),
+        new THREE.Vector3(1.5, -0.12, 0.02),
+        new THREE.Vector3(0.8, -0.18, 0.08),
+        new THREE.Vector3(0.1, -0.15, 0.02)
+      ];
+      const svCurve = new THREE.CatmullRomCurve3(svPoints);
+      const svMesh = new THREE.Mesh(new THREE.TubeGeometry(svCurve, 24, 0.04, 10, false), veinMat);
+      vesselsGroup.add(svMesh);
+
+      hbpMasterGroup.add(vesselsGroup);
+
+      // --- B. Build Liver (Distinct Right Lobe, Left Lobe & White Falciform Ligament) ---
       const liverGroup = new THREE.Group();
-      const liverGeom = new THREE.SphereGeometry(1.6, 32, 24);
-      // Scale and shape into asymmetric liver dome (Right lobe large, Left lobe tapering)
-      liverGeom.scale(1.5, 0.85, 0.75);
-      liverGeom.rotateZ(-Math.PI / 16);
-      liverMesh = new THREE.Mesh(liverGeom, liverMaterial);
-      liverMesh.position.set(-0.2, 1.8, 0.0);
-      liverGroup.add(liverMesh);
 
-      // Falciform Ligament (White vertical peritoneal fold dividing lobes)
-      const ligMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.4, side: THREE.DoubleSide });
-      const ligGeom = new THREE.PlaneGeometry(0.12, 1.4);
-      const ligMesh = new THREE.Mesh(ligGeom, ligMat);
-      ligMesh.position.set(-0.15, 2.0, 0.76);
-      ligMesh.rotation.y = -Math.PI / 12;
-      liverGroup.add(ligMesh);
+      // 1. Right Lobe (Larger, rounded dome on patient's right / image left)
+      const rLobeGeom = new THREE.SphereGeometry(1.45, 32, 24);
+      rLobeGeom.scale(1.05, 0.82, 0.75);
+      liverRightMesh = new THREE.Mesh(rLobeGeom, liverMaterial);
+      liverRightMesh.position.set(-0.85, 1.85, 0.0);
+      liverGroup.add(liverRightMesh);
+
+      // 2. Left Lobe (Flatter, triangular lobe tapering to patient's left / image right)
+      const lLobeGeom = new THREE.SphereGeometry(1.15, 28, 20);
+      lLobeGeom.scale(1.2, 0.75, 0.6);
+      liverLeftMesh = new THREE.Mesh(lLobeGeom, liverMaterial);
+      liverLeftMesh.position.set(0.65, 1.9, -0.05);
+      liverLeftMesh.rotation.z = -Math.PI / 12;
+      liverGroup.add(liverLeftMesh);
+
+      // 3. Falciform Ligament (Crisp white vertical peritoneal fold in the interlobar notch)
+      const falciformMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.35,
+        metalness: 0.05,
+        side: THREE.DoubleSide
+      });
+      const falciformGeom = new THREE.PlaneGeometry(0.14, 1.6);
+      const falciformMesh = new THREE.Mesh(falciformGeom, falciformMat);
+      falciformMesh.position.set(-0.06, 2.05, 0.72);
+      falciformMesh.rotation.y = -Math.PI / 16;
+      liverGroup.add(falciformMesh);
 
       hbpMasterGroup.add(liverGroup);
 
-      // --- 4. Build Gallbladder (Pear-shaped green reservoir seated under liver) ---
+      // --- C. Build Gallbladder (Pear-shaped with Fundus, Body, Neck & Cystic Duct) ---
       const gbGroup = new THREE.Group();
-      const gbBodyGeom = new THREE.SphereGeometry(0.38, 24, 24);
-      gbBodyGeom.scale(0.8, 1.4, 0.8);
-      const gbBodyMesh = new THREE.Mesh(gbBodyGeom, gbMaterial);
-      gbBodyMesh.position.set(-1.45, 0.15, 0.5);
-      gbBodyMesh.rotation.z = Math.PI / 4;
-      gbBodyMesh.rotation.x = Math.PI / 12;
-      gbGroup.add(gbBodyMesh);
 
-      // Cystic Duct (S-shaped winding tube connecting Gallbladder neck to CHD)
+      // Pear-shaped Gallbladder body & fundus nestled in gallbladder fossa
+      const gbGeom = new THREE.SphereGeometry(0.36, 24, 24);
+      gbGeom.scale(0.85, 1.45, 0.85);
+      const gbMesh = new THREE.Mesh(gbGeom, gbMat);
+      gbMesh.position.set(-1.4, 0.08, 0.48);
+      gbMesh.rotation.z = Math.PI / 5;
+      gbMesh.rotation.x = Math.PI / 10;
+      gbGroup.add(gbMesh);
+
+      // Cystic Duct (S-shaped curving tube connecting to CHD)
       const cysticPoints = [
-        new THREE.Vector3(-1.2, 0.4, 0.45),
-        new THREE.Vector3(-0.95, 0.55, 0.35),
-        new THREE.Vector3(-0.8, 0.4, 0.25),
-        new THREE.Vector3(-0.6, 0.45, 0.15)
+        new THREE.Vector3(-1.18, 0.45, 0.42),
+        new THREE.Vector3(-0.95, 0.62, 0.32),
+        new THREE.Vector3(-0.78, 0.52, 0.22),
+        new THREE.Vector3(-0.55, 0.58, 0.15)
       ];
       const cysticCurve = new THREE.CatmullRomCurve3(cysticPoints);
-      const cysticGeom = new THREE.TubeGeometry(cysticCurve, 24, 0.045, 12, false);
-      const cysticMesh = new THREE.Mesh(cysticGeom, ductMaterial);
+      const cysticMesh = new THREE.Mesh(new THREE.TubeGeometry(cysticCurve, 24, 0.045, 12, false), ductMat);
       gbGroup.add(cysticMesh);
 
       hbpMasterGroup.add(gbGroup);
 
-      // --- 5. Build Biliary Tree Ductal System (LHD, RHD, CHD, CBD) ---
+      // --- D. Build Biliary Ducts Tree (LHD, RHD, CHD & CBD) ---
       const bileGroup = new THREE.Group();
 
-      // Right Hepatic Duct (RHD)
-      const rhdPoints = [new THREE.Vector3(-1.2, 1.1, 0.1), new THREE.Vector3(-0.7, 0.75, 0.15)];
-      const rhdGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rhdPoints), 12, 0.042, 10, false);
-      bileGroup.add(new THREE.Mesh(rhdGeom, ductMaterial));
+      // Right Hepatic Duct (RHD) branching in liver
+      const rhdPoints = [
+        new THREE.Vector3(-1.4, 1.35, 0.1),
+        new THREE.Vector3(-0.95, 1.0, 0.15),
+        new THREE.Vector3(-0.62, 0.85, 0.18)
+      ];
+      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rhdPoints), 16, 0.042, 10, false), ductMat));
 
-      // Left Hepatic Duct (LHD)
-      const lhdPoints = [new THREE.Vector3(0.0, 1.05, 0.1), new THREE.Vector3(-0.6, 0.75, 0.15)];
-      const lhdGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lhdPoints), 12, 0.042, 10, false);
-      bileGroup.add(new THREE.Mesh(lhdGeom, ductMaterial));
+      // Left Hepatic Duct (LHD) branching in liver
+      const lhdPoints = [
+        new THREE.Vector3(0.2, 1.15, 0.1),
+        new THREE.Vector3(-0.25, 0.95, 0.15),
+        new THREE.Vector3(-0.62, 0.85, 0.18)
+      ];
+      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lhdPoints), 16, 0.042, 10, false), ductMat));
 
-      // Common Hepatic Duct (CHD) + Common Bile Duct (CBD) descending to Ampulla
+      // Common Hepatic Duct (CHD) + Common Bile Duct (CBD)
       const cbdPoints = [
-        new THREE.Vector3(-0.65, 0.75, 0.15), // Confluence of LHD & RHD
-        new THREE.Vector3(-0.6, 0.45, 0.15),  // Cystic duct junction
-        new THREE.Vector3(-0.55, 0.0, 0.12),  // Supraduodenal CBD
-        new THREE.Vector3(-0.58, -0.45, 0.08),// Retroduodenal & Intrapancreatic CBD
-        new THREE.Vector3(-0.65, -0.9, 0.1)   // Entry into Ampulla of Vater
+        new THREE.Vector3(-0.62, 0.85, 0.18), // Confluence of LHD & RHD
+        new THREE.Vector3(-0.55, 0.58, 0.15), // Joined by cystic duct
+        new THREE.Vector3(-0.52, 0.05, 0.12), // Supraduodenal CBD
+        new THREE.Vector3(-0.56, -0.48, 0.1), // Retroduodenal & Intrapancreatic CBD
+        new THREE.Vector3(-0.65, -0.9, 0.12)  // Entry into Ampulla of Vater
       ];
       const cbdCurve = new THREE.CatmullRomCurve3(cbdPoints);
-      const cbdGeom = new THREE.TubeGeometry(cbdCurve, 32, 0.055, 14, false);
-      const cbdMesh = new THREE.Mesh(cbdGeom, ductMaterial);
+      const cbdMesh = new THREE.Mesh(new THREE.TubeGeometry(cbdCurve, 32, 0.055, 14, false), ductMat);
       bileGroup.add(cbdMesh);
 
       hbpMasterGroup.add(bileGroup);
 
-      // --- 6. Build Pancreas & Main Pancreatic Duct (Wirsung) ---
+      // --- E. Build Pancreas with Cobblestone Lobular Texture & Head Cutaway Window ---
       const pancGroup = new THREE.Group();
 
-      // Pancreas Gland Geometry (Head C-loop nestled, Body extending across left, Tail pointing toward spleen)
-      const pancPoints = [
-        new THREE.Vector3(-0.55, -0.85, 0.05), // Uncinate process
-        new THREE.Vector3(-0.45, -0.4, 0.1),   // Pancreatic Head
-        new THREE.Vector3(0.1, -0.32, 0.12),   // Pancreatic Neck
-        new THREE.Vector3(0.8, -0.35, 0.1),    // Pancreatic Body
-        new THREE.Vector3(1.6, -0.25, 0.0),    // Pancreatic Body-Tail
-        new THREE.Vector3(2.1, -0.05, -0.15)   // Pancreatic Tail Apex
-      ];
-      const pancCurve = new THREE.CatmullRomCurve3(pancPoints);
-      
-      // Loft pancreas with variable gland thickness (Thick head, slender tail)
-      const pancGeom = new THREE.TubeGeometry(pancCurve, 40, 0.28, 16, false);
-      const pancMesh = new THREE.Mesh(pancGeom, pancreasMaterial);
-      pancGroup.add(pancMesh);
+      // 1. Pancreatic Head Cutaway Section (Showing internal ducts like in illustration)
+      const headGeom = new THREE.CylinderGeometry(0.42, 0.46, 0.75, 20);
+      headGeom.rotateX(Math.PI / 2);
+      const headMesh = new THREE.Mesh(headGeom, pancCutMat);
+      headMesh.position.set(-0.42, -0.55, 0.1);
+      pancGroup.add(headMesh);
 
-      // Add characteristic bumpy lobulated nodules along pancreas surface
-      for (let i = 0; i < 18; i++) {
-        const u = 0.1 + (i / 18) * 0.85;
-        const pt = pancCurve.getPoint(u);
-        const noduleGeom = new THREE.SphereGeometry(0.14 + Math.random() * 0.06, 10, 10);
-        const noduleMesh = new THREE.Mesh(noduleGeom, pancreasMaterial);
+      // 2. Pancreas Body & Tail Core Spline
+      const pancCorePoints = [
+        new THREE.Vector3(-0.35, -0.45, 0.12),
+        new THREE.Vector3(0.15, -0.38, 0.14),
+        new THREE.Vector3(0.85, -0.4, 0.12),
+        new THREE.Vector3(1.55, -0.3, 0.04),
+        new THREE.Vector3(2.15, -0.05, -0.12)
+      ];
+      const pancCoreCurve = new THREE.CatmullRomCurve3(pancCorePoints);
+
+      // 3. Populate hundreds of realistic 3D cobblestone glandular acinar nodules (Pancreas Islands)
+      const numLobules = 85;
+      for (let i = 0; i < numLobules; i++) {
+        const u = 0.05 + (i / numLobules) * 0.92;
+        const pt = pancCoreCurve.getPoint(u);
+
+        // Variable gland thickness (thick body, slender tail)
+        const radius = (1.0 - u * 0.45) * 0.18 + 0.06;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * radius;
+
+        const noduleGeom = new THREE.SphereGeometry(0.07 + Math.random() * 0.04, 10, 10);
+        noduleGeom.scale(1.1, 0.9, 1.0);
+        const noduleMesh = new THREE.Mesh(noduleGeom, acinarLobuleMat);
+        
         noduleMesh.position.set(
-          pt.x + (Math.random() - 0.5) * 0.2,
-          pt.y + (Math.random() - 0.5) * 0.18,
-          pt.z + 0.14
+          pt.x + Math.cos(angle) * dist,
+          pt.y + Math.sin(angle) * dist,
+          pt.z + (Math.random() - 0.5) * 0.2 + 0.08
         );
         pancGroup.add(noduleMesh);
       }
 
-      // Main Pancreatic Duct (Duct of Wirsung, traversing through core to Ampulla)
-      const ductPoints = [
-        new THREE.Vector3(1.95, -0.1, -0.1),
-        new THREE.Vector3(1.4, -0.28, 0.05),
-        new THREE.Vector3(0.7, -0.35, 0.15),
-        new THREE.Vector3(0.05, -0.35, 0.16),
-        new THREE.Vector3(-0.42, -0.5, 0.12),
-        new THREE.Vector3(-0.62, -0.88, 0.1) // Merges with CBD at Ampulla!
+      // 4. Main Pancreatic Duct (Duct of Wirsung, passing through center to Ampulla)
+      const wirsungPoints = [
+        new THREE.Vector3(2.05, -0.1, -0.1),
+        new THREE.Vector3(1.5, -0.3, 0.05),
+        new THREE.Vector3(0.85, -0.4, 0.15),
+        new THREE.Vector3(0.15, -0.4, 0.16),
+        new THREE.Vector3(-0.35, -0.5, 0.14),
+        new THREE.Vector3(-0.62, -0.88, 0.12) // Merges with CBD at Ampulla!
       ];
-      const ductCurve = new THREE.CatmullRomCurve3(ductPoints);
-      const ductGeom = new THREE.TubeGeometry(ductCurve, 32, 0.032, 10, false);
-      const ductMesh = new THREE.Mesh(ductGeom, wDuctMaterial);
-      pancGroup.add(ductMesh);
+      const wirsungCurve = new THREE.CatmullRomCurve3(wirsungPoints);
+      const wirsungMesh = new THREE.Mesh(new THREE.TubeGeometry(wirsungCurve, 36, 0.035, 10, false), wDuctMat);
+      pancGroup.add(wirsungMesh);
+
+      // 5. Accessory Pancreatic Duct (Duct of Santorini, branching upwards to Minor Papilla)
+      const santoriniPoints = [
+        new THREE.Vector3(-0.35, -0.5, 0.14),
+        new THREE.Vector3(-0.55, -0.65, 0.16),
+        new THREE.Vector3(-0.72, -0.68, 0.14)
+      ];
+      const santoriniCurve = new THREE.CatmullRomCurve3(santoriniPoints);
+      const santoriniMesh = new THREE.Mesh(new THREE.TubeGeometry(santoriniCurve, 16, 0.024, 8, false), wDuctMat);
+      pancGroup.add(santoriniMesh);
 
       hbpMasterGroup.add(pancGroup);
 
-      // --- 7. Build Duodenum C-Loop with Interior Medial Papilla (Ampulla of Vater) ---
+      // --- F. Build Duodenum C-Loop with Internal Major Duodenal Papilla ---
       const duodGroup = new THREE.Group();
 
-      // C-shaped intestinal loop surrounding pancreatic head
       const duodPoints = [
-        new THREE.Vector3(-0.6, 0.25, 0.0),   // D1 Superior (Duodenal Bulb start)
-        new THREE.Vector3(-0.95, 0.05, 0.0),  // D1-D2 Superior Duodenal Flexure
-        new THREE.Vector3(-1.05, -0.7, 0.0),  // D2 Descending Duodenum (Mid)
-        new THREE.Vector3(-0.95, -1.35, 0.0), // D2-D3 Inferior Duodenal Flexure
-        new THREE.Vector3(-0.4, -1.55, 0.0),  // D3 Horizontal Duodenum
-        new THREE.Vector3(0.3, -1.45, 0.0),   // D4 Ascending Duodenum
-        new THREE.Vector3(0.7, -1.1, -0.1)    // Duodenojejunal Flexure (Treitz)
+        new THREE.Vector3(-0.55, 0.15, 0.0),  // D1 Bulb start
+        new THREE.Vector3(-0.95, -0.05, 0.0), // Superior Duodenal Flexure
+        new THREE.Vector3(-1.05, -0.7, 0.0),  // D2 Descending Duodenum
+        new THREE.Vector3(-0.92, -1.35, 0.0), // Inferior Duodenal Flexure
+        new THREE.Vector3(-0.35, -1.55, 0.0), // D3 Horizontal Duodenum
+        new THREE.Vector3(0.35, -1.45, 0.0),  // D4 Ascending Duodenum
+        new THREE.Vector3(0.7, -1.1, -0.1)    // Treitz Ligament Flexure
       ];
       const duodCurve = new THREE.CatmullRomCurve3(duodPoints);
-      const duodGeom = new THREE.TubeGeometry(duodCurve, 40, 0.26, 16, false);
-      const duodMesh = new THREE.Mesh(duodGeom, duodenumMaterial);
+      const duodMesh = new THREE.Mesh(new THREE.TubeGeometry(duodCurve, 40, 0.25, 16, false), duodenumMat);
       duodGroup.add(duodMesh);
 
-      // Major Duodenal Papilla (十二指腸大乳頭 / 壺腹開口, on Medial Wall of D2)
+      // Major Duodenal Papilla (Ampulla of Vater / 奧狄氏括約肌開口)
       const papillaGroup = new THREE.Group();
-      const papillaGeom = new THREE.TorusGeometry(0.09, 0.035, 12, 16);
-      const papillaMesh = new THREE.Mesh(papillaGeom, duodCutMaterial);
-      papillaMesh.position.set(-0.65, -0.9, 0.12);
+      const papillaGeom = new THREE.TorusGeometry(0.085, 0.035, 12, 16);
+      const papillaMat = new THREE.MeshStandardMaterial({ color: 0xb94943, roughness: 0.4 });
+      const papillaMesh = new THREE.Mesh(papillaGeom, papillaMat);
+      papillaMesh.position.set(-0.65, -0.9, 0.13);
       papillaMesh.rotation.y = Math.PI / 4;
       papillaGroup.add(papillaMesh);
 
-      const orificeGeom = new THREE.SphereGeometry(0.045, 12, 12);
-      const orificeMat = new THREE.MeshBasicMaterial({ color: 0x1e293b });
-      const orificeMesh = new THREE.Mesh(orificeGeom, orificeMat);
-      orificeMesh.position.set(-0.65, -0.9, 0.12);
+      const orificeMesh = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 12), new THREE.MeshBasicMaterial({ color: 0x0f172a }));
+      orificeMesh.position.set(-0.65, -0.9, 0.13);
       papillaGroup.add(orificeMesh);
 
       duodGroup.add(papillaGroup);
@@ -783,7 +846,7 @@ import Layout from '../../layouts/Layout.astro';
       // Add Master Group to Scene
       scene.add(hbpMasterGroup);
 
-      // --- 8. Add Auto-Fitting 3D Billboard Labels ---
+      // --- G. Add Auto-Fitting 3D Billboard Labels ---
       Object.keys(segmentConfigs).forEach(k => {
         const conf = segmentConfigs[k];
         const sprite = createTextSprite(conf.label, '#f59e0b');
@@ -863,18 +926,18 @@ import Layout from '../../layouts/Layout.astro';
 
       // Gallstones in GB fundus
       const gs1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 1), stoneMat);
-      gs1.position.set(-1.48, 0.05, 0.58);
+      gs1.position.set(-1.42, -0.05, 0.58);
       gs1.userData = { type: 'gallstone', name: '膽囊膽固醇結石 (Gallstone, 0.8cm)' };
       pathologyGroup.add(gs1);
 
       const gs2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06, 1), stoneMat);
-      gs2.position.set(-1.4, 0.12, 0.62);
+      gs2.position.set(-1.35, 0.05, 0.62);
       gs2.userData = { type: 'gallstone', name: '多發性膽囊微結石 (Microcalculi)' };
       pathologyGroup.add(gs2);
 
       // Gallbladder Polyp on GB wall
       const gbp = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), polypMat);
-      gbp.position.set(-1.32, 0.28, 0.52);
+      gbp.position.set(-1.28, 0.22, 0.52);
       gbp.userData = { type: 'gallstone', name: '膽囊膽固醇息肉 (GB Polyp, 0.4cm)' };
       pathologyGroup.add(gbp);
 
@@ -886,7 +949,7 @@ import Layout from '../../layouts/Layout.astro';
         emissiveIntensity: 0.4
       });
       const cbdStoneMesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), cbdStoneMat);
-      cbdStoneMesh.position.set(-0.56, -0.2, 0.15);
+      cbdStoneMesh.position.set(-0.54, -0.15, 0.16);
       cbdStoneMesh.userData = { type: 'cbdstone', name: '總膽管結石 (CBD Stone, 0.9cm) 伴隨近端膽管擴張' };
       pathologyGroup.add(cbdStoneMesh);
 
@@ -898,7 +961,7 @@ import Layout from '../../layouts/Layout.astro';
         emissiveIntensity: 0.6
       });
       const ampStoneMesh = new THREE.Mesh(new THREE.SphereGeometry(0.095, 14, 14), ampStoneMat);
-      ampStoneMesh.position.set(-0.65, -0.9, 0.16);
+      ampStoneMesh.position.set(-0.65, -0.9, 0.18);
       ampStoneMesh.userData = { type: 'ampulla', name: '十二指腸壺腹結石嵌頓 (Ampulla Stone Impaction) 引發急性膽石性胰臟炎' };
       pathologyGroup.add(ampStoneMesh);
 
@@ -910,7 +973,7 @@ import Layout from '../../layouts/Layout.astro';
         emissiveIntensity: 0.5
       });
       const pMassMesh = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 16), massMat);
-      pMassMesh.position.set(-0.45, -0.4, 0.22);
+      pMassMesh.position.set(-0.42, -0.45, 0.22);
       pMassMesh.userData = { type: 'pancreatitis', name: '胰臟頭部腫瘤/發炎水腫 (Pancreatic Head Mass, 2.5cm)' };
       pathologyGroup.add(pMassMesh);
 
@@ -1033,27 +1096,27 @@ import Layout from '../../layouts/Layout.astro';
       document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(`view-btn-${preset}`)?.classList.add('active');
 
-      let targetPos = new THREE.Vector3(0, 0.0, 8.5);
-      let targetLook = new THREE.Vector3(0, 0.0, 0);
+      let targetPos = new THREE.Vector3(0, 0.1, 8.5);
+      let targetLook = new THREE.Vector3(0, 0.05, 0);
 
       switch(preset) {
         case 'anterior': 
-          targetPos.set(0, 0.0, 8.5); 
-          targetLook.set(0, 0.0, 0); 
+          targetPos.set(0, 0.1, 8.5); 
+          targetLook.set(0, 0.05, 0); 
           break;
         case 'ampulla': 
           targetPos.set(-0.8, -0.9, 4.2); 
-          targetLook.set(-0.65, -0.9, 0.1); 
+          targetLook.set(-0.65, -0.9, 0.12); 
           selectSegment('ampulla');
           break;
         case 'gallbladder': 
-          targetPos.set(-2.2, 0.4, 4.8); 
-          targetLook.set(-1.2, 0.3, 0.3); 
+          targetPos.set(-2.2, 0.3, 4.8); 
+          targetLook.set(-1.3, 0.2, 0.3); 
           selectSegment('gallbladder');
           break;
         case 'pancreas': 
           targetPos.set(0.8, -0.4, 5.2); 
-          targetLook.set(0.6, -0.4, 0.1); 
+          targetLook.set(0.6, -0.4, 0.15); 
           selectSegment('pancreas');
           break;
         case 'posterior': 
