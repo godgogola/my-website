@@ -1,0 +1,1837 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="肝膽胰與十二指腸 3D 互動解剖系統 | 互動解剖圖鑑 - 黃冠智醫師" 
+  description="教科書級肝膽胰與十二指腸 3D 實體模型。展示肝臟、膽囊、膽道系統 (CBD)、胰臟與主胰管、十二指腸壺腹 (Ampulla of Vater) 以及膽結石/胰臟炎病灶標記。"
+  fullWidth={true}
+  hideFooter={true}
+>
+  <!-- Three.js CDN dependencies -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+  <div class="hbp-app-wrapper" id="hbpAppWrapper">
+    <!-- Subheader with breadcrumb & action controls -->
+    <div class="anatomy-subnav">
+      <div class="subnav-left">
+        <a href="/anatomy" class="back-link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>返回圖鑑總覽</span>
+        </a>
+        <div class="divider">/</div>
+        <div class="current-badge">
+          <span class="pulse-dot"></span>
+          <span>肝膽胰與十二指腸系統 (Hepatobiliary-Pancreatic System)</span>
+        </div>
+      </div>
+      
+      <div class="subnav-right">
+        <!-- Fullscreen Button -->
+        <button class="btn btn-fullscreen" id="btn-fullscreen-toggle" onclick="toggleFullScreen()" title="進入/退出全螢幕診間衛教模式">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="icon-fs"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <span id="txt-fs-label">全螢幕模式</span>
+        </button>
+        <button class="btn btn-outline" id="btn-toggle-quiz" onclick="toggleQuizMode()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          3D 測驗模式
+        </button>
+        <button class="btn btn-primary" onclick="reset3DCamera()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          重設視角
+        </button>
+      </div>
+    </div>
+
+    <!-- Main 3-Column Workspace Grid -->
+    <div class="workspace-grid">
+      
+      <!-- Left Panel: Pathology Toggles, Opacity & Segment Navigator -->
+      <div class="glass-panel left-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            解剖導航與臨床病灶標記
+          </div>
+        </div>
+        
+        <div class="panel-body">
+          
+          <!-- 4 Major Pathology Marker Toggles -->
+          <div class="control-row">
+            <div class="section-label" style="margin-bottom: 0.45rem; color: #f59e0b;">
+              肝膽胰常見病灶 (點擊在 3D 空間呈現)
+            </div>
+            <div class="pathology-btn-grid">
+              <button class="btn btn-pathology" id="btn-path-gallstone" onclick="togglePathology('gallstone')">
+                <span class="path-dot dot-gallstone"></span>
+                膽囊結石與膽囊息肉
+              </button>
+              <button class="btn btn-pathology" id="btn-path-cbdstone" onclick="togglePathology('cbdstone')">
+                <span class="path-dot dot-cbdstone"></span>
+                總膽管結石 (CBD Stone)
+              </button>
+              <button class="btn btn-pathology" id="btn-path-ampulla" onclick="togglePathology('ampulla')">
+                <span class="path-dot dot-ampulla"></span>
+                十二指腸壺腹結石嵌頓
+              </button>
+              <button class="btn btn-pathology" id="btn-path-pancreatitis" onclick="togglePathology('pancreatitis')">
+                <span class="path-dot dot-pancreatitis"></span>
+                急性胰臟炎與胰頭腫瘤
+              </button>
+            </div>
+            <div class="pathology-info-text" id="pathology-info-text">
+              點選上方按鈕可即時切換病灶位置與臨床處置說明。
+            </div>
+          </div>
+
+          <!-- Liver Opacity Slider (To see deep biliary-pancreatic ducts) -->
+          <div class="control-row">
+            <div class="control-label-group">
+              <span>肝臟透明度 (Liver Opacity)</span>
+              <span id="txt-liver-opacity-val" class="slider-val">80%</span>
+            </div>
+            <input type="range" id="slider-liver-opacity" min="0" max="100" value="80" oninput="onLiverOpacitySlider(this.value)">
+            <div class="slider-subtext-single">
+              降低透明度可直接透視下方膽管樹 (CBD) 與胰管走向
+            </div>
+          </div>
+
+          <!-- Segment List -->
+          <div class="section-label">
+            點選解剖器官與構造 (ANATOMICAL STRUCTURES)
+          </div>
+          <div class="segment-grid-list">
+            <div class="seg-card-btn" onclick="selectSegment('liver')" id="btn-seg-liver">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">人體最大腺體</span>
+                <span class="seg-loc-tag">右上腹穹隆</span>
+              </div>
+              <div class="seg-card-name">肝臟 (Liver / Hepar)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('gallbladder')" id="btn-seg-gallbladder">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">膽汁濃縮庫</span>
+                <span class="seg-loc-tag">肝下膽囊窩</span>
+              </div>
+              <div class="seg-card-name">膽囊與膽囊管 (Gallbladder)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('biliary_tree')" id="btn-seg-biliary_tree">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">總膽管 (CBD)</span>
+                <span class="seg-loc-tag">膽管匯流通路</span>
+              </div>
+              <div class="seg-card-name">膽道系統 (Biliary Tree)</div>
+            </div>
+
+            <div class="seg-card-btn active" onclick="selectSegment('pancreas')" id="btn-seg-pancreas">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">內外分泌腺</span>
+                <span class="seg-loc-tag">腹膜後橫行</span>
+              </div>
+              <div class="seg-card-name">胰臟 (Pancreas)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('pancreatic_duct')" id="btn-seg-pancreatic_duct">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">Wirsung 管</span>
+                <span class="seg-loc-tag">胰液排泄主幹</span>
+              </div>
+              <div class="seg-card-name">主胰管 (Pancreatic Duct)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('ampulla')" id="btn-seg-ampulla">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">膽胰匯流樞紐</span>
+                <span class="seg-loc-tag">十二指腸降段</span>
+              </div>
+              <div class="seg-card-name">十二指腸壺腹 (Ampulla)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('duodenum')" id="btn-seg-duodenum">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">C-Loop 環抱</span>
+                <span class="seg-loc-tag">小腸起始段</span>
+              </div>
+              <div class="seg-card-name">十二指腸 (Duodenum)</div>
+            </div>
+
+            <div class="seg-card-btn" onclick="selectSegment('vessels')" id="btn-seg-vessels">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">下腔靜脈/主動脈</span>
+                <span class="seg-loc-tag">後腹腔大血管</span>
+              </div>
+              <div class="seg-card-name">下腔靜脈與腹主動脈</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Center Stage: Three.js True 3D Hepatobiliary-Pancreatic Canvas -->
+      <div class="glass-panel canvas-panel">
+        <!-- Preset View Angles Toolbar -->
+        <div class="view-angles-toolbar">
+          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面全覽 (Coronal View)</button>
+          <button class="view-btn" id="view-btn-ampulla" onclick="setPresetView('ampulla')">十二指腸壺腹與膽胰匯流特寫</button>
+          <button class="view-btn" id="view-btn-gallbladder" onclick="setPresetView('gallbladder')">膽囊與肝門膽管特寫</button>
+          <button class="view-btn" id="view-btn-pancreas" onclick="setPresetView('pancreas')">胰臟體部與主胰管視角</button>
+          <button class="view-btn" id="view-btn-posterior" onclick="setPresetView('posterior')">後腹膜大血管關係視角</button>
+        </div>
+
+        <!-- ThreeJS Canvas Container -->
+        <div id="threejs-canvas-container"></div>
+
+        <!-- Orbit Controls Guidance Hint -->
+        <div class="orbit-hint">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          <span><strong>滑鼠左鍵拖曳</strong>：360° 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>點擊器官/按鈕</strong>：聚焦解剖構造</span>
+        </div>
+      </div>
+
+      <!-- Right Panel: Clinical Information & Hepatobiliary-Pancreatic Guide -->
+      <div class="glass-panel right-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            肝膽胰臨床指引與超音波特徵
+          </div>
+        </div>
+        
+        <div class="panel-body" id="detail-panel">
+          
+          <!-- Header Title Info -->
+          <div class="detail-title-group">
+            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.3rem;">
+              <span id="det-pill" class="seg-badge-pill">腹膜後深層器官</span>
+              <span id="det-sector" class="sector-tag">Pancreas · Duct of Wirsung</span>
+            </div>
+            <div id="det-title-zh" class="main-title">胰臟 (Pancreas)</div>
+            <div id="det-title-en" class="sub-title">Pancreas · Caput, Corpus, Cauda</div>
+          </div>
+
+          <!-- Metric Grid -->
+          <div class="metric-grid">
+            <div class="metric-box">
+              <div class="metric-label">解剖分區</div>
+              <div id="det-regions" class="metric-value">胰頭 (Head)、胰體 (Body)、胰尾 (Tail)</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">主要生理功能</div>
+              <div id="det-function" class="metric-value">消化酵素 (外分泌) / 胰島素 (內分泌)</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">超音波掃描特徵</div>
+              <div id="det-endofeature" class="metric-value">逗號形 (Comma shape)，回音略高於肝臟</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">常見疾病好發</div>
+              <div id="det-disease" class="metric-value">急性/慢性胰臟炎、胰臟囊腫、胰臟頭部癌</div>
+            </div>
+          </div>
+
+          <!-- Clinical Pearls Box -->
+          <div class="surgical-pearls" id="det-pearls-box">
+            <strong>臨床診療重點：</strong> 胰臟深居後腹膜腔，橫臥於脊椎前方。胰頭被十二指腸 C-loop 緊密環抱，胰尾則指向脾門。主胰管（Duct of Wirsung）直徑正常小於 2~3mm，若伴隨總膽管同時擴張（雙管徵象 Double-duct sign），需高度警惕胰頭部腫瘤！
+          </div>
+
+          <!-- Clinical Pearls List -->
+          <div class="detail-card">
+            <h3>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              門診解說與超音波指引 (Clinical Pearls)
+            </h3>
+            <div id="det-pearls-list">
+              <div class="pearl-item">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>腹膜後「沉默的器官」</strong>：初期胰臟病灶多無明顯症狀，常藉由腹部超音波排查主胰管有無不正常擴張或囊腫。</span>
+              </div>
+              <div class="pearl-item">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>急性胰臟炎警訊</strong>：暴飲暴食或膽結石掉落嵌頓於壺腹時，易引發胰液逆流自體消化，伴隨劇烈上腹痛且放射至後背。</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Automatic Medical Phrase Generator -->
+          <div class="phrase-box">
+            <div class="phrase-header">
+              <span class="phrase-title">超音波與門診報告片語 (點擊即複製)</span>
+              <button class="btn btn-outline" style="padding: 0.18rem 0.5rem; font-size: 0.68rem;" onclick="copyPhrase()">複製片語</button>
+            </div>
+            <div id="det-phrase-text" class="phrase-content">
+              Abdominal Sonography: Pancreas shows homogenous parenchymal echogenicity without focal mass lesion. Main pancreatic duct is non-dilated (caliber < 2mm). Common bile duct caliber: 5.2mm.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+    <span id="toast-msg">已複製片語至剪貼簿！</span>
+  </div>
+
+  <script is:inline>
+    // Hepatobiliary & Pancreatic Anatomical Knowledge Database
+    const hbpData = {
+      liver: {
+        titleZh: '肝臟 (Liver / Hepar)',
+        titleEn: 'Hepar · Right & Left Lobes · Porta Hepatis',
+        pill: '人體最大實質腺體',
+        regions: '右葉 (Right lobe)、左葉 (Left lobe)、尾狀葉/方葉',
+        function: '製造膽汁 (Bile)、代謝合成、解毒、儲存肝醣',
+        endofeature: '細緻均勻中等回音，下緣緊鄰膽囊窩與肝門部',
+        disease: '脂肪肝、病毒性肝炎、肝硬化、肝細胞癌 (HCC)、血管瘤',
+        sector: 'Right Hypochondrium & Epigastrium',
+        pearlsBox: '<strong>臨床超音波重點：</strong> 肝臟為膽汁製造源頭，每天分泌約 600~1000ml 膽汁經由左右肝管匯流排出。肝門部（Porta hepatis）為門靜脈、肝動脈與總肝管共同進出之解剖三合體（Portal triad）。',
+        pearls: [
+          '<strong>超音波肝門三合體（Mickey Mouse sign）</strong>：短軸切面可見門靜脈（頭）、肝動脈（右耳）與總膽管（左耳）。',
+          '<strong>膽汁排泄通路</strong>：肝細胞製造膽汁 $\\to$ 膽微管 $\\to$ 左右肝管 $\\to$ 總肝管 $\\to$ 膽囊儲存濃縮。'
+        ],
+        phrase: 'Abdominal Sonography: Liver parenchymal echogenicity is homogeneous. No focal hyperechoic or hypoechoic space-occupying lesion. Portal triad is unremarkable.'
+      },
+      gallbladder: {
+        titleZh: '膽囊與膽囊管 (Gallbladder & Cystic Duct)',
+        titleEn: 'Vesica biliaris & Ductus cysticus',
+        pill: '膽汁濃縮與儲存囊袋',
+        regions: '膽囊底部 (Fundus)、體部 (Body)、頸部 (Neck)、螺旋膽囊管',
+        function: '貯存並濃縮膽汁 (達 5~10 倍)，進食油脂時收縮排空',
+        endofeature: '無回音液體腔（Anechoic），薄壁 (< 3mm)',
+        disease: '膽囊結石 (Gallstones)、膽囊息肉 (GB Polyp)、急性/慢性膽囊炎、膽囊腺肌增生症',
+        sector: 'Subhepatic Fossa',
+        pearlsBox: '<strong>臨床超音波重點：</strong> 膽囊長約 7~10cm，位於肝臟第 4/5 分段交界下方的膽囊窩。膽囊管內具有螺旋狀的 <strong>Heister 螺旋瓣（Spiral valves of Heister）</strong>，微小結石通過時容易卡在膽囊頸（Hartmann\'s pouch）引發急性膽絞痛。',
+        pearls: [
+          '<strong>膽結石三大超音波特徵 (WES triad)</strong>：強回音亮點 (Bright echo)、後方聲影 (Acoustic shadow)、隨體位移動 (Gravity-dependent shift)。',
+          '<strong>超音波墨菲氏徵象 (Sonographic Murphy\'s sign)</strong>：探頭直接壓迫發炎之膽囊時引發劇烈疼痛與吸氣中斷，為急性膽囊炎之特異指標。'
+        ],
+        phrase: 'Abdominal Sonography: Gallbladder is well distended with smooth wall (< 3mm). No mobile acoustic shadowing calculus or intraluminal polyp noted. Sonographic Murphy sign: Negative.'
+      },
+      biliary_tree: {
+        titleZh: '膽道系統與總膽管 (Biliary Tree & CBD)',
+        titleEn: 'Ductus hepaticus & Ductus choledochus (CBD)',
+        pill: '膽汁輸送高速公路',
+        regions: '左/右肝管、總肝管 (CHD)、膽囊管 (Cystic duct)、總膽管 (CBD)',
+        function: '輸送肝臟與膽囊之膽汁至十二指腸進行脂肪乳化',
+        endofeature: '內徑正常小於 6~7mm（膽囊切除後可代償性擴張至 8-10mm）',
+        disease: '總膽管結石 (Choledocholithiasis)、急性化膿性膽管炎 (Cholangitis)、膽管癌 (Klatskin tumor)',
+        sector: 'Hepatoduodenal Ligament',
+        pearlsBox: '<strong>臨床超音波與 ERCP 重點：</strong> 總肝管 (CHD) 與膽囊管匯合為 <strong>總膽管 (Common Bile Duct, CBD)</strong>，全長約 6~8cm。總膽管結石常引發劇烈腹痛、阻塞性黃疸與發燒（Charcot\'s triad 膽管炎三病徵），需透過內視鏡逆行性膽胰管攝影 (ERCP) 進行括約肌切開取石。',
+        pearls: [
+          '<strong>無痛性黃疸 (Courvoisier\'s sign)</strong>：膽囊無痛性腫大伴隨黃疸，需高度懷疑總膽管下端或胰頭部惡性腫瘤壓迫。',
+          '<strong>急性膽管炎急症 (Reynolds\' pentad)</strong>：腹痛+黃疸+發燒+休克+意識障礙，需緊急實施內視鏡膽管引流術 (ERBD/ENBD)。'
+        ],
+        phrase: 'Abdominal Sonography: Common bile duct (CBD) measures 5.0mm in caliber, within normal limits. No intraductal stone or extrahepatic biliary dilatation.'
+      },
+      pancreas: {
+        titleZh: '胰臟 (Pancreas)',
+        titleEn: 'Pancreas · Caput, Corpus, Cauda',
+        pill: '腹膜後深層腺體',
+        regions: '胰頭 (Head / Uncinate)、胰頸 (Neck)、胰體 (Body)、胰尾 (Tail)',
+        function: '分泌胰蛋白酶/脂肪酶/澱粉酶 (外分泌) 及胰島素/昇糖素 (內分泌)',
+        endofeature: '逗號形 (Comma shape)，正常回音略高於肝臟質地',
+        disease: '急性胰臟炎 (Pancreatitis)、慢性胰臟炎、胰臟頭部腺癌、神經內分泌瘤 (pNET)、黏液性囊腫 (IPMN)',
+        sector: 'Retroperitoneum (L1-L2 Level)',
+        pearlsBox: '<strong>臨床超音波重點：</strong> 胰臟深居後腹膜腔，橫臥於脊椎前方。胰頭被十二指腸 C-loop 緊密環抱，胰尾則指向脾門。主胰管（Duct of Wirsung）直徑正常小於 2~3mm，若伴隨總膽管同時擴張（雙管徵象 Double-duct sign），需高度警惕胰頭部腫瘤！',
+        pearls: [
+          '<strong>後腹膜深層死角</strong>：常因胃腸道氣體遮蔽不易完整掃描，可囑患者飲水（Water-fill method）建立超音波透亮窗觀察。',
+          '<strong>急性胰臟炎核心病因</strong>：以「膽結石掉落阻塞壺腹（40%）」與「酒精過量（35%）」為前兩大主因。'
+        ],
+        phrase: 'Abdominal Sonography: Pancreas body and head visualized with homogeneous parenchymal echogenicity. No focal mass, calcification or peripancreatic fluid accumulation.'
+      },
+      pancreatic_duct: {
+        titleZh: '主胰管 (Main Pancreatic Duct / Duct of Wirsung)',
+        titleEn: 'Ductus pancreaticus major (Wirsung)',
+        pill: '胰液排泄主幹道',
+        regions: '胰尾走向胰頭贯穿全腺體，副胰管 (Santorini duct)',
+        function: '收集全胰臟各腺泡分泌之高活性消化酵素原並排入十二指腸',
+        endofeature: '極細管狀無回音管，管徑正常 < 2.5mm',
+        disease: '胰管結石 (Pancreatic stone)、胰管狹窄、主胰管型 IPMN、慢性胰臟炎串珠狀擴張',
+        sector: 'Intrapancreatic Core',
+        pearlsBox: '<strong>臨床診療重點：</strong> 主胰管自胰尾貫穿至胰頭，管徑自尾向頭逐漸由 1mm 增至 2~3mm。當主胰管發生局部斷裂（Cut-off sign）且遠端管徑顯著擴張時，為早期胰臟癌極具診斷價值之影像指標。',
+        pearls: [
+          '<strong>雙管徵象 (Double-duct sign)</strong>：總膽管與主胰管同時擴張，強烈暗示壺腹周圍癌（Ampullary cancer）或胰頭癌。',
+          '<strong>管內乳頭狀黏液性腫瘤 (IPMN)</strong>：胰管上皮大量分泌黏液導致胰管擴張與十二指腸乳頭呈「魚眼徵（Fish-mouth sign）」。'
+        ],
+        phrase: 'Abdominal Sonography: Main pancreatic duct is smooth and slender without focal dilatation (caliber 1.8mm). No intraductal stone identified.'
+      },
+      ampulla: {
+        titleZh: '十二指腸大乳頭與壺腹 (Ampulla of Vater & Papilla)',
+        titleEn: 'Ampulla hepatopancreatica & Papilla duodeni major',
+        pill: '膽汁與胰液匯流總開口',
+        regions: '壺腹部 (Ampulla of Vater)、奧狄氏括約肌 (Sphincter of Oddi)、主十二指腸乳頭',
+        function: '奧狄氏括約肌調控膽汁與胰液排放，防止十二指腸消化液逆流入膽胰管',
+        endofeature: '十二指腸第二段內側壁黏膜隆起乳頭，內視鏡側視鏡（Side-view scope）核心視野',
+        disease: '壺腹癌 (Ampullary carcinoma)、壺腹結石嵌頓 (Stone impaction)、奧狄氏括約肌功能障礙 (SOD)',
+        sector: 'Duodenum D2 Medial Wall',
+        pearlsBox: '<strong>內視鏡與 ERCP 核心樞紐：</strong> 總膽管與主胰管於十二指腸第二段降部（D2）內側壁匯合為 <strong>壺腹（Ampulla of Vater）</strong>，開口為圓形乳頭構造。臨床進行 <strong>ERCP（內視鏡逆行性膽胰管攝影）</strong> 時，側視鏡正是對準此乳頭進行插管（Cannulation）、切開（EST）與取石。',
+        pearls: [
+          '<strong>膽石性胰臟炎機轉 (Opie\'s theory)</strong>：微小膽石掉落並卡在壺腹出口，導致膽汁逆流灌入主胰管，瞬間活化胰蛋白酶引發猛爆性胰臟發炎！',
+          '<strong>內視鏡十二指腸乳頭括約肌切開術 (EST)</strong>：以高頻電刀切開奧狄氏括約肌，擴大開口以取出卡在膽管內的結石。'
+        ],
+        phrase: 'Duodenoscopy / ERCP: Major duodenal papilla is normal in appearance without ulcerated neoplasm. Selective CBD cannulation achieved smoothly.'
+      },
+      duodenum: {
+        titleZh: '十二指腸 (Duodenum C-Loop)',
+        titleEn: 'Duodenum · Pars superior, Pars descendens',
+        pill: '小腸第一段 C 形環抱',
+        regions: '球部 (D1 Bulb)、降部 (D2 Descending)、水平部 (D3)、升部 (D4)',
+        function: '接受胃食糜，中和強酸並與膽汁、胰液充分混合消化',
+        endofeature: 'D1 光滑黏膜，D2 豐富環狀襞（Plicae circulares）與內側乳頭',
+        disease: '十二指腸球部潰瘍 (DU)、十二指腸憩室 (Lemmel syndrome)、乳頭周圍腫瘤',
+        sector: 'Right Upper Quadrant (Epigastrium)',
+        pearlsBox: '<strong>解剖構造重點：</strong> 十二指腸長約 25cm，呈「C字形」緊密包覆胰頭。第二段降部（D2）為膽汁與胰液進入消化道的唯一門戶，前壁切開可清晰看見內側壁隆起的十二指腸大乳頭與豐富的黏膜環狀皺襞。',
+        pearls: [
+          '<strong>球部潰瘍 (D1 Ulcer)</strong>：前壁潰瘍好發穿孔（Perforation），後壁潰瘍好發侵蝕胃十二指腸動脈引發大出血。',
+          '<strong>萊梅爾症候群 (Lemmel\'s Syndrome)</strong>：十二指腸乳頭旁憩室壓迫總膽管引發阻塞性黃疸。'
+        ],
+        phrase: 'Panendoscopy: Duodenal bulb is intact. Second portion (D2) reveals regular circular folds and healthy mucosal lining.'
+      },
+      vessels: {
+        titleZh: '後腹腔大血管 (IVC & Abdominal Aorta)',
+        titleEn: 'Vena Cava Inferior & Aorta Abdominalis',
+        pill: '後腹膜血管主幹',
+        regions: '下腔靜脈 (IVC, 藍色)、腹主動脈 (Aorta, 紅色)、門靜脈主幹',
+        function: '下腔靜脈收集下半身與肝靜脈回流血液；腹主動脈供應腹腔臟器動脈血',
+        endofeature: '超音波重要定位解剖地標（Landmarks）',
+        disease: '腹主動脈瘤 (AAA)、門靜脈栓塞 (PV thrombosis)、下腔靜脈壓迫',
+        sector: 'Retroperitoneal Vascular Axis',
+        pearlsBox: '<strong>超音波定位地標：</strong> 掃描胰臟時，下腔靜脈（IVC）位於胰頭後方，腹主動脈（Aorta）與上腸繫膜動脈（SMA）位於胰體後方，為超音波確認胰臟解剖層次最關鍵的「黃金地標」。',
+        pearls: [
+          '<strong>上腸繫膜動脈 (SMA)</strong>：超音波橫切面呈圓形「貓眼狀」，上方跨越的組織即為胰臟體部。',
+          '<strong>脾靜脈 (Splenic vein)</strong>：緊貼胰臟後緣橫行，匯入門靜脈主幹。'
+        ],
+        phrase: 'Abdominal Sonography: Abdominal aorta is normal in caliber (< 2.0cm) without aneurysmal dilatation. Inferior vena cava (IVC) is patent with normal respiratory collapse.'
+      }
+    };
+
+    // Global 3D Variables
+    let scene, camera, renderer, controls;
+    let hbpMasterGroup;
+    let liverMesh, liverMaterial;
+    let segmentLabelSprites = {};
+    let pathologyGroup;
+    let focusBeaconGroup, focusBeaconMesh;
+    let activePathology = { gallstone: false, cbdstone: false, ampulla: false, pancreatitis: false };
+    let selectedId = 'pancreas';
+    let isQuizMode = false, quizTarget = null;
+    let raycaster, mouse;
+    let currentLiverOpacity = 0.80;
+
+    // Landmark Target Coordinates for Focus Beacon & Labels
+    const segmentConfigs = {
+      liver: {
+        label: '肝臟 (Liver)',
+        targetPos: new THREE.Vector3(-0.3, 1.8, 0.0),
+        labelPos: [-1.8, 2.4, 0.6]
+      },
+      gallbladder: {
+        label: '膽囊與膽囊管',
+        targetPos: new THREE.Vector3(-1.4, 0.2, 0.5),
+        labelPos: [-2.4, 0.3, 0.8]
+      },
+      biliary_tree: {
+        label: '總膽管 (CBD)',
+        targetPos: new THREE.Vector3(-0.55, 0.3, 0.2),
+        labelPos: [-1.4, 0.9, 0.7]
+      },
+      pancreas: {
+        label: '胰臟 (Pancreas)',
+        targetPos: new THREE.Vector3(0.6, -0.4, 0.1),
+        labelPos: [2.0, -0.2, 0.7]
+      },
+      pancreatic_duct: {
+        label: '主胰管 (Wirsung)',
+        targetPos: new THREE.Vector3(0.8, -0.45, 0.2),
+        labelPos: [1.8, -0.9, 0.8]
+      },
+      ampulla: {
+        label: '十二指腸壺腹 (Ampulla)',
+        targetPos: new THREE.Vector3(-0.65, -0.9, 0.1),
+        labelPos: [-1.7, -1.1, 0.8]
+      },
+      duodenum: {
+        label: '十二指腸 (Duodenum)',
+        targetPos: new THREE.Vector3(-0.7, -1.3, 0.0),
+        labelPos: [-0.6, -2.2, 0.7]
+      },
+      vessels: {
+        label: '下腔靜脈與主動脈',
+        targetPos: new THREE.Vector3(0.05, 0.2, -0.6),
+        labelPos: [0.3, 2.2, -0.3]
+      }
+    };
+
+    function init3D() {
+      const container = document.getElementById('threejs-canvas-container');
+      if (!container) return;
+
+      const width = container.clientWidth || (window.innerWidth > 1150 ? window.innerWidth - 720 : window.innerWidth);
+      const height = container.clientHeight || (window.innerHeight - 130);
+
+      // 1. Scene & Camera
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      camera.position.set(0, 0.0, 8.5);
+
+      // 2. WebGL Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // 3. Orbit Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 3.5;
+      controls.maxDistance = 16;
+      controls.target.set(0, 0.0, 0);
+
+      // 4. Studio Medical Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+      scene.add(ambientLight);
+
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.4);
+      mainLight.position.set(6, 8, 8);
+      scene.add(mainLight);
+
+      const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.7);
+      fillLight.position.set(-6, -4, 6);
+      scene.add(fillLight);
+
+      const bottomLight = new THREE.DirectionalLight(0xfef08a, 0.5);
+      bottomLight.position.set(0, -6, 6);
+      scene.add(bottomLight);
+
+      // 5. Build Comprehensive Textbook 3D Hepatobiliary-Pancreatic Model
+      buildHepatobiliaryPancreaticModel();
+
+      // 6. Build 3D Pathologies (Gallstones, CBD Stones, Ampulla Impaction, Pancreatitis)
+      build3DPathologies();
+
+      // 7. Build Glowing Focus Halo Beacon
+      buildFocusBeacon();
+
+      // 8. Raycasting Setup
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+      renderer.domElement.addEventListener('pointerdown', onPointerDown);
+
+      // 9. Auto-Resize Observer
+      const resizeObserver = new ResizeObserver(() => onWindowResize());
+      resizeObserver.observe(container);
+      window.addEventListener('resize', onWindowResize);
+
+      // Initialize
+      selectSegment('pancreas');
+
+      setTimeout(onWindowResize, 100);
+
+      // Animation Loop
+      animate();
+    }
+
+    // Build Comprehensive Textbook 3D Model matching Reference Images 1, 2, 3
+    function buildHepatobiliaryPancreaticModel() {
+      hbpMasterGroup = new THREE.Group();
+
+      // --- 1. Materials for Hepatobiliary Organs ---
+      // A. Liver Material (Reddish Brown with smooth sheen)
+      liverMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0x9b3c34,
+        roughness: 0.32,
+        metalness: 0.05,
+        clearcoat: 0.7,
+        clearcoatRoughness: 0.25,
+        transparent: true,
+        opacity: currentLiverOpacity,
+        side: THREE.DoubleSide
+      });
+
+      // B. Gallbladder Material (Emerald Olive Green with translucent bile glow)
+      const gbMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0x22c55e,
+        roughness: 0.22,
+        metalness: 0.05,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.15,
+        side: THREE.DoubleSide
+      });
+
+      // C. Biliary Ducts Material (Bright Lime/Green Emerald Tubes)
+      const ductMaterial = new THREE.MeshStandardMaterial({
+        color: 0x16a34a,
+        roughness: 0.3,
+        metalness: 0.1
+      });
+
+      // D. Pancreas Material (Warm Golden Yellow Lobulated texture)
+      const pancreasMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xeab308,
+        roughness: 0.45,
+        metalness: 0.02,
+        clearcoat: 0.5,
+        side: THREE.DoubleSide
+      });
+
+      // E. Pancreatic Duct (Clean White / Translucent Tube inside pancreas)
+      const wDuctMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.2,
+        emissive: 0x38bdf8,
+        emissiveIntensity: 0.45
+      });
+
+      // F. Duodenum C-Loop Material (Warm Fleshy Pink)
+      const duodenumMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xe07a6d,
+        roughness: 0.3,
+        clearcoat: 0.65,
+        side: THREE.DoubleSide
+      });
+
+      // G. Duodenum Interior Mucosal Folds (Deep Coral with Circular Plicae)
+      const duodCutMaterial = new THREE.MeshStandardMaterial({
+        color: 0xb94943,
+        roughness: 0.4,
+        side: THREE.DoubleSide
+      });
+
+      // H. Major Vessels (IVC Blue & Aorta Red)
+      const ivcMaterial = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.3 });
+      const aortaMaterial = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.3 });
+
+      // --- 2. Build Major Vessels (IVC & Aorta behind the organs) ---
+      const ivcGeom = new THREE.CylinderGeometry(0.18, 0.18, 5.5, 20);
+      const ivcMesh = new THREE.Mesh(ivcGeom, ivcMaterial);
+      ivcMesh.position.set(-0.15, 0.2, -0.65);
+      hbpMasterGroup.add(ivcMesh);
+
+      const aortaGeom = new THREE.CylinderGeometry(0.16, 0.16, 5.5, 20);
+      const aortaMesh = new THREE.Mesh(aortaGeom, aortaMaterial);
+      aortaMesh.position.set(0.28, 0.2, -0.65);
+      hbpMasterGroup.add(aortaMesh);
+
+      // --- 3. Build Liver (Anatomical Upper Right Dome with Falciform Ligament) ---
+      const liverGroup = new THREE.Group();
+      const liverGeom = new THREE.SphereGeometry(1.6, 32, 24);
+      // Scale and shape into asymmetric liver dome (Right lobe large, Left lobe tapering)
+      liverGeom.scale(1.5, 0.85, 0.75);
+      liverGeom.rotateZ(-Math.PI / 16);
+      liverMesh = new THREE.Mesh(liverGeom, liverMaterial);
+      liverMesh.position.set(-0.2, 1.8, 0.0);
+      liverGroup.add(liverMesh);
+
+      // Falciform Ligament (White vertical peritoneal fold dividing lobes)
+      const ligMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.4, side: THREE.DoubleSide });
+      const ligGeom = new THREE.PlaneGeometry(0.12, 1.4);
+      const ligMesh = new THREE.Mesh(ligGeom, ligMat);
+      ligMesh.position.set(-0.15, 2.0, 0.76);
+      ligMesh.rotation.y = -Math.PI / 12;
+      liverGroup.add(ligMesh);
+
+      hbpMasterGroup.add(liverGroup);
+
+      // --- 4. Build Gallbladder (Pear-shaped green reservoir seated under liver) ---
+      const gbGroup = new THREE.Group();
+      const gbBodyGeom = new THREE.SphereGeometry(0.38, 24, 24);
+      gbBodyGeom.scale(0.8, 1.4, 0.8);
+      const gbBodyMesh = new THREE.Mesh(gbBodyGeom, gbMaterial);
+      gbBodyMesh.position.set(-1.45, 0.15, 0.5);
+      gbBodyMesh.rotation.z = Math.PI / 4;
+      gbBodyMesh.rotation.x = Math.PI / 12;
+      gbGroup.add(gbBodyMesh);
+
+      // Cystic Duct (S-shaped winding tube connecting Gallbladder neck to CHD)
+      const cysticPoints = [
+        new THREE.Vector3(-1.2, 0.4, 0.45),
+        new THREE.Vector3(-0.95, 0.55, 0.35),
+        new THREE.Vector3(-0.8, 0.4, 0.25),
+        new THREE.Vector3(-0.6, 0.45, 0.15)
+      ];
+      const cysticCurve = new THREE.CatmullRomCurve3(cysticPoints);
+      const cysticGeom = new THREE.TubeGeometry(cysticCurve, 24, 0.045, 12, false);
+      const cysticMesh = new THREE.Mesh(cysticGeom, ductMaterial);
+      gbGroup.add(cysticMesh);
+
+      hbpMasterGroup.add(gbGroup);
+
+      // --- 5. Build Biliary Tree Ductal System (LHD, RHD, CHD, CBD) ---
+      const bileGroup = new THREE.Group();
+
+      // Right Hepatic Duct (RHD)
+      const rhdPoints = [new THREE.Vector3(-1.2, 1.1, 0.1), new THREE.Vector3(-0.7, 0.75, 0.15)];
+      const rhdGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rhdPoints), 12, 0.042, 10, false);
+      bileGroup.add(new THREE.Mesh(rhdGeom, ductMaterial));
+
+      // Left Hepatic Duct (LHD)
+      const lhdPoints = [new THREE.Vector3(0.0, 1.05, 0.1), new THREE.Vector3(-0.6, 0.75, 0.15)];
+      const lhdGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lhdPoints), 12, 0.042, 10, false);
+      bileGroup.add(new THREE.Mesh(lhdGeom, ductMaterial));
+
+      // Common Hepatic Duct (CHD) + Common Bile Duct (CBD) descending to Ampulla
+      const cbdPoints = [
+        new THREE.Vector3(-0.65, 0.75, 0.15), // Confluence of LHD & RHD
+        new THREE.Vector3(-0.6, 0.45, 0.15),  // Cystic duct junction
+        new THREE.Vector3(-0.55, 0.0, 0.12),  // Supraduodenal CBD
+        new THREE.Vector3(-0.58, -0.45, 0.08),// Retroduodenal & Intrapancreatic CBD
+        new THREE.Vector3(-0.65, -0.9, 0.1)   // Entry into Ampulla of Vater
+      ];
+      const cbdCurve = new THREE.CatmullRomCurve3(cbdPoints);
+      const cbdGeom = new THREE.TubeGeometry(cbdCurve, 32, 0.055, 14, false);
+      const cbdMesh = new THREE.Mesh(cbdGeom, ductMaterial);
+      bileGroup.add(cbdMesh);
+
+      hbpMasterGroup.add(bileGroup);
+
+      // --- 6. Build Pancreas & Main Pancreatic Duct (Wirsung) ---
+      const pancGroup = new THREE.Group();
+
+      // Pancreas Gland Geometry (Head C-loop nestled, Body extending across left, Tail pointing toward spleen)
+      const pancPoints = [
+        new THREE.Vector3(-0.55, -0.85, 0.05), // Uncinate process
+        new THREE.Vector3(-0.45, -0.4, 0.1),   // Pancreatic Head
+        new THREE.Vector3(0.1, -0.32, 0.12),   // Pancreatic Neck
+        new THREE.Vector3(0.8, -0.35, 0.1),    // Pancreatic Body
+        new THREE.Vector3(1.6, -0.25, 0.0),    // Pancreatic Body-Tail
+        new THREE.Vector3(2.1, -0.05, -0.15)   // Pancreatic Tail Apex
+      ];
+      const pancCurve = new THREE.CatmullRomCurve3(pancPoints);
+      
+      // Loft pancreas with variable gland thickness (Thick head, slender tail)
+      const pancGeom = new THREE.TubeGeometry(pancCurve, 40, 0.28, 16, false);
+      const pancMesh = new THREE.Mesh(pancGeom, pancreasMaterial);
+      pancGroup.add(pancMesh);
+
+      // Add characteristic bumpy lobulated nodules along pancreas surface
+      for (let i = 0; i < 18; i++) {
+        const u = 0.1 + (i / 18) * 0.85;
+        const pt = pancCurve.getPoint(u);
+        const noduleGeom = new THREE.SphereGeometry(0.14 + Math.random() * 0.06, 10, 10);
+        const noduleMesh = new THREE.Mesh(noduleGeom, pancreasMaterial);
+        noduleMesh.position.set(
+          pt.x + (Math.random() - 0.5) * 0.2,
+          pt.y + (Math.random() - 0.5) * 0.18,
+          pt.z + 0.14
+        );
+        pancGroup.add(noduleMesh);
+      }
+
+      // Main Pancreatic Duct (Duct of Wirsung, traversing through core to Ampulla)
+      const ductPoints = [
+        new THREE.Vector3(1.95, -0.1, -0.1),
+        new THREE.Vector3(1.4, -0.28, 0.05),
+        new THREE.Vector3(0.7, -0.35, 0.15),
+        new THREE.Vector3(0.05, -0.35, 0.16),
+        new THREE.Vector3(-0.42, -0.5, 0.12),
+        new THREE.Vector3(-0.62, -0.88, 0.1) // Merges with CBD at Ampulla!
+      ];
+      const ductCurve = new THREE.CatmullRomCurve3(ductPoints);
+      const ductGeom = new THREE.TubeGeometry(ductCurve, 32, 0.032, 10, false);
+      const ductMesh = new THREE.Mesh(ductGeom, wDuctMaterial);
+      pancGroup.add(ductMesh);
+
+      hbpMasterGroup.add(pancGroup);
+
+      // --- 7. Build Duodenum C-Loop with Interior Medial Papilla (Ampulla of Vater) ---
+      const duodGroup = new THREE.Group();
+
+      // C-shaped intestinal loop surrounding pancreatic head
+      const duodPoints = [
+        new THREE.Vector3(-0.6, 0.25, 0.0),   // D1 Superior (Duodenal Bulb start)
+        new THREE.Vector3(-0.95, 0.05, 0.0),  // D1-D2 Superior Duodenal Flexure
+        new THREE.Vector3(-1.05, -0.7, 0.0),  // D2 Descending Duodenum (Mid)
+        new THREE.Vector3(-0.95, -1.35, 0.0), // D2-D3 Inferior Duodenal Flexure
+        new THREE.Vector3(-0.4, -1.55, 0.0),  // D3 Horizontal Duodenum
+        new THREE.Vector3(0.3, -1.45, 0.0),   // D4 Ascending Duodenum
+        new THREE.Vector3(0.7, -1.1, -0.1)    // Duodenojejunal Flexure (Treitz)
+      ];
+      const duodCurve = new THREE.CatmullRomCurve3(duodPoints);
+      const duodGeom = new THREE.TubeGeometry(duodCurve, 40, 0.26, 16, false);
+      const duodMesh = new THREE.Mesh(duodGeom, duodenumMaterial);
+      duodGroup.add(duodMesh);
+
+      // Major Duodenal Papilla (十二指腸大乳頭 / 壺腹開口, on Medial Wall of D2)
+      const papillaGroup = new THREE.Group();
+      const papillaGeom = new THREE.TorusGeometry(0.09, 0.035, 12, 16);
+      const papillaMesh = new THREE.Mesh(papillaGeom, duodCutMaterial);
+      papillaMesh.position.set(-0.65, -0.9, 0.12);
+      papillaMesh.rotation.y = Math.PI / 4;
+      papillaGroup.add(papillaMesh);
+
+      const orificeGeom = new THREE.SphereGeometry(0.045, 12, 12);
+      const orificeMat = new THREE.MeshBasicMaterial({ color: 0x1e293b });
+      const orificeMesh = new THREE.Mesh(orificeGeom, orificeMat);
+      orificeMesh.position.set(-0.65, -0.9, 0.12);
+      papillaGroup.add(orificeMesh);
+
+      duodGroup.add(papillaGroup);
+
+      hbpMasterGroup.add(duodGroup);
+
+      // Add Master Group to Scene
+      scene.add(hbpMasterGroup);
+
+      // --- 8. Add Auto-Fitting 3D Billboard Labels ---
+      Object.keys(segmentConfigs).forEach(k => {
+        const conf = segmentConfigs[k];
+        const sprite = createTextSprite(conf.label, '#f59e0b');
+        sprite.position.set(conf.labelPos[0], conf.labelPos[1], conf.labelPos[2]);
+        hbpMasterGroup.add(sprite);
+        segmentLabelSprites[k] = sprite;
+      });
+    }
+
+    // Dynamic Auto-Fitting Billboard Text Sprite Generator (100% inside borders!)
+    function createTextSprite(text, accentColor = '#f59e0b') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 140;
+      const ctx = canvas.getContext('2d');
+
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif';
+      const textWidth = ctx.measureText(text).width;
+
+      const pillWidth = Math.min(480, Math.max(160, textWidth + 64));
+      const pillHeight = 72;
+      const x = (canvas.width - pillWidth) / 2;
+      const y = (canvas.height - pillHeight) / 2;
+
+      // Draw pill background
+      ctx.fillStyle = 'rgba(10, 20, 36, 0.92)';
+      ctx.beginPath();
+      ctx.roundRect(x, y, pillWidth, pillHeight, 36);
+      ctx.fill();
+
+      // Draw crisp glowing border
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Draw centered text
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.minFilter = THREE.LinearFilter;
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(1.3 * (pillWidth / 250), 0.65, 1);
+      return sprite;
+    }
+
+    // Build Glowing Focus Halo Beacon
+    function buildFocusBeacon() {
+      focusBeaconGroup = new THREE.Group();
+
+      const ringGeom = new THREE.RingGeometry(0.32, 0.42, 32);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0xf59e0b,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.85
+      });
+      focusBeaconMesh = new THREE.Mesh(ringGeom, ringMat);
+      focusBeaconGroup.add(focusBeaconMesh);
+
+      const pointLight = new THREE.PointLight(0xf59e0b, 2.2, 2.8);
+      focusBeaconGroup.add(pointLight);
+
+      scene.add(focusBeaconGroup);
+    }
+
+    // Build 4 Major Clinical Pathologies in 3D
+    function build3DPathologies() {
+      pathologyGroup = new THREE.Group();
+
+      // 1. Gallstones & Gallbladder Polyps (Inside Gallbladder Lumen)
+      const stoneMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.6 }); // Yellow cholesterol stones
+      const polypMat = new THREE.MeshPhysicalMaterial({ color: 0xf43f5e, roughness: 0.2, clearcoat: 0.8 });
+
+      // Gallstones in GB fundus
+      const gs1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 1), stoneMat);
+      gs1.position.set(-1.48, 0.05, 0.58);
+      gs1.userData = { type: 'gallstone', name: '膽囊膽固醇結石 (Gallstone, 0.8cm)' };
+      pathologyGroup.add(gs1);
+
+      const gs2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06, 1), stoneMat);
+      gs2.position.set(-1.4, 0.12, 0.62);
+      gs2.userData = { type: 'gallstone', name: '多發性膽囊微結石 (Microcalculi)' };
+      pathologyGroup.add(gs2);
+
+      // Gallbladder Polyp on GB wall
+      const gbp = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), polypMat);
+      gbp.position.set(-1.32, 0.28, 0.52);
+      gbp.userData = { type: 'gallstone', name: '膽囊膽固醇息肉 (GB Polyp, 0.4cm)' };
+      pathologyGroup.add(gbp);
+
+      // 2. Common Bile Duct Stone (CBD Stone) causing Biliary Dilatation
+      const cbdStoneMat = new THREE.MeshStandardMaterial({
+        color: 0xd97706,
+        roughness: 0.5,
+        emissive: 0xb45309,
+        emissiveIntensity: 0.4
+      });
+      const cbdStoneMesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), cbdStoneMat);
+      cbdStoneMesh.position.set(-0.56, -0.2, 0.15);
+      cbdStoneMesh.userData = { type: 'cbdstone', name: '總膽管結石 (CBD Stone, 0.9cm) 伴隨近端膽管擴張' };
+      pathologyGroup.add(cbdStoneMesh);
+
+      // 3. Ampulla Stone Impaction & Ampullary Tumor
+      const ampStoneMat = new THREE.MeshStandardMaterial({
+        color: 0xef4444,
+        roughness: 0.4,
+        emissive: 0xdc2626,
+        emissiveIntensity: 0.6
+      });
+      const ampStoneMesh = new THREE.Mesh(new THREE.SphereGeometry(0.095, 14, 14), ampStoneMat);
+      ampStoneMesh.position.set(-0.65, -0.9, 0.16);
+      ampStoneMesh.userData = { type: 'ampulla', name: '十二指腸壺腹結石嵌頓 (Ampulla Stone Impaction) 引發急性膽石性胰臟炎' };
+      pathologyGroup.add(ampStoneMesh);
+
+      // 4. Acute Pancreatitis (Inflammatory Swelling & Pancreatic Head Mass)
+      const massMat = new THREE.MeshPhysicalMaterial({
+        color: 0x9333ea,
+        roughness: 0.35,
+        emissive: 0x7e22ce,
+        emissiveIntensity: 0.5
+      });
+      const pMassMesh = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 16), massMat);
+      pMassMesh.position.set(-0.45, -0.4, 0.22);
+      pMassMesh.userData = { type: 'pancreatitis', name: '胰臟頭部腫瘤/發炎水腫 (Pancreatic Head Mass, 2.5cm)' };
+      pathologyGroup.add(pMassMesh);
+
+      // Initially hide all pathologies
+      pathologyGroup.children.forEach(child => child.visible = false);
+      scene.add(pathologyGroup);
+    }
+
+    // Toggle Pathology Layers
+    function togglePathology(type) {
+      activePathology[type] = !activePathology[type];
+      const btn = document.getElementById(`btn-path-${type}`);
+      if (btn) btn.classList.toggle('active', activePathology[type]);
+
+      pathologyGroup.children.forEach(child => {
+        if (child.userData && child.userData.type === type) {
+          child.visible = activePathology[type];
+        }
+      });
+
+      const infoEl = document.getElementById('pathology-info-text');
+      if (type === 'gallstone') {
+        if (activePathology.gallstone) {
+          infoEl.innerHTML = '🟡 <strong>已顯示膽囊結石與息肉</strong>：位於膽囊底部強回音結石（帶後方聲影）與壁上良性膽固醇息肉。';
+          selectSegment('gallbladder');
+        } else {
+          infoEl.textContent = '已隱藏膽囊結石與息肉。';
+        }
+      } else if (type === 'cbdstone') {
+        if (activePathology.cbdstone) {
+          infoEl.innerHTML = '🟠 <strong>已顯示總膽管結石 (CBD Stone)</strong>：卡在總膽管中段，阻礙膽汁排泄引發近端膽管擴張與黃疸。';
+          selectSegment('biliary_tree');
+        } else {
+          infoEl.textContent = '已隱藏總膽管結石。';
+        }
+      } else if (type === 'ampulla') {
+        if (activePathology.ampulla) {
+          infoEl.innerHTML = '🔴 <strong>已顯示十二指腸壺腹嵌頓</strong>：結石卡在奧狄氏括約肌開口，同時阻斷膽汁與胰液，為膽石性胰臟炎之核心機轉！';
+          selectSegment('ampulla');
+        } else {
+          infoEl.textContent = '已隱藏壺腹病灶。';
+        }
+      } else if (type === 'pancreatitis') {
+        if (activePathology.pancreatitis) {
+          infoEl.innerHTML = '🟣 <strong>已顯示胰臟發炎水腫與胰頭腫瘤</strong>：胰頭部低回音腫塊壓迫膽胰管，臨床需藉由 EUS 與 CT 鑑別診斷。';
+          selectSegment('pancreas');
+        } else {
+          infoEl.textContent = '已隱藏胰臟腫瘤病灶。';
+        }
+      }
+    }
+
+    // Liver Opacity Slider Action
+    function onLiverOpacitySlider(val) {
+      currentLiverOpacity = val / 100.0;
+      const txt = document.getElementById('txt-liver-opacity-val');
+      if (txt) txt.textContent = `${val}%`;
+      if (liverMaterial) liverMaterial.opacity = currentLiverOpacity;
+    }
+
+    // Segment Selection
+    function selectSegment(id) {
+      if (isQuizMode) {
+        handleQuizClick(id);
+        return;
+      }
+
+      selectedId = id;
+      const conf = segmentConfigs[id];
+      const data = hbpData[id];
+      if (!data || !conf) return;
+
+      document.querySelectorAll('.seg-card-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`btn-seg-${id}`)?.classList.add('active');
+
+      // Move glowing focus beacon to target position
+      if (focusBeaconGroup && conf.targetPos) {
+        new TWEEN.Tween(focusBeaconGroup.position)
+          .to(conf.targetPos, 450)
+          .easing(TWEEN.Easing.Cubic.Out)
+          .start();
+      }
+
+      updateSegmentDetailsOnly(id);
+    }
+
+    function updateSegmentDetailsOnly(id) {
+      const data = hbpData[id];
+      if (!data) return;
+
+      const pill = document.getElementById('det-pill');
+      if (pill) pill.textContent = data.pill;
+      document.getElementById('det-sector').textContent = data.sector;
+      document.getElementById('det-title-zh').textContent = data.titleZh;
+      document.getElementById('det-title-en').textContent = data.titleEn;
+      document.getElementById('det-regions').textContent = data.regions;
+      document.getElementById('det-function').textContent = data.function;
+      document.getElementById('det-endofeature').textContent = data.endofeature;
+      document.getElementById('det-disease').textContent = data.disease;
+      document.getElementById('det-pearls-box').innerHTML = data.pearlsBox;
+      document.getElementById('det-phrase-text').textContent = data.phrase;
+
+      const pearlsList = document.getElementById('det-pearls-list');
+      if (pearlsList) {
+        pearlsList.innerHTML = '';
+        data.pearls.forEach(text => {
+          const item = document.createElement('div');
+          item.className = 'pearl-item';
+          item.innerHTML = `
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            <span>${text}</span>
+          `;
+          pearlsList.appendChild(item);
+        });
+      }
+    }
+
+    // Preset Views
+    function setPresetView(preset) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`view-btn-${preset}`)?.classList.add('active');
+
+      let targetPos = new THREE.Vector3(0, 0.0, 8.5);
+      let targetLook = new THREE.Vector3(0, 0.0, 0);
+
+      switch(preset) {
+        case 'anterior': 
+          targetPos.set(0, 0.0, 8.5); 
+          targetLook.set(0, 0.0, 0); 
+          break;
+        case 'ampulla': 
+          targetPos.set(-0.8, -0.9, 4.2); 
+          targetLook.set(-0.65, -0.9, 0.1); 
+          selectSegment('ampulla');
+          break;
+        case 'gallbladder': 
+          targetPos.set(-2.2, 0.4, 4.8); 
+          targetLook.set(-1.2, 0.3, 0.3); 
+          selectSegment('gallbladder');
+          break;
+        case 'pancreas': 
+          targetPos.set(0.8, -0.4, 5.2); 
+          targetLook.set(0.6, -0.4, 0.1); 
+          selectSegment('pancreas');
+          break;
+        case 'posterior': 
+          targetPos.set(0.5, 0.0, -8.0); 
+          targetLook.set(0, 0.0, -0.2); 
+          selectSegment('vessels');
+          break;
+      }
+
+      new TWEEN.Tween(camera.position).to(targetPos, 850).easing(TWEEN.Easing.Cubic.Out).start();
+      new TWEEN.Tween(controls.target).to(targetLook, 850).easing(TWEEN.Easing.Cubic.Out).start();
+    }
+
+    function reset3DCamera() {
+      setPresetView('anterior');
+      selectSegment('pancreas');
+      showToast('已重設為肝膽胰 3D 正面全覽視角');
+    }
+
+    // Fullscreen Toggle
+    function toggleFullScreen() {
+      const wrapper = document.getElementById('hbpAppWrapper');
+      if (!document.fullscreenElement) {
+        if (wrapper && wrapper.requestFullscreen) {
+          wrapper.requestFullscreen();
+        } else if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const isFs = !!document.fullscreenElement;
+      const label = document.getElementById('txt-fs-label');
+      const btn = document.getElementById('btn-fullscreen-toggle');
+      if (label) label.textContent = isFs ? '退出全螢幕' : '全螢幕模式';
+      if (btn) btn.classList.toggle('active', isFs);
+      setTimeout(onWindowResize, 150);
+    });
+
+    function onPointerDown(e) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      if (hbpMasterGroup) {
+        const intersects = raycaster.intersectObjects(hbpMasterGroup.children, true);
+        if (intersects.length > 0) {
+          const hitPt = intersects[0].point;
+          let closestId = 'pancreas', minDist = 999;
+          Object.keys(segmentConfigs).forEach(k => {
+            const d = hitPt.distanceTo(segmentConfigs[k].targetPos);
+            if (d < minDist) {
+              minDist = d;
+              closestId = k;
+            }
+          });
+          selectSegment(closestId);
+        }
+      }
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('threejs-canvas-container');
+      if (!container || !renderer || !camera) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (width > 0 && height > 0) {
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }
+    }
+
+    function copyPhrase() {
+      const text = document.getElementById('det-phrase-text')?.textContent.trim();
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('已複製肝膽胰超音波報告片語至剪貼簿！');
+        });
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      if (!toast || !msgEl) return;
+      msgEl.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    const quizCandidates = ['liver', 'gallbladder', 'biliary_tree', 'pancreas', 'pancreatic_duct', 'ampulla', 'duodenum'];
+    function toggleQuizMode() {
+      isQuizMode = !isQuizMode;
+      const btn = document.getElementById('btn-toggle-quiz');
+      if (isQuizMode) {
+        btn.classList.add('btn-primary');
+        btn.classList.remove('btn-outline');
+        btn.textContent = '結束測驗';
+        nextQuizQuestion();
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+        btn.innerHTML = `
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          3D 測驗模式
+        `;
+        selectSegment(selectedId);
+      }
+    }
+
+    function nextQuizQuestion() {
+      const idx = Math.floor(Math.random() * quizCandidates.length);
+      quizTarget = quizCandidates[idx];
+      const data = hbpData[quizTarget];
+      showToast(`🎯 請在 3D 空間中找出並點擊：【${data.titleZh}】`);
+    }
+
+    function handleQuizClick(clickedId) {
+      if (clickedId === quizTarget) {
+        showToast('🎉 答對了！非常優秀！');
+        selectSegment(clickedId);
+        setTimeout(nextQuizQuestion, 1400);
+      } else {
+        const clickedName = hbpData[clickedId] ? hbpData[clickedId].titleZh : clickedId;
+        showToast(`❌ 答錯囉！您點到的是【${clickedName}】，旋轉一下角度再試一次！`);
+      }
+    }
+
+    function animate(time) {
+      requestAnimationFrame(animate);
+      TWEEN.update();
+      if (controls) controls.update();
+
+      const t = (time || performance.now()) * 0.005;
+
+      if (focusBeaconMesh) {
+        focusBeaconMesh.rotation.z += 0.02;
+        focusBeaconMesh.scale.setScalar(1.0 + Math.sin(t * 2) * 0.15);
+      }
+
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init3D);
+    } else {
+      init3D();
+    }
+  </script>
+</Layout>
+
+<style>
+  :root {
+    --bg-dark: #060b14;
+    --bg-panel: rgba(11, 20, 38, 0.92);
+    --bg-glass: rgba(16, 28, 52, 0.78);
+    --border-color: rgba(245, 158, 11, 0.18);
+    --border-bright: rgba(245, 158, 11, 0.5);
+    
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --text-muted: #64748b;
+    
+    --accent-amber: #f59e0b;
+    --accent-yellow: #eab308;
+    --accent-green: #22c55e;
+    --accent-cyan: #38bdf8;
+    --accent-rose: #f43f5e;
+    --accent-purple: #c084fc;
+  }
+
+  .hbp-app-wrapper {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    width: 100vw;
+    max-width: 100%;
+    min-height: calc(100vh - 72px);
+    display: flex;
+    flex-direction: column;
+    background-image: 
+      radial-gradient(circle at 10% 10%, rgba(245, 158, 11, 0.09) 0%, transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(34, 197, 94, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, #0d1a24 0%, var(--bg-dark) 100%);
+    overflow-x: hidden;
+  }
+
+  /* Fullscreen Mode Overrides */
+  .hbp-app-wrapper:fullscreen,
+  .hbp-app-wrapper:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Sub Navigation Bar */
+  .anatomy-subnav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1.75rem;
+    background: rgba(10, 20, 36, 0.95);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .subnav-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--accent-amber);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .back-link:hover {
+    color: #fcd34d;
+    transform: translateX(-2px);
+  }
+
+  .divider {
+    color: #475569;
+    font-size: 0.85rem;
+  }
+
+  .current-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b;
+  }
+
+  .subnav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    border: none;
+  }
+
+  .btn-fullscreen {
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+    font-weight: 700;
+  }
+  .btn-fullscreen:hover {
+    background: rgba(245, 158, 11, 0.22);
+    border-color: #f59e0b;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-fullscreen.active {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+  }
+
+  .btn-outline {
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+  }
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--border-bright);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  }
+
+  /* Main Workspace Grid */
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr 380px;
+    height: calc(100vh - 128px);
+    width: 100vw;
+    max-width: 100%;
+    gap: 0.85rem;
+    padding: 0.75rem 1.25rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .hbp-app-wrapper:fullscreen .workspace-grid,
+  .hbp-app-wrapper:-webkit-full-screen .workspace-grid {
+    height: calc(100vh - 56px);
+  }
+
+  @media (max-width: 1400px) {
+    .workspace-grid {
+      grid-template-columns: 290px 1fr 350px;
+      padding: 0.5rem 0.75rem;
+      gap: 0.65rem;
+    }
+  }
+
+  @media (max-width: 1150px) {
+    .workspace-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .glass-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .panel-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .panel-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #e2e8f0;
+  }
+
+  .panel-body {
+    padding: 0.85rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* Pathology Button Grid */
+  .pathology-btn-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .btn-pathology {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.48rem 0.7rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .btn-pathology:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .btn-pathology.active {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: #f59e0b;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+    color: #fef08a;
+  }
+
+  .path-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-gallstone { background: #fef08a; box-shadow: 0 0 6px #fef08a; }
+  .dot-cbdstone { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+  .dot-ampulla { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+  .dot-pancreatitis { background: #c084fc; box-shadow: 0 0 6px #c084fc; }
+
+  .pathology-info-text {
+    font-size: 0.68rem;
+    color: var(--text-sub);
+    line-height: 1.45;
+  }
+
+  .control-row {
+    margin-bottom: 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .control-label-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #cbd5e1;
+  }
+
+  .slider-val {
+    font-family: monospace;
+    color: #f59e0b;
+    font-size: 0.8rem;
+  }
+
+  .slider-subtext-single {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #f59e0b;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+    border: 2px solid #ffffff;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.05em;
+  }
+
+  .segment-grid-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .seg-card-btn {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+  }
+  .seg-card-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+  }
+  .seg-card-btn.active {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: #f59e0b;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+  }
+
+  .seg-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.15rem;
+  }
+  .seg-num-pill {
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 0.75rem;
+    color: #fbbf24;
+  }
+  .seg-loc-tag {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .seg-card-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 3D Canvas Center Stage */
+  .canvas-panel {
+    position: relative;
+    background: radial-gradient(circle at 50% 50%, #122130 0%, #060b14 100%);
+    min-height: 520px;
+    user-select: none;
+  }
+
+  #threejs-canvas-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    outline: none;
+    cursor: grab;
+  }
+  #threejs-canvas-container:active {
+    cursor: grabbing;
+  }
+
+  .view-angles-toolbar {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    background: rgba(10, 20, 36, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 0.3rem 0.45rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+  }
+
+  .view-btn {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+  .view-btn.active {
+    background: rgba(245, 158, 11, 0.22);
+    border-color: rgba(245, 158, 11, 0.5);
+    color: #fbbf24;
+    font-weight: 700;
+  }
+
+  .orbit-hint {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 0.85rem;
+    z-index: 10;
+    background: rgba(10, 20, 36, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 0.72rem;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    pointer-events: none;
+  }
+  .orbit-hint svg {
+    color: #f59e0b;
+  }
+
+  /* Right Details Panel */
+  .detail-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+  .detail-card h3 {
+    font-size: 0.78rem;
+    color: var(--accent-amber);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .detail-title-group {
+    margin-bottom: 0.85rem;
+  }
+  .seg-badge-pill {
+    font-family: monospace;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+  }
+  .sector-tag {
+    font-size: 0.68rem;
+    color: #fbbf24;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .main-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .sub-title {
+    font-size: 0.72rem;
+    color: var(--text-sub);
+    font-style: italic;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
+  }
+  .metric-box {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .metric-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 0.15rem;
+    font-weight: 600;
+  }
+  .metric-value {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .pearl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  .pearl-item svg {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    color: var(--accent-amber);
+  }
+
+  .surgical-pearls {
+    border-left: 3px solid #f59e0b;
+    background: rgba(245, 158, 11, 0.06);
+    padding: 0.6rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+
+  .phrase-box {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+    border-radius: 8px;
+    padding: 0.6rem;
+    margin-top: 0.6rem;
+  }
+  .phrase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+  }
+  .phrase-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-amber);
+  }
+  .phrase-content {
+    font-size: 0.75rem;
+    color: #e2e8f0;
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 0.45rem;
+    border-radius: 6px;
+    user-select: all;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>

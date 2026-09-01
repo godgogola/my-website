@@ -124,10 +124,11 @@ import Layout from '../../layouts/Layout.astro';
         </div>
       </a>
 
-      <!-- 4. 膽囊與膽道系統 (規劃中) -->
-      <div class="organ-card organ-pending">
-        <div class="card-status-badge status-soon">
-          規劃中 · 即將推出
+      <!-- 4. 肝膽胰與十二指腸系統 (已就緒) -->
+      <a href="/anatomy/biliary-pancreas" class="organ-card organ-active">
+        <div class="card-status-badge status-ready">
+          <span class="status-dot"></span>
+          3D 互動已就緒
         </div>
         <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.2)); color: #eab308;">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -136,46 +137,25 @@ import Layout from '../../layouts/Layout.astro';
         </div>
         <div class="organ-info">
           <div class="organ-header-group">
-            <h2 class="organ-name">膽囊與膽道系統 (Biliary Tree)</h2>
-            <span class="organ-latin">Vesica biliaris · Ductus Choledochus</span>
+            <h2 class="organ-name">肝膽胰與十二指腸 (Biliary & Pancreas)</h2>
+            <span class="organ-latin">Vesica biliaris · Pancreas · Duodenum</span>
           </div>
           <p class="organ-desc">
-            左右肝管、總肝管、膽囊管與總膽管 (CBD) 匯流解剖，搭配膽結石、膽囊息肉與膽道阻塞之超音波判讀。
+            教科書級 3D 實體模型：涵蓋肝臟、膽囊、左右肝管、總膽管 (CBD)、主胰管 (Wirsung)、十二指腸壺腹 (Ampulla of Vater) 與膽結石/胰臟炎標記。
           </p>
           <div class="organ-tags">
             <span class="tag">總膽管 (CBD)</span>
-            <span class="tag">膽結石位置</span>
-            <span class="tag">膽囊息肉</span>
-            <span class="tag">超音波墨菲徵象</span>
+            <span class="tag">主胰管 (Wirsung)</span>
+            <span class="tag">十二指腸壺腹</span>
+            <span class="tag">膽囊結石 / 息肉</span>
+            <span class="tag">急性胰臟炎 / 胰頭腫瘤</span>
+          </div>
+          <div class="card-action-link">
+            <span>開啟 3D 肝膽胰解剖系統</span>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
         </div>
-      </div>
-
-      <!-- 5. 胰臟 (規劃中) -->
-      <div class="organ-card organ-pending">
-        <div class="card-status-badge status-soon">
-          規劃中 · 即將推出
-        </div>
-        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(147, 51, 234, 0.2)); color: #a855f7;">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12c2-4 8-4 12-2s4 5 2 7-6 2-10 0-4-3-4-5Z"/>
-          </svg>
-        </div>
-        <div class="organ-info">
-          <div class="organ-header-group">
-            <h2 class="organ-name">胰臟 (Pancreas)</h2>
-            <span class="organ-latin">Pancreas · Duct System</span>
-          </div>
-          <p class="organ-desc">
-            腹膜後深部器官：胰頭（勾部）、胰體、胰尾與主胰管走向，探討內視鏡超音波 (EUS) 與胰臟囊腫/腫瘤之解剖關係。
-          </p>
-          <div class="organ-tags">
-            <span class="tag">主胰管走向</span>
-            <span class="tag">胰頭十二指腸交界</span>
-            <span class="tag">腹膜後解剖</span>
-          </div>
-        </div>
-      </div>
+      </a>
 
     </div>
   </div>
