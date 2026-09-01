@@ -18,38 +18,85 @@ import Layout from '../../layouts/Layout.astro';
     <div class="anatomy-subnav">
       <div class="subnav-left">
         <a href="/anatomy" class="back-link">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          <span>返回圖鑑總覽</span>
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>圖鑑總覽</span>
         </a>
         <div class="divider">/</div>
         <div class="current-badge">
           <span class="pulse-dot"></span>
-          <span>肝臟 (Couinaud 8分段 3D 實體模型)</span>
+          <span>肝臟 (Couinaud 8分段 3D 模型)</span>
         </div>
       </div>
       
       <div class="subnav-right">
         <!-- Fullscreen Button -->
         <button class="btn btn-fullscreen" id="btn-fullscreen-toggle" onclick="toggleFullScreen()" title="進入/退出全螢幕診間衛教模式">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="icon-fs"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-          <span id="txt-fs-label">全螢幕模式</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="icon-fs"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <span class="btn-text-full">全螢幕</span>
         </button>
         <button class="btn btn-outline" id="btn-toggle-quiz" onclick="toggleQuizMode()">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-          3D 測驗模式
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          <span class="btn-text-full">3D 測驗</span>
         </button>
         <button class="btn btn-primary" onclick="reset3DCamera()">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          重設視角
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>重設</span>
         </button>
       </div>
     </div>
 
     <!-- Main 3-Column Workspace Grid (Edge-to-edge full width) -->
     <div class="workspace-grid">
+
+      <!-- Center Stage: Three.js True 3D Solid WebGL Canvas (Placed first on mobile) -->
+      <div class="glass-panel canvas-panel">
+        <!-- Preset View Angles Toolbar -->
+        <div class="view-angles-toolbar">
+          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面觀</button>
+          <button class="view-btn" id="view-btn-visceral" onclick="setPresetView('visceral')">臟面後觀</button>
+          <button class="view-btn" id="view-btn-right-lat" onclick="setPresetView('right_lat')">右後側視角</button>
+          <button class="view-btn" id="view-btn-left-lat" onclick="setPresetView('left_lat')">左側薄楔角</button>
+          <button class="view-btn" id="view-btn-superior" onclick="setPresetView('superior')">橫膈俯視</button>
+          <button class="view-btn" id="view-btn-subcostal" onclick="setPresetView('subcostal')">肋下切面</button>
+        </div>
+
+        <!-- ThreeJS Canvas Container -->
+        <div id="threejs-canvas-container"></div>
+
+        <!-- Orbit Controls Guidance Hint -->
+        <div class="orbit-hint hide-mobile">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          <span><strong>滑鼠左鍵拖曳</strong>：360° 真 3D 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>點擊 3D 塊體</strong>：高亮解剖</span>
+        </div>
+      </div>
       
+      <!-- Explode Control Bar (Pinned prominently on mobile directly below 3D organ) -->
+      <div class="glass-panel explode-control-panel">
+        <div class="control-row" style="margin-bottom: 0;">
+          <div class="control-label-group">
+            <span style="color: #38bdf8; font-weight: 800;">3D 炸開程度 (Explosion)</span>
+            <span id="txt-explode-val" class="slider-val">30%</span>
+          </div>
+          <input type="range" id="slider-explode" min="0" max="100" value="30" oninput="onExplodeSlider(this.value)">
+          <div class="slider-subtext">
+            <span>0% (緊密天然形狀)</span>
+            <span>100% (完全炸開)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Tab Switcher Navigation -->
+      <div class="mobile-tabs-nav">
+        <button class="mobile-tab-btn active" id="tab-btn-regions" onclick="switchMobileTab('regions')">
+          📍 8大分段 (S1~S8)
+        </button>
+        <button class="mobile-tab-btn" id="tab-btn-details" onclick="switchMobileTab('details')">
+          📋 超音波報告片語
+        </button>
+      </div>
+
       <!-- Left Panel: 3D Sliders, Toggles & Structure List -->
-      <div class="glass-panel left-panel">
+      <div class="glass-panel left-panel mobile-tab-pane" id="pane-regions-pathology">
         <div class="panel-header">
           <div class="panel-title">
             <svg width="16" height="16" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
@@ -68,19 +115,6 @@ import Layout from '../../layouts/Layout.astro';
             <div>
               1. <strong>3 條縱向肝靜脈 (R, M, L)</strong>：縱行於 3 條葉間裂，將肝臟劃分為右後、右前、左內、左外 4 個扇區。<br>
               2. <strong>橫向門脈系統 (PV)</strong>：由門靜脈主幹進入，水平分支將各扇區切分為<strong>上段 (7, 8, 4a, 2)</strong> 與 <strong>下段 (6, 5, 4b, 3)</strong>。
-            </div>
-          </div>
-
-          <!-- 3D Explode Slider -->
-          <div class="control-row">
-            <div class="control-label-group">
-              <span>3D 立體炸開程度 (Explosion)</span>
-              <span id="txt-explode-val" class="slider-val">30%</span>
-            </div>
-            <input type="range" id="slider-explode" min="0" max="100" value="30" oninput="onExplodeSlider(this.value)">
-            <div class="slider-subtext">
-              <span>0% (緊密天然形狀)</span>
-              <span>100% (完全炸開)</span>
             </div>
           </div>
 
@@ -179,30 +213,8 @@ import Layout from '../../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Center Stage: Three.js True 3D Solid WebGL Canvas -->
-      <div class="glass-panel canvas-panel">
-        <!-- Preset View Angles Toolbar -->
-        <div class="view-angles-toolbar">
-          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面觀 (Anterior)</button>
-          <button class="view-btn" id="view-btn-visceral" onclick="setPresetView('visceral')">臟面後觀 (Visceral / IVC)</button>
-          <button class="view-btn" id="view-btn-right-lat" onclick="setPresetView('right_lat')">右後側視角 (S6/S7)</button>
-          <button class="view-btn" id="view-btn-left-lat" onclick="setPresetView('left_lat')">左側薄楔角 (S2/S3)</button>
-          <button class="view-btn" id="view-btn-superior" onclick="setPresetView('superior')">橫膈頂俯視角</button>
-          <button class="view-btn" id="view-btn-subcostal" onclick="setPresetView('subcostal')">超音波肋下切面</button>
-        </div>
-
-        <!-- ThreeJS Canvas Container -->
-        <div id="threejs-canvas-container"></div>
-
-        <!-- Orbit Controls Guidance Hint -->
-        <div class="orbit-hint">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-          <span><strong>滑鼠左鍵拖曳</strong>：360° 真 3D 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>點擊 3D 塊體</strong>：高亮解剖</span>
-        </div>
-      </div>
-
       <!-- Right Panel: Clinical Information & Ultrasound Guide -->
-      <div class="glass-panel right-panel">
+      <div class="glass-panel right-panel mobile-tab-pane" id="pane-clinical-details">
         <div class="panel-header">
           <div class="panel-title">
             <svg width="16" height="16" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -473,9 +485,10 @@ import Layout from '../../layouts/Layout.astro';
       const height = container.clientHeight || (window.innerHeight - 130);
 
       // 1. Scene & Camera
+      const isMobile = window.innerWidth <= 768;
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-      camera.position.set(0, 0.2, 8.8);
+      camera.position.set(0, 0.2, isMobile ? 12.5 : 8.8);
 
       // 2. WebGL Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -490,7 +503,7 @@ import Layout from '../../layouts/Layout.astro';
       controls.enableDamping = true;
       controls.dampingFactor = 0.06;
       controls.minDistance = 3.5;
-      controls.maxDistance = 18;
+      controls.maxDistance = 24;
       controls.target.set(0, 0, 0);
 
       // 4. Lighting
@@ -858,16 +871,17 @@ import Layout from '../../layouts/Layout.astro';
       document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(`view-btn-${preset}`)?.classList.add('active');
 
-      let targetPos = new THREE.Vector3(0, 0, 8.8);
+      const isMobile = window.innerWidth <= 768;
+      let targetPos = new THREE.Vector3(0, 0.2, isMobile ? 12.5 : 8.8);
       let targetLook = new THREE.Vector3(0, 0, 0);
 
       switch(preset) {
-        case 'anterior': targetPos.set(0, 0.2, 8.8); break;
-        case 'visceral': targetPos.set(0, -1.0, -8.8); targetLook.set(0, 0.1, 0.0); break;
-        case 'right_lat': targetPos.set(-8.8, 0.5, 0.0); break;
-        case 'left_lat': targetPos.set(8.8, 0.2, 0.0); break;
-        case 'superior': targetPos.set(0, 8.8, 0.5); break;
-        case 'subcostal': targetPos.set(-4.5, -5.5, 5.8); break;
+        case 'anterior': targetPos.set(0, 0.2, isMobile ? 12.5 : 8.8); break;
+        case 'visceral': targetPos.set(0, -1.0, isMobile ? -12.5 : -8.8); targetLook.set(0, 0.1, 0.0); break;
+        case 'right_lat': targetPos.set(isMobile ? -12.5 : -8.8, 0.5, 0.0); break;
+        case 'left_lat': targetPos.set(isMobile ? 12.5 : 8.8, 0.2, 0.0); break;
+        case 'superior': targetPos.set(0, isMobile ? 12.5 : 8.8, 0.5); break;
+        case 'subcostal': targetPos.set(-4.5, -5.5, isMobile ? 8.2 : 5.8); break;
       }
 
       new TWEEN.Tween(camera.position).to(targetPos, 850).easing(TWEEN.Easing.Cubic.Out).start();
@@ -881,6 +895,25 @@ import Layout from '../../layouts/Layout.astro';
       onExplodeSlider(30);
       selectSegment('s6');
       showToast('已重設為 3D 正面標準視角');
+    }
+
+    // Mobile Segmented Drawer / Tab Switching
+    function switchMobileTab(tab) {
+      document.querySelectorAll('.mobile-tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-btn-${tab}`)?.classList.add('active');
+
+      const regionsPane = document.getElementById('pane-regions-pathology');
+      const detailsPane = document.getElementById('pane-clinical-details');
+
+      if (window.innerWidth <= 1150) {
+        if (tab === 'regions') {
+          if (regionsPane) regionsPane.style.display = 'flex';
+          if (detailsPane) detailsPane.style.display = 'none';
+        } else if (tab === 'details') {
+          if (regionsPane) regionsPane.style.display = 'none';
+          if (detailsPane) detailsPane.style.display = 'flex';
+        }
+      }
     }
 
     // Fullscreen Toggle
@@ -1205,12 +1238,38 @@ import Layout from '../../layouts/Layout.astro';
     height: calc(100vh - 56px);
   }
 
-  @media (max-width: 1400px) {
-    .workspace-grid {
-      grid-template-columns: 280px 1fr 340px;
-      padding: 0.5rem 0.75rem;
-      gap: 0.65rem;
-    }
+  /* Mobile Tabs Navigation Bar */
+  .mobile-tabs-nav {
+    display: none;
+    gap: 0.4rem;
+    padding: 0.2rem 0;
+    margin-bottom: 0.2rem;
+  }
+
+  .mobile-tab-btn {
+    flex: 1;
+    padding: 0.55rem 0.35rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: rgba(16, 28, 52, 0.85);
+    color: var(--text-sub);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .mobile-tab-btn.active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(37, 99, 235, 0.25));
+    border-color: #38bdf8;
+    color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+  }
+
+  .explode-control-panel {
+    display: none;
   }
 
   @media (max-width: 1150px) {
@@ -1219,6 +1278,101 @@ import Layout from '../../layouts/Layout.astro';
       height: auto;
       display: flex;
       flex-direction: column;
+      padding: 0.5rem;
+      gap: 0.65rem;
+    }
+
+    .canvas-panel {
+      order: 1;
+      height: 48vh;
+      min-height: 360px;
+      max-height: 460px;
+    }
+
+    .explode-control-panel {
+      order: 2;
+      display: block;
+      padding: 0.75rem;
+    }
+
+    .mobile-tabs-nav {
+      order: 3;
+      display: flex;
+    }
+
+    #pane-regions-pathology {
+      order: 4;
+    }
+
+    #pane-clinical-details {
+      order: 5;
+      display: none;
+    }
+
+    .hide-mobile {
+      display: none !important;
+    }
+
+    .view-angles-toolbar {
+      top: 0.5rem;
+      left: 0.5rem;
+      max-width: calc(100% - 1rem);
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding: 0.25rem 0.35rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .view-angles-toolbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .view-btn {
+      white-space: nowrap;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.45rem;
+    }
+
+    .anatomy-subnav {
+      padding: 0.5rem 0.75rem;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 0.35rem;
+    }
+
+    .subnav-left {
+      gap: 0.35rem;
+      min-width: 0;
+      flex-shrink: 1;
+    }
+
+    .current-badge {
+      display: none;
+    }
+
+    .divider {
+      display: none;
+    }
+
+    .subnav-right {
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .subnav-right .btn {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.72rem;
+      white-space: nowrap !important;
+      letter-spacing: -0.2px;
+    }
+  }
+
+  @media (min-width: 1151px) {
+    .explode-control-panel {
+      display: none !important;
+    }
+    .mobile-tab-pane {
+      display: flex !important;
     }
   }
 

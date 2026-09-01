@@ -550,19 +550,31 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     }
     .nav-track-wrapper {
       width: 100%;
+      overflow: hidden;
     }
     .nav-track {
       width: 100%;
       display: flex;
-      justify-content: space-around;
-      padding: 4px;
+      justify-content: space-between;
+      padding: 3px;
+      box-sizing: border-box;
+      border-radius: 9999px;
     }
     .nav-item {
       flex: 1;
-      padding: 8px 10px;
-      font-size: 0.95rem;
+      min-width: 0;
+      padding: 6px 3px;
+      font-size: 0.8rem;
       font-weight: 700;
+      letter-spacing: -0.3px;
       text-align: center;
+      white-space: nowrap;
+    }
+    @media (max-width: 380px) {
+      .nav-item {
+        font-size: 0.74rem;
+        padding: 5px 2px;
+      }
     }
     .nav-actions {
       display: none;
