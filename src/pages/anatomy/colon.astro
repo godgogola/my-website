@@ -59,6 +59,26 @@ import Layout from '../../layouts/Layout.astro';
         
         <div class="panel-body">
           
+          <!-- Cutaway Mode Toggle Button -->
+          <div class="control-row mode-switch-card">
+            <div class="section-label" style="color: #38bdf8; margin-bottom: 0.35rem;">
+              解剖視野模式 (ANATOMICAL VIEW)
+            </div>
+            <div class="view-mode-buttons">
+              <button class="btn btn-mode active" id="btn-mode-cutaway" onclick="setViewMode('cutaway')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>
+                內部管腔剖面 (Cutaway 視野)
+              </button>
+              <button class="btn btn-mode" id="btn-mode-full" onclick="setViewMode('full')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+                完整 3D 腸道外觀
+              </button>
+            </div>
+            <div class="view-mode-hint">
+              💡 剖面模式可透視<strong>內部結腸袋管腔</strong>與大腸鏡推進及內壁息肉。
+            </div>
+          </div>
+
           <!-- Endoscopy Scope Navigation Slider (0 - 100 cm) -->
           <div class="control-row scope-card">
             <div class="control-label-group">
@@ -398,6 +418,7 @@ import Layout from '../../layouts/Layout.astro';
     let scopeGroup, scopeHeadLight, scopeTipMesh, scopeTubeMesh;
     let pathologyGroup;
     let activePathology = { polyp: false, diverticulum: false, hemorrhoid: false };
+    let currentViewMode = 'cutaway'; // 'cutaway' or 'full'
     let selectedId = 'sigmoid';
     let isQuizMode = false, quizTarget = null;
     let raycaster, mouse;
@@ -554,6 +575,12 @@ import Layout from '../../layouts/Layout.astro';
 
     // Build 3D Colon Segments with periodic Haustra (結腸袋) & Tenia Coli (結腸帶)
     function build3DColonSegments() {
+      // Clear existing if rebuilding
+      Object.keys(colonSegments).forEach(k => {
+        scene.remove(colonSegments[k]);
+      });
+      colonSegments = {};
+
       const gutMatConfig = {
         color: 0xd97768,
         roughness: 0.35,
@@ -567,7 +594,7 @@ import Layout from '../../layouts/Layout.astro';
 
       Object.keys(segmentConfigs).forEach(key => {
         const conf = segmentConfigs[key];
-        const geom = createHaustratedSegmentGeometry(conf.tRange[0], conf.tRange[1], conf.radius, key);
+        const geom = createHaustratedSegmentGeometry(conf.tRange[0], conf.tRange[1], conf.radius, key, currentViewMode === 'cutaway');
         const mat = new THREE.MeshPhysicalMaterial(gutMatConfig);
         
         const mesh = new THREE.Mesh(geom, mat);
@@ -585,13 +612,15 @@ import Layout from '../../layouts/Layout.astro';
       });
     }
 
-    function createHaustratedSegmentGeometry(tStart, tEnd, baseR, key) {
+    function createHaustratedSegmentGeometry(tStart, tEnd, baseR, key, isCutaway) {
       const numRings = 40;
       const radialSegs = 24;
       const positions = [];
       const normals = [];
       const uvs = [];
       const indices = [];
+
+      const thetaMax = isCutaway ? Math.PI * 1.25 : Math.PI * 2.0;
 
       for (let i = 0; i <= numRings; i++) {
         const u = i / numRings;
@@ -610,7 +639,7 @@ import Layout from '../../layouts/Layout.astro';
 
         for (let j = 0; j <= radialSegs; j++) {
           const v = j / radialSegs;
-          const theta = v * Math.PI * 2;
+          const theta = isCutaway ? (-Math.PI * 0.65 + v * thetaMax) : (v * Math.PI * 2);
 
           // 3 Teniae Coli longitudinal bands (triradiate indentations)
           const teniaMod = 1.0 + 0.08 * Math.cos(3 * theta);
@@ -824,6 +853,17 @@ import Layout from '../../layouts/Layout.astro';
       // Initially hide all pathologies
       pathologyGroup.children.forEach(child => child.visible = false);
       scene.add(pathologyGroup);
+    }
+
+    // Toggle View Mode (Cutaway Luminal vs Full 3D)
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      document.getElementById('btn-mode-cutaway')?.classList.toggle('active', mode === 'cutaway');
+      document.getElementById('btn-mode-full')?.classList.toggle('active', mode === 'full');
+
+      build3DColonSegments();
+      selectSegment(selectedId);
+      showToast(mode === 'cutaway' ? '已切換為：內部管腔剖面 (Cutaway) 視野' : '已切換為：完整 3D 腸道外觀模式');
     }
 
     // Toggle Pathology Layers (Polyp / Diverticulum / Hemorrhoid)
@@ -1362,6 +1402,49 @@ import Layout from '../../layouts/Layout.astro';
     padding: 0.85rem;
     overflow-y: auto;
     flex: 1;
+  }
+
+  /* Mode Switch Card */
+  .mode-switch-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.08));
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  }
+
+  .view-mode-buttons {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .btn-mode {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-mode:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .btn-mode.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+  }
+
+  .view-mode-hint {
+    font-size: 0.65rem;
+    color: #cbd5e1;
+    line-height: 1.4;
   }
 
   /* Scope Depth Navigator Card */

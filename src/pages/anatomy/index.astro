@@ -57,12 +57,13 @@ import Layout from '../../layouts/Layout.astro';
         </div>
       </a>
 
-      <!-- 2. 胃部與食道 (規劃中) -->
-      <div class="organ-card organ-pending">
-        <div class="card-status-badge status-soon">
-          規劃中 · 即將推出
+      <!-- 2. 胃部與食道 (已就緒) -->
+      <a href="/anatomy/stomach" class="organ-card organ-active">
+        <div class="card-status-badge status-ready">
+          <span class="status-dot"></span>
+          3D 互動已就緒
         </div>
-        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(147, 197, 253, 0.2)); color: #3b82f6;">
+        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(37, 99, 235, 0.2)); color: #38bdf8;">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2C6.5 2 3 6.5 3 12c0 3.5 2.5 7 5.5 8.5 2 .8 4.5.5 6-.5 2-1.5 3-4 3.5-7.5.5-3.5-2-10.5-6-10.5Z"/>
           </svg>
@@ -70,19 +71,24 @@ import Layout from '../../layouts/Layout.astro';
         <div class="organ-info">
           <div class="organ-header-group">
             <h2 class="organ-name">胃部與食道 (Stomach & Esophagus)</h2>
-            <span class="organ-latin">Gaster · Endoscopic Views</span>
+            <span class="organ-latin">Gaster · Endoscopic Rugae Navigation</span>
           </div>
           <p class="organ-desc">
-            內視鏡專科視角：胃底、胃體、胃竇、幽門與賁門解剖構造，結合胃食道逆流 (GERD)、食道裂孔疝氣與胃息肉衛教。
+            內部胃黏膜皺襞（Rugae）剖切模型，整合胃鏡進鏡深度（0~65cm）、J-turn 倒轉視野、胃食道逆流、潰瘍、息肉與腸化生標記。
           </p>
           <div class="organ-tags">
-            <span class="tag">胃鏡操作視野</span>
-            <span class="tag">胃壁分層</span>
-            <span class="tag">胃食道逆流</span>
-            <span class="tag">胃息肉好發區</span>
+            <span class="tag">內部胃皺襞 (Rugae 剖面)</span>
+            <span class="tag">胃鏡巡航 (0~65cm)</span>
+            <span class="tag">J-turn 胃底倒轉</span>
+            <span class="tag">胃食道逆流 (GERD)</span>
+            <span class="tag">消化性潰瘍 / 腸化生</span>
+          </div>
+          <div class="card-action-link">
+            <span>開啟 3D 胃鏡解剖系統</span>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
         </div>
-      </div>
+      </a>
 
       <!-- 3. 大腸與直腸 (已就緒) -->
       <a href="/anatomy/colon" class="organ-card organ-active">
