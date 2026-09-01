@@ -498,19 +498,19 @@ import Layout from '../../layouts/Layout.astro';
       controls.maxDistance = 16;
       controls.target.set(0.0, 0.05, 0);
 
-      // 4. Studio Medical Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+      // 4. Studio Medical Lighting (Soft, balanced, non-glare)
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
       scene.add(ambientLight);
 
-      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.45);
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 0.85);
       mainLight.position.set(6, 8, 8);
       scene.add(mainLight);
 
-      const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.75);
+      const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
       fillLight.position.set(-6, -4, 6);
       scene.add(fillLight);
 
-      const bottomLight = new THREE.DirectionalLight(0xfef08a, 0.55);
+      const bottomLight = new THREE.DirectionalLight(0xfef08a, 0.25);
       bottomLight.position.set(0, -6, 6);
       scene.add(bottomLight);
 
@@ -546,65 +546,66 @@ import Layout from '../../layouts/Layout.astro';
     function buildTextbookHBPModel() {
       hbpMasterGroup = new THREE.Group();
 
-      // --- Materials ---
-      // 1. Liver Material (Deep Mahogany Red with glossy surface)
+      // --- Materials (Balanced, natural medical illustration tones, no glare) ---
+      // 1. Liver Material (Deep Warm Mahogany Red with gentle sheen)
       liverMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0x8b322a,
-        roughness: 0.30,
-        metalness: 0.04,
-        clearcoat: 0.75,
-        clearcoatRoughness: 0.25,
+        color: 0x7c2620,
+        roughness: 0.48,
+        metalness: 0.02,
+        clearcoat: 0.3,
+        clearcoatRoughness: 0.4,
         transparent: true,
         opacity: currentLiverOpacity,
         side: THREE.DoubleSide
       });
 
-      // 2. Gallbladder Material (Olive Green / Jade with bile translucency)
+      // 2. Gallbladder Material (Deep Olive Jade with gentle translucency)
       const gbMat = new THREE.MeshPhysicalMaterial({
-        color: 0x5a8738,
-        roughness: 0.26,
-        metalness: 0.05,
-        clearcoat: 0.85,
-        clearcoatRoughness: 0.2,
+        color: 0x48702c,
+        roughness: 0.42,
+        metalness: 0.03,
+        clearcoat: 0.4,
+        clearcoatRoughness: 0.3,
         side: THREE.DoubleSide
       });
 
-      // 3. Bile Duct Material (Bright Emerald Green)
+      // 3. Bile Duct Material (Natural Emerald Green)
       const ductMat = new THREE.MeshStandardMaterial({
         color: 0x15803d,
-        roughness: 0.35,
-        metalness: 0.1
-      });
-
-      // 4. Pancreas Islands Glandular Material (Warm Golden Yellow Acinar Lobules)
-      const acinarLobuleMat = new THREE.MeshPhysicalMaterial({
-        color: 0xf3ba38,
-        roughness: 0.35,
-        metalness: 0.02,
-        clearcoat: 0.65,
-        side: THREE.DoubleSide
-      });
-
-      // 5. Pancreatic Head Core (Warm Peach Yellow for cutaway window)
-      const pancCutMat = new THREE.MeshStandardMaterial({
-        color: 0xfae092,
         roughness: 0.45,
+        metalness: 0.05
+      });
+
+      // 4. Pancreas Islands Glandular Material (Warm Golden Amber Acinar Lobules)
+      const acinarLobuleMat = new THREE.MeshPhysicalMaterial({
+        color: 0xd9961e,
+        roughness: 0.45,
+        metalness: 0.02,
+        clearcoat: 0.2,
         side: THREE.DoubleSide
       });
 
-      // 6. Pancreatic Duct Material (Clean White / Light Blue Duct of Wirsung)
+      // 5. Pancreatic Head Parenchyma (Warm Golden-Orange Glandular Core)
+      const pancCutMat = new THREE.MeshStandardMaterial({
+        color: 0xc88514,
+        roughness: 0.55,
+        side: THREE.DoubleSide
+      });
+
+      // 6. Pancreatic Duct Material (Crisp Clean White Duct of Wirsung)
       const wDuctMat = new THREE.MeshStandardMaterial({
         color: 0xffffff,
-        roughness: 0.25,
+        roughness: 0.3,
         emissive: 0x38bdf8,
-        emissiveIntensity: 0.4
+        emissiveIntensity: 0.3
       });
 
-      // 7. Duodenum C-Loop Material (Fleshy Pink)
+      // 7. Duodenum C-Loop Material (Natural Deep Warm Pink-Coral Intestine)
       const duodenumMat = new THREE.MeshPhysicalMaterial({
-        color: 0xde7b6e,
-        roughness: 0.32,
-        clearcoat: 0.65,
+        color: 0xba5247,
+        roughness: 0.55,
+        clearcoat: 0.15,
+        clearcoatRoughness: 0.5,
         side: THREE.DoubleSide
       });
 
@@ -745,12 +746,24 @@ import Layout from '../../layouts/Layout.astro';
       // --- E. Build Pancreas with Cobblestone Lobular Texture & Head Cutaway Window ---
       const pancGroup = new THREE.Group();
 
-      // 1. Pancreatic Head Cutaway Section (Showing internal ducts like in illustration)
-      const headGeom = new THREE.CylinderGeometry(0.42, 0.46, 0.75, 20);
-      headGeom.rotateX(Math.PI / 2);
+      // 1. Pancreatic Head Parenchyma Section (Contoured organic lobe fitting in C-loop)
+      const headGeom = new THREE.SphereGeometry(0.42, 24, 20);
+      headGeom.scale(0.9, 1.15, 0.45);
       const headMesh = new THREE.Mesh(headGeom, pancCutMat);
-      headMesh.position.set(-0.42, -0.55, 0.1);
+      headMesh.position.set(-0.48, -0.62, 0.05);
       pancGroup.add(headMesh);
+
+      // Add peripheral acinar lobules framing the head
+      for (let h = 0; h < 14; h++) {
+        const angle = (h / 14) * Math.PI * 2;
+        const hNodule = new THREE.Mesh(new THREE.SphereGeometry(0.065 + Math.random() * 0.03, 8, 8), acinarLobuleMat);
+        hNodule.position.set(
+          -0.48 + Math.cos(angle) * 0.35,
+          -0.62 + Math.sin(angle) * 0.42,
+          0.12 + (Math.random() - 0.5) * 0.08
+        );
+        pancGroup.add(hNodule);
+      }
 
       // 2. Pancreas Body & Tail Core Spline
       const pancCorePoints = [
@@ -910,7 +923,7 @@ import Layout from '../../layouts/Layout.astro';
       focusBeaconMesh = new THREE.Mesh(ringGeom, ringMat);
       focusBeaconGroup.add(focusBeaconMesh);
 
-      const pointLight = new THREE.PointLight(0xf59e0b, 2.2, 2.8);
+      const pointLight = new THREE.PointLight(0xf59e0b, 0.7, 2.0);
       focusBeaconGroup.add(pointLight);
 
       scene.add(focusBeaconGroup);

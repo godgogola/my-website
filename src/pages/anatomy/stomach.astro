@@ -463,19 +463,19 @@ import Layout from '../../layouts/Layout.astro';
       controls.maxDistance = 16;
       controls.target.set(0.1, 0.1, 0);
 
-      // 4. Studio Medical Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      // 4. Studio Medical Lighting (Soft, balanced, non-glare)
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
       scene.add(ambientLight);
 
-      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.4);
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 0.85);
       mainLight.position.set(6, 8, 8);
       scene.add(mainLight);
 
-      const fillLight = new THREE.DirectionalLight(0xfee2e2, 0.8);
+      const fillLight = new THREE.DirectionalLight(0xfee2e2, 0.45);
       fillLight.position.set(-6, -4, 6);
       scene.add(fillLight);
 
-      const topLight = new THREE.DirectionalLight(0xffffff, 0.7);
+      const topLight = new THREE.DirectionalLight(0xffffff, 0.35);
       topLight.position.set(0, 8, 3);
       scene.add(topLight);
 
@@ -518,47 +518,47 @@ import Layout from '../../layouts/Layout.astro';
     function buildTextbookStomachModel() {
       stomachMasterGroup = new THREE.Group();
 
-      // Materials for realistic textbook anatomical illustration
-      // 1. External Serosa / Outer Shell (Natural Warm Pink Pearl)
+      // Materials for realistic textbook anatomical illustration (Balanced, warm, non-overexposed)
+      // 1. External Serosa / Outer Shell & Duodenum (Natural Deep Warm Pink)
       const serosaMat = new THREE.MeshPhysicalMaterial({
-        color: 0xdf796c,
-        roughness: 0.35,
-        metalness: 0.05,
-        clearcoat: 0.6,
-        clearcoatRoughness: 0.3,
+        color: 0xb84e44,
+        roughness: 0.52,
+        metalness: 0.02,
+        clearcoat: 0.25,
+        clearcoatRoughness: 0.4,
         side: THREE.DoubleSide
       });
 
-      // 2. Internal Mucosal Cavity (Warm Salmon with rich subsurface glow)
+      // 2. Internal Mucosal Cavity (Warm Salmon Red with rich natural depth)
       const mucosaMat = new THREE.MeshPhysicalMaterial({
-        color: 0xdb6b60,
-        roughness: 0.28,
+        color: 0xa63a32,
+        roughness: 0.48,
         metalness: 0.02,
-        clearcoat: 0.75,
-        clearcoatRoughness: 0.2,
+        clearcoat: 0.25,
+        clearcoatRoughness: 0.4,
         side: THREE.DoubleSide
       });
 
       // 3. Thickened Muscular Wall Cut Edge (Cross-section rim showing pink serosa, red muscularis & white submucosa)
       const wallCutMat = new THREE.MeshStandardMaterial({
-        color: 0xbe4a44,
-        roughness: 0.45,
+        color: 0x8a2b25,
+        roughness: 0.58,
         side: THREE.DoubleSide
       });
 
-      // 4. Rugae Folds Material (Glossy undulating folds)
+      // 4. Rugae Folds Material (Distinct warm coral folds with soft gentle sheen)
       const rugaeMat = new THREE.MeshPhysicalMaterial({
-        color: 0xe67a6d,
-        roughness: 0.25,
-        clearcoat: 0.85,
-        clearcoatRoughness: 0.2,
+        color: 0xb5463c,
+        roughness: 0.46,
+        clearcoat: 0.3,
+        clearcoatRoughness: 0.35,
         side: THREE.DoubleSide
       });
 
       // 5. Sphincter Muscular Ring Material
       const sphincterMat = new THREE.MeshStandardMaterial({
-        color: 0xce5e56,
-        roughness: 0.35
+        color: 0x94322a,
+        roughness: 0.55
       });
 
       // --- A. Define Anatomical Boundary Splines matching Image 2 ---
@@ -809,7 +809,7 @@ import Layout from '../../layouts/Layout.astro';
       focusBeaconMesh = new THREE.Mesh(ringGeom, ringMat);
       focusBeaconGroup.add(focusBeaconMesh);
 
-      const pointLight = new THREE.PointLight(0x00e5ff, 2.2, 2.5);
+      const pointLight = new THREE.PointLight(0x00e5ff, 0.7, 2.0);
       focusBeaconGroup.add(pointLight);
 
       scene.add(focusBeaconGroup);
@@ -830,13 +830,13 @@ import Layout from '../../layouts/Layout.astro';
       const coneMat = new THREE.MeshBasicMaterial({
         color: 0x38bdf8,
         transparent: true,
-        opacity: 0.45,
+        opacity: 0.35,
         side: THREE.DoubleSide
       });
       const lightBeamMesh = new THREE.Mesh(coneGeom, coneMat);
       scopeTipMesh.add(lightBeamMesh);
 
-      scopeHeadLight = new THREE.PointLight(0x00e5ff, 2.5, 3.5);
+      scopeHeadLight = new THREE.PointLight(0x00e5ff, 0.8, 2.5);
       scopeGroup.add(scopeHeadLight);
 
       scene.add(scopeGroup);

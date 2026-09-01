@@ -485,19 +485,19 @@ import Layout from '../../layouts/Layout.astro';
       controls.maxDistance = 16;
       controls.target.set(0, -0.5, 0);
 
-      // 4. Studio Medical Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.72);
+      // 4. Studio Medical Lighting (Soft, balanced, non-glare)
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
       scene.add(ambientLight);
 
-      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.25);
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 0.85);
       mainLight.position.set(6, 8, 8);
       scene.add(mainLight);
 
-      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.85);
+      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.45);
       rimLight.position.set(-8, -4, -6);
       scene.add(rimLight);
 
-      const bottomLight = new THREE.DirectionalLight(0xa7f3d0, 0.6);
+      const bottomLight = new THREE.DirectionalLight(0xa7f3d0, 0.25);
       bottomLight.position.set(0, -8, 6);
       scene.add(bottomLight);
 
@@ -602,11 +602,11 @@ import Layout from '../../layouts/Layout.astro';
       geom.computeVertexNormals();
 
       colonMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xd97768,
-        roughness: 0.32,
-        metalness: 0.05,
-        clearcoat: 0.75,
-        clearcoatRoughness: 0.25,
+        color: 0xb55146,
+        roughness: 0.52,
+        metalness: 0.02,
+        clearcoat: 0.2,
+        clearcoatRoughness: 0.4,
         transparent: true,
         opacity: currentOpacity,
         side: THREE.DoubleSide
