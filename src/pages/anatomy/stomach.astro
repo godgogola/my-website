@@ -4,7 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout 
   title="胃部與食道 3D 互動解剖暨胃鏡巡航系統 | 互動解剖圖鑑 - 黃冠智醫師" 
-  description="胃部與食道 3D 空間立體解剖系統。包含胃鏡進鏡深度模擬（0-65cm）、胃食道逆流/潰瘍/息肉/腸化生病灶標記、3D 空間立體炸開與病歷片語產生器。"
+  description="胃部與食道一體成型 3D 實體模型。包含胃鏡進鏡深度模擬（0-65cm）、胃食道逆流/潰瘍/息肉/腸化生病灶標記與病歷片語產生器。"
   fullWidth={true}
   hideFooter={true}
 >
@@ -24,7 +24,7 @@ import Layout from '../../layouts/Layout.astro';
         <div class="divider">/</div>
         <div class="current-badge">
           <span class="pulse-dot"></span>
-          <span>胃部與食道 (Stomach & Esophagus 3D 實體模型)</span>
+          <span>胃部與食道 (一體成型 3D 無縫有機模型)</span>
         </div>
       </div>
       
@@ -109,26 +109,13 @@ import Layout from '../../layouts/Layout.astro';
             </div>
           </div>
 
-          <!-- 3D Explode Slider -->
-          <div class="control-row">
-            <div class="control-label-group">
-              <span>3D 解剖部位立體炸開 (Explosion)</span>
-              <span id="txt-explode-val" class="slider-val">0%</span>
-            </div>
-            <input type="range" id="slider-explode" min="0" max="100" value="0" oninput="onExplodeSlider(this.value)">
-            <div class="slider-subtext">
-              <span>0% (緊密天然連貫構造)</span>
-              <span>100% (完全分離觀察)</span>
-            </div>
-          </div>
-
           <!-- Wall Opacity Slider -->
           <div class="control-row">
             <div class="control-label-group">
               <span>胃壁透明度 (Wall Opacity)</span>
-              <span id="txt-opacity-val" class="slider-val">92%</span>
+              <span id="txt-opacity-val" class="slider-val">95%</span>
             </div>
-            <input type="range" id="slider-opacity" min="20" max="100" value="92" oninput="onOpacitySlider(this.value)">
+            <input type="range" id="slider-opacity" min="20" max="100" value="95" oninput="onOpacitySlider(this.value)">
             <div class="slider-subtext-single">
               微調透明度可透視內部管腔走向與胃鏡發光鏡頭
             </div>
@@ -208,7 +195,7 @@ import Layout from '../../layouts/Layout.astro';
         <!-- Orbit Controls Guidance Hint -->
         <div class="orbit-hint">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-          <span><strong>滑鼠左鍵拖曳</strong>：360° 真 3D 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>滑動進鏡深度</strong>：模擬胃鏡巡航</span>
+          <span><strong>滑鼠左鍵拖曳</strong>：360° 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>滑動進鏡深度</strong>：模擬胃鏡巡航</span>
         </div>
       </div>
 
@@ -255,7 +242,7 @@ import Layout from '../../layouts/Layout.astro';
 
           <!-- Endoscopy Pearls -->
           <div class="surgical-pearls" id="det-pearls-box">
-            <strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，胃大彎佈滿豐富飽滿的肌層走向。充足充氣時胃腔平滑舒張，檢查時需沿胃小彎與大彎平滑排查有無早癌或潰瘍。
+            <strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，胃大彎走向寬廣。充足充氣時胃腔平滑舒張，檢查時需沿胃小彎與大彎平滑排查有無早癌或潰瘍。
           </div>
 
           <!-- Endoscopic Clinical Pearls -->
@@ -396,69 +383,69 @@ import Layout from '../../layouts/Layout.astro';
 
     // Global 3D State
     let scene, camera, renderer, controls;
-    let stomachSegments = {};
+    let singleStomachMesh, stomachMaterial;
     let segmentLabelSprites = {};
-    let explodeVectors = {};
     let scopeGroup, scopeHeadLight, scopeTipMesh, scopeTubeMesh;
     let pathologyGroup;
+    let focusBeaconGroup, focusBeaconMesh;
     let activePathology = { gerd: false, ulcer: false, polyp: false, metaplasia: false };
     let selectedId = 'body';
     let isQuizMode = false, quizTarget = null;
     let raycaster, mouse;
-    let currentOpacity = 0.92;
+    let currentOpacity = 0.95;
     let gastroscopySplineCurve;
 
-    // Centerline Path for Gastroscopy (Incisors to Duodenum)
+    // Anatomical Centerline Path for Gastroscopy & Organ Lofting
     const stomachScopePoints = [
       new THREE.Vector3(0.0, 3.2, 0.0),    // Incisors / Pharynx (0 cm)
       new THREE.Vector3(0.0, 2.2, 0.0),    // Mid Esophagus (20 cm)
-      new THREE.Vector3(0.1, 1.2, 0.1),    // Distal Esophagus / LES (35 cm)
-      new THREE.Vector3(0.3, 0.6, 0.2),    // Cardia / EGJ (40 cm)
-      new THREE.Vector3(0.7, 0.1, 0.3),    // Upper Body (45 cm)
-      new THREE.Vector3(0.5, -0.6, 0.4),   // Mid Body (50 cm)
-      new THREE.Vector3(-0.3, -1.0, 0.3),  // Gastric Antrum (55 cm)
-      new THREE.Vector3(-1.1, -0.95, 0.1), // Pyloric Canal (58 cm)
-      new THREE.Vector3(-1.7, -1.15, -0.1),// Duodenal Bulb (62 cm)
-      new THREE.Vector3(-2.0, -1.75, -0.2) // Duodenum Descending D2 (65 cm)
+      new THREE.Vector3(0.08, 1.2, 0.08),  // Distal Esophagus / LES (35 cm)
+      new THREE.Vector3(0.25, 0.65, 0.18), // Cardia / EGJ (40 cm)
+      new THREE.Vector3(0.65, 0.15, 0.25), // Upper Body (45 cm)
+      new THREE.Vector3(0.55, -0.6, 0.35), // Mid Body Greater Curvature (50 cm)
+      new THREE.Vector3(-0.25, -1.0, 0.3), // Gastric Antrum (55 cm)
+      new THREE.Vector3(-1.0, -0.95, 0.1), // Pyloric Canal (58 cm)
+      new THREE.Vector3(-1.55, -1.1, -0.05),// Duodenal Bulb (62 cm)
+      new THREE.Vector3(-1.9, -1.7, -0.2)  // Duodenum Descending D2 (65 cm)
     ];
 
-    // Segment Configurations with boundary-aligned t ranges along continuous stomach spine
+    // Segment Positions and Target Markers for Focus
     const segmentConfigs = {
       esophagus: {
         label: '食道與LES',
-        labelPos: [0.0, 2.2, 0.5],
-        explodeDir: new THREE.Vector3(0.0, 0.8, 0.0),
-        color: 0xeb968a
+        targetPos: new THREE.Vector3(0.0, 2.2, 0.0),
+        labelPos: [0.0, 2.3, 0.6],
+        scopeProgress: 0.30
       },
       cardia: {
         label: '賁門 (EGJ)',
-        labelPos: [0.3, 0.8, 0.6],
-        explodeDir: new THREE.Vector3(0.2, 0.5, 0.2),
-        color: 0xe07a6d
+        targetPos: new THREE.Vector3(0.25, 0.65, 0.18),
+        labelPos: [0.35, 0.75, 0.7],
+        scopeProgress: 0.60
       },
       fundus: {
         label: '胃底 (Fundus)',
-        labelPos: [1.8, 1.0, 0.5],
-        explodeDir: new THREE.Vector3(0.8, 0.6, 0.0),
-        color: 0xd96b5e
+        targetPos: new THREE.Vector3(0.9, 0.85, 0.0),
+        labelPos: [1.6, 0.95, 0.5],
+        scopeProgress: 0.65
       },
       body: {
         label: '胃體 (Body)',
-        labelPos: [1.3, -0.5, 0.7],
-        explodeDir: new THREE.Vector3(0.7, -0.2, 0.3),
-        color: 0xd96b5e
+        targetPos: new THREE.Vector3(0.6, -0.4, 0.3),
+        labelPos: [1.4, -0.45, 0.8],
+        scopeProgress: 0.76
       },
       antrum: {
         label: '胃竇與胃角',
-        labelPos: [-0.5, -1.4, 0.6],
-        explodeDir: new THREE.Vector3(-0.4, -0.6, 0.3),
-        color: 0xe07a6d
+        targetPos: new THREE.Vector3(-0.35, -1.0, 0.25),
+        labelPos: [-0.45, -1.4, 0.7],
+        scopeProgress: 0.86
       },
       pylorus: {
         label: '幽門與十二指腸',
-        labelPos: [-2.0, -1.4, 0.4],
-        explodeDir: new THREE.Vector3(-0.8, -0.3, -0.2),
-        color: 0xeb968a
+        targetPos: new THREE.Vector3(-1.5, -1.1, -0.05),
+        labelPos: [-1.9, -1.4, 0.5],
+        scopeProgress: 0.96
       }
     };
 
@@ -491,26 +478,26 @@ import Layout from '../../layouts/Layout.astro';
       controls.target.set(0, 0, 0);
 
       // 4. Studio Medical Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.72);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
       scene.add(ambientLight);
 
-      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.25);
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.3);
       mainLight.position.set(6, 8, 8);
       scene.add(mainLight);
 
-      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.85);
+      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.9);
       rimLight.position.set(-8, -4, -6);
       scene.add(rimLight);
 
-      const luminalLight = new THREE.DirectionalLight(0xfecdd3, 0.65);
-      luminalLight.position.set(0, 0, 8);
-      scene.add(luminalLight);
+      const bottomLight = new THREE.DirectionalLight(0xfecdd3, 0.6);
+      bottomLight.position.set(0, -6, 6);
+      scene.add(bottomLight);
 
       // 5. Build Spline Curve
       gastroscopySplineCurve = new THREE.CatmullRomCurve3(stomachScopePoints);
 
-      // 6. Build 3D Seamless Stomach Meshes
-      build3DStomachMeshes();
+      // 6. Build Single Organic Seamless 3D Stomach Mesh
+      buildSingleOrganicStomach();
 
       // 7. Build Dynamic 3D Gastroscopy System
       build3DGastroscope();
@@ -518,12 +505,15 @@ import Layout from '../../layouts/Layout.astro';
       // 8. Build 3D Pathologies (GERD, Ulcers, Polyps, Metaplasia)
       build3DPathologies();
 
-      // 9. Raycasting Setup
+      // 9. Build Glowing Focus Halo Beacon
+      buildFocusBeacon();
+
+      // 10. Raycasting Setup
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
       renderer.domElement.addEventListener('pointerdown', onPointerDown);
 
-      // 10. Auto-Resize Observer
+      // 11. Auto-Resize Observer
       const resizeObserver = new ResizeObserver(() => onWindowResize());
       resizeObserver.observe(container);
       window.addEventListener('resize', onWindowResize);
@@ -538,131 +528,67 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
-    // Build Seamless Continuous 3D Gastric Segments
-    function build3DStomachMeshes() {
-      // Clear existing if rebuilding
-      Object.keys(stomachSegments).forEach(k => {
-        scene.remove(stomachSegments[k]);
-      });
-      stomachSegments = {};
-
-      const matConfig = {
-        color: 0xd96b5e,
-        roughness: 0.32,
-        metalness: 0.06,
-        clearcoat: 0.75,
-        clearcoatRoughness: 0.25,
-        transparent: true,
-        opacity: currentOpacity,
-        side: THREE.DoubleSide
-      };
-
-      // 1. Esophagus Tube (Continuous closed 3D cylinder)
-      const esoGeom = createSmoothClosedTube([
-        new THREE.Vector3(0.0, 3.2, 0.0),
-        new THREE.Vector3(0.0, 2.2, 0.0),
-        new THREE.Vector3(0.08, 1.2, 0.08),
-        new THREE.Vector3(0.25, 0.65, 0.18)
-      ], 0.22, 0.25, 20);
-      const esoMesh = new THREE.Mesh(esoGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xeb968a })));
-      esoMesh.userData = { segmentId: 'esophagus' };
-      scene.add(esoMesh);
-      stomachSegments['esophagus'] = esoMesh;
-      explodeVectors['esophagus'] = segmentConfigs['esophagus'].explodeDir.clone();
-
-      // 2. Cardia (EGJ Junction)
-      const cardiaGeom = createSmoothClosedTube([
-        new THREE.Vector3(0.08, 1.2, 0.08),
-        new THREE.Vector3(0.25, 0.65, 0.18),
-        new THREE.Vector3(0.42, 0.35, 0.25)
-      ], 0.25, 0.42, 20);
-      const cardiaMesh = new THREE.Mesh(cardiaGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xe07a6d })));
-      cardiaMesh.userData = { segmentId: 'cardia' };
-      scene.add(cardiaMesh);
-      stomachSegments['cardia'] = cardiaMesh;
-      explodeVectors['cardia'] = segmentConfigs['cardia'].explodeDir.clone();
-
-      // 3. Fundus Dome (Seamless left rounded bulb)
-      const fundusGeom = createSeamlessFundusGeometry();
-      const fundusMesh = new THREE.Mesh(fundusGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xd96b5e })));
-      fundusMesh.userData = { segmentId: 'fundus' };
-      scene.add(fundusMesh);
-      stomachSegments['fundus'] = fundusMesh;
-      explodeVectors['fundus'] = segmentConfigs['fundus'].explodeDir.clone();
-
-      // 4. Body (Corpus - Continuous Organic Stomach Volume)
-      const bodyGeom = createSeamlessCorpusGeometry();
-      const bodyMesh = new THREE.Mesh(bodyGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xd96b5e })));
-      bodyMesh.userData = { segmentId: 'body' };
-      scene.add(bodyMesh);
-      stomachSegments['body'] = bodyMesh;
-      explodeVectors['body'] = segmentConfigs['body'].explodeDir.clone();
-
-      // 5. Antrum & Angulus
-      const antrumGeom = createSmoothClosedTube([
-        new THREE.Vector3(0.35, -0.85, 0.35),
-        new THREE.Vector3(-0.1, -1.05, 0.35),
-        new THREE.Vector3(-0.6, -1.1, 0.25),
-        new THREE.Vector3(-1.1, -0.95, 0.1)
-      ], 0.58, 0.35, 24);
-      const antrumMesh = new THREE.Mesh(antrumGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xe07a6d })));
-      antrumMesh.userData = { segmentId: 'antrum' };
-      scene.add(antrumMesh);
-      stomachSegments['antrum'] = antrumMesh;
-      explodeVectors['antrum'] = segmentConfigs['antrum'].explodeDir.clone();
-
-      // 6. Pylorus & Duodenum Bulb
-      const pyGeom = createSmoothClosedTube([
-        new THREE.Vector3(-1.1, -0.95, 0.1),
-        new THREE.Vector3(-1.35, -0.95, 0.05), // Pyloric Sphincter
-        new THREE.Vector3(-1.7, -1.15, -0.1), // Duodenal Bulb (D1)
-        new THREE.Vector3(-2.0, -1.75, -0.2)  // Duodenum Descending (D2)
-      ], 0.32, 0.24, 20);
-      const pyMesh = new THREE.Mesh(pyGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xeb968a })));
-      pyMesh.userData = { segmentId: 'pylorus' };
-      scene.add(pyMesh);
-      stomachSegments['pylorus'] = pyMesh;
-      explodeVectors['pylorus'] = segmentConfigs['pylorus'].explodeDir.clone();
-
-      // Add Auto-Sized 3D Billboard Labels
-      Object.keys(segmentConfigs).forEach(k => {
-        const conf = segmentConfigs[k];
-        const sprite = createTextSprite(conf.label, '#38bdf8');
-        sprite.position.set(conf.labelPos[0], conf.labelPos[1], conf.labelPos[2]);
-        stomachSegments[k]?.add(sprite);
-        segmentLabelSprites[k] = sprite;
-      });
-    }
-
-    // Parametric Full 360° Closed Tube Generator
-    function createSmoothClosedTube(points, rStart, rEnd, radialSegs = 20) {
-      const curve = new THREE.CatmullRomCurve3(points);
-      const numRings = 24;
+    // Build Single Seamless Organic 3D Stomach Surface
+    function buildSingleOrganicStomach() {
+      // Create continuous lofted cross-sections along the stomach spline with organic radius & asymmetric bulging
+      const numRings = 70;
+      const radialSegs = 36;
       const positions = [];
       const normals = [];
       const uvs = [];
       const indices = [];
 
       for (let i = 0; i <= numRings; i++) {
-        const u = i / numRings;
-        const pt = curve.getPoint(u);
-        const tangent = curve.getTangent(u).normalize();
-        const r = rStart + u * (rEnd - rStart);
+        const u = i / numRings; // 0.0 (top esophagus) to 1.0 (duodenum D2)
+        const pt = gastroscopySplineCurve.getPoint(u);
+        const tangent = gastroscopySplineCurve.getTangent(u).normalize();
 
         let normalVec = new THREE.Vector3(0, 0, 1).cross(tangent).normalize();
         if (normalVec.lengthSq() < 0.01) normalVec = new THREE.Vector3(1, 0, 0).cross(tangent).normalize();
         const binormalVec = new THREE.Vector3().crossVectors(tangent, normalVec).normalize();
 
+        // Calculate smooth continuous radius & anatomical shape variations:
+        let rBase = 0.22;
+        let xBulge = 1.0, yBulge = 1.0, centerShift = new THREE.Vector3(0, 0, 0);
+
+        if (u < 0.25) {
+          // Esophagus: smooth uniform cylinder
+          rBase = 0.22 + u * 0.1;
+        } else if (u >= 0.25 && u < 0.40) {
+          // Cardia & Upper Entry into Fundus
+          const localU = (u - 0.25) / 0.15;
+          rBase = 0.25 + localU * 0.45;
+          xBulge = 1.0 + localU * 0.4;
+          centerShift.addScaledVector(normalVec, localU * 0.2);
+        } else if (u >= 0.40 && u < 0.70) {
+          // Corpus / Body & Fundus Dome: broad, sweeping, beautiful C-shaped volume
+          const localU = (u - 0.40) / 0.30;
+          const dome = Math.sin(localU * Math.PI);
+          rBase = 0.70 + dome * 0.35;
+          xBulge = 1.35 + dome * 0.25; // Greater curvature flare
+          yBulge = 1.15;
+          centerShift.addScaledVector(normalVec, (1.0 - localU) * 0.35);
+        } else if (u >= 0.70 && u < 0.85) {
+          // Antrum & Angulus: smooth conical tapering towards pylorus
+          const localU = (u - 0.70) / 0.15;
+          rBase = 0.70 - localU * 0.38;
+          xBulge = 1.15 - localU * 0.25;
+        } else {
+          // Pylorus sphincter & Duodenal bulb
+          const localU = (u - 0.85) / 0.15;
+          rBase = 0.32 - Math.sin(localU * Math.PI * 0.5) * 0.08;
+        }
+
         for (let j = 0; j <= radialSegs; j++) {
           const v = j / radialSegs;
-          const theta = v * Math.PI * 2;
+          const theta = v * Math.PI * 2.0;
 
-          const cx = Math.cos(theta) * r;
-          const cy = Math.sin(theta) * r;
+          const cx = Math.cos(theta) * (rBase * xBulge);
+          const cy = Math.sin(theta) * (rBase * yBulge);
 
-          const vx = pt.x + normalVec.x * cx + binormalVec.x * cy;
-          const vy = pt.y + normalVec.y * cx + binormalVec.y * cy;
-          const vz = pt.z + normalVec.z * cx + binormalVec.z * cy;
+          const vx = pt.x + centerShift.x + normalVec.x * cx + binormalVec.x * cy;
+          const vy = pt.y + centerShift.y + normalVec.y * cx + binormalVec.y * cy;
+          const vz = pt.z + centerShift.z + normalVec.z * cx + binormalVec.z * cy;
 
           positions.push(vx, vy, vz);
           uvs.push(u, v);
@@ -686,67 +612,29 @@ import Layout from '../../layouts/Layout.astro';
       geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
       geom.setIndex(indices);
       geom.computeVertexNormals();
-      return geom;
-    }
 
-    // Fundus Full Closed Dome
-    function createSeamlessFundusGeometry() {
-      const geom = new THREE.SphereGeometry(0.85, 28, 24);
-      geom.scale(1.15, 0.92, 0.95);
-      geom.translate(1.05, 0.65, 0.0);
-      geom.computeVertexNormals();
-      return geom;
-    }
+      stomachMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xd96b5e,
+        roughness: 0.30,
+        metalness: 0.05,
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.22,
+        transparent: true,
+        opacity: currentOpacity,
+        side: THREE.DoubleSide
+      });
 
-    // Corpus / Body Full Continuous 3D Volume
-    function createSeamlessCorpusGeometry() {
-      const numU = 32, numV = 24;
-      const positions = [];
-      const uvs = [];
-      const indices = [];
+      singleStomachMesh = new THREE.Mesh(geom, stomachMaterial);
+      scene.add(singleStomachMesh);
 
-      for (let i = 0; i <= numU; i++) {
-        const u = i / numU;
-        const y = 0.45 - u * 1.3;
-        
-        const centerX = 0.4 + Math.sin(u * Math.PI) * 0.35;
-        const radiusX = 0.68 + Math.sin(u * Math.PI) * 0.38;
-        const radiusY = 0.58 + Math.sin(u * Math.PI) * 0.28;
-
-        for (let j = 0; j <= numV; j++) {
-          const v = j / numV;
-          const theta = v * Math.PI * 2.0;
-
-          let rx = radiusX * Math.cos(theta);
-          let rz = radiusY * Math.sin(theta);
-
-          const vx = centerX + rx;
-          const vy = y;
-          const vz = rz;
-
-          positions.push(vx, vy, vz);
-          uvs.push(u, v);
-        }
-      }
-
-      for (let i = 0; i < numU; i++) {
-        for (let j = 0; j < numV; j++) {
-          const a = i * (numV + 1) + j;
-          const b = (i + 1) * (numV + 1) + j;
-          const c = (i + 1) * (numV + 1) + (j + 1);
-          const d = i * (numV + 1) + (j + 1);
-
-          indices.push(a, b, d);
-          indices.push(b, c, d);
-        }
-      }
-
-      const geom = new THREE.BufferGeometry();
-      geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-      geom.setIndex(indices);
-      geom.computeVertexNormals();
-      return geom;
+      // Add Auto-Fitting 3D Billboard Labels
+      Object.keys(segmentConfigs).forEach(k => {
+        const conf = segmentConfigs[k];
+        const sprite = createTextSprite(conf.label, '#38bdf8');
+        sprite.position.set(conf.labelPos[0], conf.labelPos[1], conf.labelPos[2]);
+        singleStomachMesh.add(sprite);
+        segmentLabelSprites[k] = sprite;
+      });
     }
 
     // Dynamic Auto-Fitting Billboard Text Sprite Generator (100% inside borders!)
@@ -770,7 +658,7 @@ import Layout from '../../layouts/Layout.astro';
       ctx.roundRect(x, y, pillWidth, pillHeight, 36);
       ctx.fill();
 
-      // Draw crisp border
+      // Draw crisp glowing border
       ctx.strokeStyle = accentColor;
       ctx.lineWidth = 4;
       ctx.stroke();
@@ -787,6 +675,26 @@ import Layout from '../../layouts/Layout.astro';
       const sprite = new THREE.Sprite(spriteMat);
       sprite.scale.set(1.3 * (pillWidth / 250), 0.65, 1);
       return sprite;
+    }
+
+    // Build Glowing Focus Halo Beacon
+    function buildFocusBeacon() {
+      focusBeaconGroup = new THREE.Group();
+
+      const ringGeom = new THREE.RingGeometry(0.35, 0.45, 32);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x00e5ff,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.85
+      });
+      focusBeaconMesh = new THREE.Mesh(ringGeom, ringMat);
+      focusBeaconGroup.add(focusBeaconMesh);
+
+      const pointLight = new THREE.PointLight(0x00e5ff, 2.0, 2.5);
+      focusBeaconGroup.add(pointLight);
+
+      scene.add(focusBeaconGroup);
     }
 
     // Build 3D Gastroscope (Flexible black scope with bright LED optic beam)
@@ -1015,37 +923,20 @@ import Layout from '../../layouts/Layout.astro';
       const statusBox = document.getElementById('scope-status-text');
       if (cm <= 25) {
         if (statusBox) statusBox.textContent = `📍 食道段 (${cm}cm)：平滑粉紅鱗狀黏膜，觀察中上段食道。`;
-        selectSegment('esophagus');
+        updateSegmentDetailsOnly('esophagus');
       } else if (cm <= 42) {
         if (statusBox) statusBox.textContent = `📍 賁門與 EGJ (${cm}cm)：齒狀線交界，評估有無逆流性食道炎。`;
-        selectSegment('cardia');
+        updateSegmentDetailsOnly('cardia');
       } else if (cm <= 50) {
         if (statusBox) statusBox.textContent = `📍 胃體部 (${cm}cm)：胃大彎與小彎，進行胃底 J-turn 倒轉。`;
-        selectSegment('body');
+        updateSegmentDetailsOnly('body');
       } else if (cm <= 58) {
         if (statusBox) statusBox.textContent = `📍 胃竇與胃角 (${cm}cm)：胃角 V 字切跡，排查潰瘍、萎縮與幽門桿菌。`;
-        selectSegment('antrum');
+        updateSegmentDetailsOnly('antrum');
       } else {
         if (statusBox) statusBox.textContent = `🎯 十二指腸球部與第二段 (${cm}cm)：穿越幽門環，排查球部潰瘍與壺腹。`;
-        selectSegment('pylorus');
+        updateSegmentDetailsOnly('pylorus');
       }
-    }
-
-    // 3D Explode Slider Action
-    function onExplodeSlider(val) {
-      const factor = val / 100.0;
-      const txt = document.getElementById('txt-explode-val');
-      if (txt) txt.textContent = `${val}%`;
-
-      Object.keys(stomachSegments).forEach(key => {
-        const mesh = stomachSegments[key];
-        const dir = explodeVectors[key];
-        if (mesh && dir) {
-          mesh.position.x = dir.x * factor * 1.5;
-          mesh.position.y = dir.y * factor * 1.5;
-          mesh.position.z = dir.z * factor * 1.5;
-        }
-      });
     }
 
     // Opacity Slider Action
@@ -1053,11 +944,7 @@ import Layout from '../../layouts/Layout.astro';
       currentOpacity = val / 100.0;
       const txt = document.getElementById('txt-opacity-val');
       if (txt) txt.textContent = `${val}%`;
-      Object.keys(stomachSegments).forEach(key => {
-        if (stomachSegments[key]) {
-          stomachSegments[key].material.opacity = currentOpacity;
-        }
-      });
+      if (stomachMaterial) stomachMaterial.opacity = currentOpacity;
     }
 
     // Segment Selection
@@ -1068,25 +955,37 @@ import Layout from '../../layouts/Layout.astro';
       }
 
       selectedId = id;
+      const conf = segmentConfigs[id];
       const data = stomachData[id];
-      if (!data) return;
+      if (!data || !conf) return;
 
       document.querySelectorAll('.seg-card-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`btn-seg-${id}`)?.classList.add('active');
 
-      Object.keys(stomachSegments).forEach(key => {
-        const mesh = stomachSegments[key];
-        if (!mesh) return;
-        if (key === id) {
-          mesh.material.emissive.setHex(0x38bdf8);
-          mesh.material.emissiveIntensity = 0.5;
-          mesh.material.opacity = Math.max(currentOpacity, 0.95);
-        } else {
-          mesh.material.emissive.setHex(0x000000);
-          mesh.material.emissiveIntensity = 0.0;
-          mesh.material.opacity = currentOpacity;
-        }
-      });
+      // Move glowing focus beacon to target position
+      if (focusBeaconGroup && conf.targetPos) {
+        new TWEEN.Tween(focusBeaconGroup.position)
+          .to(conf.targetPos, 450)
+          .easing(TWEEN.Easing.Cubic.Out)
+          .start();
+      }
+
+      // Update scope slider to match segment position
+      if (conf.scopeProgress !== undefined) {
+        const cm = Math.round(conf.scopeProgress * 65);
+        const slider = document.getElementById('slider-scope');
+        if (slider) slider.value = cm;
+        const badge = document.getElementById('txt-scope-cm');
+        if (badge) badge.textContent = `${cm} cm`;
+        updateGastroscopePosition(conf.scopeProgress);
+      }
+
+      updateSegmentDetailsOnly(id);
+    }
+
+    function updateSegmentDetailsOnly(id) {
+      const data = stomachData[id];
+      if (!data) return;
 
       const pill = document.getElementById('det-pill');
       if (pill) pill.textContent = data.distance;
@@ -1137,9 +1036,6 @@ import Layout from '../../layouts/Layout.astro';
 
     function reset3DCamera() {
       setPresetView('anterior');
-      const slider = document.getElementById('slider-explode');
-      if (slider) slider.value = 0;
-      onExplodeSlider(0);
       selectSegment('body');
       showToast('已重設為胃部 3D 正面全覽視角');
     }
@@ -1175,13 +1071,20 @@ import Layout from '../../layouts/Layout.astro';
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
-      const meshes = Object.values(stomachSegments);
-      const intersects = raycaster.intersectObjects(meshes, false);
-
-      if (intersects.length > 0) {
-        const clickedMesh = intersects[0].object;
-        if (clickedMesh.userData && clickedMesh.userData.segmentId) {
-          selectSegment(clickedMesh.userData.segmentId);
+      if (singleStomachMesh) {
+        const intersects = raycaster.intersectObject(singleStomachMesh, false);
+        if (intersects.length > 0) {
+          const hitPt = intersects[0].point;
+          // Find closest segment config
+          let closestId = 'body', minDist = 999;
+          Object.keys(segmentConfigs).forEach(k => {
+            const d = hitPt.distanceTo(segmentConfigs[k].targetPos);
+            if (d < minDist) {
+              minDist = d;
+              closestId = k;
+            }
+          });
+          selectSegment(closestId);
         }
       }
     }
@@ -1259,9 +1162,15 @@ import Layout from '../../layouts/Layout.astro';
       TWEEN.update();
       if (controls) controls.update();
 
+      const t = (time || performance.now()) * 0.005;
+
       if (scopeHeadLight) {
-        const pulse = 2.0 + Math.sin((time || performance.now()) * 0.005) * 0.5;
-        scopeHeadLight.intensity = pulse;
+        scopeHeadLight.intensity = 2.0 + Math.sin(t) * 0.5;
+      }
+
+      if (focusBeaconMesh) {
+        focusBeaconMesh.rotation.z += 0.02;
+        focusBeaconMesh.scale.setScalar(1.0 + Math.sin(t * 2) * 0.15);
       }
 
       if (renderer && scene && camera) {
@@ -1611,14 +1520,6 @@ import Layout from '../../layouts/Layout.astro';
     font-family: monospace;
     color: #38bdf8;
     font-size: 0.8rem;
-  }
-
-  .slider-subtext {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
   }
 
   .slider-subtext-single {
