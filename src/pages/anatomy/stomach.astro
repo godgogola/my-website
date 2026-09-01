@@ -4,7 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout 
   title="胃部與食道 3D 互動解剖暨胃鏡巡航系統 | 互動解剖圖鑑 - 黃冠智醫師" 
-  description="胃部與食道一體成型 3D 實體模型。包含胃鏡進鏡深度模擬（0-65cm）、胃食道逆流/潰瘍/息肉/腸化生病灶標記與病歷片語產生器。"
+  description="教科書級 3D 胃部解剖實體模型。展現胃底穹隆、胃體大彎小彎、立體胃皺襞 (Rugae)、幽門括約肌與胃鏡進鏡巡航模擬。"
   fullWidth={true}
   hideFooter={true}
 >
@@ -24,7 +24,7 @@ import Layout from '../../layouts/Layout.astro';
         <div class="divider">/</div>
         <div class="current-badge">
           <span class="pulse-dot"></span>
-          <span>胃部與食道 (一體成型 3D 無縫有機模型)</span>
+          <span>胃部與食道 (醫學教科書級 3D 解剖模型)</span>
         </div>
       </div>
       
@@ -89,15 +89,15 @@ import Layout from '../../layouts/Layout.astro';
             <div class="pathology-btn-grid">
               <button class="btn btn-pathology" id="btn-path-gerd" onclick="togglePathology('gerd')">
                 <span class="path-dot dot-gerd"></span>
-                胃食道逆流 (GERD / 疝氣)
+                胃食道逆流 (GERD)
               </button>
               <button class="btn btn-pathology" id="btn-path-ulcer" onclick="togglePathology('ulcer')">
                 <span class="path-dot dot-ulcer"></span>
-                消化性潰瘍 (胃/十二指腸)
+                消化性潰瘍 (GU / DU)
               </button>
               <button class="btn btn-pathology" id="btn-path-polyp" onclick="togglePathology('polyp')">
                 <span class="path-dot dot-polyp"></span>
-                胃息肉 (胃底腺/增生性)
+                胃息肉 (FGPs / 增生)
               </button>
               <button class="btn btn-pathology" id="btn-path-metaplasia" onclick="togglePathology('metaplasia')">
                 <span class="path-dot dot-metaplasia"></span>
@@ -106,18 +106,6 @@ import Layout from '../../layouts/Layout.astro';
             </div>
             <div class="pathology-info-text" id="pathology-info-text">
               點選上方按鈕可即時切換病灶位置與臨床處置說明。
-            </div>
-          </div>
-
-          <!-- Wall Opacity Slider -->
-          <div class="control-row">
-            <div class="control-label-group">
-              <span>胃壁透明度 (Wall Opacity)</span>
-              <span id="txt-opacity-val" class="slider-val">95%</span>
-            </div>
-            <input type="range" id="slider-opacity" min="20" max="100" value="95" oninput="onOpacitySlider(this.value)">
-            <div class="slider-subtext-single">
-              微調透明度可透視內部管腔走向與胃鏡發光鏡頭
             </div>
           </div>
 
@@ -153,9 +141,9 @@ import Layout from '../../layouts/Layout.astro';
             <div class="seg-card-btn" onclick="selectSegment('body')" id="btn-seg-body">
               <div class="seg-card-top">
                 <span class="seg-num-pill">40~52cm</span>
-                <span class="seg-loc-tag">胃大彎與胃小彎</span>
+                <span class="seg-loc-tag">大彎、小彎與胃皺襞</span>
               </div>
-              <div class="seg-card-name">胃體 (Corpus / Body)</div>
+              <div class="seg-card-name">胃體與胃皺襞 (Body & Rugae)</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('antrum')" id="btn-seg-antrum">
@@ -169,7 +157,7 @@ import Layout from '../../layouts/Layout.astro';
             <div class="seg-card-btn" onclick="selectSegment('pylorus')" id="btn-seg-pylorus">
               <div class="seg-card-top">
                 <span class="seg-num-pill">58~65cm</span>
-                <span class="seg-loc-tag">幽門環/球部</span>
+                <span class="seg-loc-tag">幽門括約肌/球部</span>
               </div>
               <div class="seg-card-name">幽門與十二指腸 (Pylorus)</div>
             </div>
@@ -182,10 +170,10 @@ import Layout from '../../layouts/Layout.astro';
       <div class="glass-panel canvas-panel">
         <!-- Preset View Angles Toolbar -->
         <div class="view-angles-toolbar">
-          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面全覽 (Coronal View)</button>
-          <button class="view-btn" id="view-btn-jturn" onclick="setPresetView('jturn')">胃底 J-turn 倒轉視角 (Cardia View)</button>
+          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面教科書切面 (Coronal View)</button>
+          <button class="view-btn" id="view-btn-jturn" onclick="setPresetView('jturn')">胃底 J-turn 倒轉視角</button>
           <button class="view-btn" id="view-btn-antrum" onclick="setPresetView('antrum')">胃竇與幽門切面</button>
-          <button class="view-btn" id="view-btn-curvatures" onclick="setPresetView('curvatures')">胃大彎與小彎側視</button>
+          <button class="view-btn" id="view-btn-curvatures" onclick="setPresetView('curvatures')">大彎側與胃壁層次</button>
           <button class="view-btn" id="view-btn-duodenum" onclick="setPresetView('duodenum')">十二指腸球部視角</button>
         </div>
 
@@ -195,7 +183,7 @@ import Layout from '../../layouts/Layout.astro';
         <!-- Orbit Controls Guidance Hint -->
         <div class="orbit-hint">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-          <span><strong>滑鼠左鍵拖曳</strong>：360° 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>滑動進鏡深度</strong>：模擬胃鏡巡航</span>
+          <span><strong>滑鼠左鍵拖曳</strong>：360° 空間旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>滑動進鏡深度</strong>：模擬胃鏡巡航</span>
         </div>
       </div>
 
@@ -216,8 +204,8 @@ import Layout from '../../layouts/Layout.astro';
               <span id="det-pill" class="seg-badge-pill">40 ~ 52 cm</span>
               <span id="det-sector" class="sector-tag">Gastric Corpus / Rugae</span>
             </div>
-            <div id="det-title-zh" class="main-title">胃體 (Corpus / Body)</div>
-            <div id="det-title-en" class="sub-title">Corpus gastricum · Greater & Lesser Curvatures</div>
+            <div id="det-title-zh" class="main-title">胃體與胃皺襞 (Body & Rugae)</div>
+            <div id="det-title-en" class="sub-title">Corpus gastricum · Greater Curvature · Gastric Rugae</div>
           </div>
 
           <!-- Metric Grid -->
@@ -227,22 +215,22 @@ import Layout from '../../layouts/Layout.astro';
               <div id="det-distance" class="metric-value">40 ～ 52 cm (距門齒)</div>
             </div>
             <div class="metric-box">
-              <div class="metric-label">主要分泌功能</div>
-              <div id="det-function" class="metric-value">壁細胞 (胃酸/內在因子)</div>
+              <div class="metric-label">主要黏膜特徵</div>
+              <div id="det-function" class="metric-value">豐富縱向波浪狀胃皺襞 (Rugae)</div>
             </div>
             <div class="metric-box">
-              <div class="metric-label">解剖特徵</div>
-              <div id="det-endofeature" class="metric-value">胃大彎、胃小彎、胃體部</div>
+              <div class="metric-label">解剖構造</div>
+              <div id="det-endofeature" class="metric-value">胃大彎 (Greater)、胃小彎 (Lesser)</div>
             </div>
             <div class="metric-box">
               <div class="metric-label">常見疾病好發</div>
-              <div id="det-disease" class="metric-value">胃體部潰瘍、胃息肉、胃炎</div>
+              <div id="det-disease" class="metric-value">胃體潰瘍、胃息肉、慢性萎縮性胃炎</div>
             </div>
           </div>
 
           <!-- Endoscopy Pearls -->
           <div class="surgical-pearls" id="det-pearls-box">
-            <strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，胃大彎走向寬廣。充足充氣時胃腔平滑舒張，檢查時需沿胃小彎與大彎平滑排查有無早癌或潰瘍。
+            <strong>胃鏡檢查重點：</strong> 胃體部黏膜具有豐富的縱向波浪狀 <strong>胃皺襞 (Gastric Rugae)</strong>。充氣時皺襞舒展開闊，胃鏡退鏡時需沿著小彎（平滑區）與大彎（皺襞區）做 360° 全面排查。
           </div>
 
           <!-- Endoscopic Clinical Pearls -->
@@ -254,11 +242,11 @@ import Layout from '../../layouts/Layout.astro';
             <div id="det-pearls-list">
               <div class="pearl-item">
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>胃小彎與胃大彎</strong>：小彎側平滑無皺襞，為胃潰瘍與早期胃癌最易發生的區域之一。</span>
+                <span><strong>胃小彎與胃大彎</strong>：小彎側黏膜薄且平滑，血流分佈相對敏感，為良性胃潰瘍與早期胃癌最易發生的區域之一。</span>
               </div>
               <div class="pearl-item">
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>壁細胞萎縮警訊</strong>：長期幽門桿菌感染可使胃體黏膜萎縮變薄，胃酸分泌低下並增加腸化生風險。</span>
+                <span><strong>胃皺襞肥大或消失</strong>：幽門桿菌感染或萎縮性胃炎會造成皺襞變平（萎縮），而梅內特里耶病（Menetrier\'s disease）則會造成極度肥厚巨大皺襞。</span>
               </div>
             </div>
           </div>
@@ -270,7 +258,7 @@ import Layout from '../../layouts/Layout.astro';
               <button class="btn btn-outline" style="padding: 0.18rem 0.5rem; font-size: 0.68rem;" onclick="copyPhrase()">複製片語</button>
             </div>
             <div id="det-phrase-text" class="phrase-content">
-              Panendoscopy: Esophagus shows normal mucosa without mucosal break. Stomach shows smooth mucosal contours at body with mild superficial gastritis at antrum. CLO test: Negative.
+              Panendoscopy: Stomach shows prominent normal gastric rugae at greater curvature. Lesser curvature is smooth without active ulceration or suspicious neoplastic lesion.
             </div>
           </div>
 
@@ -293,11 +281,11 @@ import Layout from '../../layouts/Layout.astro';
         titleZh: '食道與下食道括約肌 (Esophagus & LES)',
         titleEn: 'Esophagus & Sphincter esophageus inferior',
         distance: '15 ～ 40 cm (距門齒)',
-        function: '推進食團，防止胃酸逆流 (LES 靜止高壓帶)',
-        endofeature: '淡粉紅鱗狀上皮 (Squamous epithelium)',
-        disease: '胃食道逆流 (GERD)、食道潰瘍、巴瑞特氏食道 (Barrett\'s)、食道靜脈曲張',
+        function: '推進食團，LES 高壓帶防止胃酸反流',
+        endofeature: '淡粉紅平滑鱗狀上皮 (Squamous epithelium)',
+        disease: '胃食道逆流 (GERD)、食道裂孔疝氣、巴瑞特氏食道 (Barrett\'s)、食道潰瘍',
         sector: 'Thorax & Mediastinum',
-        pearlsBox: '<strong>胃鏡檢查重點：</strong> 食道全長約 25 cm，管壁呈平滑粉白色鱗狀上皮。在約 38~40 cm 處與胃柱狀黏膜交會形成 <strong>齒狀線 (Z-line / EGJ)</strong>。下食道括約肌 (LES) 鬆弛是胃食道逆流與食道裂孔疝氣之核心機轉。',
+        pearlsBox: '<strong>胃鏡檢查重點：</strong> 食道自咽喉向下延伸約 25cm，在約 38~40cm 處與胃柱狀黏膜交會形成 <strong>齒狀線 (Z-line / EGJ)</strong>。管腔末端為環形增厚的 <strong>下食道括約肌 (LES)</strong>。',
         pearls: [
           '<strong>洛杉磯分類 (LA Classification)</strong>：依食道黏膜破損長度與融合範圍評估逆流嚴重度（Grade A 到 D）。',
           '<strong>巴瑞特氏食道 (Barrett\'s Esophagus)</strong>：長期胃酸逆流刺激使鱗狀上皮轉變為特化柱狀上皮，為食道腺癌之癌前病變。'
@@ -308,14 +296,14 @@ import Layout from '../../layouts/Layout.astro';
         titleZh: '賁門 (Cardia & EGJ)',
         titleEn: 'Cardia & Gastroesophageal Junction',
         distance: '38 ～ 40 cm (距門齒)',
-        function: '食物進入胃部之閘門，防止胃內容物反流',
-        endofeature: '齒狀線 (Z-line) 紅白黏膜交界線',
+        function: '食物進入胃腔之門戶，防止胃內容物逆衝',
+        endofeature: '齒狀線 (Z-line) 紅白黏膜交界交會處',
         disease: '賁門失弛緩症 (Achalasia)、食道裂孔疝氣 (Hiatal Hernia)、賁門癌',
         sector: 'Diaphragmatic Hiatus',
         pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃鏡進入胃部後，必須於胃底進行 <strong>J-turn 倒轉觀察（Retroflexion view）</strong>，直接近距離檢視「賁門周圍緊縮度（Flap valve grading）」與有無食道裂孔疝氣囊袋。',
         pearls: [
           '<strong>Hill 賁門瓣分級 (Grade I~IV)</strong>：評估賁門貼合鏡身的緊密度，Grade III~IV 常伴隨嚴重胃酸逆流與裂孔疝氣。',
-          '<strong>撕裂傷 (Mallory-Weiss tear)</strong>：劇烈劇吐後常在此交界處引發黏膜縱向撕裂大出血。'
+          '<strong>撕裂傷 (Mallory-Weiss tear)</strong>：劇烈嘔吐後常在此交界處引發黏膜縱向撕裂大出血。'
         ],
         phrase: 'Panendoscopy: Retroflexion view shows lax cardia with sliding hiatal hernia (approx. 2cm), Hill Grade III.'
       },
@@ -323,31 +311,31 @@ import Layout from '../../layouts/Layout.astro';
         titleZh: '胃底 (Gastric Fundus)',
         titleEn: 'Fundus gastricus',
         distance: '40 ～ 45 cm (J-turn 倒轉視野)',
-        function: '貯存進食吞入之氣體（胃泡）與容受性舒張',
-        endofeature: '左側穹隆頂部，覆蓋薄黏膜與黏液湖',
-        disease: '胃底腺息肉 (FGPs)、胃靜脈曲張 (Gastric varices)、黏膜下腫瘤 (GIST)',
+        function: '貯存吞入之氣體（胃泡）與進食容受性舒張',
+        endofeature: '左側高突穹隆圓頂，覆蓋薄黏膜與黏液湖',
+        disease: '胃底腺息肉 (FGPs)、胃靜脈曲張 (Gastric varices)、基質瘤 (GIST)',
         sector: 'Left Subdiaphragmatic Dome',
-        pearlsBox: '<strong>胃鏡檢查重點：</strong> 位於左側橫膈穹隆下方，為倒轉觀察（J-turn）之主要視野。若有肝硬化門脈高壓，此處易形成危險性極高的 <strong>胃底靜脈曲張 (Gastric varices)</strong>。',
+        pearlsBox: '<strong>胃鏡檢查重點：</strong> 位於左側橫膈穹隆下方，高度超越賁門入口，為倒轉觀察（J-turn）之主要視野。肝硬化門脈高壓患者在此處極易形成危險性極高的 <strong>胃底靜脈曲張 (Gastric varices)</strong>。',
         pearls: [
           '<strong>胃底腺息肉 (Fundic Gland Polyps, FGPs)</strong>：臨床最常見良性胃息肉（多小於 0.5cm，半透明），常與長期服用 PPI 抑制胃酸相關，惡性機率極低。',
-          '<strong>胃基質瘤好發 (GIST)</strong>：胃底常偶發平滑凸起之上皮下腫瘤（Subepithelial lesion）。'
+          '<strong>胃基質瘤好發 (GIST)</strong>：胃底常偶發平滑隆起之上皮下腫瘤（Subepithelial lesion）。'
         ],
         phrase: 'Panendoscopy: Multiple tiny fundic gland polyps (0.2-0.4cm) noted at gastric fundus, benign appearance.'
       },
       body: {
-        titleZh: '胃體 (Corpus / Body)',
-        titleEn: 'Corpus gastricum',
+        titleZh: '胃體與胃皺襞 (Body & Rugae)',
+        titleEn: 'Corpus gastricum · Greater Curvature · Gastric Rugae',
         distance: '40 ～ 52 cm (距門齒)',
-        function: '分泌胃酸 (HCl) 與胃蛋白酶原，進行食物混合研磨',
-        endofeature: '胃大彎與胃小彎平滑肌層',
-        disease: '胃體部潰瘍、胃息肉、自身免疫性胃炎、胃癌',
+        function: '分泌胃酸 (HCl) 與胃蛋白酶原，食物混合研磨',
+        endofeature: '胃大彎側顯著縱向波浪狀胃皺襞 (Rugae)，胃小彎側平滑',
+        disease: '胃體潰瘍、胃息肉、慢性萎縮性胃炎、胃癌',
         sector: 'Mid Gastric Region',
-        pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，胃大彎走向寬廣。胃小彎側則為胃潰瘍好發處，需仔細觀察黏膜色澤與微細血管排列。',
+        pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，胃大彎富含波浪狀 <strong>胃皺襞 (Rugae)</strong>，可隨進食充氣擴張。胃小彎側則為胃潰瘍好發處，需仔細觀察黏膜微血管與腺體排列。',
         pearls: [
           '<strong>胃小彎 (Lesser Curvature)</strong>：血流灌注相對薄弱，胃酸侵蝕時極易形成深度潰瘍。',
           '<strong>萎縮性變化</strong>：長期幽門桿菌感染可使胃體黏膜萎縮變薄，胃酸分泌低下並增加腸化生風險。'
         ],
-        phrase: 'Panendoscopy: Gastric body shows regular mucosal architecture with no active ulceration or mass.'
+        phrase: 'Panendoscopy: Gastric body shows regular prominent rugae with no active ulceration or mass.'
       },
       antrum: {
         titleZh: '胃竇與胃角 (Gastric Antrum & Angulus)',
@@ -368,22 +356,22 @@ import Layout from '../../layouts/Layout.astro';
         titleZh: '幽門與十二指腸球部 (Pylorus & Duodenum)',
         titleEn: 'Pylorus & Bulbus duodeni',
         distance: '58 ～ 65 cm (距門齒)',
-        function: '調節食糜排入十二指腸，重碳酸鹽中和強酸',
-        endofeature: '幽門圓形括約肌環，十二指腸球部絨毛黏膜',
+        function: '幽門括約肌調節食糜排空，重碳酸鹽中和強酸',
+        endofeature: '圓形增厚幽門括約肌環，十二指腸球部絨毛黏膜',
         disease: '十二指腸潰瘍 (DU)、幽門狹窄/潰瘍性阻塞、十二指腸息肉',
         sector: 'Gastroduodenal Junction',
-        pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃鏡需穿越自主收縮的幽門環進入十二指腸球部（Bulb）與第二段降部（D2）。十二指腸球部前壁為年輕人飢餓腹痛之 <strong>十二指腸潰瘍 (DU)</strong> 最常發作部位。',
+        pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃鏡需穿越自主收縮的 <strong>幽門括約肌環 (Pyloric sphincter)</strong> 進入十二指腸球部（Bulb）與第二段降部（D2）。十二指腸球部前壁為年輕人飢餓腹痛之 <strong>十二指腸潰瘍 (DU)</strong> 最常發作部位。',
         pearls: [
           '<strong>十二指腸潰瘍特性</strong>：高達 90% 以上與幽門桿菌相關，成功滅菌後潰瘍復發率可從 80% 驟降至 5% 以下！',
           '<strong>十二指腸乳頭 (Ampulla of Vater)</strong>：位於十二指腸降段，為總膽管與主胰管共同開口。'
         ],
-        phrase: 'Panendoscopy: Pyloric ring is patent. Duodenal bulb shows an active ulcer (approx. 0.8cm, A1 stage) with clean white base. No active vessel.'
+        phrase: 'Panendoscopy: Pyloric ring is patent with normal sphincter tone. Duodenal bulb shows an active ulcer (approx. 0.8cm, A1 stage) with clean base.'
       }
     };
 
     // Global 3D State
     let scene, camera, renderer, controls;
-    let singleStomachMesh, stomachMaterial;
+    let stomachMasterGroup;
     let segmentLabelSprites = {};
     let scopeGroup, scopeHeadLight, scopeTipMesh, scopeTubeMesh;
     let pathologyGroup;
@@ -392,60 +380,58 @@ import Layout from '../../layouts/Layout.astro';
     let selectedId = 'body';
     let isQuizMode = false, quizTarget = null;
     let raycaster, mouse;
-    let currentOpacity = 0.95;
     let gastroscopySplineCurve;
 
-    // Anatomical Centerline Path for Gastroscopy & Organ Lofting
+    // Centerline Path for Gastroscopy Scope Navigation
     const stomachScopePoints = [
-      new THREE.Vector3(0.0, 3.2, 0.0),    // Incisors / Pharynx (0 cm)
-      new THREE.Vector3(0.0, 2.2, 0.0),    // Mid Esophagus (20 cm)
-      new THREE.Vector3(0.08, 1.2, 0.08),  // Distal Esophagus / LES (35 cm)
-      new THREE.Vector3(0.25, 0.65, 0.18), // Cardia / EGJ (40 cm)
-      new THREE.Vector3(0.65, 0.15, 0.25), // Upper Body (45 cm)
-      new THREE.Vector3(0.55, -0.6, 0.35), // Mid Body Greater Curvature (50 cm)
-      new THREE.Vector3(-0.25, -1.0, 0.3), // Gastric Antrum (55 cm)
-      new THREE.Vector3(-1.0, -0.95, 0.1), // Pyloric Canal (58 cm)
-      new THREE.Vector3(-1.55, -1.1, -0.05),// Duodenal Bulb (62 cm)
-      new THREE.Vector3(-1.9, -1.7, -0.2)  // Duodenum Descending D2 (65 cm)
+      new THREE.Vector3(-0.9, 3.2, 0.0),    // Incisors / Upper Esophagus (0 cm)
+      new THREE.Vector3(-0.75, 2.2, 0.0),   // Mid Esophagus (20 cm)
+      new THREE.Vector3(-0.62, 1.45, 0.0),  // LES / Cardia (40 cm)
+      new THREE.Vector3(0.1, 0.6, 0.1),     // Upper Body / Fundus level (45 cm)
+      new THREE.Vector3(0.5, -0.4, 0.1),    // Mid Body (50 cm)
+      new THREE.Vector3(-0.25, -1.3, 0.1),  // Antrum / Incisura (55 cm)
+      new THREE.Vector3(-1.15, -1.35, 0.0), // Pylorus (58 cm)
+      new THREE.Vector3(-1.6, -1.6, 0.0),   // Duodenal Bulb (62 cm)
+      new THREE.Vector3(-1.85, -2.5, 0.0)   // Duodenum D2 Descending (65 cm)
     ];
 
-    // Segment Positions and Target Markers for Focus
+    // Landmark Target Coordinates for Focus Beacon & Labels
     const segmentConfigs = {
       esophagus: {
-        label: '食道與LES',
-        targetPos: new THREE.Vector3(0.0, 2.2, 0.0),
-        labelPos: [0.0, 2.3, 0.6],
-        scopeProgress: 0.30
+        label: '食道 (Esophagus)',
+        targetPos: new THREE.Vector3(-0.8, 2.2, 0.0),
+        labelPos: [-1.8, 2.6, 0.4],
+        scopeProgress: 0.25
       },
       cardia: {
-        label: '賁門 (EGJ)',
-        targetPos: new THREE.Vector3(0.25, 0.65, 0.18),
-        labelPos: [0.35, 0.75, 0.7],
+        label: '賁門 (Cardia & LES)',
+        targetPos: new THREE.Vector3(-0.6, 1.4, 0.0),
+        labelPos: [-1.4, 1.65, 0.5],
         scopeProgress: 0.60
       },
       fundus: {
         label: '胃底 (Fundus)',
-        targetPos: new THREE.Vector3(0.9, 0.85, 0.0),
-        labelPos: [1.6, 0.95, 0.5],
-        scopeProgress: 0.65
+        targetPos: new THREE.Vector3(1.2, 1.8, 0.0),
+        labelPos: [2.0, 2.2, 0.5],
+        scopeProgress: 0.68
       },
       body: {
-        label: '胃體 (Body)',
-        targetPos: new THREE.Vector3(0.6, -0.4, 0.3),
-        labelPos: [1.4, -0.45, 0.8],
+        label: '胃體與胃皺襞 (Body & Rugae)',
+        targetPos: new THREE.Vector3(0.7, -0.3, 0.0),
+        labelPos: [2.1, -0.4, 0.5],
         scopeProgress: 0.76
       },
       antrum: {
-        label: '胃竇與胃角',
-        targetPos: new THREE.Vector3(-0.35, -1.0, 0.25),
-        labelPos: [-0.45, -1.4, 0.7],
-        scopeProgress: 0.86
+        label: '胃竇與胃角 (Antrum)',
+        targetPos: new THREE.Vector3(-0.25, -1.3, 0.0),
+        labelPos: [-0.3, -2.1, 0.6],
+        scopeProgress: 0.85
       },
       pylorus: {
-        label: '幽門與十二指腸',
-        targetPos: new THREE.Vector3(-1.5, -1.1, -0.05),
-        labelPos: [-1.9, -1.4, 0.5],
-        scopeProgress: 0.96
+        label: '幽門與十二指腸 (Pylorus & Duodenum)',
+        targetPos: new THREE.Vector3(-1.5, -1.5, 0.0),
+        labelPos: [-2.1, -1.8, 0.6],
+        scopeProgress: 0.98
       }
     };
 
@@ -459,7 +445,7 @@ import Layout from '../../layouts/Layout.astro';
       // 1. Scene & Camera
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-      camera.position.set(0, 0.2, 7.5);
+      camera.position.set(0, 0.1, 8.2);
 
       // 2. WebGL Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -473,33 +459,33 @@ import Layout from '../../layouts/Layout.astro';
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.06;
-      controls.minDistance = 3.0;
-      controls.maxDistance = 15;
-      controls.target.set(0, 0, 0);
+      controls.minDistance = 3.5;
+      controls.maxDistance = 16;
+      controls.target.set(0.1, 0.1, 0);
 
       // 4. Studio Medical Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambientLight);
 
-      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.3);
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.4);
       mainLight.position.set(6, 8, 8);
       scene.add(mainLight);
 
-      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.9);
-      rimLight.position.set(-8, -4, -6);
-      scene.add(rimLight);
+      const fillLight = new THREE.DirectionalLight(0xfee2e2, 0.8);
+      fillLight.position.set(-6, -4, 6);
+      scene.add(fillLight);
 
-      const bottomLight = new THREE.DirectionalLight(0xfecdd3, 0.6);
-      bottomLight.position.set(0, -6, 6);
-      scene.add(bottomLight);
+      const topLight = new THREE.DirectionalLight(0xffffff, 0.7);
+      topLight.position.set(0, 8, 3);
+      scene.add(topLight);
 
-      // 5. Build Spline Curve
+      // 5. Build Gastroscopy Scope Spline Curve
       gastroscopySplineCurve = new THREE.CatmullRomCurve3(stomachScopePoints);
 
-      // 6. Build Single Organic Seamless 3D Stomach Mesh
-      buildSingleOrganicStomach();
+      // 6. Build Textbook-Exact 3D Stomach Anatomy Model (Matching Image 2)
+      buildTextbookStomachModel();
 
-      // 7. Build Dynamic 3D Gastroscopy System
+      // 7. Build Dynamic 3D Gastroscope System
       build3DGastroscope();
 
       // 8. Build 3D Pathologies (GERD, Ulcers, Polyps, Metaplasia)
@@ -528,111 +514,243 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
-    // Build Single Seamless Organic 3D Stomach Surface
-    function buildSingleOrganicStomach() {
-      // Create continuous lofted cross-sections along the stomach spline with organic radius & asymmetric bulging
-      const numRings = 70;
-      const radialSegs = 36;
-      const positions = [];
-      const normals = [];
-      const uvs = [];
-      const indices = [];
+    // Build Textbook-Exact 3D Stomach Anatomy Model matching Image 2
+    function buildTextbookStomachModel() {
+      stomachMasterGroup = new THREE.Group();
 
-      for (let i = 0; i <= numRings; i++) {
-        const u = i / numRings; // 0.0 (top esophagus) to 1.0 (duodenum D2)
-        const pt = gastroscopySplineCurve.getPoint(u);
-        const tangent = gastroscopySplineCurve.getTangent(u).normalize();
-
-        let normalVec = new THREE.Vector3(0, 0, 1).cross(tangent).normalize();
-        if (normalVec.lengthSq() < 0.01) normalVec = new THREE.Vector3(1, 0, 0).cross(tangent).normalize();
-        const binormalVec = new THREE.Vector3().crossVectors(tangent, normalVec).normalize();
-
-        // Calculate smooth continuous radius & anatomical shape variations:
-        let rBase = 0.22;
-        let xBulge = 1.0, yBulge = 1.0, centerShift = new THREE.Vector3(0, 0, 0);
-
-        if (u < 0.25) {
-          // Esophagus: smooth uniform cylinder
-          rBase = 0.22 + u * 0.1;
-        } else if (u >= 0.25 && u < 0.40) {
-          // Cardia & Upper Entry into Fundus
-          const localU = (u - 0.25) / 0.15;
-          rBase = 0.25 + localU * 0.45;
-          xBulge = 1.0 + localU * 0.4;
-          centerShift.addScaledVector(normalVec, localU * 0.2);
-        } else if (u >= 0.40 && u < 0.70) {
-          // Corpus / Body & Fundus Dome: broad, sweeping, beautiful C-shaped volume
-          const localU = (u - 0.40) / 0.30;
-          const dome = Math.sin(localU * Math.PI);
-          rBase = 0.70 + dome * 0.35;
-          xBulge = 1.35 + dome * 0.25; // Greater curvature flare
-          yBulge = 1.15;
-          centerShift.addScaledVector(normalVec, (1.0 - localU) * 0.35);
-        } else if (u >= 0.70 && u < 0.85) {
-          // Antrum & Angulus: smooth conical tapering towards pylorus
-          const localU = (u - 0.70) / 0.15;
-          rBase = 0.70 - localU * 0.38;
-          xBulge = 1.15 - localU * 0.25;
-        } else {
-          // Pylorus sphincter & Duodenal bulb
-          const localU = (u - 0.85) / 0.15;
-          rBase = 0.32 - Math.sin(localU * Math.PI * 0.5) * 0.08;
-        }
-
-        for (let j = 0; j <= radialSegs; j++) {
-          const v = j / radialSegs;
-          const theta = v * Math.PI * 2.0;
-
-          const cx = Math.cos(theta) * (rBase * xBulge);
-          const cy = Math.sin(theta) * (rBase * yBulge);
-
-          const vx = pt.x + centerShift.x + normalVec.x * cx + binormalVec.x * cy;
-          const vy = pt.y + centerShift.y + normalVec.y * cx + binormalVec.y * cy;
-          const vz = pt.z + centerShift.z + normalVec.z * cx + binormalVec.z * cy;
-
-          positions.push(vx, vy, vz);
-          uvs.push(u, v);
-        }
-      }
-
-      for (let i = 0; i < numRings; i++) {
-        for (let j = 0; j < radialSegs; j++) {
-          const a = i * (radialSegs + 1) + j;
-          const b = (i + 1) * (radialSegs + 1) + j;
-          const c = (i + 1) * (radialSegs + 1) + (j + 1);
-          const d = i * (radialSegs + 1) + (j + 1);
-
-          indices.push(a, b, d);
-          indices.push(b, c, d);
-        }
-      }
-
-      const geom = new THREE.BufferGeometry();
-      geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-      geom.setIndex(indices);
-      geom.computeVertexNormals();
-
-      stomachMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xd96b5e,
-        roughness: 0.30,
+      // Materials for realistic textbook anatomical illustration
+      // 1. External Serosa / Outer Shell (Natural Warm Pink Pearl)
+      const serosaMat = new THREE.MeshPhysicalMaterial({
+        color: 0xdf796c,
+        roughness: 0.35,
         metalness: 0.05,
-        clearcoat: 0.8,
-        clearcoatRoughness: 0.22,
-        transparent: true,
-        opacity: currentOpacity,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.3,
         side: THREE.DoubleSide
       });
 
-      singleStomachMesh = new THREE.Mesh(geom, stomachMaterial);
-      scene.add(singleStomachMesh);
+      // 2. Internal Mucosal Cavity (Warm Salmon with rich subsurface glow)
+      const mucosaMat = new THREE.MeshPhysicalMaterial({
+        color: 0xdb6b60,
+        roughness: 0.28,
+        metalness: 0.02,
+        clearcoat: 0.75,
+        clearcoatRoughness: 0.2,
+        side: THREE.DoubleSide
+      });
 
-      // Add Auto-Fitting 3D Billboard Labels
+      // 3. Thickened Muscular Wall Cut Edge (Cross-section rim showing pink serosa, red muscularis & white submucosa)
+      const wallCutMat = new THREE.MeshStandardMaterial({
+        color: 0xbe4a44,
+        roughness: 0.45,
+        side: THREE.DoubleSide
+      });
+
+      // 4. Rugae Folds Material (Glossy undulating folds)
+      const rugaeMat = new THREE.MeshPhysicalMaterial({
+        color: 0xe67a6d,
+        roughness: 0.25,
+        clearcoat: 0.85,
+        clearcoatRoughness: 0.2,
+        side: THREE.DoubleSide
+      });
+
+      // 5. Sphincter Muscular Ring Material
+      const sphincterMat = new THREE.MeshStandardMaterial({
+        color: 0xce5e56,
+        roughness: 0.35
+      });
+
+      // --- A. Define Anatomical Boundary Splines matching Image 2 ---
+      // Greater Curvature (Outer convex boundary from Cardia, over Fundus dome, along Body to Pylorus)
+      const greaterPoints = [
+        new THREE.Vector3(-0.45, 1.45, 0.0), // Cardia notch / His angle
+        new THREE.Vector3(-0.1, 1.95, 0.0),  // Fundus rise
+        new THREE.Vector3(0.6, 2.3, 0.0),   // Fundus apex top
+        new THREE.Vector3(1.5, 2.15, 0.0),  // Fundus right curve
+        new THREE.Vector3(2.1, 1.4, 0.0),   // Upper body right
+        new THREE.Vector3(2.35, 0.4, 0.0),  // Mid body greater curvature
+        new THREE.Vector3(2.2, -0.6, 0.0),  // Lower body
+        new THREE.Vector3(1.6, -1.5, 0.0),  // Body-antrum transition
+        new THREE.Vector3(0.6, -1.95, 0.0), // Antrum bottom curve
+        new THREE.Vector3(-0.5, -1.8, 0.0), // Pre-pyloric bottom
+        new THREE.Vector3(-1.15, -1.6, 0.0) // Pylorus inferior lip
+      ];
+      const greaterCurve = new THREE.CatmullRomCurve3(greaterPoints);
+
+      // Lesser Curvature (Inner concave boundary from Cardia, along small curve to Pylorus)
+      const lesserPoints = [
+        new THREE.Vector3(-0.65, 1.4, 0.0),  // Cardia medial lip
+        new THREE.Vector3(-0.45, 0.7, 0.0),  // Upper lesser curve
+        new THREE.Vector3(-0.3, 0.0, 0.0),   // Mid lesser curve
+        new THREE.Vector3(-0.25, -0.6, 0.0), // Angular notch (Incisura angularis)
+        new THREE.Vector3(-0.45, -1.1, 0.0), // Antrum superior curve
+        new THREE.Vector3(-1.15, -1.25, 0.0) // Pylorus superior lip
+      ];
+      const lesserCurve = new THREE.CatmullRomCurve3(lesserPoints);
+
+      // --- B. Construct 3D Posterior Bowl & Serosa Shell (Deep 3D Gastric Cavity) ---
+      const uSteps = 45; // Along vertical axis
+      const vSteps = 30; // From lesser curve to greater curve
+      const posArray = [];
+      const uvsArray = [];
+      const idxArray = [];
+
+      for (let i = 0; i <= uSteps; i++) {
+        const u = i / uSteps;
+        const ptG = greaterCurve.getPoint(u);
+        const ptL = lesserCurve.getPoint(u);
+
+        for (let j = 0; j <= vSteps; j++) {
+          const v = j / vSteps; // 0 = Lesser curve, 1 = Greater curve
+
+          // Interpolate between lesser and greater curves
+          const basePt = new THREE.Vector3().lerpVectors(ptL, ptG, v);
+
+          // Calculate parabolic dome depth in Z axis (Back wall is deeply hollowed Z < 0)
+          const spanDist = ptL.distanceTo(ptG);
+          const arch = Math.sin(v * Math.PI);
+          const uProfile = Math.sin(u * Math.PI);
+          const depthZ = -Math.pow(arch, 0.85) * (spanDist * 0.42 + 0.35) * (0.6 + 0.55 * uProfile);
+
+          posArray.push(basePt.x, basePt.y, depthZ);
+          uvsArray.push(u, v);
+        }
+      }
+
+      for (let i = 0; i < uSteps; i++) {
+        for (let j = 0; j < vSteps; j++) {
+          const a = i * (vSteps + 1) + j;
+          const b = (i + 1) * (vSteps + 1) + j;
+          const c = (i + 1) * (vSteps + 1) + (j + 1);
+          const d = i * (vSteps + 1) + (j + 1);
+
+          // Front-facing (inner mucosal cavity)
+          idxArray.push(a, b, d);
+          idxArray.push(b, c, d);
+        }
+      }
+
+      const backWallGeom = new THREE.BufferGeometry();
+      backWallGeom.setAttribute('position', new THREE.Float32BufferAttribute(posArray, 3));
+      backWallGeom.setAttribute('uv', new THREE.Float32BufferAttribute(uvsArray, 2));
+      backWallGeom.setIndex(idxArray);
+      backWallGeom.computeVertexNormals();
+
+      const backWallMesh = new THREE.Mesh(backWallGeom, mucosaMat);
+      stomachMasterGroup.add(backWallMesh);
+
+      // --- C. Construct Multi-Layered Thick Anatomical Wall Cut Border (Matching Image 2) ---
+      const wallBorderGroup = new THREE.Group();
+
+      // Greater Curvature Cut Rim
+      const greaterWallGeom = new THREE.TubeGeometry(greaterCurve, 64, 0.08, 12, false);
+      const greaterWallMesh = new THREE.Mesh(greaterWallGeom, wallCutMat);
+      greaterWallMesh.scale.set(1.0, 1.0, 0.4);
+      wallBorderGroup.add(greaterWallMesh);
+
+      // Lesser Curvature Cut Rim
+      const lesserWallGeom = new THREE.TubeGeometry(lesserCurve, 40, 0.07, 12, false);
+      const lesserWallMesh = new THREE.Mesh(lesserWallGeom, wallCutMat);
+      lesserWallMesh.scale.set(1.0, 1.0, 0.4);
+      wallBorderGroup.add(lesserWallMesh);
+
+      stomachMasterGroup.add(wallBorderGroup);
+
+      // --- D. Construct Longitudinal Wavy 3D Gastric Rugae (胃皺襞, Matching Image 2) ---
+      const rugaeGroup = new THREE.Group();
+      const numRugaeFolds = 9;
+
+      for (let r = 1; r <= numRugaeFolds; r++) {
+        const vRatio = 0.2 + (r / (numRugaeFolds + 1)) * 0.72; // Spread across the body towards greater curvature
+        const foldPoints = [];
+        const numPts = 35;
+
+        for (let p = 3; p <= numPts - 3; p++) {
+          const uRatio = p / numPts;
+          const ptG = greaterCurve.getPoint(uRatio);
+          const ptL = lesserCurve.getPoint(uRatio);
+
+          const basePt = new THREE.Vector3().lerpVectors(ptL, ptG, vRatio);
+
+          // Add characteristic sinusoidal serpentine wriggle to rugae folds
+          const wavePhase = uRatio * Math.PI * 10 + r * 1.3;
+          const waveAmp = 0.045 * Math.sin(uRatio * Math.PI);
+          const wriggleX = Math.cos(wavePhase) * waveAmp;
+          const wriggleY = Math.sin(wavePhase) * waveAmp;
+
+          const arch = Math.sin(vRatio * Math.PI);
+          const spanDist = ptL.distanceTo(ptG);
+          const depthZ = -Math.pow(arch, 0.85) * (spanDist * 0.42 + 0.35) * (0.6 + 0.55 * Math.sin(uRatio * Math.PI)) + 0.035;
+
+          foldPoints.push(new THREE.Vector3(basePt.x + wriggleX, basePt.y + wriggleY, depthZ));
+        }
+
+        if (foldPoints.length >= 4) {
+          const foldCurve = new THREE.CatmullRomCurve3(foldPoints);
+          const foldGeom = new THREE.TubeGeometry(foldCurve, 40, 0.042, 8, false);
+          const foldMesh = new THREE.Mesh(foldGeom, rugaeMat);
+          rugaeGroup.add(foldMesh);
+        }
+      }
+      stomachMasterGroup.add(rugaeGroup);
+
+      // --- E. Construct Esophagus & LES (食道與下食道括約肌, Matching Image 2 Top-Left) ---
+      const esophGroup = new THREE.Group();
+      const esophPoints = [
+        new THREE.Vector3(-0.95, 3.4, 0.0),
+        new THREE.Vector3(-0.85, 2.5, 0.0),
+        new THREE.Vector3(-0.7, 1.8, 0.0),
+        new THREE.Vector3(-0.55, 1.4, 0.0)
+      ];
+      const esophCurve = new THREE.CatmullRomCurve3(esophPoints);
+      const esophGeom = new THREE.TubeGeometry(esophCurve, 24, 0.22, 16, false);
+      const esophMesh = new THREE.Mesh(esophGeom, serosaMat);
+      esophGroup.add(esophMesh);
+
+      // LES Sphincter Ring (Thickened muscular ring at 1.7)
+      const lesGeom = new THREE.TorusGeometry(0.24, 0.055, 12, 24);
+      const lesMesh = new THREE.Mesh(lesGeom, sphincterMat);
+      lesMesh.position.set(-0.72, 1.85, 0.0);
+      lesMesh.rotation.x = Math.PI / 3;
+      esophGroup.add(lesMesh);
+
+      stomachMasterGroup.add(esophGroup);
+
+      // --- F. Construct Pyloric Sphincter & Duodenum (幽門括約肌與十二指腸, Matching Image 2 Bottom-Left) ---
+      const duoGroup = new THREE.Group();
+
+      // Pyloric Sphincter Muscular Bulb
+      const pylorusRingGeom = new THREE.TorusGeometry(0.25, 0.085, 14, 24);
+      const pylorusRingMesh = new THREE.Mesh(pylorusRingGeom, sphincterMat);
+      pylorusRingMesh.position.set(-1.18, -1.42, 0.0);
+      pylorusRingMesh.rotation.y = Math.PI / 4;
+      duoGroup.add(pylorusRingMesh);
+
+      // Duodenal C-Loop (Duodenal bulb curving down into descending D2)
+      const duoPoints = [
+        new THREE.Vector3(-1.18, -1.42, 0.0),
+        new THREE.Vector3(-1.5, -1.45, 0.0),
+        new THREE.Vector3(-1.75, -1.8, 0.0),
+        new THREE.Vector3(-1.85, -2.4, 0.0),
+        new THREE.Vector3(-1.75, -2.8, 0.0)
+      ];
+      const duoCurve = new THREE.CatmullRomCurve3(duoPoints);
+      const duoGeom = new THREE.TubeGeometry(duoCurve, 30, 0.24, 16, false);
+      const duoMesh = new THREE.Mesh(duoGeom, serosaMat);
+      duoGroup.add(duoMesh);
+
+      stomachMasterGroup.add(duoGroup);
+
+      // Add Master Group to Scene
+      scene.add(stomachMasterGroup);
+
+      // --- G. Add Auto-Fitting 3D Billboard Labels ---
       Object.keys(segmentConfigs).forEach(k => {
         const conf = segmentConfigs[k];
         const sprite = createTextSprite(conf.label, '#38bdf8');
         sprite.position.set(conf.labelPos[0], conf.labelPos[1], conf.labelPos[2]);
-        singleStomachMesh.add(sprite);
+        stomachMasterGroup.add(sprite);
         segmentLabelSprites[k] = sprite;
       });
     }
@@ -691,13 +809,13 @@ import Layout from '../../layouts/Layout.astro';
       focusBeaconMesh = new THREE.Mesh(ringGeom, ringMat);
       focusBeaconGroup.add(focusBeaconMesh);
 
-      const pointLight = new THREE.PointLight(0x00e5ff, 2.0, 2.5);
+      const pointLight = new THREE.PointLight(0x00e5ff, 2.2, 2.5);
       focusBeaconGroup.add(pointLight);
 
       scene.add(focusBeaconGroup);
     }
 
-    // Build 3D Gastroscope (Flexible black scope with bright LED optic beam)
+    // Build 3D Gastroscope (Flexible black tube with bright LED optic beam)
     function build3DGastroscope() {
       scopeGroup = new THREE.Group();
 
@@ -759,7 +877,7 @@ import Layout from '../../layouts/Layout.astro';
     function build3DPathologies() {
       pathologyGroup = new THREE.Group();
 
-      // 1. GERD & Hiatal Hernia (Erosive Streaks at EGJ / Cardia)
+      // 1. GERD (Erosive Streaks at EGJ / Cardia)
       const gerdMat = new THREE.MeshPhysicalMaterial({
         color: 0xf43f5e,
         roughness: 0.3,
@@ -768,12 +886,12 @@ import Layout from '../../layouts/Layout.astro';
       });
 
       const gerdStreaks = [
-        new THREE.Vector3(0.22, 0.75, 0.3),
-        new THREE.Vector3(0.35, 0.65, 0.35),
-        new THREE.Vector3(0.18, 0.55, 0.28)
+        new THREE.Vector3(-0.55, 1.5, 0.05),
+        new THREE.Vector3(-0.62, 1.35, 0.08),
+        new THREE.Vector3(-0.48, 1.25, 0.02)
       ];
       gerdStreaks.forEach(pos => {
-        const streakMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.22, 8), gerdMat);
+        const streakMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.22, 8), gerdMat);
         streakMesh.position.copy(pos);
         streakMesh.rotation.z = -Math.PI / 6;
         streakMesh.userData = { type: 'gerd', name: '逆流性食道炎黏膜破損 (LA Grade A/B)' };
@@ -795,15 +913,14 @@ import Layout from '../../layouts/Layout.astro';
       // Gastric Ulcer at Angulus (胃角潰瘍)
       const guMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.04, 16), ulcerMat);
       guMesh.add(new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.03, 8, 16), ulcerBorderMat));
-      guMesh.position.set(-0.35, -1.05, 0.45);
-      guMesh.rotation.x = Math.PI / 4;
+      guMesh.position.set(-0.35, -0.7, -0.05);
       guMesh.userData = { type: 'ulcer', name: '胃角部良性活動性胃潰瘍 (Gastric Ulcer, A1/A2 stage)' };
       pathologyGroup.add(guMesh);
 
       // Duodenal Ulcer at Bulb (十二指腸球部前壁潰瘍)
       const duMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.04, 16), ulcerMat);
       duMesh.add(new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.025, 8, 16), ulcerBorderMat));
-      duMesh.position.set(-1.65, -1.1, 0.05);
+      duMesh.position.set(-1.6, -1.65, 0.05);
       duMesh.userData = { type: 'ulcer', name: '十二指腸球部潰瘍 (Duodenal Ulcer)' };
       pathologyGroup.add(duMesh);
 
@@ -824,9 +941,9 @@ import Layout from '../../layouts/Layout.astro';
 
       // FGPs at Fundus (Multiple tiny benign polyps)
       const fgpPositions = [
-        new THREE.Vector3(1.2, 0.8, 0.4),
-        new THREE.Vector3(1.4, 0.5, 0.3),
-        new THREE.Vector3(1.0, 0.9, 0.2)
+        new THREE.Vector3(1.1, 1.9, -0.05),
+        new THREE.Vector3(1.5, 1.7, -0.08),
+        new THREE.Vector3(0.7, 2.0, -0.04)
       ];
       fgpPositions.forEach(pos => {
         const fgpMesh = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), fpgMat);
@@ -837,7 +954,7 @@ import Layout from '../../layouts/Layout.astro';
 
       // Hyperplastic Polyp at Antrum
       const hpMesh = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 14), hyperplasticMat);
-      hpMesh.position.set(-0.65, -1.15, 0.35);
+      hpMesh.position.set(-0.6, -1.4, 0.05);
       hpMesh.userData = { type: 'polyp', name: '胃竇增生性息肉 (Hyperplastic Polyp, 0.8cm)' };
       pathologyGroup.add(hpMesh);
 
@@ -850,12 +967,12 @@ import Layout from '../../layouts/Layout.astro';
       });
 
       const metaPositions = [
-        new THREE.Vector3(-0.2, -0.9, 0.5),
-        new THREE.Vector3(-0.5, -0.85, 0.42),
-        new THREE.Vector3(-0.75, -0.95, 0.3)
+        new THREE.Vector3(-0.1, -1.1, -0.05),
+        new THREE.Vector3(-0.4, -1.25, -0.08),
+        new THREE.Vector3(-0.7, -1.35, -0.04)
       ];
       metaPositions.forEach(pos => {
-        const mMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.02, 12), metaMat);
+        const mMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.02, 12), metaMat);
         mMesh.position.copy(pos);
         mMesh.userData = { type: 'metaplasia', name: '胃竇萎縮性胃炎伴腸化生斑塊 (Intestinal Metaplasia)' };
         pathologyGroup.add(mMesh);
@@ -881,7 +998,7 @@ import Layout from '../../layouts/Layout.astro';
       const infoEl = document.getElementById('pathology-info-text');
       if (type === 'gerd') {
         if (activePathology.gerd) {
-          infoEl.innerHTML = '🔴 <strong>已顯示胃食道逆流 (GERD)</strong>：標記於 EGJ 齒狀線與賁門黏膜破損，常伴隨食道裂孔疝氣。';
+          infoEl.innerHTML = '🔴 <strong>已顯示胃食道逆流 (GERD)</strong>：標記於 EGJ 齒狀線與賁門黏膜破損。';
           selectSegment('cardia');
         } else {
           infoEl.textContent = '已隱藏胃食道逆流病灶。';
@@ -925,26 +1042,18 @@ import Layout from '../../layouts/Layout.astro';
         if (statusBox) statusBox.textContent = `📍 食道段 (${cm}cm)：平滑粉紅鱗狀黏膜，觀察中上段食道。`;
         updateSegmentDetailsOnly('esophagus');
       } else if (cm <= 42) {
-        if (statusBox) statusBox.textContent = `📍 賁門與 EGJ (${cm}cm)：齒狀線交界，評估有無逆流性食道炎。`;
+        if (statusBox) statusBox.textContent = `📍 賁門與 EGJ (${cm}cm)：齒狀線交界，評估有無逆流性食道炎與 LES。`;
         updateSegmentDetailsOnly('cardia');
       } else if (cm <= 50) {
-        if (statusBox) statusBox.textContent = `📍 胃體部 (${cm}cm)：胃大彎與小彎，進行胃底 J-turn 倒轉。`;
+        if (statusBox) statusBox.textContent = `📍 胃體部與胃皺襞 (${cm}cm)：大彎波浪皺襞，排查胃體部病灶。`;
         updateSegmentDetailsOnly('body');
       } else if (cm <= 58) {
         if (statusBox) statusBox.textContent = `📍 胃竇與胃角 (${cm}cm)：胃角 V 字切跡，排查潰瘍、萎縮與幽門桿菌。`;
         updateSegmentDetailsOnly('antrum');
       } else {
-        if (statusBox) statusBox.textContent = `🎯 十二指腸球部與第二段 (${cm}cm)：穿越幽門環，排查球部潰瘍與壺腹。`;
+        if (statusBox) statusBox.textContent = `🎯 幽門括約肌與十二指腸 (${cm}cm)：穿越幽門環，排查球部潰瘍與降部。`;
         updateSegmentDetailsOnly('pylorus');
       }
-    }
-
-    // Opacity Slider Action
-    function onOpacitySlider(val) {
-      currentOpacity = val / 100.0;
-      const txt = document.getElementById('txt-opacity-val');
-      if (txt) txt.textContent = `${val}%`;
-      if (stomachMaterial) stomachMaterial.opacity = currentOpacity;
     }
 
     // Segment Selection
@@ -1019,15 +1128,15 @@ import Layout from '../../layouts/Layout.astro';
       document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(`view-btn-${preset}`)?.classList.add('active');
 
-      let targetPos = new THREE.Vector3(0, 0.2, 7.5);
-      let targetLook = new THREE.Vector3(0, 0, 0);
+      let targetPos = new THREE.Vector3(0, 0.1, 8.2);
+      let targetLook = new THREE.Vector3(0.1, 0.1, 0);
 
       switch(preset) {
-        case 'anterior': targetPos.set(0, 0.2, 7.5); targetLook.set(0, 0, 0); break;
-        case 'jturn': targetPos.set(0.6, -3.5, 4.8); targetLook.set(0.5, 0.6, 0.2); break; // Upward tilt for J-turn
-        case 'antrum': targetPos.set(-3.8, -1.8, 5.2); targetLook.set(-0.8, -1.0, 0.2); break;
-        case 'curvatures': targetPos.set(6.8, 0.2, 2.5); targetLook.set(0.5, -0.2, 0.0); break;
-        case 'duodenum': targetPos.set(-5.5, -1.2, 3.8); targetLook.set(-1.6, -1.2, 0.0); break;
+        case 'anterior': targetPos.set(0, 0.1, 8.2); targetLook.set(0.1, 0.1, 0); break;
+        case 'jturn': targetPos.set(0.6, -3.2, 5.0); targetLook.set(0.4, 0.8, 0.0); break;
+        case 'antrum': targetPos.set(-3.5, -1.8, 5.5); targetLook.set(-0.8, -1.0, 0.0); break;
+        case 'curvatures': targetPos.set(5.5, 0.2, 5.0); targetLook.set(0.6, 0.0, 0.0); break;
+        case 'duodenum': targetPos.set(-5.2, -1.4, 4.2); targetLook.set(-1.5, -1.5, 0.0); break;
       }
 
       new TWEEN.Tween(camera.position).to(targetPos, 850).easing(TWEEN.Easing.Cubic.Out).start();
@@ -1037,7 +1146,7 @@ import Layout from '../../layouts/Layout.astro';
     function reset3DCamera() {
       setPresetView('anterior');
       selectSegment('body');
-      showToast('已重設為胃部 3D 正面全覽視角');
+      showToast('已重設為正面教科書切面視角');
     }
 
     // Fullscreen Toggle
@@ -1071,11 +1180,10 @@ import Layout from '../../layouts/Layout.astro';
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
-      if (singleStomachMesh) {
-        const intersects = raycaster.intersectObject(singleStomachMesh, false);
+      if (stomachMasterGroup) {
+        const intersects = raycaster.intersectObjects(stomachMasterGroup.children, true);
         if (intersects.length > 0) {
           const hitPt = intersects[0].point;
-          // Find closest segment config
           let closestId = 'body', minDist = 999;
           Object.keys(segmentConfigs).forEach(k => {
             const d = hitPt.distanceTo(segmentConfigs[k].targetPos);
@@ -1516,18 +1624,6 @@ import Layout from '../../layouts/Layout.astro';
     color: #cbd5e1;
   }
 
-  .slider-val {
-    font-family: monospace;
-    color: #38bdf8;
-    font-size: 0.8rem;
-  }
-
-  .slider-subtext-single {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
-  }
-
   input[type=range] {
     -webkit-appearance: none;
     width: 100%;
@@ -1615,7 +1711,7 @@ import Layout from '../../layouts/Layout.astro';
   /* 3D Canvas Center Stage */
   .canvas-panel {
     position: relative;
-    background: radial-gradient(circle at 50% 50%, #0d1e30 0%, #060b14 100%);
+    background: radial-gradient(circle at 50% 50%, #0e1e32 0%, #060b14 100%);
     min-height: 520px;
     user-select: none;
   }
