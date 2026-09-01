@@ -517,36 +517,38 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     box-shadow: 0 6px 16px rgba(231, 111, 81, 0.45);
   }
 
-  /* ── 手機版 2x2 大字號長輩友善觸控導覽列 ── */
+  /* ── 手機版 2x2 大字號長輩友善觸控導覽列 (不浮動釘頂，釋放 100% 閱讀空間) ── */
   @media (max-width: 768px) {
     .navbar-vet-wrapper {
-      top: 8px;
-      padding: 0 10px;
-      margin-bottom: 14px;
+      position: relative !important; /* 手機版不浮動釘在螢幕上方，向下滾動時自然移出畫面，不遮擋文章與表單內容 */
+      top: 0 !important;
+      padding: 8px 12px 0;
+      margin-bottom: 8px;
+      z-index: 10;
     }
     .navbar-vet {
       flex-direction: column;
-      gap: 12px;
-      padding: 14px 16px 16px;
-      border-radius: 24px;
+      gap: 8px;
+      padding: 10px 12px 12px;
+      border-radius: 18px;
     }
     .brand-row {
       width: 100%;
       justify-content: center;
     }
     .brand-logo {
-      gap: 12px;
+      gap: 10px;
     }
     .brand-icon {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
     }
     .brand-name {
-      font-size: 1.45rem;
+      font-size: 1.3rem;
       font-weight: 900;
     }
     .brand-subtitle {
-      font-size: 1.02rem;
+      font-size: 0.95rem;
       font-weight: 600;
     }
     .nav-track-wrapper {
@@ -556,7 +558,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       width: 100%;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
       background: transparent;
       border: none;
       padding: 0;
@@ -566,18 +568,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       display: none;
     }
     .nav-item {
-      font-size: 1.05rem; /* ~19px 大字號 */
+      font-size: 1.02rem; /* 大字號 */
       font-weight: 700;
-      padding: 11px 8px;
-      border-radius: 14px;
+      padding: 10px 6px;
+      border-radius: 12px;
       background: #ffffff;
       border: 1.5px solid var(--color-border);
-      box-shadow: 0 2px 8px rgba(74, 144, 164, 0.08);
+      box-shadow: 0 2px 6px rgba(74, 144, 164, 0.08);
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 48px;
+      min-height: 46px;
       color: var(--color-text-title);
       white-space: nowrap;
       transition: all 0.2s ease;
@@ -586,7 +588,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       background: linear-gradient(135deg, var(--color-primary), #3b7688);
       color: #ffffff;
       border-color: var(--color-primary);
-      box-shadow: 0 4px 14px rgba(74, 144, 164, 0.35);
+      box-shadow: 0 3px 10px rgba(74, 144, 164, 0.3);
       font-weight: 800;
     }
     .nav-actions {
