@@ -4,7 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout 
   title="胃部與食道 3D 互動解剖暨胃鏡巡航系統 | 互動解剖圖鑑 - 黃冠智醫師" 
-  description="胃部與食道 3D 空間立體解剖系統。包含內部胃皺襞（Rugae）剖切模式、胃鏡進鏡深度模擬（0-65cm）、胃食道逆流/潰瘍/息肉/腸化生病灶標記與病歷片語產生器。"
+  description="胃部與食道 3D 空間立體解剖系統。包含胃鏡進鏡深度模擬（0-65cm）、胃食道逆流/潰瘍/息肉/腸化生病灶標記、3D 空間立體炸開與病歷片語產生器。"
   fullWidth={true}
   hideFooter={true}
 >
@@ -48,37 +48,17 @@ import Layout from '../../layouts/Layout.astro';
     <!-- Main 3-Column Workspace Grid -->
     <div class="workspace-grid">
       
-      <!-- Left Panel: Scope Navigation, View Mode, Pathologies & Controls -->
+      <!-- Left Panel: Scope Navigation, Pathologies & Controls -->
       <div class="glass-panel left-panel">
         <div class="panel-header">
           <div class="panel-title">
             <svg width="16" height="16" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C6.5 2 3 6.5 3 12c0 3.5 2.5 7 5.5 8.5 2 .8 4.5.5 6-.5 2-1.5 3-4 3.5-7.5.5-3.5-2-10.5-6-10.5Z"/></svg>
-            胃鏡巡航與剖面病灶
+            胃鏡巡航與病灶標記
           </div>
         </div>
         
         <div class="panel-body">
           
-          <!-- Cutaway Rugae Mode Toggle Button -->
-          <div class="control-row mode-switch-card">
-            <div class="section-label" style="color: #38bdf8; margin-bottom: 0.35rem;">
-              解剖視野模式 (ANATOMICAL VIEW)
-            </div>
-            <div class="view-mode-buttons">
-              <button class="btn btn-mode active" id="btn-mode-cutaway" onclick="setViewMode('cutaway')">
-                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>
-                內部黏膜皺襞 (Rugae 剖面)
-              </button>
-              <button class="btn btn-mode" id="btn-mode-full" onclick="setViewMode('full')">
-                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
-                完整 3D 胃立體外觀
-              </button>
-            </div>
-            <div class="view-mode-hint">
-              💡 剖面模式可清楚觀察<strong>內部波浪狀胃皺襞</strong>與胃鏡管腔內病灶。
-            </div>
-          </div>
-
           <!-- Gastroscopy Scope Navigation Slider (0 - 65 cm) -->
           <div class="control-row scope-card">
             <div class="control-label-group">
@@ -137,8 +117,8 @@ import Layout from '../../layouts/Layout.astro';
             </div>
             <input type="range" id="slider-explode" min="0" max="100" value="0" oninput="onExplodeSlider(this.value)">
             <div class="slider-subtext">
-              <span>0% (緊密天然構造)</span>
-              <span>100% (完全炸開)</span>
+              <span>0% (緊密天然連貫構造)</span>
+              <span>100% (完全分離觀察)</span>
             </div>
           </div>
 
@@ -186,9 +166,9 @@ import Layout from '../../layouts/Layout.astro';
             <div class="seg-card-btn" onclick="selectSegment('body')" id="btn-seg-body">
               <div class="seg-card-top">
                 <span class="seg-num-pill">40~52cm</span>
-                <span class="seg-loc-tag">皺襞密集區</span>
+                <span class="seg-loc-tag">胃大彎與胃小彎</span>
               </div>
-              <div class="seg-card-name">胃體 (Corpus / Rugae)</div>
+              <div class="seg-card-name">胃體 (Corpus / Body)</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('antrum')" id="btn-seg-antrum">
@@ -215,7 +195,7 @@ import Layout from '../../layouts/Layout.astro';
       <div class="glass-panel canvas-panel">
         <!-- Preset View Angles Toolbar -->
         <div class="view-angles-toolbar">
-          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面剖面全覽 (Coronal View)</button>
+          <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面全覽 (Coronal View)</button>
           <button class="view-btn" id="view-btn-jturn" onclick="setPresetView('jturn')">胃底 J-turn 倒轉視角 (Cardia View)</button>
           <button class="view-btn" id="view-btn-antrum" onclick="setPresetView('antrum')">胃竇與幽門切面</button>
           <button class="view-btn" id="view-btn-curvatures" onclick="setPresetView('curvatures')">胃大彎與小彎側視</button>
@@ -247,10 +227,10 @@ import Layout from '../../layouts/Layout.astro';
           <div class="detail-title-group">
             <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.3rem;">
               <span id="det-pill" class="seg-badge-pill">40 ~ 52 cm</span>
-              <span id="det-sector" class="sector-tag">Gastric Corpus / Rugae Folds</span>
+              <span id="det-sector" class="sector-tag">Gastric Corpus / Rugae</span>
             </div>
             <div id="det-title-zh" class="main-title">胃體 (Corpus / Body)</div>
-            <div id="det-title-en" class="sub-title">Corpus gastricum · Prominent Rugal Folds</div>
+            <div id="det-title-en" class="sub-title">Corpus gastricum · Greater & Lesser Curvatures</div>
           </div>
 
           <!-- Metric Grid -->
@@ -264,8 +244,8 @@ import Layout from '../../layouts/Layout.astro';
               <div id="det-function" class="metric-value">壁細胞 (胃酸/內在因子)</div>
             </div>
             <div class="metric-box">
-              <div class="metric-label">內視鏡特徵</div>
-              <div id="det-endofeature" class="metric-value">粗大黏膜皺襞 (Rugae)</div>
+              <div class="metric-label">解剖特徵</div>
+              <div id="det-endofeature" class="metric-value">胃大彎、胃小彎、胃體部</div>
             </div>
             <div class="metric-box">
               <div class="metric-label">常見疾病好發</div>
@@ -275,7 +255,7 @@ import Layout from '../../layouts/Layout.astro';
 
           <!-- Endoscopy Pearls -->
           <div class="surgical-pearls" id="det-pearls-box">
-            <strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，大彎處佈滿粗大的 <strong>胃黏膜皺襞（Rugae）</strong>。充足充氣時皺襞會平滑舒張展開，檢查時需仔細觀察皺襞間裂隙以防微小早癌或潰瘍被褶皺隱藏。
+            <strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，胃大彎佈滿豐富飽滿的肌層走向。充足充氣時胃腔平滑舒張，檢查時需沿胃小彎與大彎平滑排查有無早癌或潰瘍。
           </div>
 
           <!-- Endoscopic Clinical Pearls -->
@@ -291,7 +271,7 @@ import Layout from '../../layouts/Layout.astro';
               </div>
               <div class="pearl-item">
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span><strong>壁細胞萎縮警訊</strong>：長期幽門桿菌感染可使胃體皺襞萎縮平坦，胃酸分泌低下並增加腸化生風險。</span>
+                <span><strong>壁細胞萎縮警訊</strong>：長期幽門桿菌感染可使胃體黏膜萎縮變薄，胃酸分泌低下並增加腸化生風險。</span>
               </div>
             </div>
           </div>
@@ -303,7 +283,7 @@ import Layout from '../../layouts/Layout.astro';
               <button class="btn btn-outline" style="padding: 0.18rem 0.5rem; font-size: 0.68rem;" onclick="copyPhrase()">複製片語</button>
             </div>
             <div id="det-phrase-text" class="phrase-content">
-              Panendoscopy: Esophagus shows normal mucosa without mucosal break. Stomach shows prominent rugal folds at body with mild superficial gastritis at antrum. CLO test: Negative.
+              Panendoscopy: Esophagus shows normal mucosa without mucosal break. Stomach shows smooth mucosal contours at body with mild superficial gastritis at antrum. CLO test: Negative.
             </div>
           </div>
 
@@ -372,22 +352,22 @@ import Layout from '../../layouts/Layout.astro';
         titleEn: 'Corpus gastricum',
         distance: '40 ～ 52 cm (距門齒)',
         function: '分泌胃酸 (HCl) 與胃蛋白酶原，進行食物混合研磨',
-        endofeature: '粗大波浪狀黏膜皺襞 (Gastric Rugae)',
+        endofeature: '胃大彎與胃小彎平滑肌層',
         disease: '胃體部潰瘍、胃息肉、自身免疫性胃炎、胃癌',
         sector: 'Mid Gastric Region',
-        pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃大彎佈滿粗大 <strong>胃黏膜皺襞（Rugae）</strong>，充氣展開後需沿著皺襞溝槽逐一排查。胃小彎側則平滑無皺襞，為胃潰瘍好發處。',
+        pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃體部為胃容積最大區域，胃大彎走向寬廣。胃小彎側則為胃潰瘍好發處，需仔細觀察黏膜色澤與微細血管排列。',
         pearls: [
           '<strong>胃小彎 (Lesser Curvature)</strong>：血流灌注相對薄弱，胃酸侵蝕時極易形成深度潰瘍。',
-          '<strong>皺襞肥厚 (Ménétrier disease) vs. 萎縮</strong>：正常皺襞粗細均勻，若嚴重肥大或完全變平皆為病理徵兆。'
+          '<strong>萎縮性變化</strong>：長期幽門桿菌感染可使胃體黏膜萎縮變薄，胃酸分泌低下並增加腸化生風險。'
         ],
-        phrase: 'Panendoscopy: Gastric body shows regular rugal fold architecture with no active ulceration or mass.'
+        phrase: 'Panendoscopy: Gastric body shows regular mucosal architecture with no active ulceration or mass.'
       },
       antrum: {
         titleZh: '胃竇與胃角 (Gastric Antrum & Angulus)',
         titleEn: 'Antrum pyloricum & Incisura angularis',
         distance: '52 ～ 58 cm (距門齒)',
         function: '強烈蠕動研磨食物，G細胞分泌胃泌素 (Gastrin)',
-        endofeature: '平滑無皺襞，胃角呈典型「V字形」切跡',
+        endofeature: '平滑管狀腔體，胃角呈典型「V字形」切跡',
         disease: '幽門桿菌胃炎、胃潰瘍、萎縮性胃炎、腸化生、胃竇腺癌',
         sector: 'Distal Gastric Region',
         pearlsBox: '<strong>胃鏡檢查重點：</strong> 胃竇與胃角為 <strong>幽門螺旋桿菌 (H. pylori)</strong> 定植與慢性發炎的核心大本營。臨床上幽門桿菌快速尿素酶檢測（CLO test）與胃癌篩檢切片多在此處進行。',
@@ -422,7 +402,6 @@ import Layout from '../../layouts/Layout.astro';
     let scopeGroup, scopeHeadLight, scopeTipMesh, scopeTubeMesh;
     let pathologyGroup;
     let activePathology = { gerd: false, ulcer: false, polyp: false, metaplasia: false };
-    let currentViewMode = 'cutaway'; // 'cutaway' or 'full'
     let selectedId = 'body';
     let isQuizMode = false, quizTarget = null;
     let raycaster, mouse;
@@ -435,50 +414,50 @@ import Layout from '../../layouts/Layout.astro';
       new THREE.Vector3(0.0, 2.2, 0.0),    // Mid Esophagus (20 cm)
       new THREE.Vector3(0.1, 1.2, 0.1),    // Distal Esophagus / LES (35 cm)
       new THREE.Vector3(0.3, 0.6, 0.2),    // Cardia / EGJ (40 cm)
-      new THREE.Vector3(0.8, 0.2, 0.4),    // Upper Body / Rugae (45 cm)
-      new THREE.Vector3(0.6, -0.7, 0.5),   // Mid Body Greater Curvature (50 cm)
-      new THREE.Vector3(-0.4, -1.1, 0.4),  // Gastric Antrum (55 cm)
-      new THREE.Vector3(-1.2, -1.0, 0.2),  // Pyloric Canal (58 cm)
-      new THREE.Vector3(-1.8, -1.2, 0.0),  // Duodenal Bulb (62 cm)
-      new THREE.Vector3(-2.1, -1.8, -0.2)  // Duodenum Descending D2 (65 cm)
+      new THREE.Vector3(0.7, 0.1, 0.3),    // Upper Body (45 cm)
+      new THREE.Vector3(0.5, -0.6, 0.4),   // Mid Body (50 cm)
+      new THREE.Vector3(-0.3, -1.0, 0.3),  // Gastric Antrum (55 cm)
+      new THREE.Vector3(-1.1, -0.95, 0.1), // Pyloric Canal (58 cm)
+      new THREE.Vector3(-1.7, -1.15, -0.1),// Duodenal Bulb (62 cm)
+      new THREE.Vector3(-2.0, -1.75, -0.2) // Duodenum Descending D2 (65 cm)
     ];
 
-    // Segment Subdivision Configurations
+    // Segment Configurations with boundary-aligned t ranges along continuous stomach spine
     const segmentConfigs = {
       esophagus: {
-        label: '食道/LES',
-        labelPos: [0.3, 2.0, 0.4],
+        label: '食道與LES',
+        labelPos: [0.0, 2.2, 0.5],
         explodeDir: new THREE.Vector3(0.0, 0.8, 0.0),
         color: 0xeb968a
       },
       cardia: {
-        label: '賁門',
-        labelPos: [0.6, 0.8, 0.6],
-        explodeDir: new THREE.Vector3(0.3, 0.5, 0.2),
+        label: '賁門 (EGJ)',
+        labelPos: [0.3, 0.8, 0.6],
+        explodeDir: new THREE.Vector3(0.2, 0.5, 0.2),
         color: 0xe07a6d
       },
       fundus: {
-        label: '胃底',
-        labelPos: [1.8, 1.1, 0.5],
-        explodeDir: new THREE.Vector3(0.9, 0.6, 0.1),
+        label: '胃底 (Fundus)',
+        labelPos: [1.8, 1.0, 0.5],
+        explodeDir: new THREE.Vector3(0.8, 0.6, 0.0),
         color: 0xd96b5e
       },
       body: {
-        label: '胃體 (Rugae)',
-        labelPos: [1.2, -0.5, 0.8],
-        explodeDir: new THREE.Vector3(0.8, -0.3, 0.4),
+        label: '胃體 (Body)',
+        labelPos: [1.3, -0.5, 0.7],
+        explodeDir: new THREE.Vector3(0.7, -0.2, 0.3),
         color: 0xd96b5e
       },
       antrum: {
-        label: '胃竇/胃角',
-        labelPos: [-0.6, -1.4, 0.7],
-        explodeDir: new THREE.Vector3(-0.4, -0.7, 0.4),
+        label: '胃竇與胃角',
+        labelPos: [-0.5, -1.4, 0.6],
+        explodeDir: new THREE.Vector3(-0.4, -0.6, 0.3),
         color: 0xe07a6d
       },
       pylorus: {
-        label: '幽門/十二指腸',
-        labelPos: [-2.0, -1.5, 0.5],
-        explodeDir: new THREE.Vector3(-0.9, -0.4, -0.2),
+        label: '幽門與十二指腸',
+        labelPos: [-2.0, -1.4, 0.4],
+        explodeDir: new THREE.Vector3(-0.8, -0.3, -0.2),
         color: 0xeb968a
       }
     };
@@ -512,10 +491,10 @@ import Layout from '../../layouts/Layout.astro';
       controls.target.set(0, 0, 0);
 
       // 4. Studio Medical Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.72);
       scene.add(ambientLight);
 
-      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.2);
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.25);
       mainLight.position.set(6, 8, 8);
       scene.add(mainLight);
 
@@ -523,14 +502,14 @@ import Layout from '../../layouts/Layout.astro';
       rimLight.position.set(-8, -4, -6);
       scene.add(rimLight);
 
-      const luminalLight = new THREE.DirectionalLight(0xfecdd3, 0.6);
+      const luminalLight = new THREE.DirectionalLight(0xfecdd3, 0.65);
       luminalLight.position.set(0, 0, 8);
       scene.add(luminalLight);
 
       // 5. Build Spline Curve
       gastroscopySplineCurve = new THREE.CatmullRomCurve3(stomachScopePoints);
 
-      // 6. Build 3D Stomach Segments with Rugae & Cutaway options
+      // 6. Build 3D Seamless Stomach Meshes
       build3DStomachMeshes();
 
       // 7. Build Dynamic 3D Gastroscopy System
@@ -559,7 +538,7 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
-    // Build 3D Organic Gastric Segments
+    // Build Seamless Continuous 3D Gastric Segments
     function build3DStomachMeshes() {
       // Clear existing if rebuilding
       Object.keys(stomachSegments).forEach(k => {
@@ -571,48 +550,48 @@ import Layout from '../../layouts/Layout.astro';
         color: 0xd96b5e,
         roughness: 0.32,
         metalness: 0.06,
-        clearcoat: 0.7,
+        clearcoat: 0.75,
         clearcoatRoughness: 0.25,
         transparent: true,
         opacity: currentOpacity,
         side: THREE.DoubleSide
       };
 
-      // 1. Esophagus Tube
-      const esoGeom = createOrganTubeGeometry([
+      // 1. Esophagus Tube (Continuous closed 3D cylinder)
+      const esoGeom = createSmoothClosedTube([
         new THREE.Vector3(0.0, 3.2, 0.0),
         new THREE.Vector3(0.0, 2.2, 0.0),
-        new THREE.Vector3(0.1, 1.2, 0.1),
-        new THREE.Vector3(0.3, 0.6, 0.2)
-      ], 0.22, 0.24, 16, currentViewMode === 'cutaway');
+        new THREE.Vector3(0.08, 1.2, 0.08),
+        new THREE.Vector3(0.25, 0.65, 0.18)
+      ], 0.22, 0.25, 20);
       const esoMesh = new THREE.Mesh(esoGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xeb968a })));
       esoMesh.userData = { segmentId: 'esophagus' };
       scene.add(esoMesh);
       stomachSegments['esophagus'] = esoMesh;
       explodeVectors['esophagus'] = segmentConfigs['esophagus'].explodeDir.clone();
 
-      // 2. Cardia (EGJ Ring)
-      const cardiaGeom = createOrganTubeGeometry([
-        new THREE.Vector3(0.1, 1.2, 0.1),
-        new THREE.Vector3(0.3, 0.6, 0.2),
-        new THREE.Vector3(0.5, 0.3, 0.3)
-      ], 0.25, 0.35, 16, currentViewMode === 'cutaway');
+      // 2. Cardia (EGJ Junction)
+      const cardiaGeom = createSmoothClosedTube([
+        new THREE.Vector3(0.08, 1.2, 0.08),
+        new THREE.Vector3(0.25, 0.65, 0.18),
+        new THREE.Vector3(0.42, 0.35, 0.25)
+      ], 0.25, 0.42, 20);
       const cardiaMesh = new THREE.Mesh(cardiaGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xe07a6d })));
       cardiaMesh.userData = { segmentId: 'cardia' };
       scene.add(cardiaMesh);
       stomachSegments['cardia'] = cardiaMesh;
       explodeVectors['cardia'] = segmentConfigs['cardia'].explodeDir.clone();
 
-      // 3. Fundus (Left Dome)
-      const fundusGeom = createFundusGeometry(currentViewMode === 'cutaway');
+      // 3. Fundus Dome (Seamless left rounded bulb)
+      const fundusGeom = createSeamlessFundusGeometry();
       const fundusMesh = new THREE.Mesh(fundusGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xd96b5e })));
       fundusMesh.userData = { segmentId: 'fundus' };
       scene.add(fundusMesh);
       stomachSegments['fundus'] = fundusMesh;
       explodeVectors['fundus'] = segmentConfigs['fundus'].explodeDir.clone();
 
-      // 4. Body (Corpus with prominent Rugae folds)
-      const bodyGeom = createCorpusRugaeGeometry(currentViewMode === 'cutaway');
+      // 4. Body (Corpus - Continuous Organic Stomach Volume)
+      const bodyGeom = createSeamlessCorpusGeometry();
       const bodyMesh = new THREE.Mesh(bodyGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xd96b5e })));
       bodyMesh.userData = { segmentId: 'body' };
       scene.add(bodyMesh);
@@ -620,7 +599,12 @@ import Layout from '../../layouts/Layout.astro';
       explodeVectors['body'] = segmentConfigs['body'].explodeDir.clone();
 
       // 5. Antrum & Angulus
-      const antrumGeom = createAntrumGeometry(currentViewMode === 'cutaway');
+      const antrumGeom = createSmoothClosedTube([
+        new THREE.Vector3(0.35, -0.85, 0.35),
+        new THREE.Vector3(-0.1, -1.05, 0.35),
+        new THREE.Vector3(-0.6, -1.1, 0.25),
+        new THREE.Vector3(-1.1, -0.95, 0.1)
+      ], 0.58, 0.35, 24);
       const antrumMesh = new THREE.Mesh(antrumGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xe07a6d })));
       antrumMesh.userData = { segmentId: 'antrum' };
       scene.add(antrumMesh);
@@ -628,34 +612,36 @@ import Layout from '../../layouts/Layout.astro';
       explodeVectors['antrum'] = segmentConfigs['antrum'].explodeDir.clone();
 
       // 6. Pylorus & Duodenum Bulb
-      const pyGeom = createDuodenumGeometry(currentViewMode === 'cutaway');
+      const pyGeom = createSmoothClosedTube([
+        new THREE.Vector3(-1.1, -0.95, 0.1),
+        new THREE.Vector3(-1.35, -0.95, 0.05), // Pyloric Sphincter
+        new THREE.Vector3(-1.7, -1.15, -0.1), // Duodenal Bulb (D1)
+        new THREE.Vector3(-2.0, -1.75, -0.2)  // Duodenum Descending (D2)
+      ], 0.32, 0.24, 20);
       const pyMesh = new THREE.Mesh(pyGeom, new THREE.MeshPhysicalMaterial(Object.assign({}, matConfig, { color: 0xeb968a })));
       pyMesh.userData = { segmentId: 'pylorus' };
       scene.add(pyMesh);
       stomachSegments['pylorus'] = pyMesh;
       explodeVectors['pylorus'] = segmentConfigs['pylorus'].explodeDir.clone();
 
-      // Add 3D Billboard Labels
+      // Add Auto-Sized 3D Billboard Labels
       Object.keys(segmentConfigs).forEach(k => {
         const conf = segmentConfigs[k];
-        const sprite = createTextSprite(conf.label);
+        const sprite = createTextSprite(conf.label, '#38bdf8');
         sprite.position.set(conf.labelPos[0], conf.labelPos[1], conf.labelPos[2]);
         stomachSegments[k]?.add(sprite);
         segmentLabelSprites[k] = sprite;
       });
     }
 
-    // Parametric Tube Generator with Cutaway option
-    function createOrganTubeGeometry(points, rStart, rEnd, segs, isCutaway) {
+    // Parametric Full 360° Closed Tube Generator
+    function createSmoothClosedTube(points, rStart, rEnd, radialSegs = 20) {
       const curve = new THREE.CatmullRomCurve3(points);
       const numRings = 24;
-      const radialSegs = 20;
       const positions = [];
       const normals = [];
       const uvs = [];
       const indices = [];
-
-      const thetaMax = isCutaway ? Math.PI * 1.25 : Math.PI * 2.0;
 
       for (let i = 0; i <= numRings; i++) {
         const u = i / numRings;
@@ -669,7 +655,7 @@ import Layout from '../../layouts/Layout.astro';
 
         for (let j = 0; j <= radialSegs; j++) {
           const v = j / radialSegs;
-          const theta = isCutaway ? (-Math.PI * 0.65 + v * thetaMax) : (v * Math.PI * 2);
+          const theta = v * Math.PI * 2;
 
           const cx = Math.cos(theta) * r;
           const cy = Math.sin(theta) * r;
@@ -703,44 +689,36 @@ import Layout from '../../layouts/Layout.astro';
       return geom;
     }
 
-    // Fundus Dome Geometry
-    function createFundusGeometry(isCutaway) {
-      const phiLength = isCutaway ? Math.PI * 1.3 : Math.PI * 2;
-      const geom = new THREE.SphereGeometry(0.85, 24, 20, 0, phiLength, 0, Math.PI * 0.75);
-      geom.scale(1.2, 0.9, 0.95);
-      geom.translate(1.1, 0.6, 0.0);
+    // Fundus Full Closed Dome
+    function createSeamlessFundusGeometry() {
+      const geom = new THREE.SphereGeometry(0.85, 28, 24);
+      geom.scale(1.15, 0.92, 0.95);
+      geom.translate(1.05, 0.65, 0.0);
       geom.computeVertexNormals();
       return geom;
     }
 
-    // Corpus / Body Geometry with Organic Wavy Rugae Folds
-    function createCorpusRugaeGeometry(isCutaway) {
+    // Corpus / Body Full Continuous 3D Volume
+    function createSeamlessCorpusGeometry() {
       const numU = 32, numV = 24;
       const positions = [];
       const uvs = [];
       const indices = [];
 
-      const vMax = isCutaway ? Math.PI * 1.25 : Math.PI * 2.0;
-
       for (let i = 0; i <= numU; i++) {
-        const u = i / numU; // 0 (top/cardia) to 1 (bottom/antrum)
-        const y = 0.4 - u * 1.2; // 0.4 to -0.8
+        const u = i / numU;
+        const y = 0.45 - u * 1.3;
         
-        // Asymmetric C-shaped stomach curvature:
-        // Greater curvature (left/positive X) vs Lesser curvature (right/near axis)
         const centerX = 0.4 + Math.sin(u * Math.PI) * 0.35;
-        const radiusX = 0.65 + Math.sin(u * Math.PI) * 0.35;
-        const radiusY = 0.55 + Math.sin(u * Math.PI) * 0.25;
+        const radiusX = 0.68 + Math.sin(u * Math.PI) * 0.38;
+        const radiusY = 0.58 + Math.sin(u * Math.PI) * 0.28;
 
         for (let j = 0; j <= numV; j++) {
           const v = j / numV;
-          const theta = isCutaway ? (-Math.PI * 0.65 + v * vMax) : (v * Math.PI * 2);
+          const theta = v * Math.PI * 2.0;
 
-          // Wavy Rugae Fold Modulations (longitudinal undulating mucosal ridges)
-          const rugaeWave = 0.06 * Math.sin(theta * 8.0) * Math.sin(u * Math.PI * 6.0);
-
-          let rx = (radiusX + rugaeWave) * Math.cos(theta);
-          let rz = (radiusY + rugaeWave) * Math.sin(theta);
+          let rx = radiusX * Math.cos(theta);
+          let rz = radiusY * Math.sin(theta);
 
           const vx = centerX + rx;
           const vy = y;
@@ -771,49 +749,43 @@ import Layout from '../../layouts/Layout.astro';
       return geom;
     }
 
-    // Antrum & Angulus Geometry
-    function createAntrumGeometry(isCutaway) {
-      return createOrganTubeGeometry([
-        new THREE.Vector3(0.5, -0.8, 0.4),
-        new THREE.Vector3(0.0, -1.0, 0.4),
-        new THREE.Vector3(-0.6, -1.1, 0.3),
-        new THREE.Vector3(-1.1, -1.0, 0.1)
-      ], 0.52, 0.32, 20, isCutaway);
-    }
-
-    // Pylorus & Duodenum Geometry
-    function createDuodenumGeometry(isCutaway) {
-      return createOrganTubeGeometry([
-        new THREE.Vector3(-1.1, -1.0, 0.1),
-        new THREE.Vector3(-1.4, -0.95, 0.0), // Pyloric Sphincter
-        new THREE.Vector3(-1.8, -1.15, -0.1), // Duodenal Bulb (D1)
-        new THREE.Vector3(-2.1, -1.75, -0.2)  // Duodenum Descending (D2)
-      ], 0.28, 0.25, 20, isCutaway);
-    }
-
-    function createTextSprite(text) {
+    // Dynamic Auto-Fitting Billboard Text Sprite Generator (100% inside borders!)
+    function createTextSprite(text, accentColor = '#38bdf8') {
       const canvas = document.createElement('canvas');
-      canvas.width = 256;
-      canvas.height = 128;
+      canvas.width = 512;
+      canvas.height = 140;
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = 'rgba(10, 18, 36, 0.85)';
+
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif';
+      const textWidth = ctx.measureText(text).width;
+
+      const pillWidth = Math.min(480, Math.max(160, textWidth + 64));
+      const pillHeight = 72;
+      const x = (canvas.width - pillWidth) / 2;
+      const y = (canvas.height - pillHeight) / 2;
+
+      // Draw pill background
+      ctx.fillStyle = 'rgba(10, 20, 36, 0.92)';
       ctx.beginPath();
-      ctx.roundRect(16, 16, 224, 96, 24);
+      ctx.roundRect(x, y, pillWidth, pillHeight, 36);
       ctx.fill();
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 5;
+
+      // Draw crisp border
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 4;
       ctx.stroke();
 
-      ctx.font = 'bold 50px Plus Jakarta Sans, sans-serif';
+      // Draw centered text
       ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(text, 128, 64);
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
       const texture = new THREE.CanvasTexture(canvas);
+      texture.minFilter = THREE.LinearFilter;
       const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
       const sprite = new THREE.Sprite(spriteMat);
-      sprite.scale.set(0.85, 0.42, 1);
+      sprite.scale.set(1.3 * (pillWidth / 250), 0.65, 1);
       return sprite;
     }
 
@@ -887,7 +859,6 @@ import Layout from '../../layouts/Layout.astro';
         emissiveIntensity: 0.75
       });
 
-      // Linear mucosal breaks across Z-line
       const gerdStreaks = [
         new THREE.Vector3(0.22, 0.75, 0.3),
         new THREE.Vector3(0.35, 0.65, 0.35),
@@ -987,17 +958,6 @@ import Layout from '../../layouts/Layout.astro';
       scene.add(pathologyGroup);
     }
 
-    // Toggle View Mode (Cutaway Rugae vs Full 3D)
-    function setViewMode(mode) {
-      currentViewMode = mode;
-      document.getElementById('btn-mode-cutaway')?.classList.toggle('active', mode === 'cutaway');
-      document.getElementById('btn-mode-full')?.classList.toggle('active', mode === 'full');
-
-      build3DStomachMeshes();
-      selectSegment(selectedId);
-      showToast(mode === 'cutaway' ? '已切換為：內部波浪狀胃皺襞 (Rugae) 剖面模式' : '已切換為：完整 3D 胃立體外觀模式');
-    }
-
     // Toggle Pathology Layers
     function togglePathology(type) {
       activePathology[type] = !activePathology[type];
@@ -1060,7 +1020,7 @@ import Layout from '../../layouts/Layout.astro';
         if (statusBox) statusBox.textContent = `📍 賁門與 EGJ (${cm}cm)：齒狀線交界，評估有無逆流性食道炎。`;
         selectSegment('cardia');
       } else if (cm <= 50) {
-        if (statusBox) statusBox.textContent = `📍 胃體部 (${cm}cm)：波浪狀胃皺襞（Rugae），進行胃底 J-turn 倒轉。`;
+        if (statusBox) statusBox.textContent = `📍 胃體部 (${cm}cm)：胃大彎與小彎，進行胃底 J-turn 倒轉。`;
         selectSegment('body');
       } else if (cm <= 58) {
         if (statusBox) statusBox.textContent = `📍 胃竇與胃角 (${cm}cm)：胃角 V 字切跡，排查潰瘍、萎縮與幽門桿菌。`;
@@ -1541,49 +1501,6 @@ import Layout from '../../layouts/Layout.astro';
     padding: 0.85rem;
     overflow-y: auto;
     flex: 1;
-  }
-
-  /* Mode Switch Card */
-  .mode-switch-card {
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(37, 99, 235, 0.08));
-    border: 1px solid rgba(56, 189, 248, 0.3) !important;
-  }
-
-  .view-mode-buttons {
-    display: flex;
-    gap: 0.4rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .btn-mode {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.5rem;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-main);
-    font-size: 0.72rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-mode:hover {
-    background: rgba(255, 255, 255, 0.12);
-  }
-  .btn-mode.active {
-    background: linear-gradient(135deg, #00e5ff, #2563eb);
-    color: #ffffff;
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
-  }
-
-  .view-mode-hint {
-    font-size: 0.65rem;
-    color: #cbd5e1;
-    line-height: 1.4;
   }
 
   /* Scope Card */
