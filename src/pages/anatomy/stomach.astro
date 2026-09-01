@@ -382,56 +382,70 @@ import Layout from '../../layouts/Layout.astro';
     let raycaster, mouse;
     let gastroscopySplineCurve;
 
-    // Centerline Path for Gastroscopy Scope Navigation
+    // Centerline Path for Gastroscopy Scope Navigation (Calibrated with anatomical landmarks)
     const stomachScopePoints = [
-      new THREE.Vector3(-0.9, 3.2, 0.0),    // Incisors / Upper Esophagus (0 cm)
-      new THREE.Vector3(-0.75, 2.2, 0.0),   // Mid Esophagus (20 cm)
-      new THREE.Vector3(-0.62, 1.45, 0.0),  // LES / Cardia (40 cm)
-      new THREE.Vector3(0.1, 0.6, 0.1),     // Upper Body / Fundus level (45 cm)
-      new THREE.Vector3(0.5, -0.4, 0.1),    // Mid Body (50 cm)
-      new THREE.Vector3(-0.25, -1.3, 0.1),  // Antrum / Incisura (55 cm)
-      new THREE.Vector3(-1.15, -1.35, 0.0), // Pylorus (58 cm)
-      new THREE.Vector3(-1.6, -1.6, 0.0),   // Duodenal Bulb (62 cm)
-      new THREE.Vector3(-1.85, -2.5, 0.0)   // Duodenum D2 Descending (65 cm)
+      new THREE.Vector3(-0.95, 3.4, 0.0),   // 0 cm: Incisors / Pharynx
+      new THREE.Vector3(-0.85, 2.5, 0.0),   // 20 cm: Mid Esophagus
+      new THREE.Vector3(-0.72, 1.85, 0.0),  // 38 cm: Pre-LES
+      new THREE.Vector3(-0.58, 1.4, 0.0),   // 40 cm: LES / Cardia (EGJ) - EXACT MATCH
+      new THREE.Vector3(0.3, 0.7, 0.1),     // 44 cm: Upper Body / Fundus level
+      new THREE.Vector3(0.65, -0.3, 0.1),   // 48 cm: Mid Body
+      new THREE.Vector3(0.3, -1.2, 0.1),    // 52 cm: Lower Body / Incisura
+      new THREE.Vector3(-0.4, -1.5, 0.1),   // 55 cm: Antrum
+      new THREE.Vector3(-1.18, -1.42, 0.0), // 58 cm: Pylorus Sphincter
+      new THREE.Vector3(-1.6, -1.6, 0.0),   // 62 cm: Duodenal Bulb
+      new THREE.Vector3(-1.85, -2.4, 0.0)   // 65 cm: Duodenum D2 Descending
     ];
+
+    // Non-linear piecewise mapping from Clinical CM (0-65cm) to Spline Progress T (0.0-1.0)
+    function cmToProgressT(cm) {
+      if (cm <= 0) return 0.0;
+      if (cm <= 20) return (cm / 20.0) * 0.10;
+      if (cm <= 40) return 0.10 + ((cm - 20) / 20.0) * 0.20; // 40cm -> 0.30 (Exact LES / Cardia)
+      if (cm <= 48) return 0.30 + ((cm - 40) / 8.0) * 0.20;  // 48cm -> 0.50 (Mid Body)
+      if (cm <= 55) return 0.50 + ((cm - 48) / 7.0) * 0.20;  // 55cm -> 0.70 (Antrum)
+      if (cm <= 58) return 0.70 + ((cm - 55) / 3.0) * 0.10;  // 58cm -> 0.80 (Pylorus)
+      if (cm <= 65) return 0.80 + ((cm - 58) / 7.0) * 0.20;  // 65cm -> 1.00 (Duodenum)
+      return 1.0;
+    }
 
     // Landmark Target Coordinates for Focus Beacon & Labels
     const segmentConfigs = {
       esophagus: {
         label: '食道 (Esophagus)',
-        targetPos: new THREE.Vector3(-0.8, 2.2, 0.0),
+        targetPos: new THREE.Vector3(-0.85, 2.2, 0.0),
         labelPos: [-1.8, 2.6, 0.4],
-        scopeProgress: 0.25
+        cm: 20
       },
       cardia: {
         label: '賁門 (Cardia & LES)',
-        targetPos: new THREE.Vector3(-0.6, 1.4, 0.0),
+        targetPos: new THREE.Vector3(-0.58, 1.4, 0.0),
         labelPos: [-1.4, 1.65, 0.5],
-        scopeProgress: 0.60
+        cm: 40
       },
       fundus: {
         label: '胃底 (Fundus)',
         targetPos: new THREE.Vector3(1.2, 1.8, 0.0),
         labelPos: [2.0, 2.2, 0.5],
-        scopeProgress: 0.68
+        cm: 44
       },
       body: {
         label: '胃體與胃皺襞 (Body & Rugae)',
-        targetPos: new THREE.Vector3(0.7, -0.3, 0.0),
+        targetPos: new THREE.Vector3(0.65, -0.3, 0.0),
         labelPos: [2.1, -0.4, 0.5],
-        scopeProgress: 0.76
+        cm: 48
       },
       antrum: {
         label: '胃竇與胃角 (Antrum)',
-        targetPos: new THREE.Vector3(-0.25, -1.3, 0.0),
+        targetPos: new THREE.Vector3(-0.4, -1.4, 0.0),
         labelPos: [-0.3, -2.1, 0.6],
-        scopeProgress: 0.85
+        cm: 55
       },
       pylorus: {
         label: '幽門與十二指腸 (Pylorus & Duodenum)',
-        targetPos: new THREE.Vector3(-1.5, -1.5, 0.0),
+        targetPos: new THREE.Vector3(-1.4, -1.6, 0.0),
         labelPos: [-2.1, -1.8, 0.6],
-        scopeProgress: 0.98
+        cm: 62
       }
     };
 
@@ -1030,7 +1044,7 @@ import Layout from '../../layouts/Layout.astro';
     // Scope Slider (0 - 65 cm)
     function onScopeSlider(val) {
       const cm = parseInt(val, 10);
-      const progressT = cm / 65.0;
+      const progressT = cmToProgressT(cm);
       
       const badge = document.getElementById('txt-scope-cm');
       if (badge) badge.textContent = `${cm} cm`;
@@ -1080,13 +1094,13 @@ import Layout from '../../layouts/Layout.astro';
       }
 
       // Update scope slider to match segment position
-      if (conf.scopeProgress !== undefined) {
-        const cm = Math.round(conf.scopeProgress * 65);
+      if (conf.cm !== undefined) {
+        const cm = conf.cm;
         const slider = document.getElementById('slider-scope');
         if (slider) slider.value = cm;
         const badge = document.getElementById('txt-scope-cm');
         if (badge) badge.textContent = `${cm} cm`;
-        updateGastroscopePosition(conf.scopeProgress);
+        updateGastroscopePosition(cmToProgressT(cm));
       }
 
       updateSegmentDetailsOnly(id);
