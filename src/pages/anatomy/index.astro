@@ -1,0 +1,354 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="互動解剖圖鑑 | 臨床門診 3D 衛教系統 - 黃冠智醫師" 
+  description="專為門診解說與病患衛教打造的 3D 互動人體解剖圖鑑。涵蓋肝臟 Couinaud 8 分段、門脈與肝靜脈系統、胃鏡視野與大腸鏡腸段解剖。"
+>
+  <div class="anatomy-hub-wrapper">
+    <!-- Hero Banner -->
+    <div class="hub-hero">
+      <div class="hub-badge-row">
+        <span class="hub-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          臨床 3D 衛教與解剖專區
+        </span>
+      </div>
+      <h1 class="hub-title">互動解剖圖鑑</h1>
+      <p class="hub-subtitle">
+        專為肝膽腸胃門診解說、胃腸鏡檢查與病患溝通打造的 3D 空間解剖圖鑑。直覺探索人體器官分段、血管供應與超音波掃描切面。
+      </p>
+    </div>
+
+    <!-- Organ Cards Grid -->
+    <div class="organ-grid">
+      
+      <!-- 1. 肝臟 (已就緒) -->
+      <a href="/anatomy/liver" class="organ-card organ-active">
+        <div class="card-status-badge status-ready">
+          <span class="status-dot"></span>
+          3D 互動已就緒
+        </div>
+        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(239, 68, 68, 0.2)); color: #f97316;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          </svg>
+        </div>
+        <div class="organ-info">
+          <div class="organ-header-group">
+            <h2 class="organ-name">肝臟 (Liver)</h2>
+            <span class="organ-latin">Hepar · Couinaud Segmentation</span>
+          </div>
+          <p class="organ-desc">
+            教科書標準 3D 模型，詳細展示 Couinaud 8 個分段、3 條縱向肝靜脈裂隙（R, M, L）與橫向門靜脈樹（PV）之臨床劃分標準與超音波指引。
+          </p>
+          <div class="organ-tags">
+            <span class="tag">Couinaud 8分段</span>
+            <span class="tag">門脈系統 (PV)</span>
+            <span class="tag">肝靜脈 (HV)</span>
+            <span class="tag">超音波標準切面</span>
+            <span class="tag">360° 自由旋轉</span>
+          </div>
+          <div class="card-action-link">
+            <span>開啟 3D 肝臟解剖系統</span>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 2. 胃部與食道 (規劃中) -->
+      <div class="organ-card organ-pending">
+        <div class="card-status-badge status-soon">
+          規劃中 · 即將推出
+        </div>
+        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(147, 197, 253, 0.2)); color: #3b82f6;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C6.5 2 3 6.5 3 12c0 3.5 2.5 7 5.5 8.5 2 .8 4.5.5 6-.5 2-1.5 3-4 3.5-7.5.5-3.5-2-10.5-6-10.5Z"/>
+          </svg>
+        </div>
+        <div class="organ-info">
+          <div class="organ-header-group">
+            <h2 class="organ-name">胃部與食道 (Stomach & Esophagus)</h2>
+            <span class="organ-latin">Gaster · Endoscopic Views</span>
+          </div>
+          <p class="organ-desc">
+            內視鏡專科視角：胃底、胃體、胃竇、幽門與賁門解剖構造，結合胃食道逆流 (GERD)、食道裂孔疝氣與胃息肉衛教。
+          </p>
+          <div class="organ-tags">
+            <span class="tag">胃鏡操作視野</span>
+            <span class="tag">胃壁分層</span>
+            <span class="tag">胃食道逆流</span>
+            <span class="tag">胃息肉好發區</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 大腸與直腸 (規劃中) -->
+      <div class="organ-card organ-pending">
+        <div class="card-status-badge status-soon">
+          規劃中 · 即將推出
+        </div>
+        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.2)); color: #10b981;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 14c0 3.5 3 6 8 6s8-2.5 8-6-3-6-8-6-8 2.5-8 6Z"/>
+            <path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/>
+          </svg>
+        </div>
+        <div class="organ-info">
+          <div class="organ-header-group">
+            <h2 class="organ-name">大腸與直腸 (Colon & Rectum)</h2>
+            <span class="organ-latin">Colon · Endoscopic Segments</span>
+          </div>
+          <p class="organ-desc">
+            大腸鏡檢查各段路徑（盲腸、升結腸、橫結腸、降結腸、乙狀結腸、直腸）與息肉切除好發部位 3D 空間定位。
+          </p>
+          <div class="organ-tags">
+            <span class="tag">大腸鏡路徑</span>
+            <span class="tag">盲腸與闌尾開口</span>
+            <span class="tag">大腸息肉分級</span>
+            <span class="tag">清腸指標</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 膽囊與膽道系統 (規劃中) -->
+      <div class="organ-card organ-pending">
+        <div class="card-status-badge status-soon">
+          規劃中 · 即將推出
+        </div>
+        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.2)); color: #eab308;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C8 2 6 6 6 11c0 5 3 9 6 11 3-2 6-6 6-11 0-5-2-9-6-9Z"/>
+          </svg>
+        </div>
+        <div class="organ-info">
+          <div class="organ-header-group">
+            <h2 class="organ-name">膽囊與膽道系統 (Biliary Tree)</h2>
+            <span class="organ-latin">Vesica biliaris · Ductus Choledochus</span>
+          </div>
+          <p class="organ-desc">
+            左右肝管、總肝管、膽囊管與總膽管 (CBD) 匯流解剖，搭配膽結石、膽囊息肉與膽道阻塞之超音波判讀。
+          </p>
+          <div class="organ-tags">
+            <span class="tag">總膽管 (CBD)</span>
+            <span class="tag">膽結石位置</span>
+            <span class="tag">膽囊息肉</span>
+            <span class="tag">超音波墨菲徵象</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 胰臟 (規劃中) -->
+      <div class="organ-card organ-pending">
+        <div class="card-status-badge status-soon">
+          規劃中 · 即將推出
+        </div>
+        <div class="organ-icon-box" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(147, 51, 234, 0.2)); color: #a855f7;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12c2-4 8-4 12-2s4 5 2 7-6 2-10 0-4-3-4-5Z"/>
+          </svg>
+        </div>
+        <div class="organ-info">
+          <div class="organ-header-group">
+            <h2 class="organ-name">胰臟 (Pancreas)</h2>
+            <span class="organ-latin">Pancreas · Duct System</span>
+          </div>
+          <p class="organ-desc">
+            腹膜後深部器官：胰頭（勾部）、胰體、胰尾與主胰管走向，探討內視鏡超音波 (EUS) 與胰臟囊腫/腫瘤之解剖關係。
+          </p>
+          <div class="organ-tags">
+            <span class="tag">主胰管走向</span>
+            <span class="tag">胰頭十二指腸交界</span>
+            <span class="tag">腹膜後解剖</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .anatomy-hub-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* Hero Banner */
+  .hub-hero {
+    text-align: center;
+    max-width: 780px;
+    margin: 0 auto 3rem;
+  }
+
+  .hub-badge-row {
+    margin-bottom: 1rem;
+  }
+
+  .hub-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    background: rgba(74, 144, 164, 0.12);
+    border: 1px solid rgba(74, 144, 164, 0.3);
+    color: var(--color-primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .hub-title {
+    font-size: 2.25rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #1e293b;
+    margin-bottom: 0.85rem;
+  }
+
+  .hub-subtitle {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: #64748b;
+  }
+
+  /* Organ Grid */
+  .organ-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Organ Card */
+  .organ-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .organ-active:hover {
+    border-color: #38bdf8;
+    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.15);
+    transform: translateY(-3px);
+  }
+
+  .organ-pending {
+    opacity: 0.85;
+    background: #f8fafc;
+    border-style: dashed;
+  }
+
+  .card-status-badge {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .status-ready {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+  }
+
+  .status-soon {
+    background: #e2e8f0;
+    color: #64748b;
+  }
+
+  .organ-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .organ-header-group {
+    margin-bottom: 0.6rem;
+  }
+
+  .organ-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.15rem;
+  }
+
+  .organ-latin {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .organ-desc {
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    flex: 1;
+  }
+
+  .organ-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+  }
+
+  .card-action-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0284c7;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  @media (max-width: 768px) {
+    .hub-title {
+      font-size: 1.75rem;
+    }
+    .organ-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

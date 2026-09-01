@@ -128,6 +128,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
             <a href="/" class:list={['nav-item', { active: Astro.url.pathname === '/' }]}>首頁</a>
             <a href="/health-column" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/health-column') || Astro.url.pathname.startsWith('/posts') }]}>醫學筆記</a>
             <a href="/bowel-prep" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/bowel-prep') }]}>大腸鏡檢表單</a>
+            <a href="/anatomy" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/anatomy') }]}>互動解剖圖鑑</a>
           </nav>
         </div>
 
@@ -168,6 +169,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
               <li><a href="/">首頁總覽</a></li>
               <li><a href="/health-column">實證衛教專欄</a></li>
               <li><a href="/bowel-prep">大腸鏡檢前衛教</a></li>
+              <li><a href="/anatomy">互動解剖圖鑑</a></li>
             </ul>
           </div>
 

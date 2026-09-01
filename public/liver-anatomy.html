@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Couinaud 肝臟 8 分段高擬真 3D 實體解剖系統 (360° 空間自由旋轉)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+  
+  <!-- Three.js & OrbitControls from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #060b14;
+      --bg-panel: rgba(11, 20, 38, 0.92);
+      --bg-glass: rgba(16, 28, 52, 0.78);
+      --border-color: rgba(56, 189, 248, 0.18);
+      --border-bright: rgba(56, 189, 248, 0.5);
+      
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --text-muted: #64748b;
+      
+      --pv-cyan: #00e5ff;
+      --pv-blue: #0284c7;
+      --hv-blue: #2563eb;
+      --hv-deep: #1d4ed8;
+      
+      --accent-cyan: #38bdf8;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-purple: #c084fc;
+      
+      --shadow-3d: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 210, 255, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(0, 229, 255, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(37, 99, 235, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, #0a1324 0%, var(--bg-dark) 100%);
+    }
+
+    /* Top Navigation Bar */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 2rem;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #00e5ff, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+    }
+
+    .brand-title h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, #7dd3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title p {
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--border-bright);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn.active {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--accent-cyan);
+      color: #38bdf8;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00e5ff, #2563eb);
+      color: #ffffff;
+      font-weight: 700;
+      border: none;
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.35);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #38bdf8, #3b82f6);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.6);
+    }
+
+    /* Main Workspace Layout */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 310px 1fr 370px;
+      height: calc(100vh - 66px);
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+    }
+
+    @media (max-width: 1400px) {
+      .workspace-grid {
+        grid-template-columns: 280px 1fr 340px;
+        padding: 0.75rem;
+      }
+    }
+
+    @media (max-width: 1150px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-3d);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel-header {
+      padding: 0.8rem 1.1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .panel-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: #e2e8f0;
+    }
+
+    .panel-body {
+      padding: 1rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Concept Box */
+    .concept-box {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.08), rgba(37, 99, 235, 0.08));
+      border: 1px solid rgba(0, 210, 255, 0.25);
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 1rem;
+      font-size: 0.76rem;
+      line-height: 1.5;
+    }
+    .concept-title {
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* Sliders & Controls */
+    .control-row {
+      margin-bottom: 0.85rem;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .control-label-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .slider-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+      font-size: 0.8rem;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.15);
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #00e5ff;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+      border: 2px solid #ffffff;
+    }
+
+    /* Segment Selector Grid */
+    .segment-grid-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .seg-card-btn {
+      display: flex;
+      flex-direction: column;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: left;
+      position: relative;
+    }
+
+    .seg-card-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+    }
+
+    .seg-card-btn.active {
+      background: rgba(0, 229, 255, 0.15);
+      border-color: #38bdf8;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    }
+
+    .seg-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.15rem;
+    }
+
+    .seg-num-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #38bdf8;
+    }
+
+    .seg-loc-tag {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .seg-card-name {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 3D Canvas Center Stage */
+    .canvas-panel {
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #0e1b36 0%, #060b14 100%);
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    #threejs-canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      outline: none;
+      cursor: grab;
+    }
+
+    #threejs-canvas-container:active {
+      cursor: grabbing;
+    }
+
+    /* Floating View Angle Toolbar */
+    .view-angles-toolbar {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      background: rgba(10, 18, 36, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 0.35rem 0.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .view-btn {
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .view-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .view-btn.active {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: rgba(0, 229, 255, 0.4);
+      color: #00e5ff;
+      font-weight: 700;
+    }
+
+    /* Floating Guidance Prompt */
+    .orbit-hint {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 10;
+      background: rgba(10, 18, 36, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .orbit-hint svg {
+      color: #00e5ff;
+    }
+
+    /* Right Details Panel */
+    .detail-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.85rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .detail-card h3 {
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .detail-title-group {
+      margin-bottom: 1rem;
+    }
+
+    .seg-badge-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #00e5ff, #2563eb);
+      color: #000;
+    }
+
+    .main-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .sub-title {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      font-style: italic;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .metric-box {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .metric-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-bottom: 0.15rem;
+      font-weight: 600;
+    }
+
+    .metric-value {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .pearl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.45rem;
+      margin-bottom: 0.55rem;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+
+    .pearl-item svg {
+      flex-shrink: 0;
+      margin-top: 0.2rem;
+      color: var(--accent-amber);
+    }
+
+    .surgical-pearls {
+      border-left: 3px solid #f43f5e;
+      background: rgba(244, 63, 94, 0.06);
+      padding: 0.65rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 0.85rem;
+      font-size: 0.76rem;
+      line-height: 1.45;
+    }
+
+    /* Phrase Box */
+    .phrase-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px dashed rgba(16, 185, 129, 0.4);
+      border-radius: 8px;
+      padding: 0.65rem;
+      margin-top: 0.65rem;
+    }
+
+    .phrase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+
+    .phrase-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+    }
+
+    .phrase-content {
+      font-size: 0.75rem;
+      color: #e2e8f0;
+      font-family: monospace;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.45rem;
+      border-radius: 6px;
+      user-select: all;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-badge">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        </svg>
+      </div>
+      <div class="brand-title">
+        <h1>Couinaud 肝臟 8 分段高擬真 3D 實體系統</h1>
+        <p>Three.js 真正 3D 空間實體模型（前後厚度 / 臟面剖面 / 360° 自由旋轉與炸開）</p>
+      </div>
+    </div>
+    
+    <div class="header-controls">
+      <button class="btn" id="btn-toggle-quiz" onclick="toggleQuizMode()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        3D 測驗模式
+      </button>
+      <button class="btn btn-primary" onclick="reset3DCamera()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        重設視角
+      </button>
+    </div>
+  </header>
+
+  <!-- Workspace Grid Layout -->
+  <div class="workspace-grid">
+    
+    <!-- Left Panel: 3D Sliders, Toggles & Structure List -->
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <svg width="16" height="16" fill="none" stroke="var(--accent-cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+          3D 控制與分段選擇
+        </div>
+      </div>
+      
+      <div class="panel-body">
+        
+        <!-- Explanatory Principle Box -->
+        <div class="concept-box">
+          <div class="concept-title">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            3D 血管與分段標準
+          </div>
+          <div>
+            1. <strong>3 條縱向肝靜脈 (R, M, L)</strong>：縱行於 3 條葉間裂 (Intersegmental)，將肝臟分為右後、右前、左內、左外 4 個扇區。<br>
+            2. <strong>橫向門脈系統 (PV)</strong>：由第一肝門進入，水平分支將各扇區切分為<strong>上段 (7, 8, 4a, 2)</strong> 與 <strong>下段 (6, 5, 4b, 3)</strong>。
+          </div>
+        </div>
+
+        <!-- 3D Explode Slider -->
+        <div class="control-row">
+          <div class="control-label-group">
+            <span>3D 立體炸開程度 (Explosion)</span>
+            <span id="txt-explode-val" class="slider-val">30%</span>
+          </div>
+          <input type="range" id="slider-explode" min="0" max="100" value="30" oninput="onExplodeSlider(this.value)">
+          <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+            <span>0% (緊密天然形狀)</span>
+            <span>100% (完全炸開)</span>
+          </div>
+        </div>
+
+        <!-- Tissue Opacity Slider -->
+        <div class="control-row">
+          <div class="control-label-group">
+            <span>肝實質透明度 (Tissue Opacity)</span>
+            <span id="txt-opacity-val" class="slider-val">88%</span>
+          </div>
+          <input type="range" id="slider-opacity" min="15" max="100" value="88" oninput="onOpacitySlider(this.value)">
+          <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+            調低透明度可透視內部 3D 門脈與肝靜脈血管網絡
+          </div>
+        </div>
+
+        <!-- Segment List -->
+        <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 0.4rem; letter-spacing: 0.05em;">
+          點選肝分段 (Segments)
+        </div>
+        <div class="segment-grid-list">
+          <div class="seg-card-btn" onclick="selectSegment('s1')" id="btn-seg-s1">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S1</span>
+              <span class="seg-loc-tag">尾狀葉 / IVC旁</span>
+            </div>
+            <div class="seg-card-name">尾狀葉 (Caudate)</div>
+          </div>
+
+          <div class="seg-card-btn" onclick="selectSegment('s2')" id="btn-seg-s2">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S2</span>
+              <span class="seg-loc-tag">左外上段</span>
+            </div>
+            <div class="seg-card-name">左外側上段 (L. Lat Sup)</div>
+          </div>
+
+          <div class="seg-card-btn" onclick="selectSegment('s3')" id="btn-seg-s3">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S3</span>
+              <span class="seg-loc-tag">左外下段</span>
+            </div>
+            <div class="seg-card-name">左外側下段 (L. Lat Inf)</div>
+          </div>
+
+          <div class="seg-card-btn" onclick="selectSegment('s4')" id="btn-seg-s4">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S4</span>
+              <span class="seg-loc-tag">左內側段 (4a/4b)</span>
+            </div>
+            <div class="seg-card-name">左內側段 / 方葉</div>
+          </div>
+
+          <div class="seg-card-btn" onclick="selectSegment('s5')" id="btn-seg-s5">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S5</span>
+              <span class="seg-loc-tag">右前下段</span>
+            </div>
+            <div class="seg-card-name">右前下段 (R. Ant Inf)</div>
+          </div>
+
+          <div class="seg-card-btn" onclick="selectSegment('s6')" id="btn-seg-s6">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S6</span>
+              <span class="seg-loc-tag">右後下段</span>
+            </div>
+            <div class="seg-card-name">右後下段 (R. Post Inf)</div>
+          </div>
+
+          <div class="seg-card-btn" onclick="selectSegment('s7')" id="btn-seg-s7">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S7</span>
+              <span class="seg-loc-tag">右後上段</span>
+            </div>
+            <div class="seg-card-name">右後上段 (R. Post Sup)</div>
+          </div>
+
+          <div class="seg-card-btn" onclick="selectSegment('s8')" id="btn-seg-s8">
+            <div class="seg-card-top">
+              <span class="seg-num-pill">S8</span>
+              <span class="seg-loc-tag">右前上段</span>
+            </div>
+            <div class="seg-card-name">右前上段 (R. Ant Sup)</div>
+          </div>
+        </div>
+
+        <!-- 3D Vessel Layer Toggles -->
+        <div style="display: flex; gap: 0.4rem;">
+          <button class="btn active" id="btn-toggle-pv" style="flex: 1; font-size: 0.72rem;" onclick="toggleVesselLayer('pv')">
+            門脈系統 (亮藍)
+          </button>
+          <button class="btn active" id="btn-toggle-hv" style="flex: 1; font-size: 0.72rem;" onclick="toggleVesselLayer('hv')">
+            肝靜脈 (深藍)
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Center Stage: Three.js True 3D Solid WebGL Canvas -->
+    <div class="glass-panel canvas-panel">
+      <!-- Preset View Angles Toolbar -->
+      <div class="view-angles-toolbar">
+        <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面觀 (Anterior)</button>
+        <button class="view-btn" id="view-btn-visceral" onclick="setPresetView('visceral')">臟面後觀 (Visceral / IVC)</button>
+        <button class="view-btn" id="view-btn-right-lat" onclick="setPresetView('right_lat')">右後側視角 (S6/S7)</button>
+        <button class="view-btn" id="view-btn-left-lat" onclick="setPresetView('left_lat')">左側薄楔角 (S2/S3)</button>
+        <button class="view-btn" id="view-btn-superior" onclick="setPresetView('superior')">橫膈頂俯視角</button>
+        <button class="view-btn" id="view-btn-subcostal" onclick="setPresetView('subcostal')">超音波肋下切面</button>
+      </div>
+
+      <!-- ThreeJS Canvas Container -->
+      <div id="threejs-canvas-container"></div>
+
+      <!-- Orbit Controls Guidance Hint -->
+      <div class="orbit-hint">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        <span><strong>滑鼠左鍵拖曳</strong>：360° 真 3D 空間自由旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>右鍵</strong>：平移 ｜ <strong>點擊 3D 塊體</strong>：高亮解剖</span>
+      </div>
+    </div>
+
+    <!-- Right Panel: Clinical Information & Ultrasound Guide -->
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <svg width="16" height="16" fill="none" stroke="var(--accent-emerald)" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          臨床判讀與超音波指引
+        </div>
+      </div>
+      
+      <div class="panel-body" id="detail-panel">
+        
+        <!-- Header Title Info -->
+        <div class="detail-title-group">
+          <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.3rem;">
+            <span id="det-pill" class="seg-badge-pill">Segment 6</span>
+            <span id="det-sector" style="font-size: 0.7rem; color: #38bdf8; font-weight: 700; text-transform: uppercase;">Right Posterior Sector (Inferior)</span>
+          </div>
+          <div id="det-title-zh" class="main-title">Segment 6 (右後下段)</div>
+          <div id="det-title-en" class="sub-title">Right Posterior Inferior Segment (Segmentum posterius inferius)</div>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-label">門脈分支 (橫向供血)</div>
+            <div id="det-vessel-in" class="metric-value">門靜脈右後下支 (P6)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">引流肝靜脈 (縱向回流)</div>
+            <div id="det-vessel-out" class="metric-value">右肝靜脈 (RHV)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">解剖扇形區 (Sector)</div>
+            <div id="det-sector-name" class="metric-value">右後側扇區 (下段)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">超音波標準掃描切面</div>
+            <div id="det-us-view" class="metric-value">右第 8~10 肋間 / 腎肝切面</div>
+          </div>
+        </div>
+
+        <!-- Surgical Pearls -->
+        <div class="surgical-pearls" id="det-surgical-box">
+          <strong>外科解剖要點：</strong> 位於右葉下半部後側。與 S7 共同構成右後葉，以門靜脈右後支之水平分叉平面與 S7 分界。
+        </div>
+
+        <!-- Ultrasound Clinical Pearls -->
+        <div class="detail-card">
+          <h3>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            超音波判讀與臨床指引 (Clinical Pearls)
+          </h3>
+          <div id="det-pearls-list">
+            <div class="pearl-item">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <span><strong>莫里森氏囊 (Morison's Pouch)</strong>：S6 與右腎實質交界處為腹膜腔最低點，創傷或腹水超音波（FAST）的首要探查點。</span>
+            </div>
+            <div class="pearl-item">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <span><strong>脂肪肝對比指標</strong>：常以此區域與右腎皮質（Cortex）進行回音強度對比，評估脂肪肝嚴重程度。</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Automatic Medical Phrase Generator -->
+        <div class="phrase-box">
+          <div class="phrase-header">
+            <span class="phrase-title">超音波 / 臨床病歷報告片語 (點擊即複製)</span>
+            <button class="btn" style="padding: 0.18rem 0.5rem; font-size: 0.68rem;" onclick="copyPhrase()">複製片語</button>
+          </div>
+          <div id="det-phrase-text" class="phrase-content">
+            Abdominal Echo: A well-defined hyperechoic nodule (approx. cm) noted at Segment 6 (S6), favor Hemangioma.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+    <span id="toast-msg">已複製片語至剪貼簿！</span>
+  </div>
+
+  <script>
+    // Couinaud Anatomical Knowledge Database
+    const couinaudData = {
+      s1: {
+        roman: 'I',
+        arabic: '1',
+        titleZh: 'Segment 1 (尾狀葉 / Caudate Lobe)',
+        titleEn: 'Caudate Lobe (Lobus caudatus)',
+        sector: 'Independent Dorsal Sector',
+        vesselIn: '門靜脈左右主幹直接發出之微小分支 (P1)',
+        vesselOut: '直接匯入下腔靜脈 (IVC) 短肝靜脈，不經三條主肝靜脈',
+        sectorName: '背側獨立扇區 (Dorsal)',
+        usView: '劍突下橫切/斜切面，夾在 IVC 與門靜脈左支橫部之間',
+        surgical: '<strong>外科重要性</strong>：因具備獨立血管出入迴路，在布加症候群 (Budd-Chiari syndrome) 或肝硬化時常呈代償性肥大；位置深在第一與第二肝門之間，手術切除難度極高。',
+        pearls: [
+          '<strong>超音波地標</strong>：前方以「靜脈韌帶裂 (Fissure for ligamentum venosum)」與左葉分界，後方直接貼附下腔靜脈 (IVC)。',
+          '<strong>代償性肥大比值</strong>：Caudate / Right lobe 寬度比值 > 0.65 為診斷肝硬化之特異性超音波指標。'
+        ],
+        phrase: 'Liver Echo: Caudate lobe (S1) is normal in size without focal lesion. Short hepatic veins to IVC are patent.'
+      },
+      s2: {
+        roman: 'II',
+        arabic: '2',
+        titleZh: 'Segment 2 (左外側上段 / Left Lateral Superior)',
+        titleEn: 'Left Lateral Superior Segment',
+        sector: 'Left Lateral Sector (Superior)',
+        vesselIn: '門靜脈左外側上支 (P2)',
+        vesselOut: '左肝靜脈 (LHV)',
+        sectorName: '左外側扇區 (上段)',
+        usView: '劍突下向左上橫膈穹窿仰角切面',
+        surgical: '<strong>外科重要性</strong>：與 S3 共同構成左外側葉 (Left Lateral Section)。左外側葉切除術 (Left lateral sectionectomy, S2+S3) 為活體肝移植供體或左葉良惡性腫瘤之經典術式。',
+        pearls: [
+          '<strong>解剖高位</strong>：緊貼橫膈左穹隆與心包膜下方，超音波檢查時需請受檢者深吸氣以降低肝臟位置。',
+          '<strong>腫瘤熱消融 (RFA) 注意</strong>：鄰近胃壁賁門與心臟，施行消融需注意熱傳導風險。'
+        ],
+        phrase: 'Liver Echo: Segment 2 (S2) shows smooth surface and homogeneous parenchymal echogenicity.'
+      },
+      s3: {
+        roman: 'III',
+        arabic: '3',
+        titleZh: 'Segment 3 (左外側下段 / Left Lateral Inferior)',
+        titleEn: 'Left Lateral Inferior Segment',
+        sector: 'Left Lateral Sector (Inferior)',
+        vesselIn: '門靜脈左外側下支 (P3)',
+        vesselOut: '左肝靜脈 (LHV)',
+        sectorName: '左外側扇區 (下段)',
+        usView: '劍突下縱切與橫切面 (腹主動脈前方透聲窗)',
+        surgical: '<strong>外科重要性</strong>：位置最表淺且易於探查。以門脈左支水平部之分支平面與 S2 分隔。',
+        pearls: [
+          '<strong>肝硬化外觀評估首選</strong>：表淺且緊鄰腹壁，為評估肝臟包膜平整度（Liver surface nodularity）的最佳區域。',
+          '<strong>超音波尖銳角</strong>：正常左葉下緣邊界銳利（角度 < 45度），若變鈍常提示肝腫大或實質纖維化。'
+        ],
+        phrase: 'Liver Echo: Sharp inferior margin at Segment 3 (S3). No superficial nodularity or focal mass.'
+      },
+      s4: {
+        roman: 'IV',
+        arabic: '4',
+        titleZh: 'Segment 4 (左內側段 / 含 4a 及 4b 方葉)',
+        titleEn: 'Left Medial Segment (Quadrate / Medial)',
+        sector: 'Left Medial Sector (IVa + IVb)',
+        vesselIn: '門靜脈左支矢狀部發出之 P4 支',
+        vesselOut: '中肝靜脈 (MHV) 及 左肝靜脈 (LHV)',
+        sectorName: '左內側扇區 (Medial Sector)',
+        usView: '右肋緣下橫切面 (膽囊窩與鐮狀韌帶之間)',
+        surgical: '<strong>外科重要性</strong>：左界為鐮狀韌帶，右界為主門裂 (Cantlie Line / 中肝靜脈)。下半部即為解剖學方葉 (Quadrate Lobe)。',
+        pearls: [
+          '<strong>局部脂肪避開區好發 (Focal Fatty Sparing)</strong>：因胃冠狀靜脈或膽囊旁靜脈血流直接引入，在脂肪肝背景下極常出現邊界分明的「低回音假腫瘤」。',
+          '<strong>膽囊癌侵犯</strong>：膽囊床之腫瘤最常直接浸潤侵犯 S4 與 S5。'
+        ],
+        phrase: 'Liver Echo: Segment 4 (S4) parenchyma is homogeneous; no focal mass at gallbladder bed.'
+      },
+      s5: {
+        roman: 'V',
+        arabic: '5',
+        titleZh: 'Segment 5 (右前下段 / Right Anterior Inferior)',
+        titleEn: 'Right Anterior Inferior Segment',
+        sector: 'Right Anterior Sector (Inferior)',
+        vesselIn: '門靜脈右前下支 (P5)',
+        vesselOut: '右肝靜脈 (RHV) 與 中肝靜脈 (MHV)',
+        sectorName: '右前扇區 (下段)',
+        usView: '右肋緣下斜切 (膽囊右側實質)',
+        surgical: '<strong>外科重要性</strong>：位於膽囊窩右側。與 S8 共同構成右前葉 (Right Anterior Section)，介於 Cantlie Line 與右葉間裂之間。',
+        pearls: [
+          '<strong>膽囊炎周邊反應</strong>：重度急性膽囊炎時，局部充血與發炎反應常直接擴散波及 S5 肝實質。',
+          '<strong>超音波定位</strong>：探頭置於右肋下，以膽囊長軸為起點往右側滑動，中肝靜脈與右肝靜脈夾角下半部即為 S5。'
+        ],
+        phrase: 'Liver Echo: Segment 5 (S5) shows normal parenchymal echogenicity; gallbladder wall is thin and clear.'
+      },
+      s6: {
+        roman: 'VI',
+        arabic: '6',
+        titleZh: 'Segment 6 (右後下段 / Right Posterior Inferior)',
+        titleEn: 'Right Posterior Inferior Segment',
+        sector: 'Right Posterior Sector (Inferior)',
+        vesselIn: '門靜脈右後下支 (P6)',
+        vesselOut: '右肝靜脈 (RHV)',
+        sectorName: '右後扇區 (下段)',
+        usView: '右側第 8~10 肋間切面 / 腎肝對照長軸切面',
+        surgical: '<strong>外科重要性</strong>：與 S7 共同構成右後葉。以門靜脈右後支之水平分叉面與 S7 分隔。',
+        pearls: [
+          '<strong>莫里森氏囊 (Morison\'s Pouch)</strong>：S6 與右腎實質交界處為腹膜腔最低點，創傷或腹水超音波（FAST）的首要探查點。',
+          '<strong>脂肪肝對比指標</strong>：常以此區域與右腎皮質（Cortex）進行回音強度對比，評估脂肪肝嚴重程度。'
+        ],
+        phrase: 'Liver Echo: Segment 6 (S6) shows increased liver-kidney contrast, compatible with mild fatty liver. No focal mass.'
+      },
+      s7: {
+        roman: 'VII',
+        arabic: '7',
+        titleZh: 'Segment 7 (右後上段 / Right Posterior Superior)',
+        titleEn: 'Right Posterior Superior Segment',
+        sector: 'Right Posterior Sector (Superior)',
+        vesselIn: '門靜脈右後上支 (P7)',
+        vesselOut: '右肝靜脈 (RHV)',
+        sectorName: '右後扇區 (上段)',
+        usView: '右側高位肋間切面 (第 6~8 肋間後腋線，需深吸氣閉氣)',
+        surgical: '<strong>外科重要性</strong>：位於全肝最高位且最偏後側之圓頂區，緊貼右側橫膈與下腔靜脈。',
+        pearls: [
+          '<strong>超音波檢查頭號盲區</strong>：受右肺底氣體遮蔽，極易遺漏小腫瘤，檢查時務必採取左側臥位 (Left lateral decubitus) 並深吸氣。',
+          '<strong>HCC 高發部位</strong>：臨床上若甲型胎兒蛋白 (AFP) 異常升高但超音波未見腫瘤，常需特別以 CT/MRI 仔細排查 S7 及 S8 圓頂區。'
+        ],
+        phrase: 'Liver Echo: Segment 7 (S7) dome visualized on deep inspiration; no subdiaphragmatic solid mass.'
+      },
+      s8: {
+        roman: 'VIII',
+        arabic: '8',
+        titleZh: 'Segment 8 (右前上段 / Right Anterior Superior)',
+        titleEn: 'Right Anterior Superior Segment',
+        sector: 'Right Anterior Sector (Superior)',
+        vesselIn: '門靜脈右前上支 (P8)',
+        vesselOut: '中肝靜脈 (MHV) 及 右肝靜脈 (RHV)',
+        sectorName: '右前扇區 (上段)',
+        usView: '右肋下大角度向上仰切 / 右前肋間切面',
+        surgical: '<strong>外科重要性</strong>：全肝體積最大之分段，位居右葉中央上方頂部，由中肝靜脈與右肝靜脈共同引流。',
+        pearls: [
+          '<strong>解剖邊界</strong>：左以中肝靜脈為界，右以右肝靜脈為界，下以門靜脈右前水平支與 S5 為界。',
+          '<strong>圓頂區超音波技巧</strong>：藉由中肝靜脈與右肝靜脈之「三葉草/鹿角」徵象向上追蹤至橫膈頂部。'
+        ],
+        phrase: 'Liver Echo: Segment 8 (S8) dome fully evaluated without focal lesion or ductal dilatation.'
+      }
+    };
+
+    // Global 3D State
+    let scene, camera, renderer, controls;
+    let segmentMeshes = {};
+    let segmentLabelSprites = {};
+    let basePositions = {};
+    let explodeVectors = {};
+    let vesselGroupPortal, vesselGroupHepatic, falciformMesh;
+    let selectedId = 's6';
+    let isQuizMode = false, quizTarget = null;
+    let raycaster, mouse;
+    let currentOpacity = 0.88;
+
+    // Mathematical 3D Organic Solid Anatomical Envelope
+    // Returns the exact front (anterior) and back (posterior) Z-depth at any (x, y) point
+    function getLiver3DDepth(x, y) {
+      // Coordinate space:
+      // X: -3.2 (right edge) to +2.7 (left blade)
+      // Y: -1.7 (inferior edge) to +1.6 (dome)
+      
+      // Horizontal taper to left lobe (+x)
+      const xFactor = x < 0 ? (1.0 - Math.pow(x / 3.6, 2) * 0.35) : Math.max(0.15, 1.0 - Math.pow(x / 2.8, 1.3) * 0.85);
+      const yFactor = 1.0 - Math.pow(y / 1.8, 2) * 0.4;
+      const baseThickness = 1.45 * xFactor * Math.max(0.2, yFactor);
+
+      // Anterior convex curve
+      const zAnt = baseThickness * (0.85 + Math.cos(x * 0.5) * 0.15);
+      // Posterior visceral surface (with renal & IVC impressions)
+      let zPost = -baseThickness * 0.95;
+      if (x < -1.0 && y < 0.0) zPost += 0.25; // S6 renal impression
+      if (Math.abs(x) < 0.4 && y > 0.0) zPost -= 0.15; // IVC groove
+
+      return { zAnt, zPost };
+    }
+
+    // 3D Bounding Spatial Boundaries for all 8 Couinaud Segments
+    const segmentSolidConfigs = {
+      s7: { xRange: [-3.2, -1.3], yRange: [0.0, 1.6], dir: new THREE.Vector3(-1.0, 0.7, -0.5), label: '7', labelOffset: [-2.2, 0.9, 0.9] },
+      s8: { xRange: [-1.3, 0.0], yRange: [0.0, 1.6], dir: new THREE.Vector3(-0.3, 0.8, 0.4), label: '8', labelOffset: [-0.65, 1.0, 1.1] },
+      s4: { xRange: [0.0, 1.1], yRange: [-1.5, 1.4], dir: new THREE.Vector3(0.4, 0.4, 0.2), label: '4', labelOffset: [0.55, 0.0, 0.9] },
+      s2: { xRange: [1.1, 2.7], yRange: [0.0, 1.1], dir: new THREE.Vector3(1.1, 0.7, -0.2), label: '2', labelOffset: [1.8, 0.6, 0.5] },
+      s6: { xRange: [-3.2, -1.3], yRange: [-1.7, 0.0], dir: new THREE.Vector3(-1.0, -0.7, -0.5), label: '6', labelOffset: [-2.2, -0.9, 0.8] },
+      s5: { xRange: [-1.3, 0.0], yRange: [-1.7, 0.0], dir: new THREE.Vector3(-0.3, -0.8, 0.4), label: '5', labelOffset: [-0.65, -0.9, 1.0] },
+      s3: { xRange: [1.1, 2.7], yRange: [-1.4, 0.0], dir: new THREE.Vector3(1.1, -0.6, 0.2), label: '3', labelOffset: [1.8, -0.6, 0.5] },
+      s1: { xRange: [-0.5, 0.4], yRange: [0.1, 1.2], dir: new THREE.Vector3(0.0, 0.1, -1.1), label: '1', labelOffset: [0.0, 0.65, -1.25] }
+    };
+
+    function init3D() {
+      const container = document.getElementById('threejs-canvas-container');
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      // 1. Scene & Camera
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      camera.position.set(0, 0.2, 8.8);
+
+      // 2. WebGL Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // 3. Orbit Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 3.5;
+      controls.maxDistance = 18;
+      controls.target.set(0, 0, 0);
+
+      // 4. Studio Medical Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+      scene.add(ambientLight);
+
+      const mainLight = new THREE.DirectionalLight(0xfff3e0, 1.1);
+      mainLight.position.set(6, 8, 8);
+      scene.add(mainLight);
+
+      const rimLight = new THREE.DirectionalLight(0x00e5ff, 0.85);
+      rimLight.position.set(-8, -4, -6);
+      scene.add(rimLight);
+
+      const visceralLight = new THREE.DirectionalLight(0x93c5fd, 0.75);
+      visceralLight.position.set(0, -6, -8);
+      scene.add(visceralLight);
+
+      // 5. Build True 3D Solid Segment Meshes
+      build3DSolidSegments();
+
+      // 6. Build 3D Vessels (Hepatic & Portal Trees)
+      build3DVessels();
+
+      // 7. Build Falciform Ligament
+      buildFalciformLigament();
+
+      // 8. Raycasting Setup
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+      renderer.domElement.addEventListener('pointerdown', onPointerDown);
+
+      // 9. Window Resize Handler
+      window.addEventListener('resize', onWindowResize);
+
+      // Initialize default explode level (30%)
+      onExplodeSlider(30);
+      selectSegment('s6');
+
+      // Animation Loop
+      animate();
+    }
+
+    // Build True 3D Solid Geometry for each Segment
+    function createSolidSegmentGeometry(config, key) {
+      const x0 = config.xRange[0], x1 = config.xRange[1];
+      const y0 = config.yRange[0], y1 = config.yRange[1];
+      
+      const nx = 12, ny = 12, nz = 8;
+      const geom = new THREE.BoxGeometry(x1 - x0, y1 - y0, 1.0, nx, ny, nz);
+      
+      const cx = (x0 + x1) * 0.5;
+      const cy = (y0 + y1) * 0.5;
+      geom.translate(cx, cy, 0);
+
+      const pos = geom.attributes.position;
+      const v = new THREE.Vector3();
+
+      for (let i = 0; i < pos.count; i++) {
+        v.fromBufferAttribute(pos, i);
+
+        // Special handling for Segment 1 (Caudate Lobe) - situated behind IVC
+        if (key === 's1') {
+          v.z = -0.7 + v.z * 0.45;
+          v.x = v.x * 0.9;
+          pos.setXYZ(i, v.x, v.y, v.z);
+          continue;
+        }
+
+        const depth = getLiver3DDepth(v.x, v.y);
+
+        // Map normalized Z [-0.5, +0.5] from BoxGeometry to actual organic 3D thickness [zPost, zAnt]
+        const zNorm = v.z + 0.5; // [0, 1]
+        v.z = depth.zPost + zNorm * (depth.zAnt - depth.zPost);
+
+        // Organic curve enhancement on top and bottom boundaries
+        if (v.y > 0.0) {
+          const domeLimit = 1.6 * (v.x < 0 ? (1.0 - Math.pow(v.x / 3.6, 2) * 0.3) : Math.max(0.2, 1.0 - (v.x / 2.7) * 0.8));
+          v.y = Math.min(v.y, domeLimit);
+        } else {
+          const botLimit = -1.65 * (v.x < 0 ? (1.0 - Math.pow(v.x / 3.6, 2) * 0.3) : Math.max(0.15, 1.0 - (v.x / 2.7) * 0.85));
+          v.y = Math.max(v.y, botLimit);
+        }
+
+        pos.setXYZ(i, v.x, v.y, v.z);
+      }
+
+      geom.computeVertexNormals();
+      return geom;
+    }
+
+    function build3DSolidSegments() {
+      const liverMatConfig = {
+        color: 0xc4573b,
+        roughness: 0.32,
+        metalness: 0.05,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.25,
+        transparent: true,
+        opacity: currentOpacity,
+        side: THREE.DoubleSide
+      };
+
+      Object.keys(segmentSolidConfigs).forEach(key => {
+        const config = segmentSolidConfigs[key];
+        const geom = createSolidSegmentGeometry(config, key);
+        const mat = new THREE.MeshPhysicalMaterial(Object.assign({}, liverMatConfig));
+        
+        const mesh = new THREE.Mesh(geom, mat);
+        mesh.userData = { segmentId: key };
+        
+        basePositions[key] = new THREE.Vector3(0, 0, 0);
+        explodeVectors[key] = config.dir.clone();
+
+        scene.add(mesh);
+        segmentMeshes[key] = mesh;
+
+        // 3D Billboard Text Label placed at outer anterior face
+        const sprite = createTextSprite(config.label);
+        sprite.position.set(config.labelOffset[0], config.labelOffset[1], config.labelOffset[2]);
+        mesh.add(sprite);
+        segmentLabelSprites[key] = sprite;
+      });
+    }
+
+    function createTextSprite(text) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'rgba(10, 18, 36, 0.8)';
+      ctx.beginPath();
+      ctx.roundRect(16, 16, 224, 96, 24);
+      ctx.fill();
+      ctx.strokeStyle = '#00e5ff';
+      ctx.lineWidth = 5;
+      ctx.stroke();
+
+      ctx.font = 'bold 56px Plus Jakarta Sans, sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 128, 64);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(0.85, 0.42, 1);
+      return sprite;
+    }
+
+    // Build 3D Branching Tubes for Hepatic Veins & Portal Vein Trees
+    function build3DVessels() {
+      // 1. Hepatic Veins & IVC (Deep Royal Blue)
+      vesselGroupHepatic = new THREE.Group();
+      const hvMat = new THREE.MeshStandardMaterial({
+        color: 0x2563eb,
+        roughness: 0.2,
+        metalness: 0.3,
+        emissive: 0x1d4ed8,
+        emissiveIntensity: 0.45
+      });
+
+      // IVC Vertical Trunk in the retrohepatic visceral groove
+      const ivcGeom = new THREE.CylinderGeometry(0.35, 0.32, 5.2, 24);
+      const ivcMesh = new THREE.Mesh(ivcGeom, hvMat);
+      ivcMesh.position.set(-0.1, 0.1, -1.05);
+      vesselGroupHepatic.add(ivcMesh);
+
+      // RHV (Right Hepatic Vein)
+      const rhvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.1, 1.4, -0.9),
+        new THREE.Vector3(-0.8, 1.3, -0.4),
+        new THREE.Vector3(-1.6, 0.5, -0.3),
+        new THREE.Vector3(-2.1, -0.3, -0.2)
+      ]);
+      vesselGroupHepatic.add(new THREE.Mesh(new THREE.TubeGeometry(rhvCurve, 32, 0.16, 12, false), hvMat));
+
+      // MHV (Middle Hepatic Vein)
+      const mhvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.1, 1.4, -0.9),
+        new THREE.Vector3(0.0, 0.9, -0.1),
+        new THREE.Vector3(-0.1, 0.1, 0.4),
+        new THREE.Vector3(-0.2, -0.8, 0.5)
+      ]);
+      vesselGroupHepatic.add(new THREE.Mesh(new THREE.TubeGeometry(mhvCurve, 32, 0.17, 12, false), hvMat));
+
+      // LHV (Left Hepatic Vein)
+      const lhvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.1, 1.4, -0.9),
+        new THREE.Vector3(0.6, 1.1, -0.3),
+        new THREE.Vector3(1.3, 0.6, 0.0),
+        new THREE.Vector3(1.9, 0.1, 0.1)
+      ]);
+      vesselGroupHepatic.add(new THREE.Mesh(new THREE.TubeGeometry(lhvCurve, 32, 0.15, 12, false), hvMat));
+      scene.add(vesselGroupHepatic);
+
+      // 2. Portal Vein Tree (Glowing Cyan)
+      vesselGroupPortal = new THREE.Group();
+      const pvMat = new THREE.MeshStandardMaterial({
+        color: 0x00e5ff,
+        roughness: 0.15,
+        metalness: 0.2,
+        emissive: 0x00d2ff,
+        emissiveIntensity: 0.85
+      });
+
+      // Main Portal Trunk entering from lower porta hepatis
+      const pvTrunkCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.3, -2.4, 0.3),
+        new THREE.Vector3(0.1, -1.2, 0.1),
+        new THREE.Vector3(0.0, -0.3, 0.0)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(pvTrunkCurve, 24, 0.24, 16, false), pvMat));
+
+      // Right Main Branch & horizontal distributions
+      const rpvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.0, -0.3, 0.0),
+        new THREE.Vector3(-0.8, -0.2, 0.0),
+        new THREE.Vector3(-1.6, -0.2, -0.1)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(rpvCurve, 24, 0.19, 14, false), pvMat));
+
+      // Anterior Branches (to S5 & S8)
+      const p8Curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.8, -0.2, 0.0),
+        new THREE.Vector3(-0.7, 0.7, 0.3)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p8Curve, 16, 0.11, 10, false), pvMat));
+
+      const p5Curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.8, -0.2, 0.0),
+        new THREE.Vector3(-0.7, -0.9, 0.4)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p5Curve, 16, 0.11, 10, false), pvMat));
+
+      // Posterior Branches (to S6 & S7)
+      const p7Curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.6, -0.2, -0.1),
+        new THREE.Vector3(-1.8, 0.6, -0.3)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p7Curve, 16, 0.11, 10, false), pvMat));
+
+      const p6Curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.6, -0.2, -0.1),
+        new THREE.Vector3(-1.9, -0.8, -0.3)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p6Curve, 16, 0.11, 10, false), pvMat));
+
+      // Left Portal Branch System
+      const lpvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.0, -0.3, 0.0),
+        new THREE.Vector3(0.6, -0.2, 0.1),
+        new THREE.Vector3(1.3, -0.2, 0.0)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(lpvCurve, 24, 0.17, 14, false), pvMat));
+
+      // Branches to S2 & S3
+      const p2Curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(1.3, -0.2, 0.0),
+        new THREE.Vector3(1.8, 0.5, -0.1)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p2Curve, 16, 0.1, 10, false), pvMat));
+
+      const p3Curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(1.3, -0.2, 0.0),
+        new THREE.Vector3(2.0, -0.7, 0.1)
+      ]);
+      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p3Curve, 16, 0.1, 10, false), pvMat));
+
+      scene.add(vesselGroupPortal);
+    }
+
+    function buildFalciformLigament() {
+      const geom = new THREE.PlaneGeometry(0.12, 2.5, 8, 8);
+      const pos = geom.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const y = pos.getY(i);
+        pos.setZ(i, Math.sin((y + 1.2) * 1.4) * 0.35 + 0.4);
+      }
+      geom.computeVertexNormals();
+
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0xe2e8f0,
+        roughness: 0.3,
+        transparent: true,
+        opacity: 0.65,
+        side: THREE.DoubleSide
+      });
+
+      falciformMesh = new THREE.Mesh(geom, mat);
+      falciformMesh.position.set(1.15, 0.0, 0.3);
+      scene.add(falciformMesh);
+    }
+
+    // 3D Explode Slider Action
+    function onExplodeSlider(val) {
+      const factor = val / 100.0;
+      document.getElementById('txt-explode-val').textContent = `${val}%`;
+
+      Object.keys(segmentMeshes).forEach(key => {
+        const mesh = segmentMeshes[key];
+        const dir = explodeVectors[key];
+        
+        mesh.position.x = dir.x * factor * 1.4;
+        mesh.position.y = dir.y * factor * 1.4;
+        mesh.position.z = dir.z * factor * 1.4;
+      });
+    }
+
+    // Opacity Slider Action
+    function onOpacitySlider(val) {
+      currentOpacity = val / 100.0;
+      document.getElementById('txt-opacity-val').textContent = `${val}%`;
+      Object.keys(segmentMeshes).forEach(key => {
+        segmentMeshes[key].material.opacity = currentOpacity;
+      });
+    }
+
+    function toggleVesselLayer(type) {
+      if (type === 'pv') {
+        vesselGroupPortal.visible = !vesselGroupPortal.visible;
+        document.getElementById('btn-toggle-pv').classList.toggle('active', vesselGroupPortal.visible);
+      } else if (type === 'hv') {
+        vesselGroupHepatic.visible = !vesselGroupHepatic.visible;
+        document.getElementById('btn-toggle-hv').classList.toggle('active', vesselGroupHepatic.visible);
+      }
+    }
+
+    // Selection & Highlighting
+    function selectSegment(id) {
+      if (isQuizMode) {
+        handleQuizClick(id);
+        return;
+      }
+
+      selectedId = id;
+      const data = couinaudData[id];
+      if (!data) return;
+
+      // UI List Highlighting
+      document.querySelectorAll('.seg-card-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-seg-${id}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // 3D Mesh Highlights
+      Object.keys(segmentMeshes).forEach(key => {
+        const mesh = segmentMeshes[key];
+        if (key === id) {
+          mesh.material.emissive.setHex(0x00e5ff);
+          mesh.material.emissiveIntensity = 0.55;
+          mesh.material.opacity = Math.max(currentOpacity, 0.95);
+        } else {
+          mesh.material.emissive.setHex(0x000000);
+          mesh.material.emissiveIntensity = 0.0;
+          mesh.material.opacity = currentOpacity;
+        }
+      });
+
+      // Update Right Panel Content
+      document.getElementById('det-pill').textContent = `Segment ${data.arabic}`;
+      document.getElementById('det-sector').textContent = data.sector;
+      document.getElementById('det-title-zh').textContent = data.titleZh;
+      document.getElementById('det-title-en').textContent = data.titleEn;
+      document.getElementById('det-vessel-in').textContent = data.vesselIn;
+      document.getElementById('det-vessel-out').textContent = data.vesselOut;
+      document.getElementById('det-sector-name').textContent = data.sectorName;
+      document.getElementById('det-us-view').textContent = data.usView;
+      document.getElementById('det-surgical-box').innerHTML = data.surgical;
+      document.getElementById('det-phrase-text').textContent = data.phrase;
+
+      // Render Pearls
+      const pearlsList = document.getElementById('det-pearls-list');
+      pearlsList.innerHTML = '';
+      data.pearls.forEach(text => {
+        const item = document.createElement('div');
+        item.className = 'pearl-item';
+        item.innerHTML = `
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <span>${text}</span>
+        `;
+        pearlsList.appendChild(item);
+      });
+    }
+
+    // Preset Camera Angles Smooth Transitions
+    function setPresetView(preset) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`view-btn-${preset}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      let targetPos = new THREE.Vector3(0, 0, 8.8);
+      let targetLook = new THREE.Vector3(0, 0, 0);
+
+      switch(preset) {
+        case 'anterior':
+          targetPos.set(0, 0.2, 8.8);
+          break;
+        case 'visceral':
+          targetPos.set(0, -1.0, -8.8); // Rotate directly to back visceral view
+          targetLook.set(0, 0.1, 0.0);
+          break;
+        case 'right_lat':
+          targetPos.set(-8.8, 0.5, 0.0); // True side profile
+          break;
+        case 'left_lat':
+          targetPos.set(8.8, 0.2, 0.0); // True left profile
+          break;
+        case 'superior':
+          targetPos.set(0, 8.8, 0.5); // Top dome view
+          break;
+        case 'subcostal':
+          targetPos.set(-4.5, -5.5, 5.8);
+          break;
+      }
+
+      new TWEEN.Tween(camera.position)
+        .to(targetPos, 850)
+        .easing(TWEEN.Easing.Cubic.Out)
+        .start();
+
+      new TWEEN.Tween(controls.target)
+        .to(targetLook, 850)
+        .easing(TWEEN.Easing.Cubic.Out)
+        .start();
+    }
+
+    function reset3DCamera() {
+      setPresetView('anterior');
+      document.getElementById('slider-explode').value = 30;
+      onExplodeSlider(30);
+      selectSegment('s6');
+      showToast('已重設為 3D 正面標準視角');
+    }
+
+    // Raycast Interaction (Click on 3D mesh)
+    function onPointerDown(e) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const meshes = Object.values(segmentMeshes);
+      const intersects = raycaster.intersectObjects(meshes, false);
+
+      if (intersects.length > 0) {
+        const clickedMesh = intersects[0].object;
+        if (clickedMesh.userData && clickedMesh.userData.segmentId) {
+          selectSegment(clickedMesh.userData.segmentId);
+        }
+      }
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('threejs-canvas-container');
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    // Copy Phrase
+    function copyPhrase() {
+      const text = document.getElementById('det-phrase-text').textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('已複製病歷超音波片語至剪貼簿！');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // Quiz Mode
+    const quizCandidates = ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'];
+    function toggleQuizMode() {
+      isQuizMode = !isQuizMode;
+      const btn = document.getElementById('btn-toggle-quiz');
+      if (isQuizMode) {
+        btn.classList.add('btn-primary');
+        btn.textContent = '結束測驗';
+        nextQuizQuestion();
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.innerHTML = `
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          3D 測驗模式
+        `;
+        selectSegment(selectedId);
+      }
+    }
+
+    function nextQuizQuestion() {
+      const idx = Math.floor(Math.random() * quizCandidates.length);
+      quizTarget = quizCandidates[idx];
+      const data = couinaudData[quizTarget];
+      showToast(`🎯 請在 3D 空間中找出並點擊：【${data.titleZh}】`);
+    }
+
+    function handleQuizClick(clickedId) {
+      if (clickedId === quizTarget) {
+        showToast('🎉 答對了！非常優秀！');
+        selectSegment(clickedId);
+        setTimeout(nextQuizQuestion, 1400);
+      } else {
+        const clickedName = couinaudData[clickedId] ? couinaudData[clickedId].titleZh : clickedId;
+        showToast(`❌ 答錯囉！您點到的是【${clickedName}】，旋轉一下角度再試一次！`);
+      }
+    }
+
+    // Main Animation Loop
+    function animate(time) {
+      requestAnimationFrame(animate);
+      TWEEN.update();
+      controls.update();
+
+      // Subtle pulse on Portal Vein emissive
+      if (vesselGroupPortal && vesselGroupPortal.visible) {
+        const pulse = 0.65 + Math.sin(time * 0.003) * 0.35;
+        vesselGroupPortal.children.forEach(mesh => {
+          if (mesh.material && mesh.material.emissiveIntensity !== undefined) {
+            mesh.material.emissiveIntensity = pulse;
+          }
+        });
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('DOMContentLoaded', init3D);
+  </script>
+</body>
+</html>
