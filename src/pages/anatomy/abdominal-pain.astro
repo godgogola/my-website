@@ -1,0 +1,2522 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="九宮格腹痛與臨床鑑別診斷系統 | 互動解剖圖鑑 - 黃冠智醫師" 
+  description="以臨床醫師視角打造的腹痛九宮格互動圖鑑。提供 3D 人體器官透視與 2D 直覺速查雙模式，深度剖析右上腹、上腹、左上腹、兩側腰、臍周中腹、下腹與兩側下腹之對應器官、急重症紅旗警訊、黃金鑑別診斷與門診病歷片語。"
+  fullWidth={true}
+  hideFooter={true}
+>
+  <!-- Three.js CDN dependencies -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+  <div class="abd-app-wrapper" id="abdAppWrapper">
+    <!-- Subheader with breadcrumb & action controls -->
+    <div class="anatomy-subnav">
+      <div class="subnav-left">
+        <a href="/anatomy" class="back-link">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>圖鑑總覽</span>
+        </a>
+        <div class="divider">/</div>
+        <div class="current-badge">
+          <span class="pulse-dot"></span>
+          <span>九宮格腹痛與臨床鑑別 (3D/2D 雙模式)</span>
+        </div>
+      </div>
+      
+      <div class="subnav-right">
+        <!-- 3D / 2D Mode Switcher -->
+        <div class="mode-toggle-group">
+          <button class="btn btn-mode active" id="btn-mode-3d" onclick="switchDisplayMode('3d')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span>3D 透視</span>
+          </button>
+          <button class="btn btn-mode" id="btn-mode-2d" onclick="switchDisplayMode('2d')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>2D 九宮格</span>
+          </button>
+        </div>
+
+        <!-- Fullscreen Button -->
+        <button class="btn btn-fullscreen" id="btn-fullscreen-toggle" onclick="toggleFullScreen()" title="全螢幕模式">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="icon-fs"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <span class="btn-text-full">全螢幕</span>
+        </button>
+        <button class="btn btn-primary" onclick="resetView()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>重設視角</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Workspace Grid -->
+    <div class="workspace-grid">
+
+      <!-- Mobile Tab Switcher Navigation -->
+      <div class="mobile-tabs-nav">
+        <button class="mobile-tab-btn active" id="tab-btn-regions" onclick="switchMobileTab('regions')">
+          📍 9大腹部區位
+        </button>
+        <button class="mobile-tab-btn" id="tab-btn-pathology" onclick="switchMobileTab('pathology')">
+          🩺 鑑別診斷
+        </button>
+        <button class="mobile-tab-btn" id="tab-btn-details" onclick="switchMobileTab('details')">
+          📋 門診片語
+        </button>
+      </div>
+
+      <!-- Left Panel: 9-Grid Quick Navigator & Clinical Filter -->
+      <div class="glass-panel left-panel mobile-tab-pane" id="pane-regions-pathology">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>腹痛九宮格導航盤</span>
+          </div>
+          <span class="badge-count">9 區位</span>
+        </div>
+
+        <div class="panel-body scrollable-content">
+          <!-- Mini 3x3 Interactive Keypad -->
+          <div class="mini-grid-wrapper">
+            <div class="mini-grid-label">快速點擊切換區域：</div>
+            <div class="mini-grid-board">
+              <button class="mini-grid-btn" data-region="ruq" onclick="selectRegion('ruq')">
+                <span class="mg-code">RUQ</span>
+                <span class="mg-name">右上腹</span>
+              </button>
+              <button class="mini-grid-btn active" data-region="epigastric" onclick="selectRegion('epigastric')">
+                <span class="mg-code">EPI</span>
+                <span class="mg-name">上腹</span>
+              </button>
+              <button class="mini-grid-btn" data-region="luq" onclick="selectRegion('luq')">
+                <span class="mg-code">LUQ</span>
+                <span class="mg-name">左上腹</span>
+              </button>
+              <button class="mini-grid-btn" data-region="r_flank" onclick="selectRegion('r_flank')">
+                <span class="mg-code">RLUM</span>
+                <span class="mg-name">右側腰</span>
+              </button>
+              <button class="mini-grid-btn" data-region="umbilical" onclick="selectRegion('umbilical')">
+                <span class="mg-code">UMB</span>
+                <span class="mg-name">臍周中腹</span>
+              </button>
+              <button class="mini-grid-btn" data-region="l_flank" onclick="selectRegion('l_flank')">
+                <span class="mg-code">LLUM</span>
+                <span class="mg-name">左側腰</span>
+              </button>
+              <button class="mini-grid-btn" data-region="rlq" onclick="selectRegion('rlq')">
+                <span class="mg-code">RLQ</span>
+                <span class="mg-name">右下腹</span>
+              </button>
+              <button class="mini-grid-btn" data-region="suprapubic" onclick="selectRegion('suprapubic')">
+                <span class="mg-code">PUB</span>
+                <span class="mg-name">下腹恥骨</span>
+              </button>
+              <button class="mini-grid-btn" data-region="llq" onclick="selectRegion('llq')">
+                <span class="mg-code">LLQ</span>
+                <span class="mg-name">左下腹</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Label -->
+          <div class="section-label">9 大區位細部清單</div>
+
+          <!-- Region List Cards -->
+          <div class="segment-grid-list">
+            <button class="seg-card-btn" id="card-ruq" onclick="selectRegion('ruq')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">RUQ</span>
+                <span class="seg-loc-tag">右上腹</span>
+              </div>
+              <div class="seg-card-name">肝臟、膽囊、十二指腸</div>
+              <div class="seg-card-sub">膽囊炎 · 膽結石 · 肝炎</div>
+            </button>
+
+            <button class="seg-card-btn active" id="card-epigastric" onclick="selectRegion('epigastric')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">EPI</span>
+                <span class="seg-loc-tag">心窩上腹</span>
+              </div>
+              <div class="seg-card-name">胃部、胰臟、腹主動脈</div>
+              <div class="seg-card-sub">消化性潰瘍 · 胃炎 · 急性胰臟炎</div>
+            </button>
+
+            <button class="seg-card-btn" id="card-luq" onclick="selectRegion('luq')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">LUQ</span>
+                <span class="seg-loc-tag">左上腹</span>
+              </div>
+              <div class="seg-card-name">胃體、脾臟、胰尾</div>
+              <div class="seg-card-sub">胃炎 · 脾梗塞 · 結腸脾曲症</div>
+            </button>
+
+            <button class="seg-card-btn" id="card-r_flank" onclick="selectRegion('r_flank')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">RLUM</span>
+                <span class="seg-loc-tag">右側腰</span>
+              </div>
+              <div class="seg-card-name">升結腸、右腎與輸尿管</div>
+              <div class="seg-card-sub">腎輸尿管結石 · 腎盂腎炎</div>
+            </button>
+
+            <button class="seg-card-btn" id="card-umbilical" onclick="selectRegion('umbilical')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">UMB</span>
+                <span class="seg-loc-tag">中腹臍周</span>
+              </div>
+              <div class="seg-card-name">小腸、橫結腸、腹主動脈</div>
+              <div class="seg-card-sub">腸胃炎 · 早期闌尾炎 · 腸阻塞</div>
+            </button>
+
+            <button class="seg-card-btn" id="card-l_flank" onclick="selectRegion('l_flank')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">LLUM</span>
+                <span class="seg-loc-tag">左側腰</span>
+              </div>
+              <div class="seg-card-name">降結腸、左腎與輸尿管</div>
+              <div class="seg-card-sub">輸尿管結石 · 憩室炎 · 肌筋膜炎</div>
+            </button>
+
+            <button class="seg-card-btn" id="card-rlq" onclick="selectRegion('rlq')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">RLQ</span>
+                <span class="seg-loc-tag">右下腹</span>
+              </div>
+              <div class="seg-card-name">闌尾、盲腸、右卵巢輸卵管</div>
+              <div class="seg-card-sub">急性闌尾炎 · 憩室炎 · 婦科急症</div>
+            </button>
+
+            <button class="seg-card-btn" id="card-suprapubic" onclick="selectRegion('suprapubic')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">PUB</span>
+                <span class="seg-loc-tag">下腹恥骨上</span>
+              </div>
+              <div class="seg-card-name">膀胱、直腸、子宮攝護腺</div>
+              <div class="seg-card-sub">膀胱炎 · 尿滯留 · 骨盆腔發炎</div>
+            </button>
+
+            <button class="seg-card-btn" id="card-llq" onclick="selectRegion('llq')">
+              <div class="seg-card-top">
+                <span class="seg-num-pill">LLQ</span>
+                <span class="seg-loc-tag">左下腹</span>
+              </div>
+              <div class="seg-card-name">乙狀結腸、左卵巢輸卵管</div>
+              <div class="seg-card-sub">乙狀結腸憩室炎 · 腸躁症 · 卵巢囊腫</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Panel: 3D Stage OR 2D Interactive Matrix -->
+      <div class="glass-panel canvas-panel" id="centerStagePanel">
+        <!-- Preset Angle Toolbar (Shown in 3D Mode) -->
+        <div class="view-angles-toolbar" id="viewAnglesToolbar">
+          <button class="view-btn active" data-view="anterior" onclick="set3DPresetView('anterior')">全景正面</button>
+          <button class="view-btn" data-view="upper" onclick="set3DPresetView('upper')">上腹重點</button>
+          <button class="view-btn" data-view="lower" onclick="set3DPresetView('lower')">下腹骨盆</button>
+          <button class="view-btn" data-view="right_flank" onclick="set3DPresetView('right_flank')">右側腰後腹</button>
+          <button class="view-btn" data-view="left_flank" onclick="set3DPresetView('left_flank')">左側腰後腹</button>
+        </div>
+
+        <div class="orbit-hint" id="orbitHint">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>按住拖曳可 360° 自由旋轉</span>
+        </div>
+
+        <!-- 3D Three.js Canvas Container -->
+        <div id="threejs-canvas-container" class="stage-view active"></div>
+
+        <!-- 2D Interactive Grid Matrix View -->
+        <div id="twod-grid-container" class="stage-view">
+          <div class="twod-matrix-header">
+            <h2 class="twod-title">肚子痛的位置與對應器官</h2>
+            <p class="twod-sub">點擊下方任一九宮格，右側即刻展開完整鑑別診斷與門診片語</p>
+          </div>
+
+          <div class="twod-grid-board">
+            <!-- Row 1 -->
+            <div class="twod-cell" id="twod-ruq" onclick="selectRegion('ruq')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">RUQ</span>
+                <span class="cell-title">右上腹</span>
+              </div>
+              <div class="cell-organs">肝臟、膽囊</div>
+              <div class="cell-sub-organs">結腸肝曲 · 十二指腸 · 右腎</div>
+              <div class="cell-badge alert-red">⚠️ 膽囊炎 / 結石 / 肝炎</div>
+            </div>
+
+            <div class="twod-cell active" id="twod-epigastric" onclick="selectRegion('epigastric')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">EPI</span>
+                <span class="cell-title">上腹 (心窩)</span>
+              </div>
+              <div class="cell-organs">胃部、胰臟、十二指腸</div>
+              <div class="cell-sub-organs">腹主動脈 · 早期闌尾炎牽引</div>
+              <div class="cell-badge alert-amber">⚠️ 潰瘍 / 胃炎 / 胰臟炎</div>
+            </div>
+
+            <div class="twod-cell" id="twod-luq" onclick="selectRegion('luq')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">LUQ</span>
+                <span class="cell-title">左上腹</span>
+              </div>
+              <div class="cell-organs">胃部、脾臟、胰臟</div>
+              <div class="cell-sub-organs">結腸脾曲 · 胰尾 · 左腎</div>
+              <div class="cell-badge alert-blue">⚠️ 脾梗塞 / 結腸脹氣 / 潰瘍</div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="twod-cell" id="twod-r_flank" onclick="selectRegion('r_flank')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">R-FLK</span>
+                <span class="cell-title">右側腰</span>
+              </div>
+              <div class="cell-organs">升結腸、腎臟和輸尿管</div>
+              <div class="cell-sub-organs">後腹腔 · 腰肌筋膜</div>
+              <div class="cell-badge alert-red">⚠️ 輸尿管結石 / 腎盂腎炎</div>
+            </div>
+
+            <div class="twod-cell" id="twod-umbilical" onclick="selectRegion('umbilical')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">UMB</span>
+                <span class="cell-title">中腹 (臍周)</span>
+              </div>
+              <div class="cell-organs">小腸、橫結腸、主動脈</div>
+              <div class="cell-sub-organs">腸繫膜淋巴結 · 大網膜</div>
+              <div class="cell-badge alert-amber">⚠️ 腸胃炎 / 腸阻塞 / AAA</div>
+            </div>
+
+            <div class="twod-cell" id="twod-l_flank" onclick="selectRegion('l_flank')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">L-FLK</span>
+                <span class="cell-title">左側腰</span>
+              </div>
+              <div class="cell-organs">降結腸、腎臟和輸尿管</div>
+              <div class="cell-sub-organs">後腹腔 · 腰肌筋膜</div>
+              <div class="cell-badge alert-red">⚠️ 腎結石絞痛 / 憩室炎</div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="twod-cell" id="twod-rlq" onclick="selectRegion('rlq')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">RLQ</span>
+                <span class="cell-title">右下腹</span>
+              </div>
+              <div class="cell-organs">升結腸、盲腸、闌尾</div>
+              <div class="cell-sub-organs">右側卵巢 · 輸卵管 · 末端迴腸</div>
+              <div class="cell-badge alert-red">🚨 急性闌尾炎 / 婦科急症</div>
+            </div>
+
+            <div class="twod-cell" id="twod-suprapubic" onclick="selectRegion('suprapubic')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">PUB</span>
+                <span class="cell-title">下腹 (恥骨上)</span>
+              </div>
+              <div class="cell-organs">膀胱、直腸、子宮/攝護腺</div>
+              <div class="cell-sub-organs">輸卵管 · 尿道 · 兩側輸尿管口</div>
+              <div class="cell-badge alert-amber">⚠️ 膀胱炎 / 尿滯留 / 骨盆腔炎</div>
+            </div>
+
+            <div class="twod-cell" id="twod-llq" onclick="selectRegion('llq')">
+              <div class="cell-glow-border"></div>
+              <div class="cell-head">
+                <span class="cell-code">LLQ</span>
+                <span class="cell-title">左下腹</span>
+              </div>
+              <div class="cell-organs">降結腸、乙狀結腸</div>
+              <div class="cell-sub-organs">左側卵巢 · 輸卵管</div>
+              <div class="cell-badge alert-amber">⚠️ 乙狀結腸憩室炎 / IBS</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Indicator Bar -->
+        <div class="canvas-bottom-bar">
+          <div class="mode-info">
+            <span class="info-dot"></span>
+            <span id="activeModeText">目前檢視：3D 人體器官透視 (點選九宮格即刻高亮對應臟器)</span>
+          </div>
+          <div class="current-selected-label">
+            <span>目前焦點：</span>
+            <strong id="bottomSelectedRegionName">上腹 (Epigastrium)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Clinical Differential Diagnosis & Phrases -->
+      <div class="glass-panel right-panel mobile-tab-pane" id="pane-clinical-details">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span>臨床鑑別診斷與處置指引</span>
+          </div>
+          <span class="badge-organ" id="badgeRegionCode">EPI</span>
+        </div>
+
+        <div class="panel-body scrollable-content">
+          <!-- Region Title Header -->
+          <div class="detail-title-group">
+            <div class="tag-row">
+              <span class="region-badge-pill" id="detailPill">上腹 (Epigastrium)</span>
+              <span class="latin-name" id="detailLatin">Regio epigastrica</span>
+            </div>
+            <h1 class="main-title" id="detailMainTitle">上腹心窩處疼痛</h1>
+            <p class="sub-title" id="detailSubTitle">核心臟器：胃、胰臟、十二指腸、腹主動脈</p>
+          </div>
+
+          <!-- Anatomical Structures Involved -->
+          <div class="detail-card">
+            <h3>
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8 2 6 6 6 11c0 5 3 9 6 11 3-2 6-6 6-11 0-5-2-9-6-9Z"/></svg>
+              <span>解剖對應臟器清單 (Anatomy Involved)</span>
+            </h3>
+            <div class="organ-tags-cloud" id="detailOrganTags">
+              <span class="organ-chip highlight">胃體 / 胃竇 (Stomach)</span>
+              <span class="organ-chip highlight">十二指腸 (Duodenum)</span>
+              <span class="organ-chip highlight">胰臟本體 (Pancreas)</span>
+              <span class="organ-chip">腹主動脈 (Aorta)</span>
+              <span class="organ-chip">肝左葉 (Left Lobe of Liver)</span>
+            </div>
+          </div>
+
+          <!-- Critical Red Flags / Emergencies -->
+          <div class="detail-card alert-card-red" id="detailRedFlagsBox">
+            <h3 class="alert-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span>🚨 需優先排除之急重症 (Red Flags)</span>
+            </h3>
+            <ul class="pearls-list" id="detailRedFlagsList">
+              <li><strong>消化道穿孔 (Perforation)</strong>：突發劇烈刀割痛、木板腹 (Board-like rigidity)、游離氣體 (Free air)。</li>
+              <li><strong>急性壞死性胰臟炎 (Severe Pancreatitis)</strong>：持續劇痛穿透至後背、Cullen/Grey Turner 徵象、休克。</li>
+              <li><strong>腹主動脈瘤破裂 / 剝離 (AAA / Dissection)</strong>：劇烈撕裂痛延伸腰背、搏動性腹部腫塊、血壓崩跌。</li>
+              <li><strong>下壁心肌梗塞 (Inferior Wall MI)</strong>：非典型心窩痛合併冷汗、呼吸喘、噁心嘔吐，必驗心電圖。</li>
+            </ul>
+          </div>
+
+          <!-- Differential Diagnosis List -->
+          <div class="detail-card">
+            <h3>
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              <span>黃金鑑別診斷 (Differential Diagnosis)</span>
+            </h3>
+            <div class="diff-grid" id="detailDiffList">
+              <div class="diff-item">
+                <span class="diff-name">胃食道逆流 (GERD)</span>
+                <span class="diff-desc">火燒心、胸骨後灼熱感、平躺酸液逆流</span>
+              </div>
+              <div class="diff-item">
+                <span class="diff-name">消化性潰瘍 (GU / DU)</span>
+                <span class="diff-desc">空腹飢餓痛 (DU) 或進食後悶脹痛 (GU)，常合併幽門桿菌</span>
+              </div>
+              <div class="diff-item">
+                <span class="diff-name">急性膽絞痛 (Biliary Colic)</span>
+                <span class="diff-desc">高脂餐後上腹悶脹或絞痛，可牽引至心窩與右肩胛</span>
+              </div>
+              <div class="diff-item">
+                <span class="diff-name">早期急性闌尾炎 (Early Appendicitis)</span>
+                <span class="diff-desc">內臟神經反射性心窩/臍周悶痛，數小時後轉移至右下腹 (RLQ)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommended Diagnostic Workup -->
+          <div class="detail-card">
+            <h3>
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <span>臨床建議檢查路徑 (Diagnostic Workup)</span>
+            </h3>
+            <div class="workup-steps" id="detailWorkupBox">
+              <div class="workup-step">
+                <span class="step-num">1</span>
+                <div class="step-content">
+                  <strong>第一線快速評估 (Bedside / Rapid)</strong>
+                  <p>血清 Amylase / Lipase、心電圖 (ECG - 排除心肌梗塞)、腹部超音波 (評估膽囊結石與胰管擴張)。</p>
+                </div>
+              </div>
+              <div class="workup-step">
+                <span class="step-num">2</span>
+                <div class="step-content">
+                  <strong>進階確診與內視鏡 (Definitive / Endoscopy)</strong>
+                  <p>上消化道內視鏡 (胃鏡 EGD 確診潰瘍/胃炎/腫瘤)、顯影腹部電腦斷層 (CT 診斷胰臟炎分期或血管病變)。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Outpatient Chart / Clinical Note Phrase -->
+          <div class="phrase-box">
+            <div class="phrase-header">
+              <span class="phrase-title">門診英文病歷片語 (SOAP Clinical Note)</span>
+              <button class="btn btn-copy" onclick="copyPhrase()">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span>複製片語</span>
+              </button>
+            </div>
+            <div class="phrase-content" id="chartPhraseText">
+              Epigastric burning and postprandial dull pain for days. No peritoneal signs. Differential diagnoses include peptic ulcer disease, acute gastritis, and early acute pancreatitis. Arranged EGD and serum amylase/lipase; advised proton pump inhibitor and diet modification.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+    <span id="toastText">已複製至剪貼簿</span>
+  </div>
+
+  <script is:inline>
+    // --- Comprehensive 9-Region Abdominal Pain Database ---
+    const ABD_DATA = {
+      ruq: {
+        code: "RUQ",
+        name: "右上腹 (Right Upper Quadrant)",
+        latin: "Regio hypochondriaca dextra",
+        mainTitle: "右上腹部疼痛",
+        subTitle: "核心臟器：肝臟、膽囊、十二指腸、結腸肝曲、右腎",
+        organs: ["膽囊 (Gallbladder)", "肝臟 (Liver - 右葉)", "十二指腸 (Duodenum)", "結腸肝曲 (Hepatic Flexure)", "右腎 (Right Kidney)"],
+        highlightMeshes: ["liver", "gallbladder", "duodenum", "colon_ruq", "kidney_r"],
+        cameraPos: { x: -2.5, y: 1.4, z: 10.5 },
+        cameraLook: { x: -0.9, y: 1.2, z: 0.1 },
+        redFlags: [
+          "急性化膿性膽管炎 (Reynolds Pentad)：發燒、黃疸、右上腹痛、休克、意識不清 (急診減壓 ERCP)。",
+          "壞疽性 / 穿孔性膽囊炎：Murphy's sign 強烈陽性、高燒、腹膜刺激徵象。",
+          "巨大肝膿瘍破裂或肝癌破裂：突發血腹 (Hemoperitoneum)、低血壓休克。"
+        ],
+        differentials: [
+          { name: "急性 / 慢性膽囊炎 (Cholecystitis)", desc: "高脂餐後引發，右肋下深壓時吸氣突中斷 (Murphy's sign (+))。" },
+          { name: "膽結石絞痛 (Biliary Colic)", desc: "持續 1~5 小時劇烈悶痛，常放射至右側肩胛骨下角。" },
+          { name: "急性肝炎 (Acute Hepatitis)", desc: "肝臟腫大鈍痛、疲倦、黃疸、茶色尿、AST/ALT 明顯飆高。" },
+          { name: "右側結腸憩室炎 / 腫瘤", desc: "排便習慣改變、糞便潛血或局部發炎性疼痛。" }
+        ],
+        workup: [
+          { num: "1", title: "第一線首選檢查", desc: "腹部超音波 (Abdominal Echo - 診斷結石、膽囊壁肥厚 >3mm、膽囊水腫之首選) + 肝功能/膽紅素 (LFT, T-Bil, D-Bil, Alk-P, r-GT) + 發炎指標 (CBC/DC, CRP)。" },
+          { num: "2", title: "進階影像與處置", desc: "腹部電腦斷層 (CT) 或磁振膽胰造影 (MRCP)；若合併總膽管結石或膽管炎，安排內視鏡逆行性膽胰管造影 (ERCP) 取石引流。" }
+        ],
+        phrase: "RUQ tenderness noted with positive Murphy's sign. Suspect acute cholecystitis or symptomatic cholelithiasis. Bedside abdominal sonography performed, showing gallbladder wall thickening and acoustic shadowing stones. Lab tests (CBC, LFTs, CRP) arranged; surgical consultation advised if symptoms persist."
+      },
+
+      epigastric: {
+        code: "EPI",
+        name: "上腹心窩 (Epigastrium)",
+        latin: "Regio epigastrica",
+        mainTitle: "心窩上腹部疼痛",
+        subTitle: "核心臟器：胃部、胰臟、十二指腸、腹主動脈",
+        organs: ["胃體與胃竇 (Stomach)", "十二指腸 (Duodenum)", "胰臟本體 (Pancreas)", "腹主動脈 (Aorta)", "肝左葉 (Left Lobe of Liver)"],
+        highlightMeshes: ["stomach", "duodenum", "pancreas", "aorta"],
+        cameraPos: { x: 0, y: 1.1, z: 10.0 },
+        cameraLook: { x: 0.1, y: 0.9, z: 0.1 },
+        redFlags: [
+          "消化道潰瘍穿孔 (Perforated Peptic Ulcer)：突發爆裂性全腹痛、木板腹 (Board-like rigidity)、X光顯現膈下游離氣體。",
+          "急性重症壞死性胰臟炎 (Severe Pancreatitis)：劇痛如帶狀環抱穿透後背、需彎腰抱膝緩解、合併休克發紺。",
+          "腹主動脈瘤破裂 / 主動脈剝離 (AAA / Dissection)：突發劇烈撕裂性腹痛至背部、脈搏不對稱、搏動性腫塊。",
+          "下壁急性心肌梗塞 (Inferior MI)：糖尿病與長者常見無胸痛之非典型上腹痛，必排心電圖 (ECG) 排除。"
+        ],
+        differentials: [
+          { name: "消化性潰瘍 (Peptic Ulcer Disease - GU/DU)", desc: "空腹飢餓痛 (DU) 或進食後即痛 (GU)，常合併胃酸逆流、黑便。" },
+          { name: "急性 / 慢性胃炎 (Gastritis)", desc: "止痛藥 (NSAIDs)、酒精或辛辣刺激引發之瀰漫心窩悶脹疼痛。" },
+          { name: "胃食道逆流 (GERD)", desc: "火燒心、胸骨後灼痛、喉頭異物感、咽部酸澀。" },
+          { name: "早期急性闌尾炎 (Early Appendicitis)", desc: "發病最初 6~12 小時在心窩/臍周鈍痛，後續才轉移至右下腹。" }
+        ],
+        workup: [
+          { num: "1", title: "第一線檢驗與排除", desc: "血清 Amylase / Lipase、心電圖 (12-lead ECG 排除下壁心肌梗塞)、立位腹部 X 光 (KUB 排除自由氣體)。" },
+          { num: "2", title: "確診與內視鏡", desc: "上消化道內視鏡 (胃鏡 EGD - 評估潰瘍、幽門桿菌生檢與胃癌鑑別)；若疑似胰臟或大血管病變，安排顯影腹部 CT。" }
+        ],
+        phrase: "Epigastric burning and postprandial dull pain for days. No peritoneal signs. Differential diagnoses include peptic ulcer disease, acute gastritis, and early acute pancreatitis. Arranged EGD and serum amylase/lipase; advised proton pump inhibitor and diet modification."
+      },
+
+      luq: {
+        code: "LUQ",
+        name: "左上腹 (Left Upper Quadrant)",
+        latin: "Regio hypochondriaca sinistra",
+        mainTitle: "左上腹部疼痛",
+        subTitle: "核心臟器：胃體/胃底、脾臟、胰尾、結腸脾曲、左腎",
+        organs: ["胃底 / 胃大彎 (Stomach)", "脾臟 (Spleen)", "胰臟尾部 (Pancreatic Tail)", "結腸脾曲 (Splenic Flexure)", "左腎上極 (Left Kidney)"],
+        highlightMeshes: ["stomach", "spleen", "pancreas", "colon_luq", "kidney_l"],
+        cameraPos: { x: 2.5, y: 1.4, z: 10.5 },
+        cameraLook: { x: 0.9, y: 1.2, z: 0.1 },
+        redFlags: [
+          "脾臟破裂 (Splenic Rupture)：左季肋部外傷或脾腫大病患，突發左肩轉移痛 (Kehr sign) 與失血性休克。",
+          "脾臟梗塞 (Splenic Infarction)：心房顫動血栓或血液疾病引發，左上腹突發劇痛合併脾區摩擦音。",
+          "結腸脾曲腫瘤性腸阻塞：嚴重腹脹、排氣便停止、嘔吐。"
+        ],
+        differentials: [
+          { name: "胃潰瘍 / 胃底發炎 (Gastric Ulcer)", desc: "進食後左上腹壓迫悶痛，夜間易隱隱作痛。" },
+          { name: "結腸脾曲症候群 (Splenic Flexure Syndrome)", desc: "大腸轉角處氣體鬱積引發之左上腹脹痛，排氣或排便後常迅速緩解。" },
+          { name: "急性胰臟尾部炎 / 假性囊腫", desc: "左側背部與腰脅牽涉痛，酗酒或高三酸甘油脂病史常見。" },
+          { name: "左側腎結石 (Left Nephrolithiasis)", desc: "左後腰延伸至左下腹之突發陣發性劇烈絞痛。" }
+        ],
+        workup: [
+          { num: "1", title: "影像與常規檢查", desc: "腹部超音波 (評估脾臟大小、左腎水腫與結石) + 尿液常規 (鏡檢血尿排除結石) + 腹部 X 光 (KUB 評估脾曲氣體)。" },
+          { num: "2", title: "內視鏡與進階造影", desc: "胃鏡 EGD (檢查胃大彎與胃底黏膜)；若超音波懷疑脾臟梗塞或胰尾囊腫，安排腹部對比增強 CT。" }
+        ],
+        phrase: "LUQ dull aching pain without peritoneal signs. Splenic flexure gas entrapment, gastric fundus ulcer, and left renal calculus are considered. Arranged abdominal sonography, KUB, and urinalysis; prescribed antispasmodics and prokinetics."
+      },
+
+      r_flank: {
+        code: "RLUM",
+        name: "右側腰 (Right Lumbar / Flank)",
+        latin: "Regio lateralis dextra",
+        mainTitle: "右側腰部疼痛",
+        subTitle: "核心臟器：升結腸、右腎與輸尿管、後腹腔",
+        organs: ["升結腸 (Ascending Colon)", "右腎 (Right Kidney)", "右側輸尿管 (Right Ureter)", "腰肌筋膜 (Psoas Muscle)"],
+        highlightMeshes: ["colon_ruq", "kidney_r", "ureter_r"],
+        cameraPos: { x: -3.0, y: 0.2, z: 9.5 },
+        cameraLook: { x: -1.0, y: 0.1, z: -0.2 },
+        redFlags: [
+          "急性腎盂腎炎合併菌血休克：高燒顫抖、右側脊肋角顯著敲擊痛 (CVAT (+))、意識混亂。",
+          "腎周膿瘍 (Perinephric Abscess)：發燒多日未退，腰肌牽拉劇痛 (Psoas sign (+))。",
+          "升結腸穿孔性憩室炎：後腹腔游離氣體、嚴重局限性肌躍防衛。"
+        ],
+        differentials: [
+          { name: "右側輸尿管結石 (Right Ureteral Stone)", desc: "刀割般腰部陣發絞痛，沿輸尿管走向放射至右側鼠蹊部與睪丸/陰唇。" },
+          { name: "急性右側腎盂腎炎 (Acute Pyelonephritis)", desc: "發燒、畏寒、頻尿灼熱、右側敲擊痛 (CVAT) 顯著。" },
+          { name: "升結腸憩室炎 (Cecal/Ascending Diverticulitis)", desc: "右腰外側持續性發炎鈍痛，白血球發炎指數升高。" },
+          { name: "腰部肌筋膜拉傷 (Lumbar Strain)", desc: "特定姿勢或搬重時加劇，無發燒、敲擊痛與排尿異常。" }
+        ],
+        workup: [
+          { num: "1", title: "第一線尿液與超音波", desc: "尿液常規分析 (檢驗顯微血尿、膿尿、白血球酯酶) + 腎臟超音波 (評估右腎水腫 Hydronephrosis、結石結實訊號)。" },
+          { num: "2", title: "無顯影電腦斷層", desc: "非顯影腹部電腦斷層 (Non-contrast CT KUB - 偵測輸尿管結石之黃金標準，敏感度 >98%)。" }
+        ],
+        phrase: "Right flank colicky pain with radiation to the right groin. Right knocking pain (CVAT) is positive. Urinalysis reveals microscopic hematuria. Right ureteral stone suspected. Bedside renal US performed showing mild hydronephrosis; adequate hydration, analgesics, and non-contrast CT arranged."
+      },
+
+      umbilical: {
+        code: "UMB",
+        name: "中腹臍周 (Umbilical Region)",
+        latin: "Regio umbilicalis",
+        mainTitle: "臍周中腹部疼痛",
+        subTitle: "核心臟器：小腸、橫結腸、腹主動脈、腸繫膜",
+        organs: ["空腸與迴腸 (Small Intestines)", "橫結腸 (Transverse Colon)", "腹主動脈 (Abdominal Aorta)", "腸繫膜淋巴結 (Mesenteric Nodes)"],
+        highlightMeshes: ["small_intestines", "colon_transverse", "aorta"],
+        cameraPos: { x: 0, y: -0.2, z: 9.8 },
+        cameraLook: { x: 0, y: -0.4, z: 0.1 },
+        redFlags: [
+          "急性腸繫膜缺血 (Acute Mesenteric Ischemia)：高齡、心房顫動患者突發「檢查與痛感不成比例之劇烈全腹痛」，致死率極高。",
+          "絞勒性腸阻塞 (Strangulated Bowel Obstruction)：腹脹、嘔吐糞臭物、腹部反跳痛、腸鳴音由過亢驟降為死寂。",
+          "腹主動脈瘤擴大破裂 (AAA)：臍周摸到搏動性腫塊 (Pulsatile mass)、劇烈撕裂腰腹痛、低血壓。"
+        ],
+        differentials: [
+          { name: "急性腸胃炎 (Acute Gastroenteritis)", desc: "陣發性臍周絞痛，伴隨水瀉、嘔吐、腸鳴音亢進、多有飲食不潔史。" },
+          { name: "早期急性闌尾炎 (Early Appendicitis)", desc: "闌尾腔阻塞引發內臟神經反射，最初痛在肚臍周圍，數小時後轉移至右下腹。" },
+          { name: "機械性腸阻塞 (Mechanical Bowel Obstruction)", desc: "過去有腹部手術史 (沾黏)、腹脹、嘔吐、無法排氣 (Obstipation)。" },
+          { name: "腸繫膜淋巴腺炎 (Mesenteric Adenitis)", desc: "兒少族群常見，呼吸道感染後臍周發炎疼痛。" }
+        ],
+        workup: [
+          { num: "1", title: "急診與門診首選", desc: "立位/臥位腹部 X 光 (Plain KUB - 檢查是否有腸階梯狀氣液面 Air-fluid levels、大腸積氣或游離氣體)。" },
+          { num: "2", title: "血管與全腹部 CT", desc: "增強腹部血管電腦斷層 (CTA - 診斷腸繫膜動脈栓塞與腹主動脈瘤之黃金準則) + 腹部超音波。" }
+        ],
+        phrase: "Periumbilical crampy pain with hyperactive bowel sounds and diarrhea. Differential diagnoses include acute gastroenteritis, early-stage appendicitis, and partial bowel obstruction. Abdominal plain film (KUB) checked; prescribed antispasmodics and oral rehydration."
+      },
+
+      l_flank: {
+        code: "LLUM",
+        name: "左側腰 (Left Lumbar / Flank)",
+        latin: "Regio lateralis sinistra",
+        mainTitle: "左側腰部疼痛",
+        subTitle: "核心臟器：降結腸、左腎與輸尿管、腰肌筋膜",
+        organs: ["降結腸 (Descending Colon)", "左腎 (Left Kidney)", "左側輸尿管 (Left Ureter)", "腰肌筋膜 (Psoas Muscle)"],
+        highlightMeshes: ["colon_luq", "kidney_l", "ureter_l"],
+        cameraPos: { x: 3.0, y: 0.2, z: 9.5 },
+        cameraLook: { x: 1.0, y: 0.1, z: -0.2 },
+        redFlags: [
+          "左側重症腎盂腎炎伴敗血症：高熱發冷、左側敲擊痛極劇烈、尿量減少。",
+          "降結腸穿孔性憩室炎：左側腰腹部劇烈反彈痛與肌防禦。",
+          "腎臟梗塞 (Renal Infarction)：突發單側持續腰痛、肉眼血尿。"
+        ],
+        differentials: [
+          { name: "左側輸尿管結石 (Left Ureteral Calculus)", desc: "突發左腰劇烈絞痛，痛感放射至左鼠蹊部與生殖器，坐立難安。" },
+          { name: "急性左側腎盂腎炎 (Left Pyelonephritis)", desc: "左側肋脊角敲擊痛 (CVAT (+))、發燒、頻尿、濁尿。" },
+          { name: "降結腸憩室炎 (Descending Diverticulitis)", desc: "左側腰部局部發炎悶痛，伴隨發燒與排便習慣改變。" },
+          { name: "左側腰背肌肌筋膜疼痛 (Myofascial Pain)", desc: "按壓特定激痛點加劇，姿勢變換有明顯痛感差異。" }
+        ],
+        workup: [
+          { num: "1", title: "第一線尿液與超音波", desc: "尿液分析 (驗血尿、膿尿、尿蛋白) + 腎臟超音波 (評估左側腎盂水腫與結石影像)。" },
+          { num: "2", title: "非顯影電腦斷層", desc: "無顯影腹部 CT (Non-contrast CT - 99% 精準定位輸尿管結石位置、大小與水腎嚴重程度)。" }
+        ],
+        phrase: "Left flank sharp pain radiating down to the left groin area. Left CVAT is positive. Suspect left-side ureteral stone. Urinalysis ordered for hematuria; bedside renal echo arranged. Prescribed NSAIDs and hydration therapy."
+      },
+
+      rlq: {
+        code: "RLQ",
+        name: "右下腹 (Right Lower Quadrant)",
+        latin: "Regio inguinalis dextra",
+        mainTitle: "右下腹部疼痛",
+        subTitle: "核心臟器：闌尾、盲腸、末端迴腸、右側卵巢與輸卵管",
+        organs: ["闌尾 (Vermiform Appendix)", "盲腸 (Cecum)", "末端迴腸 (Terminal Ileum)", "右側卵巢/輸卵管 (Right Adnexa)", "右側骨盆輸尿管 (Right Ureter)"],
+        highlightMeshes: ["appendix", "cecum", "ileum", "adnexa_r"],
+        cameraPos: { x: -2.6, y: -1.5, z: 9.8 },
+        cameraLook: { x: -1.1, y: -1.4, z: 0.2 },
+        redFlags: [
+          "急性化膿穿孔性闌尾炎 (Perforated Appendicitis)：麥氏點 (McBurney) 局部壓痛轉為全腹反彈痛、高燒腹膜炎。",
+          "異位妊娠 (子宮外孕) 破裂 (Ruptured Ectopic Pregnancy)：育齡女性月經延遲，突發右下腹劇痛、陰道微出血、失血休克。",
+          "卵巢黃體破裂或卵巢扭轉 (Ovarian Torsion)：突發劇烈撕裂絞痛、噁心嘔吐，扭轉需在 6 小時內緊急腹腔鏡復位挽救卵巢。"
+        ],
+        differentials: [
+          { name: "急性闌尾炎 (Acute Appendicitis)", desc: "上腹轉移痛至右下腹，麥氏點壓痛 (McBurney)、跳痛 (Rovsing sign (+))。" },
+          { name: "盲腸 / 升結腸憩室炎 (Cecal Diverticulitis)", desc: "亞洲人常見右側憩室炎，症狀與闌尾炎極為相似，需 CT 鑑別。" },
+          { name: "末端迴腸炎 / 克隆氏症 (Crohn's Disease)", desc: "反覆右下腹痛、慢性腹瀉、發燒、營養不良或自體免疫表徵。" },
+          { name: "骨盆腔發炎 / 排卵痛 (Mittelschmerz / PID)", desc: "女性月經週期中期之單側排卵痛或子宮頸搖擺痛 (Chandelier sign)。" }
+        ],
+        workup: [
+          { num: "1", title: "急診與女性必要排除", desc: "發炎指標 (CBC/DC - 白血球上升合併左移、CRP) + 育齡女性必驗懷孕測試 (Urine hCG) + 闌尾/骨盆腔超音波。" },
+          { num: "2", title: "鑑別與確診黃金標準", desc: "腹部骨盆腔顯影電腦斷層 (Abdominal & Pelvic CT - 確診闌尾直徑 >6mm、闌尾糞石、周邊脂肪浸潤及鑑別憩室炎之標準)。" }
+        ],
+        phrase: "Localized tenderness over McBurney's point with rebound pain. Rovsing's sign positive. Acute appendicitis is highly suspected. Differential diagnoses include cecal diverticulitis and gynecologic emergencies. Arranged CBC/DC, CRP, pregnancy test (U-hCG), and urgent abdominal CT."
+      },
+
+      suprapubic: {
+        code: "PUB",
+        name: "下腹恥骨上 (Hypogastrium / Suprapubic)",
+        latin: "Regio pubica",
+        mainTitle: "恥骨上下腹部疼痛",
+        subTitle: "核心臟器：膀胱、直腸、子宮、攝護腺、尿道",
+        organs: ["膀胱 (Urinary Bladder)", "直腸 (Rectum)", "子宮 (Uterus - 女)", "攝護腺 (Prostate - 男)", "尿道與骨盆腔底 (Pelvic Floor)"],
+        highlightMeshes: ["bladder", "rectum", "uterus_prostate"],
+        cameraPos: { x: 0, y: -2.0, z: 9.5 },
+        cameraLook: { x: 0, y: -1.8, z: 0.1 },
+        redFlags: [
+          "急性尿滯留伴膀胱過度膨脹破裂 (Acute Urinary Retention)：極度下腹脹痛無尿、恥骨上膨大壓痛、高血壓心跳快。",
+          "骨盆腔膿瘍 (Tubo-ovarian Abscess - TOA)：高燒、下腹嚴重壓痛與膿樣白帶、可能誘發敗血症。",
+          "直腸穿孔或嵌頓性子宮肌瘤扭轉：劇痛併休克。"
+        ],
+        differentials: [
+          { name: "急性膀胱炎 (Acute Cystitis)", desc: "女性常見，下腹悶痛、解尿灼熱痛 (Dysuria)、頻尿急尿、血尿。" },
+          { name: "骨盆腔發炎反應 (PID)", desc: "下腹雙側鈍痛、性交後疼痛、陰道異常分泌物、子宮頸搖擺痛。" },
+          { name: "急性尿滯留 (AUR)", desc: "男性攝護腺肥大 (BPH) 或術後常見，無法解尿、恥骨上劇烈悶脹。" },
+          { name: "直腸乙狀結腸炎 (Proctosigmoiditis)", desc: "排便時劇痛、裡急後重 (Tenesmus)、排便帶黏液鮮血。" }
+        ],
+        workup: [
+          { num: "1", title: "常規尿液與超音波", desc: "尿液分析與尿液培養 (Urine analysis & Culture) + 膀胱超音波 (評估餘尿量 Post-void residual >300ml 需導尿)。" },
+          { num: "2", title: "婦科超音波與內診", desc: "經腹部或經陰道骨盆腔超音波 (Pelvic US - 評估子宮內膜、肌瘤與卵巢卵管積膿) + 婦科內診抹片。" }
+        ],
+        phrase: "Suprapubic dull aching pain with dysuria, frequency, and sensation of incomplete emptying. Bladder percussion shows mild dullness. Suspect acute bacterial cystitis or acute urinary retention. Urinalysis and bedside bladder scan arranged."
+      },
+
+      llq: {
+        code: "LLQ",
+        name: "左下腹 (Left Lower Quadrant)",
+        latin: "Regio inguinalis sinistra",
+        mainTitle: "左下腹部疼痛",
+        subTitle: "核心臟器：乙狀結腸、降結腸、左側卵巢與輸卵管",
+        organs: ["乙狀結腸 (Sigmoid Colon)", "降結腸末端 (Descending Colon)", "左側卵巢/輸卵管 (Left Adnexa)", "左側輸尿管骨盆段 (Left Ureter)"],
+        highlightMeshes: ["colon_llq", "sigmoid", "adnexa_l"],
+        cameraPos: { x: 2.6, y: -1.5, z: 9.8 },
+        cameraLook: { x: 1.1, y: -1.4, z: 0.2 },
+        redFlags: [
+          "乙狀結腸捻轉 (Sigmoid Volvulus)：高齡長者突發巨型腹脹如氣球、腹痛無排氣、X光可見典型「咖啡豆徵象 (Coffee-bean sign)」需緊急減壓。",
+          "穿孔性左側大腸憩室炎 (Perforated Diverticulitis)：左下腹極度反彈痛、游離腹腔氣體、糞石性腹膜炎。",
+          "左側異位妊娠破裂或卵巢黃體破裂失血。"
+        ],
+        differentials: [
+          { name: "急性乙狀結腸憩室炎 (Sigmoid Diverticulitis)", desc: "西方稱「左側闌尾炎」，左下腹局部壓痛、低溫發燒、排便習慣改變。" },
+          { name: "大腸激躁症 (IBS - Spastic Colon)", desc: "便秘或腹瀉交替、左下腹痙攣痛、排氣或排便後顯著緩解、無夜間痛。" },
+          { name: "左側婦科病變 (Adnexal Pathology)", desc: "左側卵巢囊腫扭轉、黃體破裂、巧克力囊腫破裂 (子宮內膜異位)。" },
+          { name: "缺血性大腸炎 (Ischemic Colitis)", desc: "心血管疾病長者餐後突發左下腹絞痛，隨後排出深紅或鮮血便。" }
+        ],
+        workup: [
+          { num: "1", title: "急性期首選影像", desc: "腹部骨盆腔對比增強 CT (Contrast CT - 評估憩室壁增厚、周邊膿瘍 Hinchey 分期，急性期避免灌腸或大腸鏡防穿孔)。" },
+          { num: "2", title: "亞急性期內視鏡與追蹤", desc: "抗生素控制緩解 6~8 週後，常規施行全大腸鏡檢查 (Colonoscopy) 排除惡性大腸腫瘤合併發炎。" }
+        ],
+        phrase: "LLQ tender cramping pain with constipation and mild fever. Left lower abdominal tenderness without overt rigidity. Suspect acute sigmoid diverticulitis. Arranged CBC, CRP, and abdominal CT scan; colonoscopy deferred until acute infection subsides."
+      }
+    };
+
+    // --- State Variables ---
+    let currentRegion = 'epigastric';
+    let displayMode = '3d'; // '3d' or '2d'
+    let scene, camera, renderer, controls;
+    let organMeshes = {};
+    let gridPlaneMeshes = {};
+    let isInitialized = false;
+
+    // --- 3D Initialization ---
+    function init3D() {
+      const container = document.getElementById('threejs-canvas-container');
+      if (!container) return;
+
+      const isMobile = window.innerWidth <= 1150;
+      const width = container.clientWidth || (isMobile ? window.innerWidth : 600);
+      const height = container.clientHeight || (isMobile ? 360 : (window.innerHeight - 130));
+
+      // 1. Scene & Camera
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      camera.position.set(0, isMobile ? 0.9 : 0.2, isMobile ? 14.5 : 9.5);
+
+      // 2. Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.domElement.style.width = '100%';
+      renderer.domElement.style.height = '100%';
+      container.appendChild(renderer.domElement);
+
+      // 3. Orbit Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 3.5;
+      controls.maxDistance = 24;
+      controls.target.set(0, isMobile ? 0.8 : 0.1, 0);
+
+      // 4. Balanced Medical Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+
+      const mainLight = new THREE.DirectionalLight(0xfff5ea, 0.95);
+      mainLight.position.set(6, 8, 8);
+      scene.add(mainLight);
+
+      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.55);
+      rimLight.position.set(-6, -4, 6);
+      scene.add(rimLight);
+
+      const backLight = new THREE.DirectionalLight(0x10b981, 0.4);
+      backLight.position.set(0, -6, -6);
+      scene.add(backLight);
+
+      // 5. Build Anatomical Model & Holographic 9-Grid
+      buildTranslucentTorsoOutline();
+      buildAbdominalOrgans();
+      build3DHologramGridPlanes();
+
+      // 6. Raycaster
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      renderer.domElement.addEventListener('pointerdown', (e) => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        const planeList = Object.values(gridPlaneMeshes);
+        const intersects = raycaster.intersectObjects(planeList);
+        if (intersects.length > 0) {
+          const hit = intersects[0].object;
+          if (hit.userData && hit.userData.regionKey) {
+            selectRegion(hit.userData.regionKey);
+          }
+        }
+      });
+
+      // 7. Auto-Resize Observer
+      const resizeObserver = new ResizeObserver(() => onWindowResize());
+      resizeObserver.observe(container);
+      window.addEventListener('resize', onWindowResize);
+
+      // Set initial
+      selectRegion('epigastric');
+
+      // Animation Loop
+      animate();
+      isInitialized = true;
+    }
+
+    // --- Build Translucent Body Silhouette & Ribcage Guide ---
+    function buildTranslucentTorsoOutline() {
+      const torsoGroup = new THREE.Group();
+
+      const bodyMat = new THREE.MeshPhysicalMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.08,
+        roughness: 0.3,
+        clearcoat: 0.5,
+        wireframe: false,
+        side: THREE.BackSide
+      });
+
+      // Simplified organic torso envelope
+      const torsoGeom = new THREE.CylinderGeometry(2.3, 1.9, 6.2, 32, 8, true);
+      torsoGeom.scale(1.15, 1.0, 0.68);
+      const torsoMesh = new THREE.Mesh(torsoGeom, bodyMat);
+      torsoMesh.position.set(0, 0.1, -0.1);
+      torsoGroup.add(torsoMesh);
+
+      // Translucent ribcage arch
+      const ribMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.15, wireframe: true });
+      const ribGeom = new THREE.CylinderGeometry(2.2, 2.0, 2.5, 18, 4, true);
+      ribGeom.scale(1.1, 1.0, 0.65);
+      const ribMesh = new THREE.Mesh(ribGeom, ribMat);
+      ribMesh.position.set(0, 1.6, -0.05);
+      torsoGroup.add(ribMesh);
+
+      scene.add(torsoGroup);
+    }
+
+    // --- Build Full Abdominal Organs ---
+    function buildAbdominalOrgans() {
+      const organsMasterGroup = new THREE.Group();
+
+      // Materials (Base State)
+      const matLiver = new THREE.MeshPhysicalMaterial({ color: 0x8b2522, roughness: 0.45, clearcoat: 0.25, transparent: true, opacity: 0.85 });
+      const matGB = new THREE.MeshPhysicalMaterial({ color: 0x4d7c0f, roughness: 0.35, clearcoat: 0.3, transparent: true, opacity: 0.9 });
+      const matStomach = new THREE.MeshPhysicalMaterial({ color: 0xb45309, roughness: 0.5, clearcoat: 0.2, transparent: true, opacity: 0.88 });
+      const matSpleen = new THREE.MeshPhysicalMaterial({ color: 0x6b21a8, roughness: 0.4, clearcoat: 0.25, transparent: true, opacity: 0.85 });
+      const matPancreas = new THREE.MeshPhysicalMaterial({ color: 0xd97706, roughness: 0.5, clearcoat: 0.2, transparent: true, opacity: 0.88 });
+      const matDuodenum = new THREE.MeshPhysicalMaterial({ color: 0xca8a04, roughness: 0.5, clearcoat: 0.2, transparent: true, opacity: 0.85 });
+      const matColon = new THREE.MeshPhysicalMaterial({ color: 0x059669, roughness: 0.45, clearcoat: 0.2, transparent: true, opacity: 0.85 });
+      const matSmallInt = new THREE.MeshPhysicalMaterial({ color: 0xd97706, roughness: 0.55, clearcoat: 0.15, transparent: true, opacity: 0.82 });
+      const matKidney = new THREE.MeshPhysicalMaterial({ color: 0x9f1239, roughness: 0.45, clearcoat: 0.2, transparent: true, opacity: 0.85 });
+      const matBladder = new THREE.MeshPhysicalMaterial({ color: 0x0284c7, roughness: 0.35, clearcoat: 0.3, transparent: true, opacity: 0.85 });
+      const matAorta = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.3 });
+      const matUreter = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 });
+
+      // 1. Liver (RUQ)
+      const liverGeom = new THREE.SphereGeometry(1.4, 28, 20);
+      liverGeom.scale(1.2, 0.85, 0.7);
+      const liverMesh = new THREE.Mesh(liverGeom, matLiver);
+      liverMesh.position.set(-0.85, 1.45, 0.05);
+      liverMesh.rotation.z = -Math.PI / 16;
+      organMeshes.liver = liverMesh;
+      organsMasterGroup.add(liverMesh);
+
+      // 2. Gallbladder (RUQ)
+      const gbGeom = new THREE.SphereGeometry(0.32, 20, 16);
+      gbGeom.scale(0.8, 1.4, 0.8);
+      const gbMesh = new THREE.Mesh(gbGeom, matGB);
+      gbMesh.position.set(-1.15, 0.55, 0.48);
+      gbMesh.rotation.z = Math.PI / 6;
+      organMeshes.gallbladder = gbMesh;
+      organsMasterGroup.add(gbMesh);
+
+      // 3. Stomach (Epigastrium -> LUQ)
+      const stCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.1, 2.2, 0.1),
+        new THREE.Vector3(0.5, 1.7, 0.3),
+        new THREE.Vector3(0.8, 1.2, 0.3),
+        new THREE.Vector3(0.4, 0.5, 0.35),
+        new THREE.Vector3(-0.3, 0.65, 0.3)
+      ]);
+      const stMesh = new THREE.Mesh(new THREE.TubeGeometry(stCurve, 28, 0.45, 14, false), matStomach);
+      organMeshes.stomach = stMesh;
+      organsMasterGroup.add(stMesh);
+
+      // 4. Spleen (LUQ)
+      const spleenGeom = new THREE.SphereGeometry(0.65, 20, 16);
+      spleenGeom.scale(0.7, 1.1, 0.8);
+      const spleenMesh = new THREE.Mesh(spleenGeom, matSpleen);
+      spleenMesh.position.set(1.75, 1.35, -0.15);
+      spleenMesh.rotation.z = -Math.PI / 8;
+      organMeshes.spleen = spleenMesh;
+      organsMasterGroup.add(spleenMesh);
+
+      // 5. Pancreas (Epigastrium / Transverse)
+      const pancCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.35, 0.6, 0.05),
+        new THREE.Vector3(0.1, 0.75, 0.0),
+        new THREE.Vector3(0.8, 0.85, -0.05),
+        new THREE.Vector3(1.4, 1.1, -0.1)
+      ]);
+      const pancMesh = new THREE.Mesh(new THREE.TubeGeometry(pancCurve, 20, 0.22, 10, false), matPancreas);
+      organMeshes.pancreas = pancMesh;
+      organsMasterGroup.add(pancMesh);
+
+      // 6. Duodenum C-Loop (Epigastrium / RUQ)
+      const duodCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.3, 0.65, 0.3),
+        new THREE.Vector3(-0.55, 0.85, 0.2),
+        new THREE.Vector3(-0.75, 0.4, 0.15),
+        new THREE.Vector3(-0.55, -0.05, 0.15),
+        new THREE.Vector3(0.0, -0.05, 0.1)
+      ]);
+      const duodMesh = new THREE.Mesh(new THREE.TubeGeometry(duodCurve, 24, 0.18, 10, false), matDuodenum);
+      organMeshes.duodenum = duodMesh;
+      organsMasterGroup.add(duodMesh);
+
+      // 7. Large Intestine / Colon (Bordering all quadrants)
+      // Ascending (Right Flank)
+      const ascCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.35, -1.8, 0.25),
+        new THREE.Vector3(-1.42, -0.8, 0.25),
+        new THREE.Vector3(-1.38, 0.2, 0.25),
+        new THREE.Vector3(-1.25, 0.9, 0.2)
+      ]);
+      const ascMesh = new THREE.Mesh(new THREE.TubeGeometry(ascCurve, 20, 0.26, 12, false), matColon);
+      organMeshes.colon_ruq = ascMesh;
+      organsMasterGroup.add(ascMesh);
+
+      // Transverse (Umbilical)
+      const transCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.25, 0.9, 0.2),
+        new THREE.Vector3(-0.6, 0.5, 0.38),
+        new THREE.Vector3(0.0, 0.42, 0.42),
+        new THREE.Vector3(0.7, 0.55, 0.38),
+        new THREE.Vector3(1.35, 1.05, 0.2)
+      ]);
+      const transMesh = new THREE.Mesh(new THREE.TubeGeometry(transCurve, 24, 0.24, 12, false), matColon);
+      organMeshes.colon_transverse = transMesh;
+      organsMasterGroup.add(transMesh);
+
+      // Descending & Sigmoid (Left Flank -> LLQ)
+      const descCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(1.35, 1.05, 0.2),
+        new THREE.Vector3(1.42, 0.2, 0.22),
+        new THREE.Vector3(1.38, -0.8, 0.24),
+        new THREE.Vector3(1.2, -1.6, 0.28),
+        new THREE.Vector3(0.6, -1.9, 0.22),
+        new THREE.Vector3(0.0, -2.2, 0.05)
+      ]);
+      const descMesh = new THREE.Mesh(new THREE.TubeGeometry(descCurve, 28, 0.24, 12, false), matColon);
+      organMeshes.colon_luq = descMesh;
+      organMeshes.colon_llq = descMesh;
+      organMeshes.sigmoid = descMesh;
+      organsMasterGroup.add(descMesh);
+
+      // Appendix (RLQ)
+      const appCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.35, -1.8, 0.25),
+        new THREE.Vector3(-1.5, -2.1, 0.28),
+        new THREE.Vector3(-1.38, -2.3, 0.22)
+      ]);
+      const appMesh = new THREE.Mesh(new THREE.TubeGeometry(appCurve, 12, 0.08, 8, false), new THREE.MeshStandardMaterial({ color: 0xef4444 }));
+      organMeshes.appendix = appMesh;
+      organMeshes.cecum = ascMesh;
+      organsMasterGroup.add(appMesh);
+
+      // Rectum (Suprapubic)
+      const recGeom = new THREE.CylinderGeometry(0.24, 0.2, 1.1, 14);
+      const recMesh = new THREE.Mesh(recGeom, matColon);
+      recMesh.position.set(0, -2.55, -0.05);
+      organMeshes.rectum = recMesh;
+      organsMasterGroup.add(recMesh);
+
+      // 8. Small Intestines (Central Umbilical bunch)
+      const smallIntGroup = new THREE.Group();
+      for (let i = 0; i < 9; i++) {
+        const loopGeom = new THREE.TorusGeometry(0.35 + (i % 3) * 0.12, 0.12, 8, 16, Math.PI * 1.5);
+        const loopMesh = new THREE.Mesh(loopGeom, matSmallInt);
+        loopMesh.position.set(((i % 3) - 1) * 0.45, -0.5 - Math.floor(i / 3) * 0.42, 0.18 + (i % 2) * 0.08);
+        loopMesh.rotation.set((i * 0.4), (i * 0.3), (i * 0.5));
+        smallIntGroup.add(loopMesh);
+      }
+      organMeshes.small_intestines = smallIntGroup;
+      organMeshes.ileum = smallIntGroup;
+      organsMasterGroup.add(smallIntGroup);
+
+      // 9. Kidneys & Ureters (Right & Left Flanks - Posterior)
+      // Right Kidney
+      const rKidGeom = new THREE.SphereGeometry(0.45, 18, 14);
+      rKidGeom.scale(0.7, 1.25, 0.7);
+      const rKidMesh = new THREE.Mesh(rKidGeom, matKidney);
+      rKidMesh.position.set(-1.3, 0.45, -0.5);
+      organMeshes.kidney_r = rKidMesh;
+      organsMasterGroup.add(rKidMesh);
+
+      // Left Kidney
+      const lKidGeom = new THREE.SphereGeometry(0.45, 18, 14);
+      lKidGeom.scale(0.7, 1.25, 0.7);
+      const lKidMesh = new THREE.Mesh(lKidGeom, matKidney);
+      lKidMesh.position.set(1.3, 0.65, -0.5);
+      organMeshes.kidney_l = lKidMesh;
+      organsMasterGroup.add(lKidMesh);
+
+      // Ureters running down
+      const rUreterCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.25, 0.25, -0.45),
+        new THREE.Vector3(-1.1, -0.8, -0.35),
+        new THREE.Vector3(-0.7, -1.8, -0.15),
+        new THREE.Vector3(-0.25, -2.05, 0.1)
+      ]);
+      const rUreter = new THREE.Mesh(new THREE.TubeGeometry(rUreterCurve, 16, 0.035, 8, false), matUreter);
+      organMeshes.ureter_r = rUreter;
+      organsMasterGroup.add(rUreter);
+
+      const lUreterCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(1.25, 0.45, -0.45),
+        new THREE.Vector3(1.1, -0.8, -0.35),
+        new THREE.Vector3(0.7, -1.8, -0.15),
+        new THREE.Vector3(0.25, -2.05, 0.1)
+      ]);
+      const lUreter = new THREE.Mesh(new THREE.TubeGeometry(lUreterCurve, 16, 0.035, 8, false), matUreter);
+      organMeshes.ureter_l = lUreter;
+      organsMasterGroup.add(lUreter);
+
+      // 10. Urinary Bladder (Suprapubic)
+      const bladderGeom = new THREE.SphereGeometry(0.55, 20, 16);
+      bladderGeom.scale(1.1, 0.95, 0.9);
+      const bladderMesh = new THREE.Mesh(bladderGeom, matBladder);
+      bladderMesh.position.set(0, -2.0, 0.25);
+      organMeshes.bladder = bladderMesh;
+      organsMasterGroup.add(bladderMesh);
+
+      // Uterus/Prostate representation
+      const utGeom = new THREE.ConeGeometry(0.3, 0.6, 12);
+      const utMesh = new THREE.Mesh(utGeom, new THREE.MeshStandardMaterial({ color: 0xe879f9, roughness: 0.4 }));
+      utMesh.position.set(0, -1.85, 0.05);
+      utMesh.rotation.x = Math.PI;
+      organMeshes.uterus_prostate = utMesh;
+      organsMasterGroup.add(utMesh);
+
+      // Adnexa R & L
+      const adnexaMat = new THREE.MeshStandardMaterial({ color: 0xf472b6 });
+      const adnexaR = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 10), adnexaMat);
+      adnexaR.position.set(-0.85, -1.85, 0.1);
+      organMeshes.adnexa_r = adnexaR;
+      organsMasterGroup.add(adnexaR);
+
+      const adnexaL = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 10), adnexaMat);
+      adnexaL.position.set(0.85, -1.85, 0.1);
+      organMeshes.adnexa_l = adnexaL;
+      organsMasterGroup.add(adnexaL);
+
+      // 11. Abdominal Aorta
+      const aortaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 4.8, 16), matAorta);
+      aortaMesh.position.set(0.15, -0.1, -0.42);
+      organMeshes.aorta = aortaMesh;
+      organsMasterGroup.add(aortaMesh);
+
+      scene.add(organsMasterGroup);
+    }
+
+    // --- Build 3D Holographic Nine-Grid Clickable Planes ---
+    function build3DHologramGridPlanes() {
+      const gridPlanesGroup = new THREE.Group();
+
+      const cellPositions = {
+        ruq:        { x: -1.35, y: 1.25, w: 1.2, h: 1.35 },
+        epigastric: { x: 0.0,   y: 1.25, w: 1.3, h: 1.35 },
+        luq:        { x: 1.35,  y: 1.25, w: 1.2, h: 1.35 },
+        r_flank:    { x: -1.35, y: -0.2, w: 1.2, h: 1.4 },
+        umbilical:  { x: 0.0,   y: -0.2, w: 1.3, h: 1.4 },
+        l_flank:    { x: 1.35,  y: -0.2, w: 1.2, h: 1.4 },
+        rlq:        { x: -1.35, y: -1.75, w: 1.2, h: 1.5 },
+        suprapubic: { x: 0.0,   y: -1.75, w: 1.3, h: 1.5 },
+        llq:        { x: 1.35,  y: -1.75, w: 1.2, h: 1.5 }
+      };
+
+      Object.entries(cellPositions).forEach(([key, pos]) => {
+        // Plane geometry in front of organs
+        const planeGeom = new THREE.PlaneGeometry(pos.w, pos.h);
+        const planeMat = new THREE.MeshBasicMaterial({
+          color: 0x38bdf8,
+          transparent: true,
+          opacity: 0.04,
+          side: THREE.DoubleSide
+        });
+
+        const planeMesh = new THREE.Mesh(planeGeom, planeMat);
+        planeMesh.position.set(pos.x, pos.y, 0.92);
+        planeMesh.userData = { regionKey: key, defaultColor: 0x38bdf8, defaultOpacity: 0.04 };
+
+        // Wireframe boundary
+        const edges = new THREE.EdgesGeometry(planeGeom);
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.35 });
+        const line = new THREE.LineSegments(edges, lineMat);
+        planeMesh.add(line);
+        planeMesh.userData.line = line;
+
+        gridPlaneMeshes[key] = planeMesh;
+        gridPlanesGroup.add(planeMesh);
+      });
+
+      scene.add(gridPlanesGroup);
+    }
+
+    // --- Animation Loop ---
+    function animate() {
+      requestAnimationFrame(animate);
+      TWEEN.update();
+      if (controls) controls.update();
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
+    }
+
+    // --- Resize Handler ---
+    function onWindowResize() {
+      const container = document.getElementById('threejs-canvas-container');
+      if (!container || !renderer || !camera) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (width > 0 && height > 0) {
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }
+    }
+
+    // --- Region Selection Handler (Syncs 3D, 2D, and Clinical Panel) ---
+    function selectRegion(regionKey) {
+      const data = ABD_DATA[regionKey];
+      if (!data) return;
+
+      currentRegion = regionKey;
+
+      // 1. Update Left Card List & Mini-grid
+      document.querySelectorAll('.seg-card-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`card-${regionKey}`)?.classList.add('active');
+
+      document.querySelectorAll('.mini-grid-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.mini-grid-btn[data-region="${regionKey}"]`)?.classList.add('active');
+
+      // 2. Update 2D Grid Cells
+      document.querySelectorAll('.twod-cell').forEach(c => c.classList.remove('active'));
+      document.getElementById(`twod-${regionKey}`)?.classList.add('active');
+
+      // 3. Update Bottom Bar Label
+      const bottomLabel = document.getElementById('bottomSelectedRegionName');
+      if (bottomLabel) bottomLabel.textContent = data.name;
+
+      // 4. Update Right Clinical Details Panel
+      updateClinicalPanel(data);
+
+      // 5. Update 3D Stage (Camera & Organ Opacity/Emissive)
+      if (isInitialized && displayMode === '3d') {
+        highlight3DOrgans(data.highlightMeshes);
+
+        // Update 3D Grid Plane Hologram Highlights
+        Object.entries(gridPlaneMeshes).forEach(([k, mesh]) => {
+          if (k === regionKey) {
+            mesh.material.color.setHex(0x10b981);
+            mesh.material.opacity = 0.22;
+            mesh.userData.line.material.color.setHex(0x34d399);
+            mesh.userData.line.material.opacity = 0.9;
+          } else {
+            mesh.material.color.setHex(0x38bdf8);
+            mesh.material.opacity = 0.04;
+            mesh.userData.line.material.color.setHex(0x0ea5e9);
+            mesh.userData.line.material.opacity = 0.3;
+          }
+        });
+
+        // Smooth Camera Tween to Framing
+        const isMobile = window.innerWidth <= 1150;
+        const targetPos = new THREE.Vector3(
+          data.cameraPos.x * (isMobile ? 0.8 : 1.0),
+          data.cameraPos.y * (isMobile ? 1.0 : 1.0),
+          data.cameraPos.z * (isMobile ? 1.4 : 1.0)
+        );
+        const targetLook = new THREE.Vector3(data.cameraLook.x, data.cameraLook.y, data.cameraLook.z);
+
+        new TWEEN.Tween(camera.position).to(targetPos, 800).easing(TWEEN.Easing.Cubic.Out).start();
+        new TWEEN.Tween(controls.target).to(targetLook, 800).easing(TWEEN.Easing.Cubic.Out).start();
+      }
+    }
+
+    // --- Highlight Specific 3D Organs ---
+    function highlight3DOrgans(targetMeshKeys) {
+      if (!targetMeshKeys) return;
+      const targetSet = new Set(targetMeshKeys);
+
+      Object.entries(organMeshes).forEach(([key, mesh]) => {
+        if (!mesh) return;
+
+        // Determine if mesh is in target
+        const isTarget = targetSet.has(key);
+
+        const applyHighlight = (m) => {
+          if (m.material) {
+            if (isTarget) {
+              m.material.opacity = 0.95;
+              if (m.material.emissive) {
+                m.material.emissive.setHex(0x38bdf8);
+                m.material.emissiveIntensity = 0.35;
+              }
+            } else {
+              m.material.opacity = 0.18;
+              if (m.material.emissive) {
+                m.material.emissiveIntensity = 0.0;
+              }
+            }
+          }
+        };
+
+        if (mesh.isGroup) {
+          mesh.traverse(child => {
+            if (child.isMesh) applyHighlight(child);
+          });
+        } else if (mesh.isMesh) {
+          applyHighlight(mesh);
+        }
+      });
+    }
+
+    // --- Update Right Clinical Details Panel Content ---
+    function updateClinicalPanel(data) {
+      document.getElementById('badgeRegionCode').textContent = data.code;
+      document.getElementById('detailPill').textContent = data.name;
+      document.getElementById('detailLatin').textContent = data.latin;
+      document.getElementById('detailMainTitle').textContent = data.mainTitle;
+      document.getElementById('detailSubTitle').textContent = data.subTitle;
+
+      // Organ Tags
+      const tagsContainer = document.getElementById('detailOrganTags');
+      if (tagsContainer) {
+        tagsContainer.innerHTML = data.organs.map((o, idx) => 
+          `<span class="organ-chip ${idx < 3 ? 'highlight' : ''}">${o}</span>`
+        ).join('');
+      }
+
+      // Red Flags List
+      const redFlagsList = document.getElementById('detailRedFlagsList');
+      if (redFlagsList) {
+        redFlagsList.innerHTML = data.redFlags.map(rf => `<li>${rf}</li>`).join('');
+      }
+
+      // Differential Diagnosis
+      const diffContainer = document.getElementById('detailDiffList');
+      if (diffContainer) {
+        diffContainer.innerHTML = data.differentials.map(d => `
+          <div class="diff-item">
+            <span class="diff-name">${d.name}</span>
+            <span class="diff-desc">${d.desc}</span>
+          </div>
+        `).join('');
+      }
+
+      // Workup Steps
+      const workupBox = document.getElementById('detailWorkupBox');
+      if (workupBox) {
+        workupBox.innerHTML = data.workup.map(w => `
+          <div class="workup-step">
+            <span class="step-num">${w.num}</span>
+            <div class="step-content">
+              <strong>${w.title}</strong>
+              <p>${w.desc}</p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // SOAP Phrase
+      const phraseContent = document.getElementById('chartPhraseText');
+      if (phraseContent) {
+        phraseContent.textContent = data.phrase;
+      }
+    }
+
+    // --- Switch Display Mode (3D Stage vs 2D Matrix) ---
+    function switchDisplayMode(mode) {
+      displayMode = mode;
+
+      document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-mode-${mode}`)?.classList.add('active');
+
+      const stage3D = document.getElementById('threejs-canvas-container');
+      const stage2D = document.getElementById('twod-grid-container');
+      const toolbar = document.getElementById('viewAnglesToolbar');
+      const orbitHint = document.getElementById('orbitHint');
+      const modeText = document.getElementById('activeModeText');
+
+      if (mode === '3d') {
+        stage3D.classList.add('active');
+        stage2D.classList.remove('active');
+        if (toolbar) toolbar.style.display = 'flex';
+        if (orbitHint) orbitHint.style.display = 'flex';
+        if (modeText) modeText.textContent = '目前檢視：3D 人體器官透視 (點選九宮格即刻高亮對應臟器)';
+        
+        onWindowResize();
+        selectRegion(currentRegion);
+      } else {
+        stage3D.classList.remove('active');
+        stage2D.classList.add('active');
+        if (toolbar) toolbar.style.display = 'none';
+        if (orbitHint) orbitHint.style.display = 'none';
+        if (modeText) modeText.textContent = '目前檢視：2D 醫療級九宮格速查盤 (點選任一宮格即連動臨床鑑別)';
+
+        selectRegion(currentRegion);
+      }
+    }
+
+    // --- 3D Preset Angle Toolbar Controls ---
+    function set3DPresetView(preset) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.view-btn[data-view="${preset}"]`)?.classList.add('active');
+
+      const isMobile = window.innerWidth <= 1150;
+      let targetPos = new THREE.Vector3(0, isMobile ? 0.9 : 0.2, isMobile ? 14.5 : 9.5);
+      let targetLook = new THREE.Vector3(0, isMobile ? 0.8 : 0.1, 0);
+
+      switch(preset) {
+        case 'anterior':
+          targetPos.set(0, isMobile ? 0.9 : 0.2, isMobile ? 14.5 : 9.5);
+          targetLook.set(0, isMobile ? 0.8 : 0.1, 0);
+          break;
+        case 'upper':
+          targetPos.set(0, isMobile ? 1.5 : 1.1, isMobile ? 10.5 : 7.0);
+          targetLook.set(0, isMobile ? 1.2 : 0.9, 0.1);
+          break;
+        case 'lower':
+          targetPos.set(0, isMobile ? -1.2 : -1.5, isMobile ? 10.5 : 7.0);
+          targetLook.set(0, isMobile ? -1.6 : -1.8, 0.1);
+          break;
+        case 'right_flank':
+          targetPos.set(isMobile ? -8.5 : -6.5, isMobile ? 0.5 : 0.2, isMobile ? 7.0 : 4.5);
+          targetLook.set(-1.0, isMobile ? 0.3 : 0.0, 0);
+          break;
+        case 'left_flank':
+          targetPos.set(isMobile ? 8.5 : 6.5, isMobile ? 0.5 : 0.2, isMobile ? 7.0 : 4.5);
+          targetLook.set(1.0, isMobile ? 0.3 : 0.0, 0);
+          break;
+      }
+
+      new TWEEN.Tween(camera.position).to(targetPos, 850).easing(TWEEN.Easing.Cubic.Out).start();
+      new TWEEN.Tween(controls.target).to(targetLook, 850).easing(TWEEN.Easing.Cubic.Out).start();
+    }
+
+    function resetView() {
+      set3DPresetView('anterior');
+      selectRegion('epigastric');
+      showToast('已重設為正面全覽視角');
+    }
+
+    // --- Mobile Tab Switching ---
+    function switchMobileTab(tab) {
+      document.querySelectorAll('.mobile-tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-btn-${tab}`)?.classList.add('active');
+
+      const regionsPane = document.getElementById('pane-regions-pathology');
+      const detailsPane = document.getElementById('pane-clinical-details');
+      const redFlagsBox = document.getElementById('detailRedFlagsBox');
+      const phraseBox = document.querySelector('.phrase-box');
+
+      if (window.innerWidth <= 1150) {
+        if (tab === 'regions') {
+          if (regionsPane) regionsPane.style.display = 'flex';
+          if (detailsPane) detailsPane.style.display = 'none';
+        } else if (tab === 'pathology') {
+          if (regionsPane) regionsPane.style.display = 'none';
+          if (detailsPane) detailsPane.style.display = 'flex';
+          if (redFlagsBox) redFlagsBox.style.display = 'block';
+          if (phraseBox) phraseBox.style.display = 'none';
+        } else if (tab === 'details') {
+          if (regionsPane) regionsPane.style.display = 'none';
+          if (detailsPane) detailsPane.style.display = 'flex';
+          if (redFlagsBox) redFlagsBox.style.display = 'none';
+          if (phraseBox) phraseBox.style.display = 'block';
+        }
+      }
+    }
+
+    // --- Fullscreen Toggle ---
+    function toggleFullScreen() {
+      const wrapper = document.getElementById('abdAppWrapper');
+      if (!document.fullscreenElement) {
+        if (wrapper && wrapper.requestFullscreen) {
+          wrapper.requestFullscreen();
+        } else if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // --- Copy Phrase Toast ---
+    function copyPhrase() {
+      const text = document.getElementById('chartPhraseText')?.innerText;
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('已複製門診英文病歷片語');
+        });
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      if (toast && toastText) {
+        toastText.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      }
+    }
+
+    // Boot
+    window.addEventListener('DOMContentLoaded', () => {
+      init3D();
+    });
+  </script>
+</Layout>
+
+<style>
+  :root {
+    --bg-main: #060b14;
+    --border-color: rgba(56, 189, 248, 0.2);
+    --accent-cyan: #00e5ff;
+    --accent-blue: #38bdf8;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+  }
+
+  .abd-app-wrapper {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  /* Subnav Header */
+  .anatomy-subnav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1.5rem;
+    background: rgba(10, 20, 36, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 30;
+  }
+
+  .subnav-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .back-link:hover {
+    color: var(--accent-cyan);
+    transform: translateX(-2px);
+  }
+
+  .divider {
+    color: #475569;
+    font-weight: 300;
+  }
+
+  .current-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #f1f5f9;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.25); }
+  }
+
+  .subnav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  /* Mode Switcher Group */
+  .mode-toggle-group {
+    display: inline-flex;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .btn-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.42rem 0.85rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-mode:hover {
+    color: #f8fafc;
+  }
+  .btn-mode.active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(37, 99, 235, 0.3));
+    color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: 9px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .btn-fullscreen {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+  }
+  .btn-fullscreen:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #38bdf8, #3b82f6);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+  }
+
+  /* Workspace Grid */
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr 440px;
+    grid-template-areas: "left center right";
+    height: calc(100vh - 120px);
+    width: 100vw;
+    max-width: 100%;
+    gap: 0.85rem;
+    padding: 0.75rem 1.25rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .abd-app-wrapper:fullscreen .workspace-grid {
+    height: calc(100vh - 56px);
+  }
+
+  /* Glass Panels */
+  .glass-panel {
+    background: rgba(11, 22, 38, 0.8);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .left-panel {
+    grid-area: left;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .canvas-panel {
+    grid-area: center;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+    background: radial-gradient(circle at 50% 45%, #0e1e34 0%, #060b14 100%);
+  }
+
+  .right-panel {
+    grid-area: right;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: rgba(8, 16, 32, 0.9);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #f1f5f9;
+  }
+
+  .badge-count, .badge-organ {
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  .scrollable-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.85rem;
+  }
+
+  /* Left Panel Mini Grid Keypad */
+  .mini-grid-wrapper {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .mini-grid-label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+  }
+
+  .mini-grid-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem;
+  }
+
+  .mini-grid-btn {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.45rem 0.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mini-grid-btn:hover {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+  }
+  .mini-grid-btn.active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(37, 99, 235, 0.35));
+    border-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+  }
+  .mg-code {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #38bdf8;
+    font-family: monospace;
+  }
+  .mg-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #e2e8f0;
+  }
+
+  .section-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0.65rem 0 0.45rem 0.2rem;
+  }
+
+  /* Region List Cards */
+  .segment-grid-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .seg-card-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .seg-card-btn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateX(2px);
+  }
+  .seg-card-btn.active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(37, 99, 235, 0.2));
+    border-color: #38bdf8;
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.2);
+  }
+
+  .seg-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.2rem;
+  }
+  .seg-num-pill {
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #38bdf8;
+  }
+  .seg-loc-tag {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    font-weight: 700;
+  }
+  .seg-card-name {
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0.15rem;
+  }
+  .seg-card-sub {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  /* Center Stage Container */
+  .stage-view {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+  .stage-view.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #threejs-canvas-container {
+    flex: 1;
+    position: relative;
+    outline: none;
+    cursor: grab;
+  }
+  #threejs-canvas-container:active {
+    cursor: grabbing;
+  }
+
+  /* 3D View Angles Toolbar */
+  .view-angles-toolbar {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    z-index: 10;
+    display: flex;
+    gap: 0.45rem;
+    background: rgba(10, 20, 36, 0.9);
+    backdrop-filter: blur(12px);
+    padding: 0.4rem 0.55rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+  }
+
+  .view-btn {
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .view-btn.active {
+    background: rgba(56, 189, 248, 0.25);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+    font-weight: 800;
+  }
+
+  .orbit-hint {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    z-index: 10;
+    background: rgba(10, 20, 36, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    pointer-events: none;
+  }
+
+  /* 2D Matrix View */
+  #twod-grid-container {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 50%, #0d1e35 0%, #060b14 100%);
+  }
+  #twod-grid-container.active {
+    display: flex;
+  }
+
+  .twod-matrix-header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+  .twod-title {
+    font-size: 1.55rem;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.25rem;
+  }
+  .twod-sub {
+    font-size: 0.95rem;
+    color: #94a3b8;
+  }
+
+  .twod-grid-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .twod-cell {
+    position: relative;
+    background: rgba(16, 30, 54, 0.75);
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(56, 189, 248, 0.2);
+    border-radius: 14px;
+    padding: 1rem 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 125px;
+    box-sizing: border-box;
+  }
+  .twod-cell:hover {
+    transform: translateY(-4px);
+    border-color: #38bdf8;
+    box-shadow: 0 10px 24px rgba(56, 189, 248, 0.25);
+    background: rgba(22, 42, 74, 0.85);
+  }
+  .twod-cell.active {
+    border-color: #38bdf8;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(16, 185, 129, 0.2));
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
+  }
+
+  .cell-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+  }
+  .cell-code {
+    font-size: 0.8rem;
+    font-family: monospace;
+    font-weight: 800;
+    color: #38bdf8;
+  }
+  .cell-title {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #ffffff;
+  }
+  .cell-organs {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #f1f5f9;
+    margin-bottom: 0.2rem;
+    line-height: 1.35;
+  }
+  .cell-sub-organs {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    line-height: 1.3;
+    margin-bottom: 0.45rem;
+  }
+  .cell-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.22rem 0.45rem;
+    border-radius: 6px;
+    align-self: flex-start;
+  }
+  .alert-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+  .alert-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+  .alert-blue { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+
+  /* Canvas Bottom Bar */
+  .canvas-bottom-bar {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    background: rgba(8, 16, 32, 0.95);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.88rem;
+  }
+  .mode-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+  }
+  .info-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+  }
+  .current-selected-label {
+    color: #cbd5e1;
+  }
+  .current-selected-label strong {
+    color: #38bdf8;
+  }
+
+  /* Right Panel Details */
+  .detail-title-group {
+    margin-bottom: 1rem;
+  }
+  .tag-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.3rem;
+  }
+  .region-badge-pill {
+    font-size: 0.95rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    color: #fff;
+  }
+  .latin-name {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    font-style: italic;
+  }
+  .main-title {
+    font-size: 1.55rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0.3rem 0 0.2rem;
+  }
+  .sub-title {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+  }
+
+  .detail-card {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1rem;
+    margin-bottom: 0.85rem;
+  }
+  .detail-card h3 {
+    font-size: 0.98rem;
+    color: #38bdf8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 800;
+  }
+
+  .organ-tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .organ-chip {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .organ-chip.highlight {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.4);
+    font-weight: 700;
+  }
+
+  /* Red Flags Alert Card */
+  .alert-card-red {
+    border-left: 4px solid var(--accent-rose);
+    background: rgba(244, 63, 94, 0.08);
+    border-color: rgba(244, 63, 94, 0.25);
+  }
+  .alert-title {
+    color: #fb7185 !important;
+  }
+  .pearls-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #f1f5f9;
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+  .pearls-list li {
+    margin-bottom: 0.45rem;
+  }
+  .pearls-list strong {
+    color: #fda4af;
+  }
+
+  /* Differential Diagnosis Grid */
+  .diff-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .diff-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 9px;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .diff-name {
+    display: block;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 0.15rem;
+  }
+  .diff-desc {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.45;
+  }
+
+  /* Workup Steps */
+  .workup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  .workup-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    font-size: 0.82rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.1rem;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+  }
+  .step-content strong {
+    font-size: 0.95rem;
+    color: #f8fafc;
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+  .step-content p {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  /* SOAP Phrase Box */
+  .phrase-box {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1.5px dashed rgba(16, 185, 129, 0.4);
+    border-radius: 12px;
+    padding: 0.85rem;
+    margin-top: 0.85rem;
+  }
+  .phrase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.55rem;
+  }
+  .phrase-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--accent-emerald);
+  }
+  .btn-copy {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    padding: 0.3rem 0.65rem;
+    border-radius: 7px;
+    font-size: 0.82rem;
+  }
+  .btn-copy:hover {
+    background: rgba(16, 185, 129, 0.35);
+    color: #fff;
+  }
+  .phrase-content {
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.75rem;
+    border-radius: 8px;
+    user-select: all;
+    line-height: 1.55;
+  }
+
+  /* Mobile Tabs Navigation */
+  .mobile-tabs-nav {
+    display: none;
+  }
+
+  /* Toast Notification */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    font-size: 0.98rem;
+    font-weight: 800;
+    padding: 0.75rem 1.3rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  #threejs-canvas-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  /* Media Queries for Desktop layout */
+  @media (min-width: 1151px) {
+    .mobile-tab-pane {
+      display: flex !important;
+    }
+    .segment-grid-list {
+      display: flex !important;
+    }
+  }
+
+  /* Media Queries for Mobile Responsive (Max 1150px) */
+  @media (max-width: 1150px) {
+    .workspace-grid {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+      padding: 0.4rem;
+      gap: 0.65rem;
+      overflow-x: hidden;
+    }
+
+    .canvas-panel {
+      order: 1;
+      height: 52vh;
+      min-height: 380px;
+      max-height: 500px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #threejs-canvas-container {
+      flex: 1;
+      min-height: 240px;
+      width: 100%;
+      position: relative;
+    }
+
+    #twod-grid-container {
+      padding: 0.85rem;
+    }
+    .twod-title {
+      font-size: 1.25rem;
+    }
+    .twod-sub {
+      font-size: 0.82rem;
+    }
+    .twod-grid-board {
+      gap: 0.45rem;
+    }
+    .twod-cell {
+      padding: 0.65rem 0.5rem;
+      min-height: 95px;
+    }
+    .cell-title {
+      font-size: 0.95rem;
+    }
+    .cell-organs {
+      font-size: 0.85rem;
+    }
+    .cell-sub-organs {
+      display: none;
+    }
+    .cell-badge {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.35rem;
+    }
+
+    .canvas-bottom-bar {
+      flex-shrink: 0;
+      padding: 0.55rem 0.75rem;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.8rem;
+    }
+
+    .mobile-tabs-nav {
+      order: 2;
+      display: flex;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      gap: 0.35rem;
+      padding: 0.1rem 0;
+      margin-bottom: 0.2rem;
+    }
+
+    .mobile-tab-btn {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 0.5rem 0.2rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      background: rgba(16, 28, 52, 0.92);
+      color: #94a3b8;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .mobile-tab-btn.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(37, 99, 235, 0.35));
+      border-color: #38bdf8;
+      color: #38bdf8;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+    }
+
+    #pane-regions-pathology {
+      order: 3;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #pane-clinical-details {
+      order: 4;
+      display: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .view-angles-toolbar {
+      position: absolute !important;
+      top: 0.4rem !important;
+      left: 0.4rem !important;
+      right: auto !important;
+      max-width: calc(100% - 0.8rem) !important;
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      white-space: nowrap !important;
+      gap: 0.35rem !important;
+      padding: 0.3rem 0.45rem !important;
+      border-radius: 10px !important;
+      background: rgba(10, 20, 32, 0.88) !important;
+      backdrop-filter: blur(10px) !important;
+      z-index: 20 !important;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .view-angles-toolbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .view-btn {
+      flex-shrink: 0 !important;
+      font-size: 0.8rem !important;
+      padding: 0.32rem 0.55rem !important;
+      border-radius: 6px !important;
+      white-space: nowrap !important;
+    }
+
+    .orbit-hint {
+      display: none !important;
+    }
+
+    .anatomy-subnav {
+      padding: 0.5rem 0.75rem;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.45rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .subnav-left {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .back-link {
+      white-space: nowrap;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .current-badge {
+      display: inline-flex;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    .divider {
+      display: none;
+    }
+
+    .subnav-right {
+      display: flex;
+      gap: 0.35rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .subnav-right .btn,
+    .mode-toggle-group {
+      min-width: 0;
+    }
+
+    .mode-toggle-group {
+      flex: 2;
+    }
+
+    .btn-mode {
+      flex: 1;
+      justify-content: center;
+      padding: 0.38rem 0.3rem;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .subnav-right .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 0.45rem 0.3rem;
+      font-size: 0.85rem;
+      white-space: nowrap !important;
+      min-height: 38px;
+    }
+
+    .segment-grid-list {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.45rem !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .seg-card-btn {
+      width: 100% !important;
+      box-sizing: border-box !important;
+      min-width: 0 !important;
+      padding: 0.6rem 0.75rem !important;
+    }
+
+    .seg-card-name {
+      font-size: 0.95rem !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+    }
+  }
+</style>
