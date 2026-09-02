@@ -483,7 +483,7 @@ import Layout from '../../layouts/Layout.astro';
       // 1. Scene & Camera
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-      camera.position.set(0, isMobile ? -0.1 : -0.5, isMobile ? 13.0 : 8.8);
+      camera.position.set(0, isMobile ? 0.3 : -0.5, isMobile ? 13.5 : 8.8);
 
       // 2. WebGL Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -501,7 +501,7 @@ import Layout from '../../layouts/Layout.astro';
       controls.dampingFactor = 0.06;
       controls.minDistance = 3.2;
       controls.maxDistance = 24;
-      controls.target.set(0, isMobile ? -0.1 : -0.5, 0);
+      controls.target.set(0, isMobile ? 0.2 : -0.5, 0);
 
       // 4. Studio Medical Lighting (Soft, balanced, non-glare)
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
@@ -999,13 +999,13 @@ import Layout from '../../layouts/Layout.astro';
       document.getElementById(`view-btn-${preset}`)?.classList.add('active');
 
       const isMobile = window.innerWidth <= 1150;
-      let targetPos = new THREE.Vector3(0, isMobile ? -0.1 : -0.5, isMobile ? 13.0 : 8.8);
-      let targetLook = new THREE.Vector3(0, isMobile ? -0.1 : -0.5, 0);
+      let targetPos = new THREE.Vector3(0, isMobile ? 0.3 : -0.5, isMobile ? 13.5 : 8.8);
+      let targetLook = new THREE.Vector3(0, isMobile ? 0.2 : -0.5, 0);
 
       switch(preset) {
         case 'anterior': 
-          targetPos.set(0, isMobile ? -0.1 : -0.5, isMobile ? 13.0 : 8.8); 
-          targetLook.set(0, isMobile ? -0.1 : -0.5, 0); 
+          targetPos.set(0, isMobile ? 0.3 : -0.5, isMobile ? 13.5 : 8.8); 
+          targetLook.set(0, isMobile ? 0.2 : -0.5, 0); 
           break;
         case 'left_colon': 
           targetPos.set(4.8, isMobile ? 0.0 : -0.5, isMobile ? 8.0 : 5.0); 
