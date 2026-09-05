@@ -1,0 +1,301 @@
+---
+import type { VideoItem } from '../data/videos';
+import { getYouTubeThumbnail } from '../data/videos';
+
+interface Props {
+  video: VideoItem;
+  compact?: boolean;
+}
+
+const { video, compact = false } = Astro.props;
+const thumbnail = getYouTubeThumbnail(video.id);
+
+// 分類主題色映射
+const categoryColorMap: Record<string, string> = {
+  '胃部疾病': 'badge-stomach',
+  '腸道健康': 'badge-intestine',
+  '檢查衛教': 'badge-exam',
+  '代謝慢病': 'badge-metabolic',
+};
+
+const categoryClass = categoryColorMap[video.category] || 'badge-default';
+---
+
+<article
+  class:list={['video-card', { 'video-card-compact': compact }]}
+  data-video-id={video.id}
+  data-video-title={video.title}
+  data-video-category={video.category}
+  tabindex="0"
+  role="button"
+  aria-label={`播放衛教影片：${video.title}`}
+>
+  <!-- 16:9 影片縮圖與播放按鈕覆蓋層 -->
+  <div class="thumbnail-wrapper">
+    <img
+      src={thumbnail}
+      alt={video.title}
+      class="thumbnail-img"
+      loading="lazy"
+    />
+    
+    <!-- 縮圖上方遮罩光影 -->
+    <div class="thumbnail-scrim"></div>
+
+    <!-- 播放按鈕徽章 -->
+    <div class="play-btn-overlay">
+      <div class="play-btn-circle">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <polygon points="6 3 20 12 6 21 6 3"></polygon>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 時長標籤 -->
+    <div class="duration-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <span>{video.duration}</span>
+    </div>
+
+    <!-- 分類標籤 (浮動於縮圖左上角) -->
+    <span class:list={['category-tag', categoryClass]}>
+      {video.category}
+    </span>
+  </div>
+
+  <!-- 卡片文字內容 -->
+  <div class="card-content">
+    <h3 class="video-title">{video.title}</h3>
+    <p class="video-desc">{video.description}</p>
+    
+    <div class="card-footer">
+      <span class="watch-action">
+        <span class="watch-icon">▶</span>
+        <span>點擊播放 (0:41)</span>
+      </span>
+      <span class="channel-brand">黃冠智醫師</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  /* ═══════════════════════════════════════
+     Video Card 精品醫療風格卡片
+  ═══════════════════════════════════════ */
+  .video-card {
+    background: #ffffff;
+    border-radius: var(--radius-md, 14px);
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(74, 144, 164, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--color-border, #d4e5eb);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.28s ease;
+    user-select: none;
+    outline: none;
+    position: relative;
+  }
+
+  .video-card:hover,
+  .video-card:focus-visible {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 36px -8px rgba(74, 144, 164, 0.22), 0 2px 6px rgba(0, 0, 0, 0.06);
+    border-color: var(--color-primary, #4a90a4);
+  }
+
+  .video-card:focus-visible {
+    box-shadow: 0 0 0 3px rgba(74, 144, 164, 0.35);
+  }
+
+  /* 縮圖區域 (16:9) */
+  .thumbnail-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #11202a;
+    overflow: hidden;
+  }
+
+  .thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .video-card:hover .thumbnail-img {
+    transform: scale(1.05);
+  }
+
+  .thumbnail-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 30, 42, 0.2) 0%, rgba(15, 30, 42, 0.6) 100%);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-card:hover .thumbnail-scrim {
+    opacity: 0.4;
+  }
+
+  /* 播放按鈕 */
+  .play-btn-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .play-btn-circle {
+    width: 54px;
+    height: 54px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--color-coral, #e76f51);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 3px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .video-card:hover .play-btn-circle {
+    transform: scale(1.15);
+    background: #e76f51;
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(231, 111, 81, 0.45);
+  }
+
+  /* 時長標籤 */
+  .duration-badge {
+    position: absolute;
+    bottom: 0.65rem;
+    right: 0.65rem;
+    background: rgba(15, 30, 42, 0.85);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    letter-spacing: 0.03em;
+  }
+
+  /* 分類標籤 */
+  .category-tag {
+    position: absolute;
+    top: 0.65rem;
+    left: 0.65rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.22rem 0.65rem;
+    border-radius: var(--radius-full, 9999px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    letter-spacing: 0.03em;
+  }
+
+  .badge-stomach {
+    background: rgba(231, 111, 81, 0.9);
+    color: #ffffff;
+  }
+
+  .badge-intestine {
+    background: rgba(74, 144, 164, 0.9);
+    color: #ffffff;
+  }
+
+  .badge-exam {
+    background: rgba(107, 181, 162, 0.9);
+    color: #ffffff;
+  }
+
+  .badge-metabolic {
+    background: rgba(244, 162, 97, 0.95);
+    color: #3b2405;
+  }
+
+  .badge-default {
+    background: rgba(44, 83, 100, 0.88);
+    color: #ffffff;
+  }
+
+  /* 卡片內容 */
+  .card-content {
+    padding: 1.15rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .video-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1e3a4c);
+    line-height: 1.4;
+    margin: 0 0 0.5rem 0;
+    transition: color 0.2s ease;
+  }
+
+  .video-card:hover .video-title {
+    color: var(--color-primary-dark, #3b7688);
+  }
+
+  .video-desc {
+    font-size: 0.88rem;
+    color: var(--color-text-body, #2d4f63);
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+    opacity: 0.88;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--color-border, #d4e5eb);
+    font-size: 0.8rem;
+  }
+
+  .watch-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 700;
+    color: var(--color-coral, #e76f51);
+    transition: transform 0.2s ease;
+  }
+
+  .video-card:hover .watch-action {
+    transform: translateX(2px);
+  }
+
+  .watch-icon {
+    font-size: 0.75rem;
+  }
+
+  .channel-brand {
+    color: var(--color-text-muted, #5a7a8a);
+    font-size: 0.78rem;
+  }
+</style>

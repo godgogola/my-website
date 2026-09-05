@@ -1,7 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PostCard from '../components/PostCard.astro';
+import VideoCard from '../components/VideoCard.astro';
+import VideoModal from '../components/VideoModal.astro';
 import { getCollection } from 'astro:content';
+import { videos } from '../data/videos';
+
+// 取得首頁精選 4 部短影音
+const featuredVideos = videos.filter(v => v.featured).slice(0, 4);
 
 // 取得所有未草稿的文章，並依日期排序
 const allPosts = await getCollection('posts');
@@ -220,6 +226,23 @@ const formatDate = (date: Date) => {
     </div>
   </section>
 
+  <!-- Featured Videos Section (精選衛教短影音) -->
+  <section class="featured-videos-section">
+    <div class="section-header">
+      <div>
+        <div class="badge badge-coral mb-2">影音專欄</div>
+        <h2>精選衛教短影音</h2>
+      </div>
+      <a href="/videos" class="view-all-link">查看全部影音 ({videos.length} 部) →</a>
+    </div>
+
+    <div class="videos-grid-home">
+      {featuredVideos.map((video) => (
+        <VideoCard video={video} />
+      ))}
+    </div>
+  </section>
+
   <!-- 豐田診所 · 門診資訊與就醫指引專區 -->
   <section class="clinic-info-section" aria-labelledby="clinic-section-title">
     <div class="clinic-section-header">
@@ -327,6 +350,8 @@ const formatDate = (date: Date) => {
       </div>
     </div>
   </section>
+  <!-- 沉浸式燈箱彈窗播放器 -->
+  <VideoModal />
 </Layout>
 
 <script>
@@ -1235,6 +1260,36 @@ const formatDate = (date: Date) => {
     .clinic-info-card,
     .line-card-inner {
       padding: 28px 24px;
+    }
+  }
+
+  /* ═══════════════════════════════════════
+     首頁精選短影音專區樣式
+  ═══════════════════════════════════════ */
+  .featured-videos-section {
+    margin-bottom: 5rem;
+  }
+
+  .badge-coral {
+    background: #fdeee9;
+    color: #e76f51;
+    border: 1px solid rgba(231, 111, 81, 0.25);
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .videos-grid-home {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .videos-grid-home {
+      grid-template-columns: 1fr;
     }
   }
 </style>

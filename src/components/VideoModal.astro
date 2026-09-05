@@ -1,0 +1,306 @@
+---
+/**
+ * VideoModal.astro
+ * 沉浸式 YouTube 燈箱彈窗播放器
+ * 具備背景毛玻璃模糊、16:9 自適應響應式寬度、自動播放、ESC 快捷關閉
+ */
+---
+
+<div id="video-modal-backdrop" class="video-modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="video-modal-dialog">
+    <!-- 彈窗頂部控制列 -->
+    <div class="video-modal-header">
+      <div class="video-modal-meta">
+        <span id="video-modal-category" class="video-modal-badge">衛教影音</span>
+        <h3 id="video-modal-title" class="video-modal-title">影片標題</h3>
+      </div>
+      <button type="button" id="video-modal-close-btn" class="video-modal-close" aria-label="關閉播放器">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 16:9 播放區域 -->
+    <div class="video-modal-player-wrap">
+      <iframe
+        id="video-modal-iframe"
+        src=""
+        title="YouTube 衛教影片播放器"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        class="video-modal-iframe"
+      ></iframe>
+    </div>
+
+    <!-- 彈窗底部快捷操作 -->
+    <div class="video-modal-footer">
+      <span class="video-modal-hint">💡 點擊背景或按 ESC 鍵可關閉播放視窗</span>
+      <a
+        id="video-modal-yt-link"
+        href="https://www.youtube.com/@godgogola"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="video-modal-external-link"
+      >
+        <span>在 YouTube 上觀看 / 訂閱頻道</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 全站統一的 VideoModal 控制邏輯
+  function initVideoModal() {
+    const backdrop = document.getElementById('video-modal-backdrop');
+    const dialog = backdrop?.querySelector('.video-modal-dialog');
+    const iframe = document.getElementById('video-modal-iframe') as HTMLIFrameElement | null;
+    const titleEl = document.getElementById('video-modal-title');
+    const categoryEl = document.getElementById('video-modal-category');
+    const ytLinkEl = document.getElementById('video-modal-yt-link') as HTMLAnchorElement | null;
+    const closeBtn = document.getElementById('video-modal-close-btn');
+
+    if (!backdrop || !iframe) return;
+
+    function openModal(videoId: string, title: string, category?: string) {
+      if (titleEl) titleEl.textContent = title;
+      if (categoryEl && category) categoryEl.textContent = category;
+      if (ytLinkEl) ytLinkEl.href = `https://www.youtube.com/watch?v=${videoId}`;
+      
+      // 注入 iframe 網址並啟用自動播放
+      iframe!.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`;
+
+      backdrop!.classList.add('active');
+      backdrop!.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden'; // 防止底層滾動
+    }
+
+    function closeModal() {
+      backdrop!.classList.remove('active');
+      backdrop!.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      
+      // 清空 src 停止播放與聲音
+      if (iframe) iframe.src = '';
+    }
+
+    // 關閉按鈕事件
+    closeBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeModal();
+    });
+
+    // 點擊背景遮罩關閉
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        closeModal();
+      }
+    });
+
+    // ESC 鍵關閉
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && backdrop.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // 綁定全站所有帶有 data-video-id 的觸發元素（委派監聽或直接綁定）
+    document.addEventListener('click', (e) => {
+      const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-video-id]');
+      if (trigger) {
+        e.preventDefault();
+        const videoId = trigger.dataset.videoId;
+        const videoTitle = trigger.dataset.videoTitle || '衛教影片';
+        const videoCategory = trigger.dataset.videoCategory || '衛教專區';
+        if (videoId) {
+          openModal(videoId, videoTitle, videoCategory);
+        }
+      }
+    });
+  }
+
+  // DOM 載入或換頁時初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVideoModal);
+  } else {
+    initVideoModal();
+  }
+</script>
+
+<style>
+  /* ═══════════════════════════════════════
+     Video Modal 沉浸式燈箱樣式
+  ═══════════════════════════════════════ */
+  .video-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 30, 42, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .video-modal-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .video-modal-dialog {
+    width: 100%;
+    max-width: 920px;
+    background: #ffffff;
+    border-radius: var(--radius-lg, 20px);
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    transform: scale(0.94) translateY(12px);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .video-modal-backdrop.active .video-modal-dialog {
+    transform: scale(1) translateY(0);
+  }
+
+  /* 頂部 Header */
+  .video-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    background: linear-gradient(135deg, #f8fbfc 0%, #eef5f7 100%);
+    border-bottom: 1px solid var(--color-border, #d4e5eb);
+  }
+
+  .video-modal-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    overflow: hidden;
+  }
+
+  .video-modal-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-primary-dark, #3b7688);
+    background: var(--color-primary-light, #eef7f9);
+    border: 1px solid rgba(74, 144, 164, 0.25);
+    border-radius: var(--radius-full, 9999px);
+    white-space: nowrap;
+  }
+
+  .video-modal-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1e3a4c);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .video-modal-close {
+    background: #ffffff;
+    border: 1px solid var(--color-border, #d4e5eb);
+    color: var(--color-text-muted, #5a7a8a);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full, 9999px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .video-modal-close:hover {
+    background: var(--color-coral-light, #fdeee9);
+    border-color: var(--color-coral, #e76f51);
+    color: var(--color-coral, #e76f51);
+    transform: rotate(90deg);
+  }
+
+  /* 16:9 響應式 iframe */
+  .video-modal-player-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #0b1319;
+  }
+
+  .video-modal-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* 底部 Footer */
+  .video-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.4rem;
+    background: #ffffff;
+    border-top: 1px solid var(--color-border, #d4e5eb);
+    font-size: 0.85rem;
+  }
+
+  .video-modal-hint {
+    color: var(--color-text-muted, #5a7a8a);
+    font-size: 0.82rem;
+  }
+
+  .video-modal-external-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 700;
+    color: #e76f51; /* YouTube/Action accent */
+    text-decoration: none;
+    transition: gap 0.2s ease, opacity 0.2s ease;
+  }
+
+  .video-modal-external-link:hover {
+    opacity: 0.85;
+    gap: 0.5rem;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .video-modal-backdrop {
+      padding: 0.75rem;
+    }
+    .video-modal-header {
+      padding: 0.85rem 1rem;
+    }
+    .video-modal-title {
+      font-size: 1rem;
+    }
+    .video-modal-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+    }
+  }
+</style>

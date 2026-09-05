@@ -1,0 +1,461 @@
+---
+import Layout from '../layouts/Layout.astro';
+import VideoCard from '../components/VideoCard.astro';
+import VideoModal from '../components/VideoModal.astro';
+import { videos, videoCategories } from '../data/videos';
+
+// 計算各分類數量
+const categoryCounts = videoCategories.reduce((acc, cat) => {
+  if (cat === '全部') {
+    acc[cat] = videos.length;
+  } else {
+    acc[cat] = videos.filter((v) => v.category === cat).length;
+  }
+  return acc;
+}, {} as Record<string, number>);
+---
+
+<Layout
+  title="衛教短影音專區｜黃冠智醫師 肝膽腸胃科"
+  meta_title="衛教短影音專區｜黃冠智醫師｜一分鐘看懂腸胃疾病與內視鏡衛教"
+  description="黃冠智醫師衛教短影音專區，精選代謝症候群、大腸息肉、胃食道逆流、無痛腸胃鏡等 16:9 實證短片，一分鐘快速吸收專業消化道醫學知識。"
+>
+  <div class="videos-page-container">
+    <!-- 影音專區專屬頂部 Hero Banner -->
+    <header class="videos-hero">
+      <div class="videos-hero-badge">
+        <span class="pulse-dot"></span>
+        <span>YOUTUBE 衛教影音頻道</span>
+      </div>
+
+      <h1 class="videos-hero-title">
+        衛教短影音 <span class="gradient-text">專區</span>
+      </h1>
+      
+      <p class="videos-hero-desc">
+        用精簡的 41 秒實證短片，為您解構常見腸胃疾病、內視鏡檢查與代謝保健關鍵，隨時隨地守護健康。
+      </p>
+
+      <!-- 統計指標與官方頻道連結按鈕 -->
+      <div class="videos-hero-actions">
+        <div class="hero-stats">
+          <div class="stat-pill">
+            <strong>{videos.length}</strong>
+            <span>部精選短片</span>
+          </div>
+          <div class="stat-pill">
+            <strong>16:9</strong>
+            <span>高畫質解析</span>
+          </div>
+          <div class="stat-pill">
+            <strong>41s</strong>
+            <span>精煉無負擔</span>
+          </div>
+        </div>
+
+        <a
+          href="https://www.youtube.com/@godgogola"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-youtube-subscribe"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span>訂閱 YouTube 官方頻道</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- 分類過濾篩選器 (Tabs) -->
+    <section class="video-filter-section" aria-label="影片分類篩選">
+      <div class="filter-pills-wrap">
+        {videoCategories.map((cat, index) => (
+          <button
+            type="button"
+            class:list={['filter-pill', { active: index === 0 }]}
+            data-category={cat}
+          >
+            <span>{cat}</span>
+            <span class="count-bubble">{categoryCounts[cat] || 0}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+
+    <!-- 影片網格列表 -->
+    <section class="videos-grid-section">
+      <div class="videos-grid" id="videos-grid">
+        {videos.map((video) => (
+          <div class="video-grid-item" data-category={video.category}>
+            <VideoCard video={video} />
+          </div>
+        ))}
+      </div>
+
+      <!-- 查無結果提示 (預留) -->
+      <div id="no-videos-match" class="no-videos-message" style="display: none;">
+        <p>此分類目前尚無收錄影片，敬請期待陸續上線！</p>
+      </div>
+    </section>
+
+    <!-- 底部資訊導引卡片 -->
+    <section class="channel-callout-card">
+      <div class="callout-inner">
+        <div class="callout-text">
+          <h3>想要更深入的醫學衛教文章？</h3>
+          <p>除了短影音外，黃冠智醫師親自撰寫的長篇衛教專欄已同步上線，包含最新降血脂藥物、胃食道逆流及內視鏡深度解析。</p>
+        </div>
+        <div class="callout-actions">
+          <a href="/health-column" class="btn-primary">
+            <span>閱讀醫學專欄筆記</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 沉浸式燈箱彈窗播放器 -->
+  <VideoModal />
+</Layout>
+
+<script>
+  // 分類篩選邏輯
+  function initCategoryFilter() {
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+    const items = document.querySelectorAll<HTMLElement>('.video-grid-item');
+    const noResults = document.getElementById('no-videos-match');
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        // 更新按鈕 active 樣式
+        filterButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const selectedCat = btn.dataset.category || '全部';
+        let visibleCount = 0;
+
+        items.forEach((item) => {
+          const itemCat = item.dataset.category;
+          if (selectedCat === '全部' || itemCat === selectedCat) {
+            item.style.display = 'block';
+            item.classList.add('fade-in');
+            visibleCount++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        if (noResults) {
+          noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCategoryFilter);
+  } else {
+    initCategoryFilter();
+  }
+</script>
+
+<style>
+  /* ═══════════════════════════════════════
+     Videos 專頁樣式
+  ═══════════════════════════════════════ */
+  .videos-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem 1.5rem;
+  }
+
+  /* 頁面 Hero */
+  .videos-hero {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .videos-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--color-primary-dark, #3b7688);
+    background: var(--color-primary-light, #eef7f9);
+    border: 1px solid rgba(74, 144, 164, 0.25);
+    padding: 0.35rem 1rem;
+    border-radius: var(--radius-full, 9999px);
+    margin-bottom: 1.25rem;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #e76f51;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(231, 111, 81, 0.7);
+    animation: pulse 1.8s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(231, 111, 81, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 8px rgba(231, 111, 81, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(231, 111, 81, 0);
+    }
+  }
+
+  .videos-hero-title {
+    font-size: 2.75rem;
+    font-weight: 900;
+    color: var(--color-text-title, #1e3a4c);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-primary, #4a90a4) 0%, var(--color-secondary, #6bb5a2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .videos-hero-desc {
+    font-size: 1.125rem;
+    color: var(--color-text-body, #2d4f63);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .videos-hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stat-pill {
+    background: #ffffff;
+    border: 1px solid var(--color-border, #d4e5eb);
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.85rem;
+    color: var(--color-text-body, #2d4f63);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.05);
+  }
+
+  .stat-pill strong {
+    font-size: 1.05rem;
+    color: var(--color-primary-dark, #3b7688);
+    font-weight: 800;
+  }
+
+  .btn-youtube-subscribe {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #ff0000;
+    color: #ffffff;
+    padding: 0.8rem 1.6rem;
+    border-radius: var(--radius-full, 9999px);
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.28);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+
+  .btn-youtube-subscribe:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(255, 0, 0, 0.4);
+    background: #e60000;
+  }
+
+  /* 篩選器 */
+  .video-filter-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .filter-pills-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-pill {
+    background: #ffffff;
+    border: 1.5px solid var(--color-border, #d4e5eb);
+    color: var(--color-text-body, #2d4f63);
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px rgba(74, 144, 164, 0.04);
+  }
+
+  .filter-pill:hover {
+    border-color: var(--color-primary, #4a90a4);
+    color: var(--color-primary-dark, #3b7688);
+    background: var(--color-primary-light, #eef7f9);
+    transform: translateY(-1px);
+  }
+
+  .filter-pill.active {
+    background: var(--color-primary-dark, #3b7688);
+    border-color: var(--color-primary-dark, #3b7688);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(59, 118, 136, 0.3);
+  }
+
+  .count-bubble {
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.08);
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+  }
+
+  .filter-pill.active .count-bubble {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+  }
+
+  /* 影片網格 */
+  .videos-grid-section {
+    margin-bottom: 4rem;
+  }
+
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.75rem;
+  }
+
+  .video-grid-item.fade-in {
+    animation: itemFade 0.35s ease forwards;
+  }
+
+  @keyframes itemFade {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .no-videos-message {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: #ffffff;
+    border-radius: var(--radius-md, 14px);
+    border: 1px dashed var(--color-border, #d4e5eb);
+    color: var(--color-text-muted, #5a7a8a);
+  }
+
+  /* 底部導引卡片 */
+  .channel-callout-card {
+    background: linear-gradient(135deg, #eef7f9 0%, #edf7f4 100%);
+    border: 1px solid var(--color-border, #d4e5eb);
+    border-radius: var(--radius-lg, 20px);
+    padding: 2.25rem;
+    box-shadow: 0 10px 30px rgba(74, 144, 164, 0.08);
+  }
+
+  .callout-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .callout-text h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1e3a4c);
+    margin-bottom: 0.5rem;
+  }
+
+  .callout-text p {
+    font-size: 0.95rem;
+    color: var(--color-text-body, #2d4f63);
+    line-height: 1.7;
+    margin: 0;
+    max-width: 680px;
+  }
+
+  .callout-actions {
+    flex-shrink: 0;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-primary-dark, #3b7688);
+    color: #ffffff;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-full, 9999px);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(59, 118, 136, 0.25);
+  }
+
+  .btn-primary:hover {
+    background: var(--color-primary, #4a90a4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(74, 144, 164, 0.35);
+  }
+
+  @media (max-width: 768px) {
+    .videos-hero-title {
+      font-size: 2.1rem;
+    }
+    .videos-grid {
+      grid-template-columns: 1fr;
+    }
+    .callout-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+  }
+</style>
