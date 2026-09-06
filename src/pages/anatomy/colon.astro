@@ -483,7 +483,7 @@ import Layout from '../../layouts/Layout.astro';
       // 1. Scene & Camera
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-      camera.position.set(0, isMobile ? 0.3 : -0.5, isMobile ? 13.5 : 8.8);
+      camera.position.set(0, isMobile ? 0.3 : -0.5, isMobile ? 9.2 : 8.8);
 
       // 2. WebGL Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -1975,27 +1975,29 @@ import Layout from '../../layouts/Layout.astro';
 
     .canvas-panel {
       order: 1;
-      height: 52vh;
-      min-height: 360px;
-      max-height: 480px;
+      height: auto;
+      min-height: auto;
+      max-height: none;
       display: flex;
       flex-direction: column;
       position: relative;
       overflow: hidden;
       width: 100%;
       box-sizing: border-box;
+      border-radius: 16px;
     }
 
     #threejs-canvas-container {
-      flex: 1;
-      min-height: 220px;
+      height: 60vh;
+      min-height: 380px;
+      max-height: 62vh;
       width: 100%;
       position: relative;
     }
 
     .canvas-scope-bar {
       flex-shrink: 0;
-      padding: 0.55rem 0.75rem;
+      padding: 0.5rem 0.75rem;
       width: 100%;
       box-sizing: border-box;
     }

@@ -473,7 +473,7 @@ import Layout from '../../layouts/Layout.astro';
       // 1. Scene & Camera
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-      camera.position.set(0, isMobile ? 0.9 : 0.1, isMobile ? 13.5 : 8.8);
+      camera.position.set(0, isMobile ? 0.5 : 0.1, isMobile ? 9.2 : 8.8);
 
       // 2. WebGL Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -491,7 +491,7 @@ import Layout from '../../layouts/Layout.astro';
       controls.dampingFactor = 0.06;
       controls.minDistance = 3.5;
       controls.maxDistance = 24;
-      controls.target.set(0.1, isMobile ? 0.8 : 0.1, 0);
+      controls.target.set(0.1, isMobile ? 0.4 : 0.1, 0);
 
       // 4. Studio Medical Lighting (Soft, balanced, non-glare)
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
@@ -1159,29 +1159,29 @@ import Layout from '../../layouts/Layout.astro';
       document.getElementById(`view-btn-${preset}`)?.classList.add('active');
 
       const isMobile = window.innerWidth <= 1150;
-      let targetPos = new THREE.Vector3(0, isMobile ? 0.9 : 0.1, isMobile ? 13.5 : 8.8);
-      let targetLook = new THREE.Vector3(0.1, isMobile ? 0.8 : 0.1, 0);
+      let targetPos = new THREE.Vector3(0, isMobile ? 0.5 : 0.1, isMobile ? 9.2 : 8.8);
+      let targetLook = new THREE.Vector3(0.1, isMobile ? 0.4 : 0.1, 0);
 
       switch(preset) {
         case 'anterior': 
-          targetPos.set(0, isMobile ? 0.9 : 0.1, isMobile ? 13.5 : 8.8); 
-          targetLook.set(0.1, isMobile ? 0.8 : 0.1, 0); 
+          targetPos.set(0, isMobile ? 0.5 : 0.1, isMobile ? 9.2 : 8.8); 
+          targetLook.set(0.1, isMobile ? 0.4 : 0.1, 0); 
           break;
         case 'jturn': 
-          targetPos.set(0.6, isMobile ? -2.6 : -3.2, isMobile ? 8.2 : 5.5); 
-          targetLook.set(0.4, isMobile ? 1.3 : 0.8, 0.0); 
+          targetPos.set(0.6, isMobile ? -2.2 : -3.2, isMobile ? 6.2 : 5.5); 
+          targetLook.set(0.4, isMobile ? 1.0 : 0.8, 0.0); 
           break;
         case 'pylorus': 
-          targetPos.set(-3.5, isMobile ? -1.3 : -1.8, isMobile ? 8.5 : 5.8); 
-          targetLook.set(-0.8, isMobile ? -0.5 : -1.0, 0.0); 
+          targetPos.set(-3.5, isMobile ? -1.0 : -1.8, isMobile ? 6.5 : 5.8); 
+          targetLook.set(-0.8, isMobile ? -0.4 : -1.0, 0.0); 
           break;
         case 'layers': 
-          targetPos.set(5.5, isMobile ? 0.7 : 0.2, isMobile ? 8.2 : 5.5); 
-          targetLook.set(0.6, isMobile ? 0.5 : 0.0, 0.0); 
+          targetPos.set(5.5, isMobile ? 0.5 : 0.2, isMobile ? 6.2 : 5.5); 
+          targetLook.set(0.6, isMobile ? 0.3 : 0.0, 0.0); 
           break;
         case 'duodenum': 
-          targetPos.set(-5.2, isMobile ? -0.9 : -1.4, isMobile ? 7.5 : 4.8); 
-          targetLook.set(-1.5, isMobile ? -1.0 : -1.5, 0.0); 
+          targetPos.set(-5.2, isMobile ? -0.8 : -1.4, isMobile ? 5.8 : 4.8); 
+          targetLook.set(-1.5, isMobile ? -0.8 : -1.5, 0.0); 
           break;
       }
 
@@ -2121,27 +2121,29 @@ import Layout from '../../layouts/Layout.astro';
 
     .canvas-panel {
       order: 1;
-      height: 52vh;
-      min-height: 360px;
-      max-height: 480px;
+      height: auto;
+      min-height: auto;
+      max-height: none;
       display: flex;
       flex-direction: column;
       position: relative;
       overflow: hidden;
       width: 100%;
       box-sizing: border-box;
+      border-radius: 16px;
     }
 
     #threejs-canvas-container {
-      flex: 1;
-      min-height: 220px;
+      height: 60vh;
+      min-height: 380px;
+      max-height: 62vh;
       width: 100%;
       position: relative;
     }
 
     .canvas-scope-bar {
       flex-shrink: 0;
-      padding: 0.55rem 0.75rem;
+      padding: 0.5rem 0.75rem;
       width: 100%;
       box-sizing: border-box;
     }

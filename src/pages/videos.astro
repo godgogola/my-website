@@ -36,19 +36,8 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
         用精簡的實證短片，為您解構常見腸胃疾病、內視鏡檢查與代謝保健關鍵，隨時隨地守護健康。
       </p>
 
-      <!-- 統計指標與官方頻道連結按鈕 -->
+      <!-- 官方頻道連結按鈕 -->
       <div class="videos-hero-actions">
-        <div class="hero-stats">
-          <div class="stat-pill">
-            <strong>{videos.length}</strong>
-            <span>部精選短片</span>
-          </div>
-          <div class="stat-pill">
-            <strong>16:9</strong>
-            <span>高畫質解析</span>
-          </div>
-        </div>
-
         <a
           href="https://www.youtube.com/@godgogola"
           target="_blank"
@@ -238,6 +227,7 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     line-height: 1.8;
     margin-bottom: 2rem;
     opacity: 0.9;
+    white-space: nowrap;
   }
 
   .videos-hero-actions {
@@ -462,6 +452,7 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
       line-height: 1.6;
       margin-bottom: 1.15rem;
       padding: 0 0.5rem;
+      white-space: normal;
     }
     .videos-hero-actions {
       gap: 0.85rem;
