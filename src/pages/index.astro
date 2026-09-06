@@ -124,6 +124,48 @@ const formatDate = (date: Date) => {
     </div>
   </section>
 
+  <!-- Doctor Story Section (建站初心 · 診間隨筆) -->
+  <section class="doctor-story-section" aria-labelledby="story-card-title">
+    <div class="doctor-story-card">
+      <div class="story-card-header">
+        <div class="story-badge">
+          <span class="story-badge-icon">✍️</span>
+          <span>診間手帳 · 建站初心</span>
+        </div>
+        <span class="story-journal-tag">Doctor's Note</span>
+      </div>
+
+      <div class="story-card-body">
+        <span class="story-quote-symbol" aria-hidden="true">“</span>
+        <h2 id="story-card-title" class="story-title">
+          「方便自己看，也方便大家查」—— 從一本臨床私房筆記，到隨身衛教小站
+        </h2>
+        <div class="story-text">
+          <p>
+            門診時，常常覺得短短幾分鐘的看診時間太過匆忙，許多檢查細節、飲食配合與日常照護觀念，很難一次講透。
+          </p>
+          <p>
+            下診後的深夜裡，我習慣坐在書桌前一邊查閱最新醫學文獻，一邊把臨床心得整理成筆記。起初只是單純想幫自己打造一本隨手可查的「數位臨床手帳」；後來心想，既然都花時間整理了，何不化為好懂的白話與圖解放上線？
+          </p>
+          <p>
+            這樣一來，我看診複習方便，病患回家隨時能查閱安心，也能分享給關心的家人。不知不覺中，這個網站就像一本真實記錄的診間日記，自然而然地誕生了。
+          </p>
+        </div>
+
+        <div class="story-card-footer">
+          <a
+            href="/posts/為什麼想建這個網站從一本臨床筆記到線上衛教小站"
+            class="btn-story-readmore"
+          >
+            <span>閱讀完整建站手記</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <span class="story-sign">—— 黃冠智 醫師 / 筆</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Schedule Section (門診時間表) -->
   <section class="schedule-section">
     <div class="section-header">
@@ -665,6 +707,143 @@ const formatDate = (date: Date) => {
     font-size: 1.2rem;
     line-height: 1;
     top: 0;
+  }
+
+  /* ═══════════════════════════════════════
+     Doctor Story Card (建站初心 · 診間隨筆)
+  ═══════════════════════════════════════ */
+  .doctor-story-section {
+    margin-bottom: 48px;
+  }
+
+  .doctor-story-card {
+    position: relative;
+    background: linear-gradient(145deg, #ffffff 0%, #f7fafc 55%, #eef6f8 100%);
+    border-radius: 24px;
+    padding: 36px 42px;
+    border: 1.5px solid rgba(74, 144, 164, 0.2);
+    border-left: 6px solid var(--color-primary, #4a90a4);
+    box-shadow: 0 10px 28px rgba(74, 144, 164, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .doctor-story-card:hover {
+    box-shadow: 0 14px 36px rgba(74, 144, 164, 0.12), 0 4px 10px rgba(0, 0, 0, 0.03);
+    border-color: rgba(74, 144, 164, 0.32);
+  }
+
+  .story-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  .story-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(74, 144, 164, 0.12);
+    color: var(--color-primary, #4a90a4);
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    border: 1px solid rgba(74, 144, 164, 0.18);
+  }
+
+  .story-badge-icon {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .story-journal-tag {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #8da4ad;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .story-card-body {
+    position: relative;
+    z-index: 2;
+  }
+
+  .story-quote-symbol {
+    position: absolute;
+    top: -24px;
+    right: 0;
+    font-family: Georgia, serif;
+    font-size: 5.5rem;
+    line-height: 1;
+    color: rgba(74, 144, 164, 0.1);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .story-title {
+    font-size: 1.38rem;
+    font-weight: 800;
+    color: var(--color-text-title, #1c3643);
+    margin-bottom: 18px;
+    line-height: 1.5;
+    letter-spacing: -0.2px;
+  }
+
+  .story-text {
+    font-size: 1.02rem;
+    line-height: 1.85;
+    color: var(--color-text-body, #335366);
+  }
+
+  .story-text p {
+    margin-bottom: 12px;
+  }
+
+  .story-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .story-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(74, 144, 164, 0.22);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .btn-story-readmore {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--color-primary, #4a90a4), #3b7688);
+    color: #ffffff;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(74, 144, 164, 0.25);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-story-readmore:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(74, 144, 164, 0.38);
+    background: linear-gradient(135deg, #3d8093, #2d5f6e);
+    color: #ffffff;
+  }
+
+  .story-sign {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-primary, #4a90a4);
+    letter-spacing: 0.5px;
   }
 
   /* ═══════════════════════════════════════
@@ -1251,6 +1430,40 @@ const formatDate = (date: Date) => {
   }
 
   @media (max-width: 768px) {
+    .doctor-story-card {
+      padding: 24px 18px;
+      border-radius: 18px;
+      border-left-width: 4px;
+    }
+    .story-title {
+      font-size: 1.15rem;
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+    .story-text {
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+    .story-quote-symbol {
+      display: none;
+    }
+    .story-card-footer {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 14px;
+    }
+    .btn-story-readmore {
+      width: 100%;
+      justify-content: center;
+      padding: 9px 18px;
+      font-size: 0.9rem;
+    }
+    .story-sign {
+      text-align: right;
+      font-size: 0.88rem;
+    }
     .clinic-cards-row {
       grid-template-columns: 1fr;
     }

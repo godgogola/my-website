@@ -171,6 +171,7 @@ function sync() {
       let publishDate = fileDateStr;
       let draft = false;
       let order = null;
+      let coverImage = '';
 
       if (frontmatter) {
         const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
@@ -187,14 +188,15 @@ function sync() {
           const parsedOrder = parseInt(orderMatch[1].trim(), 10);
           if (!isNaN(parsedOrder)) order = parsedOrder;
         }
+        const sourceCoverMatch = frontmatter.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
+        if (sourceCoverMatch) coverImage = sourceCoverMatch[1].trim();
       }
 
-      let coverImage = '';
       if (fs.existsSync(outputPath)) {
         try {
           const existingContent = fs.readFileSync(outputPath, 'utf8');
           const coverMatch = existingContent.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
-          if (coverMatch) coverImage = coverMatch[1].trim();
+          if (!coverImage && coverMatch) coverImage = coverMatch[1].trim();
 
           if (order === null) {
             const existingOrderMatch = existingContent.match(/^order:\s*(.+)$/m);
