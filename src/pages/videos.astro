@@ -33,7 +33,7 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
       </h1>
       
       <p class="videos-hero-desc">
-        用精簡的 41 秒實證短片，為您解構常見腸胃疾病、內視鏡檢查與代謝保健關鍵，隨時隨地守護健康。
+        用精簡的實證短片，為您解構常見腸胃疾病、內視鏡檢查與代謝保健關鍵，隨時隨地守護健康。
       </p>
 
       <!-- 統計指標與官方頻道連結按鈕 -->
@@ -46,10 +46,6 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
           <div class="stat-pill">
             <strong>16:9</strong>
             <span>高畫質解析</span>
-          </div>
-          <div class="stat-pill">
-            <strong>41s</strong>
-            <span>精煉無負擔</span>
           </div>
         </div>
 
@@ -316,14 +312,14 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     background: #ffffff;
     border: 1.5px solid var(--color-border, #d4e5eb);
     color: var(--color-text-body, #2d4f63);
-    padding: 0.6rem 1.25rem;
+    padding: 0.45rem 1rem;
     border-radius: var(--radius-full, 9999px);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 2px 6px rgba(74, 144, 164, 0.04);
   }
@@ -446,8 +442,64 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
   }
 
   @media (max-width: 768px) {
+    .videos-page-container {
+      padding: 1.25rem 0.85rem 3.5rem 0.85rem;
+    }
+    .videos-hero {
+      margin-bottom: 1.75rem;
+    }
+    .videos-hero-badge {
+      font-size: 0.72rem;
+      padding: 0.22rem 0.7rem;
+      margin-bottom: 0.75rem;
+    }
     .videos-hero-title {
-      font-size: 2.1rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .videos-hero-desc {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 1.15rem;
+      padding: 0 0.5rem;
+    }
+    .videos-hero-actions {
+      gap: 0.85rem;
+    }
+    .hero-stats {
+      gap: 0.45rem;
+    }
+    .stat-pill {
+      padding: 0.25rem 0.65rem;
+      font-size: 0.76rem;
+      gap: 0.3rem;
+      box-shadow: 0 1px 4px rgba(74, 144, 164, 0.05);
+    }
+    .stat-pill strong {
+      font-size: 0.88rem;
+    }
+    .btn-youtube-subscribe {
+      padding: 0.55rem 1.15rem;
+      font-size: 0.86rem;
+      gap: 0.45rem;
+      box-shadow: 0 4px 14px rgba(255, 0, 0, 0.2);
+    }
+    .video-filter-section {
+      margin-bottom: 1.5rem;
+    }
+    .filter-pills-wrap {
+      gap: 0.4rem;
+    }
+    .filter-pill {
+      padding: 0.32rem 0.68rem;
+      font-size: 0.82rem;
+      gap: 0.35rem;
+      border-width: 1px;
+      box-shadow: 0 1px 4px rgba(74, 144, 164, 0.04);
+    }
+    .count-bubble {
+      font-size: 0.68rem;
+      padding: 0.05rem 0.35rem;
     }
     .videos-grid {
       grid-template-columns: 1fr;

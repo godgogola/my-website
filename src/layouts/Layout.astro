@@ -519,38 +519,39 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     box-shadow: 0 6px 16px rgba(231, 111, 81, 0.45);
   }
 
-  /* ── 手機版 2x2 大字號長輩友善觸控導覽列 (不浮動釘頂，釋放 100% 閱讀空間) ── */
+  /* ── 手機版精緻緊湊觸控導覽列 (不浮動釘頂，釋放 100% 閱讀空間) ── */
   @media (max-width: 768px) {
     .navbar-vet-wrapper {
       position: relative !important; /* 手機版不浮動釘在螢幕上方，向下滾動時自然移出畫面，不遮擋文章與表單內容 */
       top: 0 !important;
-      padding: 8px 12px 0;
-      margin-bottom: 8px;
+      padding: 6px 10px 0;
+      margin-bottom: 6px;
       z-index: 10;
     }
     .navbar-vet {
       flex-direction: column;
-      gap: 8px;
-      padding: 10px 12px 12px;
-      border-radius: 18px;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
     }
     .brand-row {
       width: 100%;
       justify-content: center;
     }
     .brand-logo {
-      gap: 10px;
+      gap: 8px;
     }
     .brand-icon {
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
     }
     .brand-name {
-      font-size: 1.3rem;
-      font-weight: 900;
+      font-size: 1.1rem;
+      font-weight: 800;
     }
     .brand-subtitle {
-      font-size: 0.95rem;
+      font-size: 0.8rem;
       font-weight: 600;
     }
     .nav-track-wrapper {
@@ -559,8 +560,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     .nav-track {
       width: 100%;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
       background: transparent;
       border: none;
       padding: 0;
@@ -570,31 +571,47 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       display: none;
     }
     .nav-item {
-      font-size: 1.02rem; /* 大字號 */
+      font-size: 0.88rem;
       font-weight: 700;
-      padding: 10px 6px;
-      border-radius: 12px;
+      padding: 6px 4px;
+      border-radius: 8px;
       background: #ffffff;
-      border: 1.5px solid var(--color-border);
-      box-shadow: 0 2px 6px rgba(74, 144, 164, 0.08);
+      border: 1px solid var(--color-border);
+      box-shadow: 0 1px 4px rgba(74, 144, 164, 0.06);
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 46px;
+      min-height: 36px;
       color: var(--color-text-title);
       white-space: nowrap;
       transition: all 0.2s ease;
+    }
+    .nav-item:nth-of-type(1),
+    .nav-item:nth-of-type(2),
+    .nav-item:nth-of-type(3) {
+      grid-column: span 2;
+    }
+    .nav-item:nth-of-type(4),
+    .nav-item:nth-of-type(5) {
+      grid-column: span 3;
     }
     .nav-item.active {
       background: linear-gradient(135deg, var(--color-primary), #3b7688);
       color: #ffffff;
       border-color: var(--color-primary);
-      box-shadow: 0 3px 10px rgba(74, 144, 164, 0.3);
+      box-shadow: 0 2px 8px rgba(74, 144, 164, 0.25);
       font-weight: 800;
     }
     .nav-actions {
       display: none;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .nav-item {
+      font-size: 0.8rem;
+      padding: 5px 2px;
     }
   }
 
