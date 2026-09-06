@@ -7,7 +7,7 @@ export interface VideoItem {
   id: string;             // YouTube Video ID
   title: string;          // 影片標題
   description: string;    // 影片重點衛教簡述
-  category: '胃部疾病' | '腸道健康' | '檢查衛教' | '代謝慢病'; // 分類標籤
+  category: '肝膽胰疾病' | '胃部疾病' | '腸道健康' | '檢查衛教' | '代謝慢病'; // 分類標籤
   duration: string;       // 影片長度
   url: string;            // YouTube 觀看連結
   featured: boolean;      // 是否列為首頁精選（展示於首頁影音專區）
@@ -16,6 +16,7 @@ export interface VideoItem {
 
 export const videoCategories = [
   '全部',
+  '肝膽胰疾病',
   '胃部疾病',
   '腸道健康',
   '檢查衛教',
@@ -24,6 +25,16 @@ export const videoCategories = [
 
 export const videos: VideoItem[] = [
   {
+    id: 'EVPOpaNEs_o',
+    title: '急性膽囊炎',
+    description: '右上腹劇烈絞痛發燒小心膽囊炎！認識膽結石併發急性膽囊炎成因、超音波診斷與臨床治療照護。',
+    category: '肝膽胰疾病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=EVPOpaNEs_o',
+    featured: true,
+    order: 1,
+  },
+  {
     id: '41WgFILCHtM',
     title: '代謝症候群',
     description: '一分鐘快速掌握代謝症候群 5 大關鍵指標，提早防範心血管與三高慢性病風險。',
@@ -31,7 +42,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=41WgFILCHtM',
     featured: true,
-    order: 1,
+    order: 2,
   },
   {
     id: 'kbVjl-HOKr4',

@@ -12,6 +12,7 @@ const thumbnail = getYouTubeThumbnail(video.id);
 
 // 分類主題色映射
 const categoryColorMap: Record<string, string> = {
+  '肝膽胰疾病': 'badge-liver',
   '胃部疾病': 'badge-stomach',
   '腸道健康': 'badge-intestine',
   '檢查衛教': 'badge-exam',
@@ -207,6 +208,11 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
     backdrop-filter: blur(8px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     letter-spacing: 0.03em;
+  }
+
+  .badge-liver {
+    background: rgba(14, 165, 233, 0.92);
+    color: #ffffff;
   }
 
   .badge-stomach {
