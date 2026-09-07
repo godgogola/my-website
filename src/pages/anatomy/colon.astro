@@ -394,7 +394,7 @@ import Layout from '../../layouts/Layout.astro';
 
     // Global 3D Variables
     let scene, camera, renderer, controls;
-    let singleColonMesh, colonMaterial;
+    let singleColonMesh, colonMaterial, colonMasterGroup;
     let segmentLabelSprites = {};
     let scopeGroup, scopeHeadLight, scopeTipMesh, scopeTubeMesh;
     let pathologyGroup;
@@ -483,7 +483,7 @@ import Layout from '../../layouts/Layout.astro';
       // 1. Scene & Camera
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-      camera.position.set(0, isMobile ? 0.3 : -0.5, isMobile ? 9.2 : 8.8);
+      camera.position.set(0, -0.45, isMobile ? 10.8 : 9.4);
 
       // 2. WebGL Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -501,7 +501,7 @@ import Layout from '../../layouts/Layout.astro';
       controls.dampingFactor = 0.06;
       controls.minDistance = 3.2;
       controls.maxDistance = 24;
-      controls.target.set(0, isMobile ? 0.2 : -0.5, 0);
+      controls.target.set(0, -0.45, 0);
 
       // 4. Studio Medical Lighting (Soft, balanced, non-glare)
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
@@ -518,6 +518,10 @@ import Layout from '../../layouts/Layout.astro';
       const bottomLight = new THREE.DirectionalLight(0xa7f3d0, 0.25);
       bottomLight.position.set(0, -8, 6);
       scene.add(bottomLight);
+
+      const frontLight = new THREE.DirectionalLight(0xfff7ed, 0.5);
+      frontLight.position.set(0, 0, 8);
+      scene.add(frontLight);
 
       // 5. Build Spline Curve
       colonSplineCurve = new THREE.CatmullRomCurve3(colonPathPoints);
@@ -554,17 +558,73 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
-    // Build Single Seamless Organic 3D Colon Mesh with modulated Haustra
+    // Build Textbook-Exact 3D Colon Cutaway Anatomy Model (Coronal Cutaway matching Stomach)
     function buildSingleOrganicColon() {
+      colonMasterGroup = new THREE.Group();
+
+      // Materials for realistic textbook anatomical illustration (Matching Stomach model)
+      // 1. External Serosa / Outer Shell (Natural Deep Warm Tone)
+      const serosaMat = new THREE.MeshPhysicalMaterial({
+        color: 0xb54e44,
+        roughness: 0.52,
+        metalness: 0.02,
+        clearcoat: 0.25,
+        clearcoatRoughness: 0.4,
+        side: THREE.DoubleSide
+      });
+
+      // 2. Internal Mucosal Cavity (Warm Salmon Red with rich natural depth)
+      colonMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xa63a32,
+        roughness: 0.48,
+        metalness: 0.02,
+        clearcoat: 0.25,
+        clearcoatRoughness: 0.4,
+        transparent: true,
+        opacity: currentOpacity,
+        side: THREE.DoubleSide
+      });
+
+      // 3. Thickened Muscular Wall Cut Edge (Cross-section rim showing wall thickness)
+      const wallCutMat = new THREE.MeshStandardMaterial({
+        color: 0x8a2b25,
+        roughness: 0.58,
+        side: THREE.DoubleSide
+      });
+
+      // 4. Semilunar Folds Material (Plicae semilunares, distinct warm coral mucosal folds)
+      const foldMat = new THREE.MeshPhysicalMaterial({
+        color: 0xb5463c,
+        roughness: 0.46,
+        clearcoat: 0.3,
+        clearcoatRoughness: 0.35,
+        side: THREE.DoubleSide
+      });
+
+      // 5. Sphincter Muscular Ring Material
+      const sphincterMat = new THREE.MeshStandardMaterial({
+        color: 0x94322a,
+        roughness: 0.55
+      });
+
+      // --- A. Construct 3D Posterior Half-Pipe Lumen Trough ---
       const numRings = 160;
-      const radialSegs = 32;
+      const radialSegs = 24;
       const positions = [];
-      const normals = [];
       const uvs = [];
       const indices = [];
 
+      const leftLipPoints = [];
+      const rightLipPoints = [];
+
+      // Angle range: Posterior half (back wall facing forward into lumen)
+      // Cut with slight wrap past 180 degrees so lateral edges embrace the lumen
+      const startTheta = Math.PI - 0.12;
+      const endTheta = 2 * Math.PI + 0.12;
+
       for (let i = 0; i <= numRings; i++) {
-        const u = i / numRings; // 0.0 (Anus) to 1.0 (Cecum/Appendix)
+        // u spans from 0.0 (anus) to 0.92 (cecum pole)
+        const u = (i / numRings) * 0.92;
         const pt = colonSplineCurve.getPoint(u);
         const tangent = colonSplineCurve.getTangent(u).normalize();
 
@@ -577,18 +637,22 @@ import Layout from '../../layouts/Layout.astro';
         if (u < 0.12) baseR = 0.38; // Rectal ampulla
         else if (u < 0.35) baseR = 0.30; // Sigmoid loop
         else if (u < 0.74) baseR = 0.35; // Descending & Transverse
-        else baseR = 0.38 + (u - 0.74) * 0.1; // Ascending to wide Cecum
+        else baseR = 0.38 + (u - 0.74) * 0.12; // Ascending to wide Cecum
 
-        // Continuous Haustra pouches & 3 Teniae Coli ridges
+        // Haustra pouches modulation
         const haustraMod = 1.0 + 0.18 * Math.sin(u * Math.PI * 2 * 28);
 
         for (let j = 0; j <= radialSegs; j++) {
           const v = j / radialSegs;
-          const theta = v * Math.PI * 2;
+          const theta = startTheta + v * (endTheta - startTheta);
 
-          const teniaMod = 1.0 + 0.07 * Math.cos(3 * theta);
-          const r = baseR * haustraMod * teniaMod;
+          // Triangular lumen nuance in transverse colon (0.55 ~ 0.78)
+          let shapeMod = 1.0;
+          if (u > 0.55 && u < 0.78) {
+            shapeMod = 1.0 + 0.06 * Math.cos(3 * theta);
+          }
 
+          const r = baseR * haustraMod * shapeMod;
           const cx = Math.cos(theta) * r;
           const cy = Math.sin(theta) * r;
 
@@ -598,6 +662,10 @@ import Layout from '../../layouts/Layout.astro';
 
           positions.push(vx, vy, vz);
           uvs.push(u, v);
+
+          // Track left and right cut lips for continuous wall cut rims
+          if (j === 0) leftLipPoints.push(new THREE.Vector3(vx, vy, vz));
+          if (j === radialSegs) rightLipPoints.push(new THREE.Vector3(vx, vy, vz));
         }
       }
 
@@ -608,6 +676,7 @@ import Layout from '../../layouts/Layout.astro';
           const c = (i + 1) * (radialSegs + 1) + (j + 1);
           const d = i * (radialSegs + 1) + (j + 1);
 
+          // Front-facing into the inner mucosal cavity
           indices.push(a, b, d);
           indices.push(b, c, d);
         }
@@ -619,26 +688,146 @@ import Layout from '../../layouts/Layout.astro';
       geom.setIndex(indices);
       geom.computeVertexNormals();
 
-      colonMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xb55146,
-        roughness: 0.52,
-        metalness: 0.02,
-        clearcoat: 0.2,
-        clearcoatRoughness: 0.4,
-        transparent: true,
-        opacity: currentOpacity,
-        side: THREE.DoubleSide
-      });
-
       singleColonMesh = new THREE.Mesh(geom, colonMaterial);
-      scene.add(singleColonMesh);
+      colonMasterGroup.add(singleColonMesh);
 
-      // Add Auto-Fitting 3D Billboard Labels
+      // --- B. Construct Thickened Wall Cut Border Rims (Matching Image 2) ---
+      const leftCurve = new THREE.CatmullRomCurve3(leftLipPoints);
+      const leftRimGeom = new THREE.TubeGeometry(leftCurve, 120, 0.048, 8, false);
+      const leftRimMesh = new THREE.Mesh(leftRimGeom, wallCutMat);
+      leftRimMesh.scale.set(1.0, 1.0, 0.45);
+      colonMasterGroup.add(leftRimMesh);
+
+      const rightCurve = new THREE.CatmullRomCurve3(rightLipPoints);
+      const rightRimGeom = new THREE.TubeGeometry(rightCurve, 120, 0.048, 8, false);
+      const rightRimMesh = new THREE.Mesh(rightRimGeom, wallCutMat);
+      rightRimMesh.scale.set(1.0, 1.0, 0.45);
+      colonMasterGroup.add(rightRimMesh);
+
+      // --- C. Construct Crescent Semilunar Folds (結腸半月襞, Plicae Semilunares) ---
+      const foldGroup = new THREE.Group();
+      const numFolds = 24;
+      for (let k = 1; k <= numFolds; k++) {
+        const uFold = 0.05 + (k / (numFolds + 1)) * 0.85;
+        const ptF = colonSplineCurve.getPoint(uFold);
+        const tanF = colonSplineCurve.getTangent(uFold).normalize();
+        let nF = new THREE.Vector3(0, 0, 1).cross(tanF).normalize();
+        if (nF.lengthSq() < 0.01) nF = new THREE.Vector3(1, 0, 0).cross(tanF).normalize();
+        const bnF = new THREE.Vector3().crossVectors(tanF, nF).normalize();
+
+        let baseRF = 0.34;
+        if (uFold < 0.12) baseRF = 0.38;
+        else if (uFold < 0.35) baseRF = 0.30;
+        else if (uFold < 0.74) baseRF = 0.35;
+        else baseRF = 0.38 + (uFold - 0.74) * 0.12;
+
+        const foldR = baseRF * 0.90;
+        const arcPts = [];
+        const arcSteps = 14;
+        for (let s = 0; s <= arcSteps; s++) {
+          const vF = 0.06 + (s / arcSteps) * 0.88;
+          const thetaF = startTheta + vF * (endTheta - startTheta);
+          const fx = ptF.x + nF.x * Math.cos(thetaF) * foldR + bnF.x * Math.sin(thetaF) * foldR;
+          const fy = ptF.y + nF.y * Math.cos(thetaF) * foldR + bnF.y * Math.sin(thetaF) * foldR;
+          const fz = ptF.z + nF.z * Math.cos(thetaF) * foldR + bnF.z * Math.sin(thetaF) * foldR;
+          arcPts.push(new THREE.Vector3(fx, fy, fz));
+        }
+        const foldCurve = new THREE.CatmullRomCurve3(arcPts);
+        const foldGeom = new THREE.TubeGeometry(foldCurve, 16, 0.024, 6, false);
+        const foldMesh = new THREE.Mesh(foldGeom, foldMat);
+        foldGroup.add(foldMesh);
+      }
+      colonMasterGroup.add(foldGroup);
+
+      // --- D. Construct Anus & Rectum Details (Houston Valves & Anal Sphincter) ---
+      // Anal Sphincter Muscular Ring
+      const analRingGeom = new THREE.TorusGeometry(0.38, 0.065, 12, 24);
+      const analRingMesh = new THREE.Mesh(analRingGeom, sphincterMat);
+      analRingMesh.position.set(0.0, -2.6, 0.0);
+      analRingMesh.rotation.x = Math.PI / 2;
+      colonMasterGroup.add(analRingMesh);
+
+      // Rectal Houston transverse valves (2 shelves inside rectal ampulla)
+      const h1Geom = new THREE.TorusGeometry(0.32, 0.035, 8, 16, Math.PI * 0.65);
+      const h1Mesh = new THREE.Mesh(h1Geom, foldMat);
+      h1Mesh.position.set(0.0, -2.3, 0.05);
+      h1Mesh.rotation.x = Math.PI / 2;
+      h1Mesh.rotation.z = Math.PI * 0.2;
+      colonMasterGroup.add(h1Mesh);
+
+      const h2Mesh = new THREE.Mesh(h1Geom, foldMat);
+      h2Mesh.position.set(0.0, -1.95, 0.08);
+      h2Mesh.rotation.x = Math.PI / 2;
+      h2Mesh.rotation.z = -Math.PI * 0.4;
+      colonMasterGroup.add(h2Mesh);
+
+      // --- E. Construct Cecum & Vermiform Appendix (闌尾開口與迴盲瓣) ---
+      // Cecal Fundic Bowl (Rounded bottom cup)
+      const cecumBowlGeom = new THREE.SphereGeometry(0.44, 20, 16, 0, Math.PI * 1.1, 0, Math.PI * 0.55);
+      const cecumBowlMesh = new THREE.Mesh(cecumBowlGeom, colonMaterial);
+      cecumBowlMesh.position.set(-1.8, -1.8, 0.2);
+      cecumBowlMesh.rotation.x = -Math.PI / 2;
+      cecumBowlMesh.rotation.z = Math.PI / 3;
+      colonMasterGroup.add(cecumBowlMesh);
+
+      // Vermiform Appendix (闌尾 - Narrow intact 3D tube branching from cecum base)
+      const appendixPoints = [
+        new THREE.Vector3(-1.8, -1.8, 0.2),
+        new THREE.Vector3(-1.65, -2.05, 0.25),
+        new THREE.Vector3(-1.5, -2.2, 0.28),
+        new THREE.Vector3(-1.38, -2.32, 0.32)
+      ];
+      const appendixCurve = new THREE.CatmullRomCurve3(appendixPoints);
+      const appendixGeom = new THREE.TubeGeometry(appendixCurve, 20, 0.08, 12, false);
+      const appendixMesh = new THREE.Mesh(appendixGeom, serosaMat);
+      colonMasterGroup.add(appendixMesh);
+
+      const appTipGeom = new THREE.SphereGeometry(0.08, 12, 12);
+      const appTipMesh = new THREE.Mesh(appTipGeom, serosaMat);
+      appTipMesh.position.set(-1.38, -2.32, 0.32);
+      colonMasterGroup.add(appTipMesh);
+
+      // Appendiceal Orifice (闌尾開口 - Mercedes-Benz 3-slit sign at base of cecum)
+      const appOrificeGroup = new THREE.Group();
+      const craterGeom = new THREE.TorusGeometry(0.075, 0.02, 8, 16);
+      const craterMesh = new THREE.Mesh(craterGeom, sphincterMat);
+      appOrificeGroup.add(craterMesh);
+
+      for (let s = 0; s < 3; s++) {
+        const slitGeom = new THREE.BoxGeometry(0.015, 0.065, 0.01);
+        const slitMesh = new THREE.Mesh(slitGeom, wallCutMat);
+        slitMesh.rotation.z = s * (Math.PI * 2 / 3);
+        appOrificeGroup.add(slitMesh);
+      }
+      appOrificeGroup.position.set(-1.75, -1.75, 0.15);
+      appOrificeGroup.rotation.x = -Math.PI / 4;
+      colonMasterGroup.add(appOrificeGroup);
+
+      // Ileocecal Valve (迴盲瓣 - Upper & lower mucosal lips on medial wall)
+      const icValveGroup = new THREE.Group();
+      const lipUpperGeom = new THREE.CylinderGeometry(0.04, 0.04, 0.16, 8);
+      lipUpperGeom.rotateZ(Math.PI / 2);
+      const lipUpperMesh = new THREE.Mesh(lipUpperGeom, foldMat);
+      lipUpperMesh.position.set(0, 0.035, 0);
+      icValveGroup.add(lipUpperMesh);
+
+      const lipLowerMesh = new THREE.Mesh(lipUpperGeom, foldMat);
+      lipLowerMesh.position.set(0, -0.035, 0);
+      icValveGroup.add(lipLowerMesh);
+
+      icValveGroup.position.set(-1.48, -1.52, 0.16);
+      icValveGroup.rotation.z = -Math.PI / 6;
+      colonMasterGroup.add(icValveGroup);
+
+      // Add Master Group to Scene
+      scene.add(colonMasterGroup);
+
+      // --- F. Add Auto-Fitting 3D Billboard Labels ---
       Object.keys(segmentConfigs).forEach(key => {
         const conf = segmentConfigs[key];
         const sprite = createTextSprite(conf.label, '#10b981');
         sprite.position.set(conf.labelPos[0], conf.labelPos[1], conf.labelPos[2]);
-        singleColonMesh.add(sprite);
+        colonMasterGroup.add(sprite);
         segmentLabelSprites[key] = sprite;
       });
     }
@@ -734,18 +923,20 @@ import Layout from '../../layouts/Layout.astro';
       if (!colonSplineCurve || !scopeGroup) return;
 
       const tClamped = Math.max(0.001, Math.min(0.999, progressT));
-      const pt = colonSplineCurve.getPoint(tClamped);
-      const tangent = colonSplineCurve.getTangent(tClamped).normalize();
+      // Calibrate so 100cm intubates into the cecum (0.91)
+      const tCurve = tClamped * 0.91;
+      const pt = colonSplineCurve.getPoint(tCurve);
+      const tangent = colonSplineCurve.getTangent(tCurve).normalize();
 
       scopeGroup.position.copy(pt);
       scopeTipMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tangent);
 
       if (scopeTubeMesh) scene.remove(scopeTubeMesh);
 
-      const numPoints = Math.max(8, Math.floor(tClamped * 50));
+      const numPoints = Math.max(8, Math.floor(tCurve * 55));
       const subPoints = [];
       for (let i = 0; i <= numPoints; i++) {
-        subPoints.push(colonSplineCurve.getPoint((i / numPoints) * tClamped));
+        subPoints.push(colonSplineCurve.getPoint((i / numPoints) * tCurve));
       }
 
       if (subPoints.length >= 2) {
@@ -765,7 +956,7 @@ import Layout from '../../layouts/Layout.astro';
     function build3DPathologies() {
       pathologyGroup = new THREE.Group();
 
-      // 1. Polyps (3 Distinct Locations & Morphologies)
+      // 1. Polyps (3 Distinct Locations & Morphologies sitting on inner mucosal wall)
       const polypMat = new THREE.MeshPhysicalMaterial({
         color: 0xf43f5e,
         roughness: 0.2,
@@ -774,32 +965,34 @@ import Layout from '../../layouts/Layout.astro';
         emissiveIntensity: 0.6
       });
 
-      // Sigmoid Pedunculated Polyp
-      const p1StalkGeom = new THREE.CylinderGeometry(0.04, 0.05, 0.25, 8);
-      const p1HeadGeom = new THREE.SphereGeometry(0.14, 16, 16);
-      p1HeadGeom.translate(0, 0.16, 0);
+      // Sigmoid Pedunculated Polyp (有蒂腺瘤 - projecting into the sigmoid lumen)
+      const p1StalkGeom = new THREE.CylinderGeometry(0.035, 0.045, 0.22, 8);
+      const p1HeadGeom = new THREE.SphereGeometry(0.13, 16, 16);
+      p1HeadGeom.translate(0, 0.15, 0);
       const p1Mesh = new THREE.Mesh(p1HeadGeom, polypMat);
       p1Mesh.add(new THREE.Mesh(p1StalkGeom, polypMat));
-      p1Mesh.position.set(1.5, -2.1, 0.7);
+      p1Mesh.position.set(1.48, -1.82, 0.42);
+      p1Mesh.rotation.z = -Math.PI / 4;
+      p1Mesh.rotation.x = Math.PI / 6;
       p1Mesh.userData = { type: 'polyp', name: '乙狀結腸有蒂腺瘤 (Pedunculated Polyp, 0.8cm)' };
       pathologyGroup.add(p1Mesh);
 
-      // Ascending Flat Serrated Polyp (SSA/P)
-      const p2Geom = new THREE.CylinderGeometry(0.18, 0.22, 0.08, 16);
+      // Ascending Flat Serrated Polyp (SSA/P - 扁平鋸齒狀腺瘤 flat elevation on ascending mucosa)
+      const p2Geom = new THREE.CylinderGeometry(0.18, 0.22, 0.06, 16);
       const p2Mesh = new THREE.Mesh(p2Geom, polypMat);
-      p2Mesh.position.set(-1.85, 0.1, 0.1);
+      p2Mesh.position.set(-1.82, 0.15, -0.08);
       p2Mesh.rotation.z = Math.PI / 3;
       p2Mesh.userData = { type: 'polyp', name: '升結腸無蒂鋸齒狀腺瘤 (Flat SSA, 1.2cm)' };
       pathologyGroup.add(p2Mesh);
 
-      // Transverse Small Polyp
+      // Transverse Small Polyp (橫結腸管狀腺瘤 on transverse mucosal floor)
       const p3Geom = new THREE.SphereGeometry(0.1, 12, 12);
       const p3Mesh = new THREE.Mesh(p3Geom, polypMat);
-      p3Mesh.position.set(0.2, 0.65, 0.95);
+      p3Mesh.position.set(0.15, 0.68, 0.52);
       p3Mesh.userData = { type: 'polyp', name: '橫結腸管狀腺瘤 (Tubular Adenoma, 0.5cm)' };
       pathologyGroup.add(p3Mesh);
 
-      // 2. Diverticula (Multiple Outpouchings in Sigmoid & Descending)
+      // 2. Diverticula (Outpouching pocket crypts in Sigmoid & Descending)
       const divertMat = new THREE.MeshStandardMaterial({
         color: 0x7c3aed,
         roughness: 0.4,
@@ -808,21 +1001,26 @@ import Layout from '../../layouts/Layout.astro';
       });
 
       const divPositions = [
-        new THREE.Vector3(1.65, -1.9, 0.85),
-        new THREE.Vector3(1.75, -2.2, 0.45),
-        new THREE.Vector3(1.9, -1.2, 0.5),
-        new THREE.Vector3(2.0, -0.8, 0.2),
-        new THREE.Vector3(2.05, 0.2, -0.3)
+        new THREE.Vector3(1.62, -1.85, 0.45),
+        new THREE.Vector3(1.72, -2.15, 0.35),
+        new THREE.Vector3(1.85, -1.2, 0.22),
+        new THREE.Vector3(1.92, -0.75, 0.05),
+        new THREE.Vector3(1.95, 0.2, -0.15)
       ];
 
       divPositions.forEach((pos, idx) => {
-        const dMesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), divertMat);
-        dMesh.position.copy(pos);
-        dMesh.userData = { type: 'diverticulum', name: `乙狀結腸憩室 (${idx + 1})` };
-        pathologyGroup.add(dMesh);
+        const dGroup = new THREE.Group();
+        const dRing = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.02, 8, 12), divertMat);
+        const dSphere = new THREE.Mesh(new THREE.SphereGeometry(0.085, 10, 10), divertMat);
+        dSphere.position.set(0, 0, -0.05);
+        dGroup.add(dRing);
+        dGroup.add(dSphere);
+        dGroup.position.copy(pos);
+        dGroup.userData = { type: 'diverticulum', name: `乙狀結腸憩室 (${idx + 1})` };
+        pathologyGroup.add(dGroup);
       });
 
-      // 3. Hemorrhoids (Clusters at Anorectal Junction)
+      // 3. Hemorrhoids (Clusters at Anorectal Junction / Dentate Line)
       const hemMat = new THREE.MeshPhysicalMaterial({
         color: 0x9333ea,
         roughness: 0.25,
@@ -832,13 +1030,13 @@ import Layout from '../../layouts/Layout.astro';
       });
 
       const hemPositions = [
-        new THREE.Vector3(0.12, -2.48, 0.15),
-        new THREE.Vector3(-0.14, -2.45, 0.12),
-        new THREE.Vector3(0.02, -2.52, -0.16)
+        new THREE.Vector3(0.09, -2.48, 0.06),
+        new THREE.Vector3(-0.09, -2.46, 0.04),
+        new THREE.Vector3(0.02, -2.52, -0.05)
       ];
 
       hemPositions.forEach(pos => {
-        const hMesh = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), hemMat);
+        const hMesh = new THREE.Mesh(new THREE.SphereGeometry(0.105, 14, 14), hemMat);
         hMesh.position.copy(pos);
         hMesh.userData = { type: 'hemorrhoid', name: '肛門齒狀線內痔血管叢 (Hemorrhoid)' };
         pathologyGroup.add(hMesh);
@@ -999,29 +1197,29 @@ import Layout from '../../layouts/Layout.astro';
       document.getElementById(`view-btn-${preset}`)?.classList.add('active');
 
       const isMobile = window.innerWidth <= 1150;
-      let targetPos = new THREE.Vector3(0, isMobile ? 0.3 : -0.5, isMobile ? 13.5 : 8.8);
-      let targetLook = new THREE.Vector3(0, isMobile ? 0.2 : -0.5, 0);
+      let targetPos = new THREE.Vector3(0, -0.45, isMobile ? 10.8 : 9.4);
+      let targetLook = new THREE.Vector3(0, -0.45, 0);
 
       switch(preset) {
         case 'anterior': 
-          targetPos.set(0, isMobile ? 0.3 : -0.5, isMobile ? 13.5 : 8.8); 
-          targetLook.set(0, isMobile ? 0.2 : -0.5, 0); 
+          targetPos.set(0, -0.45, isMobile ? 10.8 : 9.4); 
+          targetLook.set(0, -0.45, 0); 
           break;
         case 'left_colon': 
-          targetPos.set(4.8, isMobile ? 0.0 : -0.5, isMobile ? 8.0 : 5.0); 
-          targetLook.set(1.2, isMobile ? -0.3 : -0.8, 0.2); 
+          targetPos.set(3.8, isMobile ? -0.2 : -0.5, isMobile ? 6.5 : 5.2); 
+          targetLook.set(1.2, isMobile ? -0.3 : -0.65, 0.2); 
           break;
         case 'right_colon': 
-          targetPos.set(-4.8, isMobile ? 0.0 : -0.5, isMobile ? 8.0 : 5.0); 
-          targetLook.set(-1.2, isMobile ? -0.3 : -0.8, 0.2); 
+          targetPos.set(-3.8, isMobile ? -0.2 : -0.5, isMobile ? 6.5 : 5.2); 
+          targetLook.set(-1.2, isMobile ? -0.3 : -0.65, 0.2); 
           break;
         case 'splenic': 
-          targetPos.set(3.5, isMobile ? 3.6 : 3.2, isMobile ? 8.0 : 5.2); 
-          targetLook.set(1.5, isMobile ? 1.6 : 1.2, 0.0); 
+          targetPos.set(2.5, isMobile ? 2.5 : 2.2, isMobile ? 6.0 : 4.8); 
+          targetLook.set(1.2, isMobile ? 1.2 : 1.0, 0.0); 
           break;
         case 'pelvis': 
-          targetPos.set(0, isMobile ? -5.5 : -6.5, isMobile ? 6.5 : 4.0); 
-          targetLook.set(0, isMobile ? -1.5 : -2.0, 0.2); 
+          targetPos.set(0, isMobile ? -4.5 : -5.0, isMobile ? 5.5 : 4.2); 
+          targetLook.set(0, isMobile ? -1.8 : -2.0, 0.2); 
           break;
       }
 
@@ -1114,8 +1312,8 @@ import Layout from '../../layouts/Layout.astro';
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
-      if (singleColonMesh) {
-        const intersects = raycaster.intersectObject(singleColonMesh, false);
+      if (colonMasterGroup) {
+        const intersects = raycaster.intersectObjects(colonMasterGroup.children, true);
         if (intersects.length > 0) {
           const hitPt = intersects[0].point;
           let closestId = 'sigmoid', minDist = 999;
@@ -1744,29 +1942,37 @@ import Layout from '../../layouts/Layout.astro';
 
   .view-angles-toolbar {
     position: absolute;
-    top: 0.85rem;
-    left: 0.85rem;
+    top: 0.75rem;
+    left: 0.75rem;
     z-index: 10;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
     background: rgba(10, 20, 32, 0.9);
     backdrop-filter: blur(12px);
-    padding: 0.45rem 0.6rem;
-    border-radius: 12px;
+    padding: 0.25rem 0.35rem;
+    border-radius: 10px;
     border: 1px solid var(--border-color);
+    max-width: calc(100% - 1.5rem);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .view-angles-toolbar::-webkit-scrollbar {
+    display: none;
   }
 
   .view-btn {
-    padding: 0.45rem 0.8rem;
-    border-radius: 8px;
+    padding: 0.3rem 0.55rem;
+    border-radius: 6px;
     border: 1px solid transparent;
     background: transparent;
     color: #cbd5e1;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
   }
   .view-btn:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -1781,23 +1987,31 @@ import Layout from '../../layouts/Layout.astro';
 
   .orbit-hint {
     position: absolute;
-    top: 0.85rem;
-    right: 0.85rem;
-    z-index: 10;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 9;
     background: rgba(10, 20, 32, 0.85);
     backdrop-filter: blur(10px);
-    padding: 0.45rem 0.75rem;
+    padding: 0.35rem 0.65rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    font-size: 0.88rem;
-    color: #cbd5e1;
+    font-size: 0.8rem;
+    color: #94a3b8;
     display: flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.35rem;
     pointer-events: none;
+    white-space: nowrap;
   }
   .orbit-hint svg {
     color: #10b981;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 1440px) {
+    .orbit-hint {
+      display: none;
+    }
   }
 
   /* Right Details Panel */

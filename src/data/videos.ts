@@ -25,14 +25,24 @@ export const videoCategories = [
 
 export const videos: VideoItem[] = [
   {
-    id: 'EVPOpaNEs_o',
-    title: '急性膽囊炎',
-    description: '右上腹劇烈絞痛發燒小心膽囊炎！認識膽結石併發急性膽囊炎成因、超音波診斷與臨床治療照護。',
+    id: '1zkY0lUePRo',
+    title: '膽結石',
+    description: '右上腹悶痛、飯後脹氣小心膽結石！認識膽結石成因、高危險群、症狀警訊與微創手術治療時機。',
     category: '肝膽胰疾病',
     duration: '0:41',
-    url: 'https://www.youtube.com/watch?v=EVPOpaNEs_o',
+    url: 'https://www.youtube.com/watch?v=1zkY0lUePRo',
     featured: true,
     order: 1,
+  },
+  {
+    id: 'rW2WJlv-6u8',
+    title: '打瘦瘦針也要健康',
+    description: '打瘦瘦針快速減重也要守護肌肉與代謝！腸胃專科醫師解析 GLP-1 瘦瘦筆正確用藥原則、常見副作用照護與預防復胖關鍵。',
+    category: '代謝慢病',
+    duration: '1:11',
+    url: 'https://www.youtube.com/watch?v=rW2WJlv-6u8',
+    featured: true,
+    order: 2,
   },
   {
     id: '41WgFILCHtM',
@@ -42,7 +52,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=41WgFILCHtM',
     featured: true,
-    order: 2,
+    order: 3,
   },
   {
     id: 'kbVjl-HOKr4',
@@ -52,7 +62,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=kbVjl-HOKr4',
     featured: true,
-    order: 2,
+    order: 4,
   },
   {
     id: 'EVtiKzGPfiE',
@@ -61,8 +71,8 @@ export const videos: VideoItem[] = [
     category: '胃部疾病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=EVtiKzGPfiE',
-    featured: true,
-    order: 3,
+    featured: false,
+    order: 5,
   },
   {
     id: '-Nfxr0NGDQ0',
@@ -71,18 +81,18 @@ export const videos: VideoItem[] = [
     category: '檢查衛教',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=-Nfxr0NGDQ0',
-    featured: true,
-    order: 4,
+    featured: false,
+    order: 6,
   },
   {
-    id: 'aOezd4xhdnw',
+    id: 'omtvd71Inwc',
     title: '上消化道潰瘍',
     description: '胃潰瘍與十二指腸潰瘍有何不同？搞懂疼痛發作時間點、致病因素與黃金治療期。',
     category: '胃部疾病',
     duration: '0:41',
-    url: 'https://www.youtube.com/watch?v=aOezd4xhdnw',
+    url: 'https://www.youtube.com/watch?v=omtvd71Inwc',
     featured: false,
-    order: 5,
+    order: 7,
   },
   {
     id: 'cBAGeNQeMP8',
@@ -92,7 +102,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=cBAGeNQeMP8',
     featured: false,
-    order: 6,
+    order: 8,
   },
   {
     id: 'S2QcETFlIxI',
@@ -102,7 +112,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=S2QcETFlIxI',
     featured: false,
-    order: 7,
+    order: 9,
   },
   {
     id: 'lxOZ1KRJDDE',
@@ -112,7 +122,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=lxOZ1KRJDDE',
     featured: false,
-    order: 8,
+    order: 10,
   },
   {
     id: 'wCFG_s-ToXA',
@@ -122,7 +132,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=wCFG_s-ToXA',
     featured: false,
-    order: 9,
+    order: 11,
   },
   {
     id: '7yhAnDnFC60',
@@ -132,7 +142,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=7yhAnDnFC60',
     featured: false,
-    order: 10,
+    order: 12,
   },
 ];
 

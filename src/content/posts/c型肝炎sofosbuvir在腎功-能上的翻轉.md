@@ -4,7 +4,7 @@ category: "肝病特區"
 publishDate: "2026-06-28"
 draft: false
 slug: "c型肝炎sofosbuvir在腎功-能上的翻轉"
-coverImage: "C型肝炎.webp"
+coverImage: "【C型肝炎】Sofosbuvir在腎功 能上的翻轉.webp"
 ---
 之所以會有「SOF-based（索華迪基礎）藥物會傷腎、腎功能不好不能用」的強烈印象，主要是因為 C 肝新藥在過去幾年間經歷了一次「觀念上的顛覆性歷史大翻轉」。以下為您拆解這個誤解的由來以及目前的最新實證：
 
