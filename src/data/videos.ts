@@ -25,6 +25,36 @@ export const videoCategories = [
 
 export const videos: VideoItem[] = [
   {
+    id: '4j84jWlgqlY',
+    title: '巴瑞式食道炎',
+    description: '火燒心久治不癒小心食道癌前病變！認識巴瑞特氏食道炎成因、腸化生細胞特徵與定期內視鏡追蹤防癌關鍵。',
+    category: '胃部疾病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=4j84jWlgqlY',
+    featured: true,
+    order: 1,
+  },
+  {
+    id: 'Z63MSpIm87o',
+    title: '結腸激躁症',
+    description: '一緊張壓力大就肚子痛、腹瀉或便秘？搞懂大腸激躁症（IBS）成因、常見分型與低 FODMAP 飲食日常調理。',
+    category: '腸道健康',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=Z63MSpIm87o',
+    featured: true,
+    order: 2,
+  },
+  {
+    id: 'GmdlJWoGZEA',
+    title: '藥物性食道潰瘍',
+    description: '吞藥沒喝夠水小心食道黏膜被灼傷！一顆藥丸引發胸口劇痛與吞嚥困難，認識藥物性食道潰瘍預防與照護重點。',
+    category: '胃部疾病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=GmdlJWoGZEA',
+    featured: true,
+    order: 3,
+  },
+  {
     id: '1zkY0lUePRo',
     title: '膽結石',
     description: '右上腹悶痛、飯後脹氣小心膽結石！認識膽結石成因、高危險群、症狀警訊與微創手術治療時機。',
@@ -32,7 +62,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=1zkY0lUePRo',
     featured: true,
-    order: 1,
+    order: 4,
   },
   {
     id: 'rW2WJlv-6u8',
@@ -41,8 +71,8 @@ export const videos: VideoItem[] = [
     category: '代謝慢病',
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=rW2WJlv-6u8',
-    featured: true,
-    order: 2,
+    featured: false,
+    order: 5,
   },
   {
     id: '41WgFILCHtM',
@@ -51,8 +81,8 @@ export const videos: VideoItem[] = [
     category: '代謝慢病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=41WgFILCHtM',
-    featured: true,
-    order: 3,
+    featured: false,
+    order: 6,
   },
   {
     id: 'kbVjl-HOKr4',
@@ -61,8 +91,8 @@ export const videos: VideoItem[] = [
     category: '腸道健康',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=kbVjl-HOKr4',
-    featured: true,
-    order: 4,
+    featured: false,
+    order: 7,
   },
   {
     id: 'EVtiKzGPfiE',
@@ -72,7 +102,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=EVtiKzGPfiE',
     featured: false,
-    order: 5,
+    order: 8,
   },
   {
     id: '-Nfxr0NGDQ0',
@@ -82,7 +112,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=-Nfxr0NGDQ0',
     featured: false,
-    order: 6,
+    order: 9,
   },
   {
     id: 'omtvd71Inwc',
@@ -92,7 +122,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=omtvd71Inwc',
     featured: false,
-    order: 7,
+    order: 10,
   },
   {
     id: 'cBAGeNQeMP8',
@@ -102,7 +132,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=cBAGeNQeMP8',
     featured: false,
-    order: 8,
+    order: 11,
   },
   {
     id: 'S2QcETFlIxI',
@@ -112,7 +142,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=S2QcETFlIxI',
     featured: false,
-    order: 9,
+    order: 12,
   },
   {
     id: 'lxOZ1KRJDDE',
@@ -122,7 +152,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=lxOZ1KRJDDE',
     featured: false,
-    order: 10,
+    order: 13,
   },
   {
     id: 'wCFG_s-ToXA',
@@ -132,7 +162,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=wCFG_s-ToXA',
     featured: false,
-    order: 11,
+    order: 14,
   },
   {
     id: '7yhAnDnFC60',
@@ -142,7 +172,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=7yhAnDnFC60',
     featured: false,
-    order: 12,
+    order: 15,
   },
 ];
 
