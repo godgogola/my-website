@@ -25,6 +25,16 @@ export const videoCategories = [
 
 export const videos: VideoItem[] = [
   {
+    id: 'iFDd1LTER_I',
+    title: '急性胰臟炎',
+    description: '上腹劇痛穿透後背小心自體消化！認識急性胰臟炎三大導火線、疼痛特徵警訊與臨床緊急處置原則。',
+    category: '肝膽胰疾病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=iFDd1LTER_I',
+    featured: true,
+    order: 1,
+  },
+  {
     id: '4j84jWlgqlY',
     title: '巴瑞式食道炎',
     description: '火燒心久治不癒小心食道癌前病變！認識巴瑞特氏食道炎成因、腸化生細胞特徵與定期內視鏡追蹤防癌關鍵。',
@@ -32,7 +42,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=4j84jWlgqlY',
     featured: true,
-    order: 1,
+    order: 2,
   },
   {
     id: 'Z63MSpIm87o',
@@ -42,7 +52,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Z63MSpIm87o',
     featured: true,
-    order: 2,
+    order: 3,
   },
   {
     id: 'GmdlJWoGZEA',
@@ -52,7 +62,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=GmdlJWoGZEA',
     featured: true,
-    order: 3,
+    order: 4,
   },
   {
     id: '1zkY0lUePRo',
@@ -61,8 +71,8 @@ export const videos: VideoItem[] = [
     category: '肝膽胰疾病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=1zkY0lUePRo',
-    featured: true,
-    order: 4,
+    featured: false,
+    order: 5,
   },
   {
     id: 'rW2WJlv-6u8',
@@ -72,7 +82,7 @@ export const videos: VideoItem[] = [
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=rW2WJlv-6u8',
     featured: false,
-    order: 5,
+    order: 6,
   },
   {
     id: '41WgFILCHtM',
@@ -82,7 +92,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=41WgFILCHtM',
     featured: false,
-    order: 6,
+    order: 7,
   },
   {
     id: 'kbVjl-HOKr4',
@@ -92,7 +102,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=kbVjl-HOKr4',
     featured: false,
-    order: 7,
+    order: 8,
   },
   {
     id: 'EVtiKzGPfiE',
@@ -102,7 +112,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=EVtiKzGPfiE',
     featured: false,
-    order: 8,
+    order: 9,
   },
   {
     id: '-Nfxr0NGDQ0',
@@ -112,7 +122,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=-Nfxr0NGDQ0',
     featured: false,
-    order: 9,
+    order: 10,
   },
   {
     id: 'omtvd71Inwc',
@@ -122,7 +132,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=omtvd71Inwc',
     featured: false,
-    order: 10,
+    order: 11,
   },
   {
     id: 'cBAGeNQeMP8',
@@ -132,7 +142,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=cBAGeNQeMP8',
     featured: false,
-    order: 11,
+    order: 12,
   },
   {
     id: 'S2QcETFlIxI',
@@ -142,7 +152,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=S2QcETFlIxI',
     featured: false,
-    order: 12,
+    order: 13,
   },
   {
     id: 'lxOZ1KRJDDE',
@@ -152,7 +162,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=lxOZ1KRJDDE',
     featured: false,
-    order: 13,
+    order: 14,
   },
   {
     id: 'wCFG_s-ToXA',
@@ -162,7 +172,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=wCFG_s-ToXA',
     featured: false,
-    order: 14,
+    order: 15,
   },
   {
     id: '7yhAnDnFC60',
@@ -172,7 +182,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=7yhAnDnFC60',
     featured: false,
-    order: 15,
+    order: 16,
   },
 ];
 
