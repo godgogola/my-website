@@ -105,14 +105,24 @@ export const videos: VideoItem[] = [
     order: 8,
   },
   {
-    id: 'EVtiKzGPfiE',
+    id: 'lywTekvOC1k',
     title: '胃食道逆流',
     description: '火燒心、喉嚨異物感？帶您了解胃食道逆流成因、生活飲食調整與最新整合用藥觀念。',
     category: '胃部疾病',
-    duration: '0:41',
-    url: 'https://www.youtube.com/watch?v=EVtiKzGPfiE',
+    duration: '0:51',
+    url: 'https://www.youtube.com/watch?v=lywTekvOC1k',
     featured: false,
     order: 9,
+  },
+  {
+    id: 'w3L4lQW7HKU',
+    title: '血糖平穩的好習慣',
+    description: '遠離血糖雲霄飛車！腸胃專科醫師分享控糖好習慣、日常進食順序與穩糖關鍵心法。',
+    category: '代謝慢病',
+    duration: '1:11',
+    url: 'https://www.youtube.com/watch?v=w3L4lQW7HKU',
+    featured: false,
+    order: 10,
   },
   {
     id: '-Nfxr0NGDQ0',
@@ -122,7 +132,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=-Nfxr0NGDQ0',
     featured: false,
-    order: 10,
+    order: 11,
   },
   {
     id: 'omtvd71Inwc',
@@ -132,7 +142,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=omtvd71Inwc',
     featured: false,
-    order: 11,
+    order: 12,
   },
   {
     id: 'cBAGeNQeMP8',
@@ -142,7 +152,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=cBAGeNQeMP8',
     featured: false,
-    order: 12,
+    order: 13,
   },
   {
     id: 'S2QcETFlIxI',
@@ -152,7 +162,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=S2QcETFlIxI',
     featured: false,
-    order: 13,
+    order: 14,
   },
   {
     id: 'lxOZ1KRJDDE',
@@ -162,7 +172,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=lxOZ1KRJDDE',
     featured: false,
-    order: 14,
+    order: 15,
   },
   {
     id: 'wCFG_s-ToXA',
@@ -172,7 +182,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=wCFG_s-ToXA',
     featured: false,
-    order: 15,
+    order: 16,
   },
   {
     id: '7yhAnDnFC60',
@@ -182,7 +192,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=7yhAnDnFC60',
     featured: false,
-    order: 16,
+    order: 17,
   },
 ];
 
