@@ -25,14 +25,74 @@ export const videoCategories = [
 
 export const videos: VideoItem[] = [
   {
+    id: 'gGoY0kMHbPw',
+    title: '一直放屁，是腸子出問題了嗎',
+    description: '頻繁排氣連環放屁好尷尬？解析日常放屁成因、產氣食物陷阱與腸道菌發酵機制，掌握何時該就醫檢查腸道健康。',
+    category: '腸道健康',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=gGoY0kMHbPw',
+    featured: true,
+    order: 1,
+  },
+  {
+    id: 'bIe3o8ikO40',
+    title: '大腸憩室炎',
+    description: '腹痛發燒小心大腸長小囊袋發炎！搞懂大腸憩室成因、左下腹劇痛等典型警訊，與急性期抗生素治療及照護關鍵。',
+    category: '腸道健康',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=bIe3o8ikO40',
+    featured: true,
+    order: 2,
+  },
+  {
+    id: 'qO9JWpIJuoI',
+    title: '【2026 ACSM】基礎阻力訓練',
+    description: '2026 美國運動醫學會（ACSM）最新指引！專為初學者與長輩打造的入門處方，每週 2 天、先大後小安全防範肌少症。',
+    category: '代謝慢病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=qO9JWpIJuoI',
+    featured: true,
+    order: 3,
+  },
+  {
+    id: 'TJLqk1pfn7Q',
+    title: '代謝異常脂肪肝病變',
+    description: '脂肪肝不只是肝臟問題更是全身代謝警訊！最新 MASLD 代謝異常脂肪肝病變正面表列診斷、心血管關聯與逆轉全攻略。',
+    category: '肝膽胰疾病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=TJLqk1pfn7Q',
+    featured: true,
+    order: 4,
+  },
+  {
+    id: 'MskD8Z4qclA',
+    title: '大腸癌風險因子',
+    description: '年輕化的大腸癌如何提早防範？深入剖析超加工食品、肥胖微發炎與環境塑料等高風險因子，把握黃金篩檢防癌時機。',
+    category: '腸道健康',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=MskD8Z4qclA',
+    featured: false,
+    order: 5,
+  },
+  {
+    id: 'rcDzG-v3JlA',
+    title: '【2026 ACSM】基礎阻力訓練套餐',
+    description: '在家也能做的抗老強身處方！遵循 2026 ACSM 指南先大後小、多關節動作優先原則，精選 8 大動作全方位強化全身肌群。',
+    category: '代謝慢病',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=rcDzG-v3JlA',
+    featured: false,
+    order: 6,
+  },
+  {
     id: '3BRS3MTu3Vg',
     title: '糖尿病診斷',
     description: '血糖超標就是糖尿病嗎？掌握 ADA 最新糖尿病診斷 4 大標準（糖化血色素 HbA1c、空腹血糖與耐糖測試）與篩檢時機。',
     category: '代謝慢病',
     duration: '0:31',
     url: 'https://www.youtube.com/watch?v=3BRS3MTu3Vg',
-    featured: true,
-    order: 1,
+    featured: false,
+    order: 7,
   },
   {
     id: 'UfuklQPtsYA',
@@ -41,8 +101,8 @@ export const videos: VideoItem[] = [
     category: '代謝慢病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=UfuklQPtsYA',
-    featured: true,
-    order: 2,
+    featured: false,
+    order: 8,
   },
   {
     id: 'Tjp2DGgcJs4',
@@ -51,8 +111,8 @@ export const videos: VideoItem[] = [
     category: '代謝慢病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Tjp2DGgcJs4',
-    featured: true,
-    order: 3,
+    featured: false,
+    order: 9,
   },
   {
     id: 'gkBta3p1_Jo',
@@ -61,8 +121,8 @@ export const videos: VideoItem[] = [
     category: '代謝慢病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=gkBta3p1_Jo',
-    featured: true,
-    order: 4,
+    featured: false,
+    order: 10,
   },
   {
     id: '8uvg8uMzjeY',
@@ -72,7 +132,7 @@ export const videos: VideoItem[] = [
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=8uvg8uMzjeY',
     featured: false,
-    order: 5,
+    order: 11,
   },
   {
     id: '2a2u2uyCS1U',
@@ -82,7 +142,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=2a2u2uyCS1U',
     featured: false,
-    order: 6,
+    order: 12,
   },
   {
     id: 'iFDd1LTER_I',
@@ -92,7 +152,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=iFDd1LTER_I',
     featured: false,
-    order: 7,
+    order: 13,
   },
   {
     id: '4j84jWlgqlY',
@@ -102,7 +162,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=4j84jWlgqlY',
     featured: false,
-    order: 8,
+    order: 14,
   },
   {
     id: 'Z63MSpIm87o',
@@ -112,7 +172,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Z63MSpIm87o',
     featured: false,
-    order: 9,
+    order: 15,
   },
   {
     id: 'GmdlJWoGZEA',
@@ -122,7 +182,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=GmdlJWoGZEA',
     featured: false,
-    order: 10,
+    order: 16,
   },
   {
     id: '1zkY0lUePRo',
@@ -132,7 +192,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=1zkY0lUePRo',
     featured: false,
-    order: 11,
+    order: 17,
   },
   {
     id: 'rW2WJlv-6u8',
@@ -142,7 +202,7 @@ export const videos: VideoItem[] = [
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=rW2WJlv-6u8',
     featured: false,
-    order: 12,
+    order: 18,
   },
   {
     id: '41WgFILCHtM',
@@ -152,7 +212,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=41WgFILCHtM',
     featured: false,
-    order: 13,
+    order: 19,
   },
   {
     id: 'kbVjl-HOKr4',
@@ -162,7 +222,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=kbVjl-HOKr4',
     featured: false,
-    order: 14,
+    order: 20,
   },
   {
     id: 'lywTekvOC1k',
@@ -172,7 +232,7 @@ export const videos: VideoItem[] = [
     duration: '0:51',
     url: 'https://www.youtube.com/watch?v=lywTekvOC1k',
     featured: false,
-    order: 15,
+    order: 21,
   },
   {
     id: 'w3L4lQW7HKU',
@@ -182,7 +242,7 @@ export const videos: VideoItem[] = [
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=w3L4lQW7HKU',
     featured: false,
-    order: 16,
+    order: 22,
   },
   {
     id: '-Nfxr0NGDQ0',
@@ -192,7 +252,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=-Nfxr0NGDQ0',
     featured: false,
-    order: 17,
+    order: 23,
   },
   {
     id: 'omtvd71Inwc',
@@ -202,7 +262,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=omtvd71Inwc',
     featured: false,
-    order: 18,
+    order: 24,
   },
   {
     id: 'cBAGeNQeMP8',
@@ -212,7 +272,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=cBAGeNQeMP8',
     featured: false,
-    order: 19,
+    order: 25,
   },
   {
     id: 'S2QcETFlIxI',
@@ -222,7 +282,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=S2QcETFlIxI',
     featured: false,
-    order: 20,
+    order: 26,
   },
   {
     id: 'lxOZ1KRJDDE',
@@ -232,7 +292,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=lxOZ1KRJDDE',
     featured: false,
-    order: 21,
+    order: 27,
   },
   {
     id: 'wCFG_s-ToXA',
@@ -242,7 +302,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=wCFG_s-ToXA',
     featured: false,
-    order: 22,
+    order: 28,
   },
   {
     id: '7yhAnDnFC60',
@@ -252,7 +312,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=7yhAnDnFC60',
     featured: false,
-    order: 23,
+    order: 29,
   },
 ];
 
