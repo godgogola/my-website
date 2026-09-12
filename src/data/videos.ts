@@ -1,6 +1,6 @@
 /**
  * 衛教短影音資料集
- * 集中管理 YouTube 頻道 @godgogola 最新衛教影片
+ * 集中管理 YouTube 頻道 @godgogola 最新衛教影片與對應衛教文章
  */
 
 export interface VideoItem {
@@ -12,6 +12,8 @@ export interface VideoItem {
   url: string;            // YouTube 觀看連結
   featured: boolean;      // 是否列為首頁精選（展示於首頁影音專區）
   order: number;          // 排序序號
+  articleSlug?: string;   // 【雙態卡片】對應衛教文章 Slug（選填，有填則自動點亮「閱讀專文」按鈕）
+  articleTitle?: string;  // 【雙態卡片】對應衛教文章標題（選填）
 }
 
 export const videoCategories = [
@@ -24,6 +26,93 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 ---
+  {
+    id: 'gHcM9xxGFag',
+    title: '【2026年健保新制】降血脂藥',
+    description: '2026年健保擴大降血脂藥物給付新制！掌握LDL壞膽固醇達標門檻、用藥時機與心血管風險評估關鍵。',
+    category: '代謝慢病',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=gHcM9xxGFag',
+    featured: true,
+    order: 1,
+    articleSlug: '2026年健保新制降血脂藥',
+    articleTitle: '【2026年健保新制】降血脂藥',
+  },
+  {
+    id: 'GQF4nPRswDc',
+    title: '小孩才做選擇，我重訓有氧都要',
+    description: '減重消脂該選重訓還是有氧？解析重訓提升基礎代謝與有氧高效燃脂的完美黃金比例組合。',
+    category: '代謝慢病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=GQF4nPRswDc',
+    featured: true,
+    order: 2,
+    articleSlug: '想減重要有氧還是重訓',
+    articleTitle: '想減重，要有氧還是重訓',
+  },
+  {
+    id: '5VG5rwPXSy8',
+    title: '新血脂指標【ApoB】【Lpa】【sd LDL】【ApoA1】',
+    description: '傳統血脂正常心血管依然亮紅燈？解讀 ApoB、Lp(a)、sdLDL 超壞膽固醇與 ApoA1 四大新一代動脈硬化預測指標。',
+    category: '代謝慢病',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=5VG5rwPXSy8',
+    featured: true,
+    order: 3,
+    articleSlug: 'apob-lpa-sdldl-apoa1四大進階脂蛋白指標',
+    articleTitle: '【ApoB, Lp(a), sdLDL, ApoA1】四大進階脂蛋白指標',
+  },
+  {
+    id: '1Zto2psWASI',
+    title: '內痔',
+    description: '排便出血擦拭有鮮血小心內痔！解析內痔與外痔成因、常見分級症狀與微創階梯治療全攻略。',
+    category: '腸道健康',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=1Zto2psWASI',
+    featured: false,
+    order: 4,
+    articleSlug: '痔瘡內痔與外痔',
+    articleTitle: '【痔瘡】內痔與外痔',
+  },
+  {
+    id: 'IXPgRx1HZjM',
+    title: '改善胰島素阻抗',
+    description: '肥胖脂肪肝的源頭！搞懂胰島素阻抗成因、早期身體警訊，與透過飲食生活作息逆轉阻抗策略。',
+    category: '代謝慢病',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=IXPgRx1HZjM',
+    featured: false,
+    order: 5,
+    articleSlug: '改善胰島素阻抗',
+    articleTitle: '改善胰島素阻抗',
+  },
+  {
+    id: '7M9UeRu2KT0',
+    title: '高三酸甘油脂',
+    description: '抽血血漿混濁如牛奶？高三酸甘油脂血症成因、誘發急性胰臟炎風險與飲食藥物控制處方。',
+    category: '代謝慢病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=7M9UeRu2KT0',
+    featured: false,
+    order: 6,
+    articleSlug: '高三酸甘油脂血症',
+    articleTitle: '高三酸甘油脂血症',
+  },
+  {
+    id: 'grV4xrO_VQ8',
+    title: '為什麼會有黑綠色大便',
+    description: '馬桶驚見墨綠色便便好擔心？解析膽汁氧化、飲食鐵劑影響與腸道蠕動過快原因，掌握就醫觀察要點。',
+    category: '腸道健康',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=grV4xrO_VQ8',
+    featured: false,
+    order: 7,
+    articleSlug: '為什麼會有墨綠色大便',
+    articleTitle: '為什麼會有墨綠色大便',
+  },
+
+  // --- 現有精選影音庫 ---
   {
     id: 'gGoY0kMHbPw',
     title: '一直放屁，是腸子出問題了嗎',
@@ -31,8 +120,10 @@ export const videos: VideoItem[] = [
     category: '腸道健康',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=gGoY0kMHbPw',
-    featured: true,
-    order: 1,
+    featured: false,
+    order: 8,
+    articleSlug: '放太多屁是不是腸子有問題',
+    articleTitle: '放太多屁是不是腸子有問題',
   },
   {
     id: 'bIe3o8ikO40',
@@ -41,8 +132,10 @@ export const videos: VideoItem[] = [
     category: '腸道健康',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=bIe3o8ikO40',
-    featured: true,
-    order: 2,
+    featured: false,
+    order: 9,
+    articleSlug: '大腸憩室炎',
+    articleTitle: '大腸憩室炎',
   },
   {
     id: 'qO9JWpIJuoI',
@@ -51,8 +144,10 @@ export const videos: VideoItem[] = [
     category: '代謝慢病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=qO9JWpIJuoI',
-    featured: true,
-    order: 3,
+    featured: false,
+    order: 10,
+    articleSlug: '2026-acsm基礎阻力訓練',
+    articleTitle: '【2026 ACSM】基礎阻力訓練',
   },
   {
     id: 'TJLqk1pfn7Q',
@@ -61,8 +156,10 @@ export const videos: VideoItem[] = [
     category: '肝膽胰疾病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=TJLqk1pfn7Q',
-    featured: true,
-    order: 4,
+    featured: false,
+    order: 11,
+    articleSlug: '代謝異常脂肪肝',
+    articleTitle: '【代謝異常脂肪肝】',
   },
   {
     id: 'MskD8Z4qclA',
@@ -72,7 +169,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=MskD8Z4qclA',
     featured: false,
-    order: 5,
+    order: 12,
+    articleSlug: '大腸癌大腸癌危險因子',
+    articleTitle: '【大腸癌】大腸癌危險因子',
   },
   {
     id: 'rcDzG-v3JlA',
@@ -82,7 +181,9 @@ export const videos: VideoItem[] = [
     duration: '1:01',
     url: 'https://www.youtube.com/watch?v=rcDzG-v3JlA',
     featured: false,
-    order: 6,
+    order: 13,
+    articleSlug: '2026-acsm基礎阻力訓練套餐',
+    articleTitle: '【2026 ACSM】基礎阻力訓練套餐',
   },
   {
     id: '3BRS3MTu3Vg',
@@ -92,7 +193,9 @@ export const videos: VideoItem[] = [
     duration: '0:31',
     url: 'https://www.youtube.com/watch?v=3BRS3MTu3Vg',
     featured: false,
-    order: 7,
+    order: 14,
+    articleSlug: '糖尿病診斷標準',
+    articleTitle: '糖尿病診斷標準',
   },
   {
     id: 'UfuklQPtsYA',
@@ -102,7 +205,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=UfuklQPtsYA',
     featured: false,
-    order: 8,
+    order: 15,
+    articleSlug: '糖尿病併發症',
+    articleTitle: '糖尿病併發症',
   },
   {
     id: 'Tjp2DGgcJs4',
@@ -112,7 +217,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Tjp2DGgcJs4',
     featured: false,
-    order: 9,
+    order: 16,
+    articleSlug: '長期血壓控制不良的併發症',
+    articleTitle: '長期血壓控制不良的併發症',
   },
   {
     id: 'gkBta3p1_Jo',
@@ -122,7 +229,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=gkBta3p1_Jo',
     featured: false,
-    order: 10,
+    order: 17,
+    articleSlug: '痛風急性痛風的原因',
+    articleTitle: '【痛風】急性痛風的原因',
   },
   {
     id: '8uvg8uMzjeY',
@@ -132,7 +241,9 @@ export const videos: VideoItem[] = [
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=8uvg8uMzjeY',
     featured: false,
-    order: 11,
+    order: 18,
+    articleSlug: 's-abcde-高血壓生活型態調整',
+    articleTitle: 'S-ABCDE 高血壓生活型態調整',
   },
   {
     id: '2a2u2uyCS1U',
@@ -142,7 +253,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=2a2u2uyCS1U',
     featured: false,
-    order: 12,
+    order: 19,
+    articleSlug: '最新高血壓診斷分級與-722-量測準則',
+    articleTitle: '最新高血壓診斷分級與 722 量測準則',
   },
   {
     id: 'iFDd1LTER_I',
@@ -152,17 +265,21 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=iFDd1LTER_I',
     featured: false,
-    order: 13,
+    order: 20,
+    articleSlug: '急性胰臟炎',
+    articleTitle: '急性胰臟炎',
   },
   {
     id: '4j84jWlgqlY',
-    title: '巴瑞式食道炎',
+    title: '巴瑞氏食道炎',
     description: '火燒心久治不癒小心食道癌前病變！認識巴瑞特氏食道炎成因、腸化生細胞特徵與定期內視鏡追蹤防癌關鍵。',
     category: '胃部疾病',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=4j84jWlgqlY',
     featured: false,
-    order: 14,
+    order: 21,
+    articleSlug: '巴瑞氏食道炎',
+    articleTitle: '巴瑞氏食道炎',
   },
   {
     id: 'Z63MSpIm87o',
@@ -172,7 +289,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Z63MSpIm87o',
     featured: false,
-    order: 15,
+    order: 22,
+    articleSlug: '結腸激躁症',
+    articleTitle: '結腸激躁症',
   },
   {
     id: 'GmdlJWoGZEA',
@@ -182,7 +301,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=GmdlJWoGZEA',
     featured: false,
-    order: 16,
+    order: 23,
+    articleSlug: '藥物性食道潰瘍',
+    articleTitle: '藥物性食道潰瘍',
   },
   {
     id: '1zkY0lUePRo',
@@ -192,7 +313,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=1zkY0lUePRo',
     featured: false,
-    order: 17,
+    order: 24,
+    articleSlug: '膽結石',
+    articleTitle: '膽結石',
   },
   {
     id: 'rW2WJlv-6u8',
@@ -202,7 +325,9 @@ export const videos: VideoItem[] = [
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=rW2WJlv-6u8',
     featured: false,
-    order: 18,
+    order: 25,
+    articleSlug: '瘦瘦針打瘦瘦針也要健康',
+    articleTitle: '【瘦瘦針】打瘦瘦針也要健康',
   },
   {
     id: '41WgFILCHtM',
@@ -212,7 +337,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=41WgFILCHtM',
     featured: false,
-    order: 19,
+    order: 26,
+    articleSlug: '代謝症候群',
+    articleTitle: '代謝症候群',
   },
   {
     id: 'kbVjl-HOKr4',
@@ -222,7 +349,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=kbVjl-HOKr4',
     featured: false,
-    order: 20,
+    order: 27,
+    articleSlug: '大腸息肉',
+    articleTitle: '大腸息肉',
   },
   {
     id: 'lywTekvOC1k',
@@ -232,7 +361,9 @@ export const videos: VideoItem[] = [
     duration: '0:51',
     url: 'https://www.youtube.com/watch?v=lywTekvOC1k',
     featured: false,
-    order: 21,
+    order: 28,
+    articleSlug: '胃食道逆流',
+    articleTitle: '胃食道逆流',
   },
   {
     id: 'w3L4lQW7HKU',
@@ -242,7 +373,9 @@ export const videos: VideoItem[] = [
     duration: '1:11',
     url: 'https://www.youtube.com/watch?v=w3L4lQW7HKU',
     featured: false,
-    order: 22,
+    order: 29,
+    articleSlug: '平穩血糖上升的飲食與生活策略',
+    articleTitle: '平穩血糖上升的飲食與生活策略',
   },
   {
     id: '-Nfxr0NGDQ0',
@@ -252,7 +385,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=-Nfxr0NGDQ0',
     featured: false,
-    order: 23,
+    order: 30,
+    articleSlug: '無痛腸胃鏡',
+    articleTitle: '無痛腸胃鏡',
   },
   {
     id: 'omtvd71Inwc',
@@ -262,7 +397,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=omtvd71Inwc',
     featured: false,
-    order: 24,
+    order: 31,
+    articleSlug: '上消化道潰瘍',
+    articleTitle: '上消化道潰瘍',
   },
   {
     id: 'cBAGeNQeMP8',
@@ -272,7 +409,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=cBAGeNQeMP8',
     featured: false,
-    order: 25,
+    order: 32,
+    articleSlug: '一次做完腸胃篩檢',
+    articleTitle: '一次做完腸胃篩檢',
   },
   {
     id: 'S2QcETFlIxI',
@@ -282,17 +421,21 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=S2QcETFlIxI',
     featured: false,
-    order: 26,
+    order: 33,
+    articleSlug: '腸鏡前準備低渣飲食',
+    articleTitle: '【腸鏡前準備】低渣飲食',
   },
   {
     id: 'lxOZ1KRJDDE',
     title: '胃幽門桿菌',
     description: '胃癌與消化道潰瘍的頭號隱形殺手！什麼是幽門螺旋桿菌？為什麼感染務必殺菌？',
-    category: '胃部疾病',
+    category: '檢查衛教',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=lxOZ1KRJDDE',
     featured: false,
-    order: 27,
+    order: 34,
+    articleSlug: '要如何防治胃癌根除幽門桿菌',
+    articleTitle: '要如何防治胃癌，根除幽門桿菌',
   },
   {
     id: 'wCFG_s-ToXA',
@@ -302,7 +445,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=wCFG_s-ToXA',
     featured: false,
-    order: 28,
+    order: 35,
+    articleSlug: '幽門桿菌幽門桿菌檢測',
+    articleTitle: '【幽門桿菌】幽門桿菌檢測',
   },
   {
     id: '7yhAnDnFC60',
@@ -312,7 +457,9 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=7yhAnDnFC60',
     featured: false,
-    order: 29,
+    order: 36,
+    articleSlug: '急性腸胃炎',
+    articleTitle: '急性腸胃炎',
   },
 ];
 
@@ -328,4 +475,13 @@ export function getYouTubeThumbnail(videoId: string): string {
  */
 export function getYouTubeEmbedUrl(videoId: string, autoplay = true): string {
   return `https://www.youtube.com/embed/${videoId}?rel=0&showinfo=0&autoplay=${autoplay ? 1 : 0}`;
+}
+
+/**
+ * 取得文章網址（支援個人網站站內跳轉與診所跨站跳轉）
+ */
+export function getArticleUrl(slug?: string, isEmbed = false): string {
+  if (!slug) return '';
+  const path = `/posts/${slug}`;
+  return isEmbed ? `https://drhuanggi.vercel.app${path}` : path;
 }

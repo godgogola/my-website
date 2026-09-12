@@ -111,8 +111,14 @@
       }
     });
 
-    // 綁定全站所有帶有 data-video-id 的觸發元素（委派監聽或直接綁定）
+    // 綁定全站所有帶有 data-video-id 的觸發元素（排除專文閱讀連結）
     document.addEventListener('click', (e) => {
+      const articleLink = (e.target as HTMLElement).closest<HTMLElement>('a[data-article-link], .twin-btn-article');
+      if (articleLink) {
+        // 點擊專文按鈕時放行，允許正常開新分頁跳轉
+        return;
+      }
+
       const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-video-id]');
       if (trigger) {
         e.preventDefault();

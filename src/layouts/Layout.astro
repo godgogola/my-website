@@ -7,6 +7,8 @@ interface Props {
   article?: boolean;
   fullWidth?: boolean;
   hideFooter?: boolean;
+  hideHeader?: boolean;
+  isEmbed?: boolean;
 }
 
 const {
@@ -17,6 +19,8 @@ const {
   article = false,
   fullWidth = false,
   hideFooter = false,
+  hideHeader = false,
+  isEmbed = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuanggi.vercel.app');
@@ -37,6 +41,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 嵌入模式智慧偵測 -->
+    <script is:inline>
+      if (
+        window.self !== window.top ||
+        new URLSearchParams(window.location.search).get('embed') === 'true'
+      ) {
+        document.documentElement.classList.add('is-embed');
+      }
+    </script>
     <!-- Favicon & Mobile Web App Icons -->
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=20260910" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png?v=20260910" />
@@ -114,6 +127,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     </div>
 
     <!-- 頂部浮動雙層導覽列 (Floating 2-Tier Capsule Header) -->
+    { !hideHeader && (
     <header class="navbar-vet-wrapper">
       <div class="navbar-vet">
         <!-- 品牌區塊 (第一排) -->
@@ -150,6 +164,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
         </div>
       </div>
     </header>
+    )}
 
     <!-- 主要內容區 -->
     <main class:list={['page-container', { 'page-container-full': fullWidth }]}>
@@ -178,7 +193,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
             <ul>
               <li><a href="/">首頁總覽</a></li>
               <li><a href="/health-column">實證衛教專欄</a></li>
-              <li><a href="/videos">衛教短影音專區</a></li>
+              <li><a href="/videos">動物農莊衛教短影音</a></li>
               <li><a href="/bowel-prep">大腸鏡檢前衛教</a></li>
               <li><a href="/anatomy">互動解剖圖鑑</a></li>
             </ul>
@@ -783,5 +798,24 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     font-size: 0.82rem;
     color: rgba(255, 255, 255, 0.55);
     line-height: 1.6;
+  }
+
+  /* ═══════════════════════════════════════
+     嵌入模式優化 (Iframe Embed Styles)
+  ═══════════════════════════════════════ */
+  html.is-embed .navbar-vet-wrapper,
+  html.is-embed .footer-vet,
+  html.is-embed .ambient-glow-layer {
+    display: none !important;
+  }
+
+  html.is-embed body {
+    background: transparent !important;
+  }
+
+  html.is-embed .page-container {
+    padding-top: 0.5rem !important;
+    padding-bottom: 1.5rem !important;
+    max-width: 100% !important;
   }
 </style>

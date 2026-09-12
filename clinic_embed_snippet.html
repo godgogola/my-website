@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>衛教影音專欄 | 豐田診所嵌入範本</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-color: #2F6656;
+    --primary-light: #3d8570;
+    --bg-color: #F7F9F8;
+    --card-bg: #FFFFFF;
+    --text-dark: #22332e;
+    --text-muted: #5e7069;
+    --radius-lg: 18px;
+    --shadow-md: 0 4px 20px rgba(47, 102, 86, 0.08);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Noto Sans TC', 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+    padding: 24px 16px;
+  }
+
+  .embed-page-wrapper {
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+
+  /* 診所頂部說明區 */
+  .clinic-embed-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+  }
+
+  .clinic-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(47, 102, 86, 0.1);
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 14px;
+    border-radius: 9999px;
+    margin-bottom: 10px;
+  }
+
+  .clinic-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary-color);
+    border-radius: 50%;
+  }
+
+  .clinic-embed-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .clinic-embed-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Iframe 外層容器 */
+  .iframe-container {
+    width: 100%;
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(47, 102, 86, 0.12);
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .iframe-container:hover {
+    box-shadow: 0 8px 30px rgba(47, 102, 86, 0.12);
+  }
+
+  #doctor-video-iframe {
+    width: 100%;
+    min-height: 850px;
+    height: 900px;
+    border: none;
+    display: block;
+    background: transparent;
+  }
+
+  /* 貼心整合指南卡片 (供院長/工程師參考) */
+  .integration-guide-card {
+    margin-top: 32px;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px dashed rgba(47, 102, 86, 0.25);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .integration-guide-card h3 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+
+  .code-snippet {
+    background: #24332f;
+    color: #a8e6cf;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    margin: 10px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+
+<div class="embed-page-wrapper">
+  <!-- 診所網頁專屬標頭 -->
+  <header class="clinic-embed-header">
+    <div class="clinic-badge">
+      <span class="dot"></span>
+      <span>豐田診所 · 院長專欄</span>
+    </div>
+    <h1 class="clinic-embed-title">動物農莊衛教短影音 × 醫學專欄</h1>
+    <p class="clinic-embed-subtitle">
+      我們特別邀請動物界的各科專科醫師出診！用精簡生動的實證短片，為您深入講解常見腸胃疾病、內視鏡檢查與代謝保健；點擊「閱讀專文」還能深入查看完整醫學指引。
+    </p>
+  </header>
+
+  <!-- 智慧 iframe 嵌入區塊 -->
+  <main class="iframe-container">
+    <iframe
+      id="doctor-video-iframe"
+      src="https://drhuanggi.vercel.app/videos/embed"
+      title="動物農莊衛教短影音專區"
+      loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+  </main>
+
+  <!-- 整合說明（此段僅為說明，實際使用時可刪除） -->
+  <aside class="integration-guide-card">
+    <h3>💡 診所網站嵌入代碼（複製以下一行即可貼入任何診所頁面）：</h3>
+    <div class="code-snippet">&lt;iframe src="https://drhuanggi.vercel.app/videos/embed" width="100%" height="880px" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border: none; border-radius: 16px; width: 100%; min-height: 850px; display: block;"&gt;&lt;/iframe&gt;</div>
+    <p>✅ 未來只需在個人網站更新影片與文章，診所網站將自動無縫同步最新內容，無需再次更新！</p>
+  </aside>
+</div>
+
+<!-- 智慧自適應高度監聽腳本 (可選) -->
+<script>
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'embed-resize' && e.data.height) {
+      var iframe = document.getElementById('doctor-video-iframe');
+      if (iframe && typeof e.data.height === 'number') {
+        iframe.style.height = (e.data.height + 25) + 'px';
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
