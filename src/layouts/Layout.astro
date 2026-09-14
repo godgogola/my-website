@@ -809,13 +809,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     display: none !important;
   }
 
+  html.is-embed,
   html.is-embed body {
     background: transparent !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   html.is-embed .page-container {
     padding-top: 0.5rem !important;
     padding-bottom: 1.5rem !important;
     max-width: 100% !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
   }
 </style>
