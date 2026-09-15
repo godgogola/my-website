@@ -24,11 +24,11 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
   isEmbed={true}
 >
   <div class="videos-embed-container">
-    <!-- 影音專區頂部標題與說明 -->
+    <!-- 影音專區頂部標題與說明 (精簡俐落款，適配嵌入) -->
     <header class="videos-hero">
       <div class="videos-hero-badge">
         <span class="pulse-dot"></span>
-        <span>YOUTUBE 衛教影視頻道</span>
+        <span>今日隨機精選 · 衛教短影音</span>
       </div>
 
       <h1 class="videos-hero-title">
@@ -36,7 +36,7 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
       </h1>
       
       <p class="videos-hero-desc">
-        我們特別邀請動物界的各科專科醫師出診！用精簡生動的實證短片，為您深入講解常見腸胃疾病、內視鏡檢查與代謝保健，輕鬆簡單就能守護健康。
+        我們特別邀請動物界專科醫師出診！用生動短片為您解構常見腸胃疾病、內視鏡檢查與代謝保健。
       </p>
     </header>
 
@@ -56,11 +56,11 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
       </div>
     </section>
 
-    <!-- 影片網格列表 (雙態一體卡片) -->
+    <!-- 影片網格列表 (模式 A：預設隨機展示 4 部) -->
     <section class="videos-grid-section">
       <div class="videos-grid" id="videos-grid">
         {videos.map((video) => (
-          <div class="video-grid-item" data-category={video.category}>
+          <div class="video-grid-item" data-category={video.category} data-video-id={video.id} style="display: none;">
             <VideoCard video={video} isEmbed={true} />
           </div>
         ))}
@@ -71,6 +71,29 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
         <p>此分類目前尚無收錄影片，敬請期待陸續上線！</p>
       </div>
     </section>
+
+    <!-- 互動操作列：換一批 + 查看全部 50+ 部 -->
+    <div class="embed-actions-bar">
+      <button type="button" class="btn-action-random" id="btnRefreshRandom" aria-label="隨機更換4部影片">
+        <svg class="dice-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+          <circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"></circle>
+          <circle cx="15.5" cy="8.5" r="1.2" fill="currentColor"></circle>
+          <circle cx="12" cy="12" r="1.2" fill="currentColor"></circle>
+          <circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"></circle>
+          <circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"></circle>
+        </svg>
+        <span>換一批（隨機推薦）</span>
+      </button>
+
+      <a href="https://drhuanggi.vercel.app/videos" target="_blank" rel="noopener noreferrer" class="btn-action-viewall">
+        <span>查看全部 50+ 部專題</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
 
     <!-- 底部導流個人網站專欄卡片 -->
     <section class="channel-callout-card">
@@ -94,11 +117,15 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
 </Layout>
 
 <script>
-  // 分類篩選邏輯與自動高度通知 (ResizeObserver + postMessage)
-  function initCategoryFilter() {
+  // 模式 A：純隨機 4 部 + 換一批 + 分類篩選 + 自動高度通知
+  function initRandomEmbedVideos() {
     const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
-    const items = document.querySelectorAll<HTMLElement>('.video-grid-item');
+    const allItems = Array.from(document.querySelectorAll<HTMLElement>('.video-grid-item'));
+    const refreshBtn = document.getElementById('btnRefreshRandom') as HTMLButtonElement | null;
     const noResults = document.getElementById('no-videos-match');
+    
+    let currentCategory = '全部';
+    const DISPLAY_COUNT = 4;
 
     function notifyParentHeight() {
       try {
@@ -111,44 +138,87 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
       }
     }
 
+    // 隨機抽選 N 部影片並呈現
+    function showRandomVideos(category: string, isShuffle = false) {
+      currentCategory = category;
+
+      // 取得符合目前分類的所有卡片
+      const matchedItems = allItems.filter(item => {
+        const cat = item.dataset.category;
+        return category === '全部' || cat === category;
+      });
+
+      if (matchedItems.length === 0) {
+        allItems.forEach(item => item.style.display = 'none');
+        if (noResults) noResults.style.display = 'block';
+        setTimeout(notifyParentHeight, 100);
+        return;
+      }
+
+      if (noResults) noResults.style.display = 'none';
+
+      // 隱藏全部卡片
+      allItems.forEach(item => {
+        item.style.display = 'none';
+        item.classList.remove('fade-in');
+      });
+
+      // Fisher-Yates 隨機洗牌
+      const shuffled = [...matchedItems];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      // 選取前 4 部 (如果該類別不足 4 部則全部顯示)
+      const selected = shuffled.slice(0, DISPLAY_COUNT);
+
+      selected.forEach((item, index) => {
+        item.style.display = 'block';
+        item.style.animationDelay = `${index * 0.05}s`;
+        item.classList.add('fade-in');
+      });
+
+      // 換一批按鈕的微動畫回饋
+      if (refreshBtn && isShuffle) {
+        refreshBtn.classList.add('btn-animating');
+        setTimeout(() => refreshBtn.classList.remove('btn-animating'), 400);
+      }
+
+      // 高度重新計算並通知父層
+      setTimeout(notifyParentHeight, 150);
+    }
+
+    // 初始載入：純隨機 4 部
+    showRandomVideos('全部');
+
+    // 點擊「換一批」
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        showRandomVideos(currentCategory, true);
+      });
+    }
+
+    // 分類篩選點擊
     filterButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
         filterButtons.forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
 
-        const selectedCat = btn.dataset.category || '全部';
-        let visibleCount = 0;
-
-        items.forEach((item) => {
-          const itemCat = item.dataset.category;
-          if (selectedCat === '全部' || itemCat === selectedCat) {
-            item.style.display = 'block';
-            item.classList.add('fade-in');
-            visibleCount++;
-          } else {
-            item.style.display = 'none';
-          }
-        });
-
-        if (noResults) {
-          noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-        }
-
-        // 分類切換後更新外層 iframe 高度
-        setTimeout(notifyParentHeight, 150);
+        const cat = btn.dataset.category || '全部';
+        showRandomVideos(cat);
       });
     });
 
-    // 視窗變動與初始化時通知
+    // 視窗縮放與圖片載入完成通知
     window.addEventListener('resize', notifyParentHeight);
     window.addEventListener('load', notifyParentHeight);
-    notifyParentHeight();
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCategoryFilter);
+    document.addEventListener('DOMContentLoaded', initRandomEmbedVideos);
   } else {
-    initCategoryFilter();
+    initRandomEmbedVideos();
   }
 </script>
 
@@ -157,16 +227,19 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
      Videos 嵌入專頁樣式 (Embed Container)
   ═══════════════════════════════════════ */
   .videos-embed-container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 1.5rem 1rem 3rem 1rem;
+    padding: 1.25rem 1rem 2.5rem 1rem;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden;
   }
 
-  /* 頁面 Hero */
+  /* 頁面 Hero (嵌入版精簡化，不佔過多空間) */
   .videos-hero {
     text-align: center;
-    max-width: 780px;
-    margin: 0 auto 2.5rem auto;
+    max-width: 720px;
+    margin: 0 auto 1.5rem auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -176,20 +249,20 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     color: var(--color-primary-dark, #3b7688);
     background: var(--color-primary-light, #eef7f9);
     border: 1px solid rgba(74, 144, 164, 0.25);
-    padding: 0.35rem 1rem;
+    padding: 0.25rem 0.85rem;
     border-radius: var(--radius-full, 9999px);
-    margin-bottom: 1rem;
+    margin-bottom: 0.65rem;
   }
 
   .pulse-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     background: #e76f51;
     border-radius: 50%;
     box-shadow: 0 0 0 0 rgba(231, 111, 81, 0.7);
@@ -197,27 +270,18 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
   }
 
   @keyframes pulse {
-    0% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(231, 111, 81, 0.7);
-    }
-    70% {
-      transform: scale(1);
-      box-shadow: 0 0 0 8px rgba(231, 111, 81, 0);
-    }
-    100% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(231, 111, 81, 0);
-    }
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 111, 81, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 7px rgba(231, 111, 81, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 111, 81, 0); }
   }
 
   .videos-hero-title {
-    font-size: 2.25rem;
+    font-size: 1.85rem;
     font-weight: 900;
     color: var(--color-text-title, #1e3a4c);
     letter-spacing: -0.02em;
     line-height: 1.25;
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.5rem;
   }
 
   .gradient-text {
@@ -227,38 +291,40 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
   }
 
   .videos-hero-desc {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: var(--color-text-body, #2d4f63);
-    line-height: 1.7;
-    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
     opacity: 0.9;
   }
 
   /* 篩選器 */
   .video-filter-section {
-    margin-bottom: 2.25rem;
+    margin-bottom: 1.75rem;
+    width: 100%;
   }
 
   .filter-pills-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.65rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
+    width: 100%;
   }
 
   .filter-pill {
     background: #ffffff;
     border: 1.5px solid var(--color-border, #d4e5eb);
     color: var(--color-text-body, #2d4f63);
-    padding: 0.45rem 1rem;
+    padding: 0.35rem 0.85rem;
     border-radius: var(--radius-full, 9999px);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.35rem;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 2px 6px rgba(74, 144, 164, 0.04);
   }
@@ -274,13 +340,13 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     background: var(--color-primary-dark, #3b7688);
     border-color: var(--color-primary-dark, #3b7688);
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(59, 118, 136, 0.3);
+    box-shadow: 0 3px 12px rgba(59, 118, 136, 0.28);
   }
 
   .count-bubble {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     background: rgba(0, 0, 0, 0.08);
-    padding: 0.1rem 0.45rem;
+    padding: 0.08rem 0.4rem;
     border-radius: 9999px;
   }
 
@@ -289,25 +355,34 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     color: #ffffff;
   }
 
-  /* 影片網格 */
+  /* 影片網格 (精選 4 部：桌機 2x2，手機 1 欄) */
   .videos-grid-section {
-    margin-bottom: 3.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
   }
 
   .videos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.65rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .video-grid-item {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .video-grid-item.fade-in {
-    animation: itemFade 0.35s ease forwards;
+    animation: itemFade 0.32s ease forwards;
   }
 
   @keyframes itemFade {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
@@ -317,11 +392,88 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
 
   .no-videos-message {
     text-align: center;
-    padding: 3rem 1.5rem;
+    padding: 2.5rem 1.5rem;
     background: #ffffff;
     border-radius: var(--radius-md, 14px);
     border: 1px dashed var(--color-border, #d4e5eb);
     color: var(--color-text-muted, #5a7a8a);
+  }
+
+  /* ═══ 互動按鈕列：換一批 + 查看全部 50+ 部 ═══ */
+  .embed-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .btn-action-random {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    color: var(--color-primary-dark, #3b7688);
+    border: 1.5px solid var(--color-primary, #4a90a4);
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.92rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(74, 144, 164, 0.12);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-action-random:hover {
+    background: var(--color-primary-light, #eef7f9);
+    border-color: var(--color-primary-dark, #3b7688);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(74, 144, 164, 0.22);
+  }
+
+  .btn-action-random.btn-animating .dice-icon {
+    animation: diceSpin 0.4s ease;
+  }
+
+  @keyframes diceSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .btn-action-viewall {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    background: linear-gradient(135deg, var(--color-primary-dark, #3b7688) 0%, #2c5364 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.92rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 3px 12px rgba(44, 83, 100, 0.25);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-action-viewall:hover {
+    background: linear-gradient(135deg, #2c5364 0%, #1e3a4c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(44, 83, 100, 0.35);
+    color: #ffffff;
+  }
+
+  .btn-action-viewall svg {
+    transition: transform 0.2s ease;
+  }
+
+  .btn-action-viewall:hover svg {
+    transform: translateX(3px);
   }
 
   /* 底部導引卡片 */
@@ -329,28 +481,28 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     background: linear-gradient(135deg, #eef7f9 0%, #edf7f4 100%);
     border: 1px solid var(--color-border, #d4e5eb);
     border-radius: var(--radius-lg, 18px);
-    padding: 2rem;
-    box-shadow: 0 8px 24px rgba(74, 144, 164, 0.06);
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 6px 20px rgba(74, 144, 164, 0.05);
   }
 
   .callout-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
   .callout-text h3 {
-    font-size: 1.35rem;
+    font-size: 1.18rem;
     font-weight: 800;
     color: var(--color-text-title, #1e3a4c);
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.35rem;
   }
 
   .callout-text p {
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     color: var(--color-text-body, #2d4f63);
-    line-height: 1.65;
+    line-height: 1.55;
     margin: 0;
   }
 
@@ -364,33 +516,90 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     gap: 0.5rem;
     background: var(--color-primary-dark, #3b7688);
     color: #ffffff;
-    padding: 0.75rem 1.4rem;
+    padding: 0.65rem 1.25rem;
     border-radius: var(--radius-full, 9999px);
     font-weight: 700;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     text-decoration: none;
-    box-shadow: 0 4px 14px rgba(59, 118, 136, 0.28);
+    box-shadow: 0 3px 10px rgba(59, 118, 136, 0.25);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-primary:hover {
     background: #2b5764;
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(59, 118, 136, 0.38);
+    box-shadow: 0 5px 14px rgba(59, 118, 136, 0.35);
     color: #ffffff;
   }
 
+  /* ═══ 手機版極致緊湊響應式 ═══ */
   @media (max-width: 768px) {
+    .videos-embed-container {
+      padding: 0.75rem 0.5rem 1.75rem 0.5rem;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+    .videos-hero {
+      margin-bottom: 1.25rem;
+      padding: 0 0.25rem;
+    }
     .videos-hero-title {
-      font-size: 1.85rem;
+      font-size: 1.55rem;
+    }
+    .videos-hero-desc {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      margin-bottom: 0.25rem;
+    }
+    .video-filter-section {
+      margin-bottom: 1.25rem;
+      width: 100%;
+    }
+    .filter-pills-wrap {
+      gap: 0.35rem;
+      width: 100%;
+    }
+    .filter-pill {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.65rem;
+    }
+    .videos-grid-section {
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+    .videos-grid {
+      grid-template-columns: 1fr;
+      gap: 1.15rem;
+      width: 100%;
+    }
+    .embed-actions-bar {
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+      width: 100%;
+    }
+    .btn-action-random,
+    .btn-action-viewall {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
     }
     .callout-inner {
       flex-direction: column;
       text-align: center;
-      gap: 1.25rem;
+      gap: 1rem;
+      padding: 0.25rem;
     }
-    .videos-grid {
-      grid-template-columns: 1fr;
+    .callout-actions {
+      width: 100%;
+    }
+    .callout-actions .btn-primary {
+      width: 100%;
+      justify-content: center;
+      padding: 0.7rem 1rem;
     }
   }
 </style>
