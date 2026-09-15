@@ -83,7 +83,7 @@ const getCoverImageUrl = (img?: string) => {
     <header class="column-hero-section">
       <div class="hero-badge">
         <span class="badge-dot"></span>
-        <span>豐田診所 × 黃冠智醫師 · 臨床實證衛教知識庫</span>
+        <span>今日隨機精選 · 臨床實證衛教知識庫</span>
       </div>
       <h1 class="hero-title">
         醫師 <span class="gradient-text">衛教專欄</span>
@@ -112,7 +112,7 @@ const getCoverImageUrl = (img?: string) => {
           </button>
         </div>
         <div class="search-status-bar">
-          <span id="resultCountBadge" class="count-badge">收錄全站 {posts.length} 篇專題文章</span>
+          <span id="resultCountBadge" class="count-badge">今日隨機推薦 12 篇 · 全站共收錄 {posts.length} 篇專題</span>
         </div>
       </div>
     </header>
@@ -136,7 +136,7 @@ const getCoverImageUrl = (img?: string) => {
       </div>
     </nav>
 
-    <!-- 文章卡片網格 (Pinterest 風格，圖片滿版 + 漸層文字疊圖) -->
+    <!-- 文章卡片網格 (預設隨機展示 12 篇) -->
     <main class="cards-grid-section">
       <div class="posts-grid" id="postsGrid">
         {posts.map((post) => {
@@ -153,6 +153,7 @@ const getCoverImageUrl = (img?: string) => {
               data-category={postCat}
               data-title={postTitle.toLowerCase()}
               data-keywords={postKeywords}
+              style="display: none;"
             >
               <a
                 href={articleUrl}
@@ -216,6 +217,29 @@ const getCoverImageUrl = (img?: string) => {
         <button type="button" id="resetFiltersBtn" class="reset-filter-btn">
           顯示全部文章
         </button>
+      </div>
+
+      <!-- 互動操作列：換一批 + 查看全部 230+ 篇 -->
+      <div class="embed-actions-bar" id="embedActionsBar">
+        <button type="button" class="btn-action-random" id="btnRefreshRandom" aria-label="隨機更換12篇專題文章">
+          <svg class="dice-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+            <circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"></circle>
+            <circle cx="15.5" cy="8.5" r="1.2" fill="currentColor"></circle>
+            <circle cx="12" cy="12" r="1.2" fill="currentColor"></circle>
+            <circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"></circle>
+            <circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"></circle>
+          </svg>
+          <span>換一批（隨機推薦 12 篇）</span>
+        </button>
+
+        <a href="https://drhuanggi.vercel.app/health-column" target="_blank" rel="noopener noreferrer" class="btn-action-viewall">
+          <span>查看全部 {posts.length}+ 篇專題</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
       </div>
     </main>
 
@@ -499,6 +523,20 @@ const getCoverImageUrl = (img?: string) => {
   .post-card-item {
     transition: opacity 0.3s ease;
   }
+  .post-card-item.fade-in {
+    animation: cardFadeIn 0.35s ease forwards;
+  }
+  @keyframes cardFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .post-card {
     position: relative;
     display: block;
@@ -633,6 +671,67 @@ const getCoverImageUrl = (img?: string) => {
   .post-card:hover .read-hint {
     transform: translateX(3px);
     color: #FFFFFF;
+  }
+
+  /* ===== 互動操作列：換一批 + 查看全部 230+ 篇 ===== */
+  .embed-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .btn-action-random {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border-radius: 9999px;
+    background: #FFFFFF;
+    color: #2F6656;
+    border: 1.5px solid #2F6656;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(47, 102, 86, 0.1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-action-random:hover {
+    background: #2F6656;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(47, 102, 86, 0.25);
+  }
+  .btn-action-random.btn-animating .dice-icon {
+    animation: diceRoll 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes diceRoll {
+    0% { transform: rotate(0deg) scale(0.9); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .btn-action-viewall {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #2F6656, #3D8B75);
+    color: #FFFFFF;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.25);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-action-viewall:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(47, 102, 86, 0.35);
+    background: linear-gradient(135deg, #1E483D, #2F6656);
   }
 
   /* ===== 查無結果提示 ===== */
@@ -790,6 +889,16 @@ const getCoverImageUrl = (img?: string) => {
     .card-text-overlay {
       padding: 12px 10px 14px;
     }
+    .embed-actions-bar {
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .btn-action-random,
+    .btn-action-viewall {
+      width: 100%;
+      justify-content: center;
+    }
     .callout-box {
       flex-direction: column;
       text-align: center;
@@ -804,13 +913,18 @@ const getCoverImageUrl = (img?: string) => {
 
 <script>
   function initColumnEmbed() {
+    const BATCH_SIZE = 12; // 模式：預設隨機抽選 12 篇
+
     const searchInput = document.getElementById('columnSearchInput') as HTMLInputElement | null;
     const clearBtn = document.getElementById('clearSearchBtn') as HTMLButtonElement | null;
     const resultCountBadge = document.getElementById('resultCountBadge');
     const capsuleBtns = document.querySelectorAll<HTMLButtonElement>('.capsule-btn');
-    const cardItems = document.querySelectorAll<HTMLElement>('.post-card-item');
+    const cardItems = Array.from(document.querySelectorAll<HTMLElement>('.post-card-item'));
     const noPostsBox = document.getElementById('noPostsFound');
     const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+    const btnRefresh = document.getElementById('btnRefreshRandom');
+    const actionsBar = document.getElementById('embedActionsBar');
+    const totalPostsCount = cardItems.length;
 
     let currentCategory = '全部';
     let currentSearchTerm = '';
@@ -819,7 +933,6 @@ const getCoverImageUrl = (img?: string) => {
     function notifyParentHeight() {
       try {
         if (window.parent && window.parent !== window) {
-          // 微延遲等待 DOM 重新計算
           requestAnimationFrame(() => {
             const height = document.documentElement.scrollHeight;
             window.parent.postMessage({ type: 'embed-resize', height: height }, '*');
@@ -828,10 +941,79 @@ const getCoverImageUrl = (img?: string) => {
       } catch (e) {}
     }
 
-    // 篩選核心邏輯
-    function filterPosts() {
+    // 隨機渲染 12 篇卡片
+    function renderRandomCards(category: string, animateDice = false) {
+      currentCategory = category;
+
+      // 篩選出符合分類的所有卡片
+      const matched = cardItems.filter((item) => {
+        const itemCat = item.dataset.category || '';
+        return category === '全部' || itemCat === category;
+      });
+
+      // 先將全部隱藏
+      cardItems.forEach((item) => {
+        item.style.display = 'none';
+        item.classList.remove('fade-in');
+      });
+
+      if (matched.length === 0) {
+        if (noPostsBox) noPostsBox.style.display = 'block';
+        if (actionsBar) actionsBar.style.display = 'none';
+        setTimeout(notifyParentHeight, 100);
+        return;
+      }
+
+      if (noPostsBox) noPostsBox.style.display = 'none';
+      if (actionsBar) actionsBar.style.display = 'flex';
+
+      // Fisher-Yates 洗牌
+      const shuffled = [...matched];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      // 抽取前 12 篇
+      const selected = shuffled.slice(0, BATCH_SIZE);
+      selected.forEach((item, idx) => {
+        item.style.display = 'block';
+        item.style.animationDelay = `${(idx % 6) * 0.04}s`;
+        item.classList.add('fade-in');
+      });
+
+      // 更新統計標籤
+      if (resultCountBadge) {
+        if (category === '全部') {
+          resultCountBadge.textContent = `隨機推薦 ${selected.length} 篇 · 全站共收錄 ${totalPostsCount} 篇專題`;
+        } else {
+          resultCountBadge.textContent = `「${category}」推薦 ${selected.length} 篇（該分類共 ${matched.length} 篇）`;
+        }
+      }
+
+      // 骰子按鈕動態
+      if (btnRefresh && animateDice) {
+        btnRefresh.classList.add('btn-animating');
+        setTimeout(() => btnRefresh.classList.remove('btn-animating'), 450);
+      }
+
+      setTimeout(notifyParentHeight, 120);
+    }
+
+    // 搜尋模式處理
+    function handleSearch(term: string) {
+      const cleanTerm = term.trim().toLowerCase();
+
+      if (!cleanTerm) {
+        // 清空搜尋，回到隨機推薦模式
+        if (actionsBar) actionsBar.style.display = 'flex';
+        renderRandomCards(currentCategory, false);
+        return;
+      }
+
+      // 搜尋模式啟動：隱藏換一批按鈕，展開全部符合搜尋條件的文章
+      if (actionsBar) actionsBar.style.display = 'none';
       let visibleCount = 0;
-      const term = currentSearchTerm.trim().toLowerCase();
 
       cardItems.forEach((item) => {
         const itemCat = item.dataset.category || '';
@@ -839,63 +1021,63 @@ const getCoverImageUrl = (img?: string) => {
         const itemKeywords = item.dataset.keywords || '';
 
         const matchesCategory = currentCategory === '全部' || itemCat === currentCategory;
-        const matchesSearch = !term || itemTitle.includes(term) || itemKeywords.includes(term);
+        const matchesSearch = itemTitle.includes(cleanTerm) || itemKeywords.includes(cleanTerm);
 
         if (matchesCategory && matchesSearch) {
           item.style.display = 'block';
+          item.classList.remove('fade-in');
           visibleCount++;
         } else {
           item.style.display = 'none';
         }
       });
 
-      // 更新篇數統計
+      // 更新統計
       if (resultCountBadge) {
-        if (term) {
-          resultCountBadge.textContent = `搜尋「${currentSearchTerm}」共找到 ${visibleCount} 篇文章`;
-        } else if (currentCategory !== '全部') {
-          resultCountBadge.textContent = `「${currentCategory}」分類共 ${visibleCount} 篇文章`;
-        } else {
-          resultCountBadge.textContent = `收錄全站 ${visibleCount} 篇專題文章`;
-        }
+        resultCountBadge.textContent = `搜尋「${cleanTerm}」共找到 ${visibleCount} 篇文章`;
       }
 
       // 無結果提示
       if (noPostsBox) {
-        if (visibleCount === 0) {
-          noPostsBox.style.display = 'block';
-        } else {
-          noPostsBox.style.display = 'none';
-        }
+        noPostsBox.style.display = visibleCount === 0 ? 'block' : 'none';
       }
 
-      // 觸發高度更新
-      setTimeout(notifyParentHeight, 80);
+      setTimeout(notifyParentHeight, 100);
     }
 
-    // 監聽搜尋輸入
+    // 初始化：載入隨機 12 篇
+    renderRandomCards('全部', false);
+
+    // 點擊「換一批」
+    if (btnRefresh) {
+      btnRefresh.addEventListener('click', () => {
+        renderRandomCards(currentCategory, true);
+      });
+    }
+
+    // 搜尋輸入監聽
     if (searchInput) {
       searchInput.addEventListener('input', () => {
         currentSearchTerm = searchInput.value;
         if (clearBtn) {
           clearBtn.style.display = currentSearchTerm ? 'flex' : 'none';
         }
-        filterPosts();
+        handleSearch(currentSearchTerm);
       });
     }
 
-    // 清除搜尋按鈕
+    // 清除搜尋
     if (clearBtn && searchInput) {
       clearBtn.addEventListener('click', () => {
         searchInput.value = '';
         currentSearchTerm = '';
         clearBtn.style.display = 'none';
         searchInput.focus();
-        filterPosts();
+        handleSearch('');
       });
     }
 
-    // 分類膠囊點擊切換
+    // 分類膠囊切換
     capsuleBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         capsuleBtns.forEach((b) => {
@@ -906,14 +1088,20 @@ const getCoverImageUrl = (img?: string) => {
         btn.setAttribute('aria-selected', 'true');
 
         currentCategory = btn.dataset.category || '全部';
-        filterPosts();
 
-        // 手機版自動將被選中按鈕置中
+        // 若搜尋框有內容，依搜尋篩選；否則隨機挑選 12 篇
+        if (currentSearchTerm) {
+          handleSearch(currentSearchTerm);
+        } else {
+          renderRandomCards(currentCategory, false);
+        }
+
+        // 手機版按鈕置中滾動
         btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
     });
 
-    // 重置篩選條件
+    // 重設篩選條件按鈕
     if (resetFiltersBtn) {
       resetFiltersBtn.addEventListener('click', () => {
         if (searchInput) searchInput.value = '';
@@ -930,11 +1118,11 @@ const getCoverImageUrl = (img?: string) => {
           }
         });
         currentCategory = '全部';
-        filterPosts();
+        renderRandomCards('全部', false);
       });
     }
 
-    // 視窗變化或載入完成回報高度
+    // 視窗調整回報高度
     window.addEventListener('resize', notifyParentHeight);
     window.addEventListener('load', notifyParentHeight);
     notifyParentHeight();
