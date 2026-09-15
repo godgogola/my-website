@@ -29,6 +29,14 @@ import Layout from '../../layouts/Layout.astro';
       </div>
       
       <div class="subnav-right">
+        <!-- 大腸鏡直通胃鏡快捷切換按鈕 -->
+        <a href="/anatomy/stomach" class="btn btn-switch-endo" title="快速切換至胃部與食道 3D 解剖">
+          <span class="endo-icon">🩺</span>
+          <span class="btn-text-prefix">切換至</span>
+          <span>胃鏡</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+
         <!-- Fullscreen Button -->
         <button class="btn btn-fullscreen" id="btn-fullscreen-toggle" onclick="toggleFullScreen()" title="進入/退出全螢幕診間衛教模式">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="icon-fs"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
@@ -1543,6 +1551,25 @@ import Layout from '../../layouts/Layout.astro';
     border: none;
   }
 
+  .btn-switch-endo {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(37, 99, 235, 0.22));
+    border: 1.5px solid rgba(56, 189, 248, 0.6);
+    color: #7dd3fc;
+    font-weight: 800;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.22);
+  }
+  .btn-switch-endo:hover {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.45), rgba(37, 99, 235, 0.45));
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+    transform: translateY(-1px);
+  }
+  .endo-icon {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
   .btn-fullscreen {
     border: 1px solid rgba(16, 185, 129, 0.4);
     background: rgba(16, 185, 129, 0.1);
@@ -2353,6 +2380,10 @@ import Layout from '../../layouts/Layout.astro';
       font-size: 0.85rem;
       white-space: nowrap !important;
       min-height: 38px;
+    }
+
+    .btn-switch-endo .btn-text-prefix {
+      display: none;
     }
 
     .segment-grid-list {

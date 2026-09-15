@@ -7,6 +7,7 @@ import Layout from '../../layouts/Layout.astro';
   description="以臨床醫師視角打造的腹痛九宮格互動圖鑑。提供 3D 人體器官透視與 2D 直覺速查雙模式，深度剖析右上腹、上腹、左上腹、兩側腰、臍周中腹、下腹與兩側下腹之對應器官、急重症紅旗警訊、黃金鑑別診斷與門診病歷片語。"
   fullWidth={true}
   hideFooter={true}
+  hideHeader={true}
 >
   <!-- Three.js CDN dependencies -->
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -832,256 +833,519 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     // --- Build Translucent Body Silhouette & Ribcage Guide ---
+    // --- Build Translucent Body Silhouette & Costal Margin Landmarks ---
     function buildTranslucentTorsoOutline() {
       const torsoGroup = new THREE.Group();
 
       const bodyMat = new THREE.MeshPhysicalMaterial({
         color: 0x38bdf8,
         transparent: true,
-        opacity: 0.08,
+        opacity: 0.06,
         roughness: 0.3,
         clearcoat: 0.5,
         wireframe: false,
         side: THREE.BackSide
       });
 
-      // Simplified organic torso envelope
-      const torsoGeom = new THREE.CylinderGeometry(2.3, 1.9, 6.2, 32, 8, true);
-      torsoGeom.scale(1.15, 1.0, 0.68);
+      // Anatomical torso silhouette (waist curve & pelvic flare)
+      const torsoGeom = new THREE.CylinderGeometry(2.3, 2.0, 6.4, 36, 12, true);
+      const tPos = torsoGeom.attributes.position;
+      for (let i = 0; i < tPos.count; i++) {
+        let x = tPos.getX(i);
+        let y = tPos.getY(i);
+        let z = tPos.getZ(i);
+        // Subtle waist narrowing around y = 0
+        const waist = 1.0 - 0.12 * Math.cos((y / 3.2) * Math.PI * 0.5);
+        x *= waist * 1.12;
+        z *= waist * 0.68;
+        tPos.setXYZ(i, x, y, z);
+      }
+      torsoGeom.computeVertexNormals();
       const torsoMesh = new THREE.Mesh(torsoGeom, bodyMat);
       torsoMesh.position.set(0, 0.1, -0.1);
       torsoGroup.add(torsoMesh);
 
-      // Translucent ribcage arch
-      const ribMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.15, wireframe: true });
-      const ribGeom = new THREE.CylinderGeometry(2.2, 2.0, 2.5, 18, 4, true);
-      ribGeom.scale(1.1, 1.0, 0.65);
-      const ribMesh = new THREE.Mesh(ribGeom, ribMat);
-      ribMesh.position.set(0, 1.6, -0.05);
-      torsoGroup.add(ribMesh);
+      // Anatomical Costal Margin Arches (肋弓標誌：定義心窩與左右季肋區下界)
+      const costalMat = new THREE.MeshBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.35 });
+      const rightCostalCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.0, 2.15, 0.40),   // Xiphoid process (劍突)
+        new THREE.Vector3(-0.65, 1.85, 0.42), // 7-8th costal cartilage
+        new THREE.Vector3(-1.45, 1.35, 0.36), // 9-10th rib margin
+        new THREE.Vector3(-1.95, 0.75, 0.18)  // Costal arch tip (右肋骨弓尖)
+      ]);
+      const leftCostalCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.0, 2.15, 0.40),
+        new THREE.Vector3(0.65, 1.85, 0.42),
+        new THREE.Vector3(1.45, 1.35, 0.36),
+        new THREE.Vector3(1.95, 0.75, 0.18)
+      ]);
+      const rCostalMesh = new THREE.Mesh(new THREE.TubeGeometry(rightCostalCurve, 24, 0.045, 8, false), costalMat);
+      const lCostalMesh = new THREE.Mesh(new THREE.TubeGeometry(leftCostalCurve, 24, 0.045, 8, false), costalMat);
+      torsoGroup.add(rCostalMesh);
+      torsoGroup.add(lCostalMesh);
+
+      // Pelvic Brim Guide Arc (骨盆梳標誌：定義下腹與雙側鼠蹊邊界)
+      const pelvicCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.55, -1.65, 0.22), // Right ASIS (髂前上棘)
+        new THREE.Vector3(-0.85, -2.15, 0.26), // Inguinal ligament
+        new THREE.Vector3(0.0, -2.40, 0.28),   // Pubic symphysis (恥骨聯合)
+        new THREE.Vector3(0.85, -2.15, 0.26),
+        new THREE.Vector3(1.55, -1.65, 0.22)
+      ]);
+      const pelvicMesh = new THREE.Mesh(new THREE.TubeGeometry(pelvicCurve, 24, 0.035, 8, false), new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.25 }));
+      torsoGroup.add(pelvicMesh);
 
       scene.add(torsoGroup);
     }
 
-    // --- Build Full Abdominal Organs ---
+    // --- Build Full Abdominal Organs (Realistic Anatomical Sculpting) ---
     function buildAbdominalOrgans() {
       const organsMasterGroup = new THREE.Group();
 
-      // Materials (Base State)
-      const matLiver = new THREE.MeshPhysicalMaterial({ color: 0x8b2522, roughness: 0.45, clearcoat: 0.25, transparent: true, opacity: 0.85 });
-      const matGB = new THREE.MeshPhysicalMaterial({ color: 0x4d7c0f, roughness: 0.35, clearcoat: 0.3, transparent: true, opacity: 0.9 });
-      const matStomach = new THREE.MeshPhysicalMaterial({ color: 0xb45309, roughness: 0.5, clearcoat: 0.2, transparent: true, opacity: 0.88 });
-      const matSpleen = new THREE.MeshPhysicalMaterial({ color: 0x6b21a8, roughness: 0.4, clearcoat: 0.25, transparent: true, opacity: 0.85 });
-      const matPancreas = new THREE.MeshPhysicalMaterial({ color: 0xd97706, roughness: 0.5, clearcoat: 0.2, transparent: true, opacity: 0.88 });
-      const matDuodenum = new THREE.MeshPhysicalMaterial({ color: 0xca8a04, roughness: 0.5, clearcoat: 0.2, transparent: true, opacity: 0.85 });
-      const matColon = new THREE.MeshPhysicalMaterial({ color: 0x059669, roughness: 0.45, clearcoat: 0.2, transparent: true, opacity: 0.85 });
-      const matSmallInt = new THREE.MeshPhysicalMaterial({ color: 0xd97706, roughness: 0.55, clearcoat: 0.15, transparent: true, opacity: 0.82 });
-      const matKidney = new THREE.MeshPhysicalMaterial({ color: 0x9f1239, roughness: 0.45, clearcoat: 0.2, transparent: true, opacity: 0.85 });
-      const matBladder = new THREE.MeshPhysicalMaterial({ color: 0x0284c7, roughness: 0.35, clearcoat: 0.3, transparent: true, opacity: 0.85 });
+      // Materials (Base Anatomical Palette)
+      const matLiver = new THREE.MeshPhysicalMaterial({ color: 0x991b1b, roughness: 0.38, clearcoat: 0.4, transparent: true, opacity: 0.90 });
+      const matGB = new THREE.MeshPhysicalMaterial({ color: 0x15803d, roughness: 0.3, clearcoat: 0.45, transparent: true, opacity: 0.92 });
+      const matStomach = new THREE.MeshPhysicalMaterial({ color: 0xb45309, roughness: 0.45, clearcoat: 0.35, transparent: true, opacity: 0.90 });
+      const matSpleen = new THREE.MeshPhysicalMaterial({ color: 0x6b21a8, roughness: 0.38, clearcoat: 0.3, transparent: true, opacity: 0.88 });
+      const matPancreas = new THREE.MeshPhysicalMaterial({ color: 0xd97706, roughness: 0.5, clearcoat: 0.25, transparent: true, opacity: 0.90 });
+      const matDuodenum = new THREE.MeshPhysicalMaterial({ color: 0xca8a04, roughness: 0.45, clearcoat: 0.25, transparent: true, opacity: 0.88 });
+      const matColon = new THREE.MeshPhysicalMaterial({ color: 0x047857, roughness: 0.42, clearcoat: 0.3, transparent: true, opacity: 0.88 });
+      const matSmallInt = new THREE.MeshPhysicalMaterial({ color: 0xd97706, roughness: 0.52, clearcoat: 0.2, transparent: true, opacity: 0.85 });
+      const matKidney = new THREE.MeshPhysicalMaterial({ color: 0x881337, roughness: 0.42, clearcoat: 0.3, transparent: true, opacity: 0.88 });
+      const matBladder = new THREE.MeshPhysicalMaterial({ color: 0x0284c7, roughness: 0.32, clearcoat: 0.4, transparent: true, opacity: 0.88 });
+      const matPelvic = new THREE.MeshPhysicalMaterial({ color: 0xe879f9, roughness: 0.4, clearcoat: 0.25, transparent: true, opacity: 0.85 });
       const matAorta = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.3 });
       const matUreter = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 });
 
-      // 1. Liver (RUQ)
-      const liverGeom = new THREE.SphereGeometry(1.4, 28, 20);
-      liverGeom.scale(1.2, 0.85, 0.7);
+      // 1. Realistic Anatomical Liver (Large wedge with dominant right dome and tapering left lobe)
+      const liverGeom = new THREE.SphereGeometry(1.45, 36, 28);
+      const lPos = liverGeom.attributes.position;
+      for (let i = 0; i < lPos.count; i++) {
+        let x = lPos.getX(i);
+        let y = lPos.getY(i);
+        let z = lPos.getZ(i);
+
+        if (x > 0) {
+          // Left lobe: tapers and flattens across epigastrium towards LUQ
+          z *= Math.max(0.2, 1.0 - x * 0.52);
+          y *= Math.max(0.35, 1.0 - x * 0.38);
+          x *= 1.15;
+        } else {
+          // Right lobe: massive, rounded diaphragmatic dome
+          z *= 1.08 + 0.12 * Math.sin(y * 1.5);
+          x *= 1.12;
+        }
+
+        if (y > 0) {
+          y *= 0.95;
+        } else {
+          // Inferior visceral surface: angled sharp margin with gallbladder fossa recess
+          const distToGB = Math.hypot(x - (-0.35), z - 0.22);
+          if (distToGB < 0.45) {
+            y += (0.45 - distToGB) * 0.35;
+          }
+          y *= 0.85;
+          if (z < 0) y -= 0.12;
+        }
+
+        if (z < 0) z *= 0.72;
+        lPos.setXYZ(i, x, y, z);
+      }
+      liverGeom.computeVertexNormals();
       const liverMesh = new THREE.Mesh(liverGeom, matLiver);
-      liverMesh.position.set(-0.85, 1.45, 0.05);
-      liverMesh.rotation.z = -Math.PI / 16;
+      liverMesh.position.set(-0.72, 1.5, 0.05);
+      liverMesh.rotation.z = -Math.PI / 22;
+      liverMesh.rotation.y = -Math.PI / 18;
       organMeshes.liver = liverMesh;
       organsMasterGroup.add(liverMesh);
 
-      // 2. Gallbladder (RUQ)
-      const gbGeom = new THREE.SphereGeometry(0.32, 20, 16);
-      gbGeom.scale(0.8, 1.4, 0.8);
+      // 2. Realistic Pear-Shaped Gallbladder
+      const gbGeom = new THREE.SphereGeometry(0.34, 24, 20);
+      const gbPos = gbGeom.attributes.position;
+      for (let i = 0; i < gbPos.count; i++) {
+        let x = gbPos.getX(i);
+        let y = gbPos.getY(i);
+        let z = gbPos.getZ(i);
+        // Pear shape: narrow neck at top, rounded fundus at bottom
+        const t = (y + 0.34) / 0.68;
+        const radiusFactor = 1.1 - t * 0.65;
+        x *= radiusFactor * 0.88;
+        z *= radiusFactor * 0.88;
+        y *= 1.32;
+        gbPos.setXYZ(i, x, y, z);
+      }
+      gbGeom.computeVertexNormals();
       const gbMesh = new THREE.Mesh(gbGeom, matGB);
-      gbMesh.position.set(-1.15, 0.55, 0.48);
-      gbMesh.rotation.z = Math.PI / 6;
+      gbMesh.position.set(-1.08, 0.62, 0.42);
+      gbMesh.rotation.z = Math.PI / 6.5;
+      gbMesh.rotation.x = Math.PI / 9;
       organMeshes.gallbladder = gbMesh;
       organsMasterGroup.add(gbMesh);
 
-      // 3. Stomach (Epigastrium -> LUQ)
-      const stCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.1, 2.2, 0.1),
-        new THREE.Vector3(0.5, 1.7, 0.3),
-        new THREE.Vector3(0.8, 1.2, 0.3),
-        new THREE.Vector3(0.4, 0.5, 0.35),
-        new THREE.Vector3(-0.3, 0.65, 0.3)
-      ]);
-      const stMesh = new THREE.Mesh(new THREE.TubeGeometry(stCurve, 28, 0.45, 14, false), matStomach);
+      // 3. Realistic J-Shaped Stomach (Fundus, Corpus, Antrum, Pylorus)
+      const stomachSpinePoints = [
+        new THREE.Vector3(0.0, 2.25, 0.08),    // Cardia
+        new THREE.Vector3(0.48, 2.32, 0.22),   // Fundus apex dome
+        new THREE.Vector3(0.88, 1.9, 0.26),    // Upper body
+        new THREE.Vector3(0.96, 1.3, 0.28),    // Mid body (Greater curve)
+        new THREE.Vector3(0.72, 0.68, 0.30),   // Incisura angularis
+        new THREE.Vector3(0.28, 0.46, 0.26),   // Antrum
+        new THREE.Vector3(-0.24, 0.56, 0.20),  // Pyloric canal
+        new THREE.Vector3(-0.46, 0.66, 0.16)   // Pyloric ring
+      ];
+      const stomachSpine = new THREE.CatmullRomCurve3(stomachSpinePoints);
+
+      const stNumRings = 42;
+      const stRadialSegs = 24;
+      const stPositions = [];
+      const stUvs = [];
+      const stIndices = [];
+
+      for (let i = 0; i <= stNumRings; i++) {
+        const t = i / stNumRings;
+        const pt = stomachSpine.getPoint(t);
+        const tan = stomachSpine.getTangent(t).normalize();
+        let norm = new THREE.Vector3(0, 0, 1).cross(tan).normalize();
+        if (norm.lengthSq() < 0.01) norm = new THREE.Vector3(1, 0, 0).cross(tan).normalize();
+        const binorm = new THREE.Vector3().crossVectors(tan, norm).normalize();
+
+        let r = 0.22;
+        if (t < 0.2) {
+          r = 0.22 + (t / 0.2) * 0.42;
+        } else if (t < 0.55) {
+          r = 0.64 + Math.sin((t - 0.2) / 0.35 * Math.PI) * 0.09;
+        } else if (t < 0.82) {
+          r = 0.64 - ((t - 0.55) / 0.27) * 0.25;
+        } else {
+          r = 0.39 - ((t - 0.82) / 0.18) * 0.20;
+        }
+
+        for (let j = 0; j <= stRadialSegs; j++) {
+          const theta = (j / stRadialSegs) * Math.PI * 2;
+          const asym = 1.0 + 0.22 * Math.sin(theta);
+          const rx = Math.cos(theta) * r * asym;
+          const ry = Math.sin(theta) * r * 0.86;
+
+          stPositions.push(
+            pt.x + norm.x * rx + binorm.x * ry,
+            pt.y + norm.y * rx + binorm.y * ry,
+            pt.z + norm.z * rx + binorm.z * ry
+          );
+          stUvs.push(t, j / stRadialSegs);
+        }
+      }
+
+      for (let i = 0; i < stNumRings; i++) {
+        for (let j = 0; j < stRadialSegs; j++) {
+          const a = i * (stRadialSegs + 1) + j;
+          const b = (i + 1) * (stRadialSegs + 1) + j;
+          const c = (i + 1) * (stRadialSegs + 1) + (j + 1);
+          const d = i * (stRadialSegs + 1) + (j + 1);
+          stIndices.push(a, b, d);
+          stIndices.push(b, c, d);
+        }
+      }
+
+      const stGeom = new THREE.BufferGeometry();
+      stGeom.setAttribute('position', new THREE.Float32BufferAttribute(stPositions, 3));
+      stGeom.setAttribute('uv', new THREE.Float32BufferAttribute(stUvs, 2));
+      stGeom.setIndex(stIndices);
+      stGeom.computeVertexNormals();
+
+      const stMesh = new THREE.Mesh(stGeom, matStomach);
       organMeshes.stomach = stMesh;
       organsMasterGroup.add(stMesh);
 
-      // 4. Spleen (LUQ)
-      const spleenGeom = new THREE.SphereGeometry(0.65, 20, 16);
-      spleenGeom.scale(0.7, 1.1, 0.8);
+      // 4. Realistic Spleen (Coffee-bean with concave visceral face)
+      const spleenGeom = new THREE.SphereGeometry(0.7, 24, 18);
+      const spPos = spleenGeom.attributes.position;
+      for (let i = 0; i < spPos.count; i++) {
+        let x = spPos.getX(i);
+        let y = spPos.getY(i);
+        let z = spPos.getZ(i);
+        y *= 1.25;
+        z *= 0.75;
+        if (x < 0) x *= 0.65;
+        spPos.setXYZ(i, x, y, z);
+      }
+      spleenGeom.computeVertexNormals();
       const spleenMesh = new THREE.Mesh(spleenGeom, matSpleen);
-      spleenMesh.position.set(1.75, 1.35, -0.15);
-      spleenMesh.rotation.z = -Math.PI / 8;
+      spleenMesh.position.set(1.78, 1.35, -0.15);
+      spleenMesh.rotation.z = -Math.PI / 7;
+      spleenMesh.rotation.y = Math.PI / 10;
       organMeshes.spleen = spleenMesh;
       organsMasterGroup.add(spleenMesh);
 
-      // 5. Pancreas (Epigastrium / Transverse)
-      const pancCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.35, 0.6, 0.05),
-        new THREE.Vector3(0.1, 0.75, 0.0),
-        new THREE.Vector3(0.8, 0.85, -0.05),
-        new THREE.Vector3(1.4, 1.1, -0.1)
-      ]);
-      const pancMesh = new THREE.Mesh(new THREE.TubeGeometry(pancCurve, 20, 0.22, 10, false), matPancreas);
-      organMeshes.pancreas = pancMesh;
-      organsMasterGroup.add(pancMesh);
-
-      // 6. Duodenum C-Loop (Epigastrium / RUQ)
+      // 6. Duodenum C-Loop (Surrounding the pancreatic head)
       const duodCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.3, 0.65, 0.3),
-        new THREE.Vector3(-0.55, 0.85, 0.2),
-        new THREE.Vector3(-0.75, 0.4, 0.15),
-        new THREE.Vector3(-0.55, -0.05, 0.15),
-        new THREE.Vector3(0.0, -0.05, 0.1)
+        new THREE.Vector3(-0.46, 0.66, 0.16),
+        new THREE.Vector3(-0.68, 0.85, 0.15),
+        new THREE.Vector3(-0.88, 0.45, 0.12),
+        new THREE.Vector3(-0.82, -0.05, 0.10),
+        new THREE.Vector3(-0.45, -0.12, 0.10),
+        new THREE.Vector3(0.05, -0.05, 0.08)
       ]);
-      const duodMesh = new THREE.Mesh(new THREE.TubeGeometry(duodCurve, 24, 0.18, 10, false), matDuodenum);
+      const duodMesh = new THREE.Mesh(new THREE.TubeGeometry(duodCurve, 28, 0.16, 12, false), matDuodenum);
       organMeshes.duodenum = duodMesh;
       organsMasterGroup.add(duodMesh);
 
-      // 7. Large Intestine / Colon (Bordering all quadrants)
-      // Ascending (Right Flank)
-      const ascCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.35, -1.8, 0.25),
-        new THREE.Vector3(-1.42, -0.8, 0.25),
-        new THREE.Vector3(-1.38, 0.2, 0.25),
-        new THREE.Vector3(-1.25, 0.9, 0.2)
+      // 5. Realistic Pancreas (Expanded head in C-loop, tapering body & tail to spleen)
+      const pancGroup = new THREE.Group();
+      const headGeom = new THREE.CylinderGeometry(0.38, 0.35, 0.32, 18);
+      headGeom.scale(1.0, 0.7, 1.1);
+      const headMesh = new THREE.Mesh(headGeom, matPancreas);
+      headMesh.position.set(-0.52, 0.38, 0.08);
+      pancGroup.add(headMesh);
+
+      const pancSpine = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.4, 0.45, 0.06),
+        new THREE.Vector3(0.05, 0.68, 0.02),
+        new THREE.Vector3(0.72, 0.82, -0.04),
+        new THREE.Vector3(1.42, 1.12, -0.12)
       ]);
-      const ascMesh = new THREE.Mesh(new THREE.TubeGeometry(ascCurve, 20, 0.26, 12, false), matColon);
+      const pancTubeGeom = new THREE.TubeGeometry(pancSpine, 24, 0.18, 10, false);
+      const pancBodyMesh = new THREE.Mesh(pancTubeGeom, matPancreas);
+      pancGroup.add(pancBodyMesh);
+
+      organMeshes.pancreas = pancGroup;
+      organsMasterGroup.add(pancGroup);
+
+      // 7. Realistic Haustrated Colon (大腸與結腸袋分節)
+      function createHaustratedSegment(curve, baseR, numPouches, mat) {
+        const rings = Math.max(28, numPouches * 4);
+        const segs = 16;
+        const pos = [];
+        const uvs = [];
+        const idx = [];
+
+        for (let i = 0; i <= rings; i++) {
+          const t = i / rings;
+          const pt = curve.getPoint(t);
+          const tan = curve.getTangent(t).normalize();
+          let norm = new THREE.Vector3(0, 0, 1).cross(tan).normalize();
+          if (norm.lengthSq() < 0.01) norm = new THREE.Vector3(1, 0, 0).cross(tan).normalize();
+          const binorm = new THREE.Vector3().crossVectors(tan, norm).normalize();
+
+          const haustra = 1.0 + 0.22 * Math.sin(t * numPouches * Math.PI * 2);
+          const r = baseR * haustra;
+
+          for (let j = 0; j <= segs; j++) {
+            const theta = (j / segs) * Math.PI * 2;
+            const taeniaMod = 1.0 + 0.06 * Math.cos(3 * theta);
+            const cx = Math.cos(theta) * r * taeniaMod;
+            const cy = Math.sin(theta) * r * taeniaMod;
+
+            pos.push(
+              pt.x + norm.x * cx + binorm.x * cy,
+              pt.y + norm.y * cx + binorm.y * cy,
+              pt.z + norm.z * cx + binorm.z * cy
+            );
+            uvs.push(t, j / segs);
+          }
+        }
+
+        for (let i = 0; i < rings; i++) {
+          for (let j = 0; j < segs; j++) {
+            const a = i * (segs + 1) + j;
+            const b = (i + 1) * (segs + 1) + j;
+            const c = (i + 1) * (segs + 1) + (j + 1);
+            const d = i * (segs + 1) + (j + 1);
+            idx.push(a, b, d);
+            idx.push(b, c, d);
+          }
+        }
+
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+        geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+        geom.setIndex(idx);
+        geom.computeVertexNormals();
+        return new THREE.Mesh(geom, mat);
+      }
+
+      // Ascending Colon & Cecum (Right Flank & RUQ)
+      const ascCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.38, -1.85, 0.24),
+        new THREE.Vector3(-1.46, -0.85, 0.25),
+        new THREE.Vector3(-1.40, 0.2, 0.24),
+        new THREE.Vector3(-1.26, 0.95, 0.20)
+      ]);
+      const ascMesh = createHaustratedSegment(ascCurve, 0.27, 8, matColon.clone());
       organMeshes.colon_ruq = ascMesh;
+      organMeshes.cecum = ascMesh;
       organsMasterGroup.add(ascMesh);
 
-      // Transverse (Umbilical)
-      const transCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.25, 0.9, 0.2),
-        new THREE.Vector3(-0.6, 0.5, 0.38),
-        new THREE.Vector3(0.0, 0.42, 0.42),
-        new THREE.Vector3(0.7, 0.55, 0.38),
-        new THREE.Vector3(1.35, 1.05, 0.2)
+      // Vermiform Appendix (RLQ - worm-like tube)
+      const appCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.38, -1.85, 0.24),
+        new THREE.Vector3(-1.58, -2.12, 0.28),
+        new THREE.Vector3(-1.42, -2.36, 0.22),
+        new THREE.Vector3(-1.25, -2.42, 0.20)
       ]);
-      const transMesh = new THREE.Mesh(new THREE.TubeGeometry(transCurve, 24, 0.24, 12, false), matColon);
+      const appMesh = new THREE.Mesh(new THREE.TubeGeometry(appCurve, 16, 0.075, 8, false), new THREE.MeshPhysicalMaterial({ color: 0xef4444, roughness: 0.4, clearcoat: 0.3 }));
+      organMeshes.appendix = appMesh;
+      organsMasterGroup.add(appMesh);
+
+      // Transverse Colon (Umbilical - sagging loop)
+      const transCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-1.26, 0.95, 0.20),
+        new THREE.Vector3(-0.62, 0.52, 0.38),
+        new THREE.Vector3(0.0, 0.44, 0.42),
+        new THREE.Vector3(0.72, 0.58, 0.38),
+        new THREE.Vector3(1.36, 1.10, 0.20)
+      ]);
+      const transMesh = createHaustratedSegment(transCurve, 0.25, 12, matColon.clone());
       organMeshes.colon_transverse = transMesh;
       organsMasterGroup.add(transMesh);
 
-      // Descending & Sigmoid (Left Flank -> LLQ)
+      // Descending & Sigmoid Colon (Left Flank -> LLQ)
       const descCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(1.35, 1.05, 0.2),
-        new THREE.Vector3(1.42, 0.2, 0.22),
-        new THREE.Vector3(1.38, -0.8, 0.24),
-        new THREE.Vector3(1.2, -1.6, 0.28),
-        new THREE.Vector3(0.6, -1.9, 0.22),
-        new THREE.Vector3(0.0, -2.2, 0.05)
+        new THREE.Vector3(1.36, 1.10, 0.20),
+        new THREE.Vector3(1.44, 0.2, 0.22),
+        new THREE.Vector3(1.40, -0.85, 0.24),
+        new THREE.Vector3(1.22, -1.65, 0.28),
+        new THREE.Vector3(0.62, -1.95, 0.22),
+        new THREE.Vector3(0.0, -2.25, 0.08)
       ]);
-      const descMesh = new THREE.Mesh(new THREE.TubeGeometry(descCurve, 28, 0.24, 12, false), matColon);
+      const descMesh = createHaustratedSegment(descCurve, 0.24, 14, matColon.clone());
       organMeshes.colon_luq = descMesh;
       organMeshes.colon_llq = descMesh;
       organMeshes.sigmoid = descMesh;
       organsMasterGroup.add(descMesh);
 
-      // Appendix (RLQ)
-      const appCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.35, -1.8, 0.25),
-        new THREE.Vector3(-1.5, -2.1, 0.28),
-        new THREE.Vector3(-1.38, -2.3, 0.22)
-      ]);
-      const appMesh = new THREE.Mesh(new THREE.TubeGeometry(appCurve, 12, 0.08, 8, false), new THREE.MeshStandardMaterial({ color: 0xef4444 }));
-      organMeshes.appendix = appMesh;
-      organMeshes.cecum = ascMesh;
-      organsMasterGroup.add(appMesh);
-
-      // Rectum (Suprapubic)
-      const recGeom = new THREE.CylinderGeometry(0.24, 0.2, 1.1, 14);
-      const recMesh = new THREE.Mesh(recGeom, matColon);
-      recMesh.position.set(0, -2.55, -0.05);
+      // Rectal Ampulla (Suprapubic)
+      const recGeom = new THREE.CylinderGeometry(0.26, 0.18, 1.0, 16);
+      recGeom.scale(1.15, 1.0, 0.85);
+      const recMesh = new THREE.Mesh(recGeom, matColon.clone());
+      recMesh.position.set(0, -2.6, -0.05);
       organMeshes.rectum = recMesh;
       organsMasterGroup.add(recMesh);
 
-      // 8. Small Intestines (Central Umbilical bunch)
+      // 8. Realistic Meandering Small Intestinal Loops (Umbilical)
       const smallIntGroup = new THREE.Group();
-      for (let i = 0; i < 9; i++) {
-        const loopGeom = new THREE.TorusGeometry(0.35 + (i % 3) * 0.12, 0.12, 8, 16, Math.PI * 1.5);
-        const loopMesh = new THREE.Mesh(loopGeom, matSmallInt);
-        loopMesh.position.set(((i % 3) - 1) * 0.45, -0.5 - Math.floor(i / 3) * 0.42, 0.18 + (i % 2) * 0.08);
-        loopMesh.rotation.set((i * 0.4), (i * 0.3), (i * 0.5));
-        smallIntGroup.add(loopMesh);
-      }
+      const siMat = matSmallInt.clone();
+
+      const loopPaths = [
+        [new THREE.Vector3(-0.55, -0.25, 0.26), new THREE.Vector3(-0.15, -0.15, 0.32), new THREE.Vector3(0.45, -0.22, 0.28), new THREE.Vector3(0.55, -0.45, 0.25), new THREE.Vector3(0.1, -0.42, 0.30)],
+        [new THREE.Vector3(-0.6, -0.55, 0.24), new THREE.Vector3(-0.25, -0.7, 0.32), new THREE.Vector3(0.2, -0.65, 0.34), new THREE.Vector3(0.52, -0.85, 0.26), new THREE.Vector3(-0.1, -0.92, 0.32)],
+        [new THREE.Vector3(-0.5, -1.05, 0.25), new THREE.Vector3(0.05, -1.18, 0.32), new THREE.Vector3(0.45, -1.25, 0.28), new THREE.Vector3(-0.15, -1.42, 0.26), new THREE.Vector3(-0.85, -1.6, 0.22)]
+      ];
+
+      loopPaths.forEach(pts => {
+        const c = new THREE.CatmullRomCurve3(pts);
+        const m = new THREE.Mesh(new THREE.TubeGeometry(c, 32, 0.14, 10, false), siMat);
+        smallIntGroup.add(m);
+      });
+
       organMeshes.small_intestines = smallIntGroup;
       organMeshes.ileum = smallIntGroup;
       organsMasterGroup.add(smallIntGroup);
 
-      // 9. Kidneys & Ureters (Right & Left Flanks - Posterior)
-      // Right Kidney
-      const rKidGeom = new THREE.SphereGeometry(0.45, 18, 14);
-      rKidGeom.scale(0.7, 1.25, 0.7);
-      const rKidMesh = new THREE.Mesh(rKidGeom, matKidney);
-      rKidMesh.position.set(-1.3, 0.45, -0.5);
+      // 9. Realistic Bean-Shaped Kidneys with Medial Hilum
+      function createBeanKidney(isLeft, mat) {
+        const geom = new THREE.SphereGeometry(0.52, 28, 22);
+        const pos = geom.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          let x = pos.getX(i);
+          let y = pos.getY(i);
+          let z = pos.getZ(i);
+
+          y *= 1.35;
+          z *= 0.72;
+
+          const isMedial = isLeft ? (x < 0) : (x > 0);
+          if (isMedial && Math.abs(y) < 0.45) {
+            x *= 0.52;
+          } else {
+            x *= 0.88;
+          }
+
+          pos.setXYZ(i, x, y, z);
+        }
+        geom.computeVertexNormals();
+        return new THREE.Mesh(geom, mat);
+      }
+
+      const rKidMesh = createBeanKidney(false, matKidney.clone());
+      rKidMesh.position.set(-1.32, 0.42, -0.48);
+      rKidMesh.rotation.z = Math.PI / 16;
       organMeshes.kidney_r = rKidMesh;
       organsMasterGroup.add(rKidMesh);
 
-      // Left Kidney
-      const lKidGeom = new THREE.SphereGeometry(0.45, 18, 14);
-      lKidGeom.scale(0.7, 1.25, 0.7);
-      const lKidMesh = new THREE.Mesh(lKidGeom, matKidney);
-      lKidMesh.position.set(1.3, 0.65, -0.5);
+      const lKidMesh = createBeanKidney(true, matKidney.clone());
+      lKidMesh.position.set(1.32, 0.65, -0.48);
+      lKidMesh.rotation.z = -Math.PI / 16;
       organMeshes.kidney_l = lKidMesh;
       organsMasterGroup.add(lKidMesh);
 
-      // Ureters running down
+      // Ureters
       const rUreterCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.25, 0.25, -0.45),
-        new THREE.Vector3(-1.1, -0.8, -0.35),
-        new THREE.Vector3(-0.7, -1.8, -0.15),
-        new THREE.Vector3(-0.25, -2.05, 0.1)
+        new THREE.Vector3(-1.22, 0.22, -0.42),
+        new THREE.Vector3(-1.08, -0.85, -0.32),
+        new THREE.Vector3(-0.68, -1.82, -0.12),
+        new THREE.Vector3(-0.22, -2.08, 0.12)
       ]);
-      const rUreter = new THREE.Mesh(new THREE.TubeGeometry(rUreterCurve, 16, 0.035, 8, false), matUreter);
+      const rUreter = new THREE.Mesh(new THREE.TubeGeometry(rUreterCurve, 20, 0.038, 8, false), matUreter);
       organMeshes.ureter_r = rUreter;
       organsMasterGroup.add(rUreter);
 
       const lUreterCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(1.25, 0.45, -0.45),
-        new THREE.Vector3(1.1, -0.8, -0.35),
-        new THREE.Vector3(0.7, -1.8, -0.15),
-        new THREE.Vector3(0.25, -2.05, 0.1)
+        new THREE.Vector3(1.22, 0.45, -0.42),
+        new THREE.Vector3(1.08, -0.85, -0.32),
+        new THREE.Vector3(0.68, -1.82, -0.12),
+        new THREE.Vector3(0.22, -2.08, 0.12)
       ]);
-      const lUreter = new THREE.Mesh(new THREE.TubeGeometry(lUreterCurve, 16, 0.035, 8, false), matUreter);
+      const lUreter = new THREE.Mesh(new THREE.TubeGeometry(lUreterCurve, 20, 0.038, 8, false), matUreter);
       organMeshes.ureter_l = lUreter;
       organsMasterGroup.add(lUreter);
 
-      // 10. Urinary Bladder (Suprapubic)
-      const bladderGeom = new THREE.SphereGeometry(0.55, 20, 16);
-      bladderGeom.scale(1.1, 0.95, 0.9);
+      // 10. Realistic Globular Urinary Bladder
+      const bladderGeom = new THREE.SphereGeometry(0.58, 24, 20);
+      bladderGeom.scale(1.12, 0.92, 0.88);
       const bladderMesh = new THREE.Mesh(bladderGeom, matBladder);
-      bladderMesh.position.set(0, -2.0, 0.25);
+      bladderMesh.position.set(0, -2.05, 0.24);
       organMeshes.bladder = bladderMesh;
       organsMasterGroup.add(bladderMesh);
 
-      // Uterus/Prostate representation
-      const utGeom = new THREE.ConeGeometry(0.3, 0.6, 12);
-      const utMesh = new THREE.Mesh(utGeom, new THREE.MeshStandardMaterial({ color: 0xe879f9, roughness: 0.4 }));
-      utMesh.position.set(0, -1.85, 0.05);
-      utMesh.rotation.x = Math.PI;
-      organMeshes.uterus_prostate = utMesh;
-      organsMasterGroup.add(utMesh);
+      // Anatomical Uterine / Pelvic Organ (Piriform smooth muscle)
+      const uterusGroup = new THREE.Group();
+      const utBodyGeom = new THREE.SphereGeometry(0.38, 20, 16);
+      const utPos = utBodyGeom.attributes.position;
+      for (let i = 0; i < utPos.count; i++) {
+        let x = utPos.getX(i);
+        let y = utPos.getY(i);
+        let z = utPos.getZ(i);
+        const factor = 0.55 + 0.45 * ((y + 0.38) / 0.76);
+        x *= factor * 1.1;
+        z *= 0.65;
+        utPos.setXYZ(i, x, y, z);
+      }
+      utBodyGeom.computeVertexNormals();
+      const utMesh = new THREE.Mesh(utBodyGeom, matPelvic.clone());
+      utMesh.position.set(0, -1.88, 0.04);
+      uterusGroup.add(utMesh);
 
-      // Adnexa R & L
-      const adnexaMat = new THREE.MeshStandardMaterial({ color: 0xf472b6 });
-      const adnexaR = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 10), adnexaMat);
-      adnexaR.position.set(-0.85, -1.85, 0.1);
+      organMeshes.uterus_prostate = uterusGroup;
+      organsMasterGroup.add(uterusGroup);
+
+      // Ovaries & Adnexa R & L (Almond-shaped ovaries)
+      const adnexaMat = new THREE.MeshPhysicalMaterial({ color: 0xf472b6, roughness: 0.35, clearcoat: 0.3 });
+      const ovGeom = new THREE.SphereGeometry(0.18, 16, 12);
+      ovGeom.scale(1.2, 0.8, 0.7);
+
+      const adnexaR = new THREE.Mesh(ovGeom, adnexaMat.clone());
+      adnexaR.position.set(-0.82, -1.85, 0.08);
       organMeshes.adnexa_r = adnexaR;
       organsMasterGroup.add(adnexaR);
 
-      const adnexaL = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 10), adnexaMat);
-      adnexaL.position.set(0.85, -1.85, 0.1);
+      const adnexaL = new THREE.Mesh(ovGeom, adnexaMat.clone());
+      adnexaL.position.set(0.82, -1.85, 0.08);
       organMeshes.adnexa_l = adnexaL;
       organsMasterGroup.add(adnexaL);
 
       // 11. Abdominal Aorta
-      const aortaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 4.8, 16), matAorta);
-      aortaMesh.position.set(0.15, -0.1, -0.42);
+      const aortaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.12, 4.8, 18), matAorta);
+      aortaMesh.position.set(0.12, -0.1, -0.40);
       organMeshes.aorta = aortaMesh;
       organsMasterGroup.add(aortaMesh);
 

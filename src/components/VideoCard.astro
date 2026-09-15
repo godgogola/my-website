@@ -15,11 +15,17 @@ const articleUrl = hasArticle ? getArticleUrl(video.articleSlug, isEmbed) : '';
 
 // 分類主題色映射
 const categoryColorMap: Record<string, string> = {
+  '內視鏡檢查': 'badge-exam',
   '肝膽胰疾病': 'badge-liver',
   '胃部疾病': 'badge-stomach',
-  '腸道健康': 'badge-intestine',
-  '檢查衛教': 'badge-exam',
-  '代謝慢病': 'badge-metabolic',
+  '腸道疾病': 'badge-intestine',
+  '慢性病': 'badge-chronic',
+  '高血壓': 'badge-bp',
+  '高血脂': 'badge-lipid',
+  '糖尿病': 'badge-dm',
+  '減重': 'badge-weight',
+  '健康飲食': 'badge-diet',
+  '要活就要動': 'badge-exercise',
 };
 
 const categoryClass = categoryColorMap[video.category] || 'badge-default';
@@ -263,9 +269,39 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
     color: #ffffff;
   }
 
-  .badge-metabolic {
+  .badge-diet {
+    background: rgba(16, 185, 129, 0.92);
+    color: #ffffff;
+  }
+
+  .badge-lipid {
+    background: rgba(245, 158, 11, 0.95);
+    color: #ffffff;
+  }
+
+  .badge-bp {
+    background: rgba(244, 63, 94, 0.92);
+    color: #ffffff;
+  }
+
+  .badge-dm {
+    background: rgba(139, 92, 246, 0.92);
+    color: #ffffff;
+  }
+
+  .badge-chronic {
     background: rgba(244, 162, 97, 0.95);
     color: #3b2405;
+  }
+
+  .badge-weight {
+    background: rgba(20, 184, 166, 0.92);
+    color: #ffffff;
+  }
+
+  .badge-exercise {
+    background: rgba(6, 182, 212, 0.92);
+    color: #ffffff;
   }
 
   .badge-default {
