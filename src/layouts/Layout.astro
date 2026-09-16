@@ -40,7 +40,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     </script>
 
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {isEmbed ? (
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    ) : (
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    )}
     <!-- 嵌入模式智慧偵測 -->
     <script is:inline>
       if (

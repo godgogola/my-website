@@ -290,7 +290,7 @@ const getCoverImageUrl = (img?: string) => {
 
   .column-embed-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 10px 14px 36px;
     box-sizing: border-box;
@@ -448,12 +448,20 @@ const getCoverImageUrl = (img?: string) => {
     position: relative;
     z-index: 10;
     padding: 4px 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   .capsules-track {
     display: flex;
     flex-wrap: wrap;
     gap: 7px;
     justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .capsule-btn {
     display: inline-flex;
@@ -840,6 +848,10 @@ const getCoverImageUrl = (img?: string) => {
     .column-embed-container {
       /* 極致滿版：縮小左右 padding，卡片擴充至邊界 */
       padding: 6px 6px 24px;
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
     /* 手機版隱藏頂部大 Banner，省下超過 140px 高度直奔文章 */
     .promo-banner-wrapper {
@@ -866,18 +878,23 @@ const getCoverImageUrl = (img?: string) => {
     }
     .search-input {
       height: 40px;
-      font-size: 0.86rem;
+      font-size: 16px !important; /* 確保不小於16px，杜絕 iOS Safari 點擊聚焦自動放大頁面 */
       padding: 0 36px 0 38px;
+      box-sizing: border-box;
     }
     .search-icon {
       left: 14px;
       width: 15px;
       height: 15px;
     }
-    /* 手機版膠囊支援緊湊水平滑動 */
+    /* 手機版膠囊支援緊湊水平滑動 (嚴格約束寬度避免撐開版面) */
     .category-nav {
       margin: 8px 0 12px;
       padding: 4px 0;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
     }
     .capsules-track {
       flex-wrap: nowrap;
@@ -885,6 +902,10 @@ const getCoverImageUrl = (img?: string) => {
       overflow-x: auto;
       padding: 0 2px 4px;
       gap: 6px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
@@ -922,6 +943,14 @@ const getCoverImageUrl = (img?: string) => {
     .pagination-bar {
       margin: 16px 0 6px;
       gap: 4px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .page-numbers-group {
+      max-width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .page-nav-btn {
       padding: 6px 10px;
