@@ -442,16 +442,12 @@ const getCoverImageUrl = (img?: string) => {
     color: #FFFFFF;
   }
 
-  /* ===== 分類篩選膠囊 (Capsules) ===== */
+  /* ===== 分類篩選膠囊 (Capsules) 自然隨頁面捲動 ===== */
   .category-nav {
     margin: 12px 0 18px;
-    position: sticky;
-    top: 0;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 50;
-    padding: 6px 0;
+    position: relative;
+    z-index: 10;
+    padding: 4px 0;
   }
   .capsules-track {
     display: flex;
@@ -785,20 +781,20 @@ const getCoverImageUrl = (img?: string) => {
     transform: translateY(-2px);
   }
 
-  /* ===== 底部導流卡片 ===== */
+  /* ===== 底部導流卡片 (緊湊化以適配 Wix 嵌入高度) ===== */
   .bottom-callout-section {
-    margin-top: 40px;
+    margin-top: 20px;
   }
   .callout-box {
     background: linear-gradient(135deg, #FAFDFC 0%, #EDF5F2 100%);
     border: 1.5px solid var(--clinic-border);
-    border-radius: 18px;
-    padding: 20px 24px;
+    border-radius: 14px;
+    padding: 14px 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    box-shadow: 0 3px 12px rgba(47, 102, 86, 0.05);
+    gap: 14px;
+    box-shadow: 0 2px 8px rgba(47, 102, 86, 0.04);
   }
   .callout-info h3 {
     font-size: 1.05rem;
