@@ -191,9 +191,30 @@ const getCoverImageUrl = (img?: string) => {
         </button>
       </div>
 
+      <!-- 分頁導覽控制列 (每頁 6 篇) -->
+      <nav class="pagination-bar" id="paginationBar" aria-label="文章分頁導覽" style="display: none;">
+        <button type="button" class="page-nav-btn" id="btnPrevPage" aria-label="上一頁" disabled>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>上一頁</span>
+        </button>
+
+        <div class="page-numbers-group" id="pageNumbersGroup">
+          <!-- 動態產生精緻頁碼按鈕 -->
+        </div>
+
+        <button type="button" class="page-nav-btn" id="btnNextPage" aria-label="下一頁">
+          <span>下一頁</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </nav>
+
       <!-- 互動操作列：換一批 + 查看全部 230+ 篇 -->
       <div class="embed-actions-bar" id="embedActionsBar">
-        <button type="button" class="btn-action-random" id="btnRefreshRandom" aria-label="隨機更換12篇專題文章">
+        <button type="button" class="btn-action-random" id="btnRefreshRandom" aria-label="隨機推薦6篇專題文章">
           <svg class="dice-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="4"></rect>
             <circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"></circle>
@@ -202,7 +223,7 @@ const getCoverImageUrl = (img?: string) => {
             <circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"></circle>
             <circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"></circle>
           </svg>
-          <span>換一批（隨機推薦 12 篇）</span>
+          <span>換一批（隨機 6 篇）</span>
         </button>
 
         <a href="https://drhuanggi.vercel.app/health-column" target="_blank" rel="noopener noreferrer" class="btn-action-viewall">
@@ -241,6 +262,21 @@ const getCoverImageUrl = (img?: string) => {
 </Layout>
 
 <style>
+  /* ===== 全局隱藏滾動條（徹底消除右側滑動條槓槓） ===== */
+  :global(html),
+  :global(body) {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    overflow-x: hidden !important;
+  }
+  :global(html)::-webkit-scrollbar,
+  :global(body)::-webkit-scrollbar,
+  :global(*)::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
   /* ===== 基礎與容器設定 ===== */
   :root {
     --clinic-green: #2F6656;
@@ -330,11 +366,13 @@ const getCoverImageUrl = (img?: string) => {
     margin: 0;
     letter-spacing: -0.02em;
     line-height: 1.2;
+    white-space: nowrap;
   }
   .hero-subtitle {
     font-size: 0.85rem;
     color: #6C847C;
     font-weight: 600;
+    white-space: nowrap;
   }
   .gradient-text {
     background: linear-gradient(135deg, #2F6656 20%, #3D8B75 80%);
@@ -563,13 +601,92 @@ const getCoverImageUrl = (img?: string) => {
     overflow: hidden;
   }
 
+  /* ===== 分頁導覽控制列 (每頁 6 篇) ===== */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0 12px;
+    flex-wrap: wrap;
+    user-select: none;
+  }
+  .page-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 15px;
+    border-radius: 20px;
+    background: #FFFFFF;
+    color: var(--clinic-green);
+    border: 1.2px solid var(--clinic-border);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(47, 102, 86, 0.06);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .page-nav-btn:hover:not(:disabled) {
+    background: #F4F8F6;
+    border-color: var(--clinic-green);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(47, 102, 86, 0.12);
+  }
+  .page-nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .page-numbers-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .page-num-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 6px;
+    border-radius: 10px;
+    border: 1.2px solid transparent;
+    background: #FFFFFF;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  .page-num-btn:hover:not(.active) {
+    border-color: var(--clinic-border);
+    background: #F4F8F6;
+    color: var(--clinic-green);
+  }
+  .page-num-btn.active {
+    background: linear-gradient(135deg, #2F6656, #3D8B75);
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(47, 102, 86, 0.25);
+    cursor: default;
+  }
+  .page-ellipsis {
+    color: #92A7A0;
+    font-size: 0.9rem;
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+  }
+
   /* ===== 互動操作列：換一批 + 查看全部 230+ 篇 ===== */
   .embed-actions-bar {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 14px;
-    margin-top: 28px;
+    margin-top: 14px;
     flex-wrap: wrap;
   }
   .btn-action-random {
@@ -736,13 +853,20 @@ const getCoverImageUrl = (img?: string) => {
       margin-bottom: 10px;
     }
     .hero-title-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
       margin-bottom: 8px;
     }
     .hero-title {
       font-size: 1.35rem;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
     }
     .hero-subtitle {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      color: #6C847C;
     }
     .search-input {
       height: 40px;
@@ -798,11 +922,26 @@ const getCoverImageUrl = (img?: string) => {
       line-height: 1.3;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
+    /* 手機版分頁導覽控制 */
+    .pagination-bar {
+      margin: 16px 0 6px;
+      gap: 4px;
+    }
+    .page-nav-btn {
+      padding: 6px 10px;
+      font-size: 0.82rem;
+    }
+    .page-num-btn {
+      min-width: 30px;
+      height: 30px;
+      font-size: 0.82rem;
+      border-radius: 8px;
+    }
     /* 底部操作按鈕 */
     .embed-actions-bar {
       flex-direction: column;
       gap: 8px;
-      margin-top: 20px;
+      margin-top: 12px;
       width: 100%;
     }
     .btn-action-random,
@@ -829,19 +968,25 @@ const getCoverImageUrl = (img?: string) => {
 
 <script>
   function initColumnEmbed() {
-    const BATCH_SIZE = 12; // 模式：預設隨機抽選 12 篇
+    const PAGE_SIZE = 6; // 固定一頁 6 篇
 
     const searchInput = document.getElementById('columnSearchInput') as HTMLInputElement | null;
     const clearBtn = document.getElementById('clearSearchBtn') as HTMLButtonElement | null;
     const capsuleBtns = document.querySelectorAll<HTMLButtonElement>('.capsule-btn');
     const cardItems = Array.from(document.querySelectorAll<HTMLElement>('.post-card-item'));
+    const postsGrid = document.getElementById('postsGrid');
     const noPostsBox = document.getElementById('noPostsFound');
     const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+    const paginationBar = document.getElementById('paginationBar');
+    const btnPrevPage = document.getElementById('btnPrevPage') as HTMLButtonElement | null;
+    const btnNextPage = document.getElementById('btnNextPage') as HTMLButtonElement | null;
+    const pageNumbersGroup = document.getElementById('pageNumbersGroup');
     const btnRefresh = document.getElementById('btnRefreshRandom');
     const actionsBar = document.getElementById('embedActionsBar');
 
     let currentCategory = '全部';
     let currentSearchTerm = '';
+    let currentPage = 1;
 
     // 回傳高度給 Wix 父視窗
     function notifyParentHeight() {
@@ -855,24 +1000,134 @@ const getCoverImageUrl = (img?: string) => {
       } catch (e) {}
     }
 
-    // 隨機渲染 12 篇卡片
-    function renderRandomCards(category: string, animateDice = false) {
-      currentCategory = category;
+    // 平滑滾動至文章卡片頂部
+    function scrollToGridTop() {
+      if (postsGrid) {
+        postsGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
 
-      // 篩選出符合分類的所有卡片
-      const matched = cardItems.filter((item) => {
+    // 篩選符合當前條件的所有卡片
+    function getFilteredCards(): HTMLElement[] {
+      const cleanTerm = currentSearchTerm.trim().toLowerCase();
+      return cardItems.filter((item) => {
         const itemCat = item.dataset.category || '';
-        return category === '全部' || itemCat === category;
-      });
+        const itemTitle = item.dataset.title || '';
+        const itemKeywords = item.dataset.keywords || '';
 
-      // 先將全部隱藏
+        const matchesCategory = currentCategory === '全部' || itemCat === currentCategory;
+        const matchesSearch = !cleanTerm || itemTitle.includes(cleanTerm) || itemKeywords.includes(cleanTerm);
+
+        return matchesCategory && matchesSearch;
+      });
+    }
+
+    // 渲染分頁 UI
+    function renderPaginationUI(totalPages: number) {
+      if (!paginationBar || !pageNumbersGroup) return;
+
+      if (totalPages <= 1) {
+        paginationBar.style.display = 'none';
+        return;
+      }
+
+      paginationBar.style.display = 'flex';
+
+      // 上一頁 / 下一頁 按鈕狀態
+      if (btnPrevPage) {
+        btnPrevPage.disabled = currentPage <= 1;
+      }
+      if (btnNextPage) {
+        btnNextPage.disabled = currentPage >= totalPages;
+      }
+
+      // 清空頁碼群組
+      pageNumbersGroup.innerHTML = '';
+
+      // 計算要顯示的頁碼序列
+      const pagesToShow: (number | string)[] = [];
+      const isMobile = window.innerWidth <= 600;
+      const maxButtons = isMobile ? 5 : 7;
+
+      if (totalPages <= maxButtons) {
+        for (let i = 1; i <= totalPages; i++) {
+          pagesToShow.push(i);
+        }
+      } else {
+        pagesToShow.push(1);
+
+        if (isMobile) {
+          // 手機版緊湊分頁
+          if (currentPage > 3) pagesToShow.push('...');
+          const start = Math.max(2, currentPage - 1);
+          const end = Math.min(totalPages - 1, currentPage + 1);
+          for (let i = start; i <= end; i++) {
+            pagesToShow.push(i);
+          }
+          if (currentPage < totalPages - 2) pagesToShow.push('...');
+        } else {
+          // 桌面版分頁
+          if (currentPage > 4) pagesToShow.push('...');
+          const start = Math.max(2, currentPage - 1);
+          const end = Math.min(totalPages - 1, currentPage + 1);
+          for (let i = start; i <= end; i++) {
+            pagesToShow.push(i);
+          }
+          if (currentPage < totalPages - 3) pagesToShow.push('...');
+        }
+
+        pagesToShow.push(totalPages);
+      }
+
+      // 產生頁碼 DOM
+      pagesToShow.forEach((p) => {
+        if (typeof p === 'number') {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'page-num-btn' + (p === currentPage ? ' active' : '');
+          btn.textContent = String(p);
+          btn.setAttribute('aria-label', `第 ${p} 頁`);
+          if (p === currentPage) {
+            btn.setAttribute('aria-current', 'page');
+          }
+          btn.addEventListener('click', () => {
+            if (currentPage !== p) {
+              currentPage = p;
+              renderCurrentPage(true);
+              scrollToGridTop();
+            }
+          });
+          pageNumbersGroup.appendChild(btn);
+        } else {
+          const span = document.createElement('span');
+          span.className = 'page-ellipsis';
+          span.textContent = '…';
+          span.setAttribute('aria-hidden', 'true');
+          pageNumbersGroup.appendChild(span);
+        }
+      });
+    }
+
+    // 渲染當前頁（固定 6 篇）
+    function renderCurrentPage(shouldScroll = false) {
+      const filteredCards = getFilteredCards();
+      const totalCount = filteredCards.length;
+      const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+
+      if (currentPage > totalPages) {
+        currentPage = 1;
+      }
+
+      // 先隱藏所有文章卡片
       cardItems.forEach((item) => {
         item.style.display = 'none';
         item.classList.remove('fade-in');
       });
 
-      if (matched.length === 0) {
+      // 查無資料判斷
+      if (totalCount === 0) {
         if (noPostsBox) noPostsBox.style.display = 'block';
+        if (paginationBar) paginationBar.style.display = 'none';
         if (actionsBar) actionsBar.style.display = 'none';
         setTimeout(notifyParentHeight, 100);
         return;
@@ -881,77 +1136,87 @@ const getCoverImageUrl = (img?: string) => {
       if (noPostsBox) noPostsBox.style.display = 'none';
       if (actionsBar) actionsBar.style.display = 'flex';
 
-      // Fisher-Yates 洗牌
-      const shuffled = [...matched];
+      // 取得當前頁的 6 篇
+      const startIndex = (currentPage - 1) * PAGE_SIZE;
+      const endIndex = startIndex + PAGE_SIZE;
+      const pageCards = filteredCards.slice(startIndex, endIndex);
+
+      pageCards.forEach((item, idx) => {
+        item.style.display = 'block';
+        item.style.animationDelay = `${(idx % 6) * 0.04}s`;
+        item.classList.add('fade-in');
+      });
+
+      // 渲染分頁控制列
+      renderPaginationUI(totalPages);
+
+      setTimeout(notifyParentHeight, 100);
+    }
+
+    // 隨機換一批（從當前符合條件的文章中抽 6 篇）
+    function renderRandom6(animateDice = true) {
+      const filteredCards = getFilteredCards();
+      const totalCount = filteredCards.length;
+      if (totalCount === 0) return;
+
+      // 隨機洗牌
+      const shuffled = [...filteredCards];
       for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
 
-      // 抽取前 12 篇
-      const selected = shuffled.slice(0, BATCH_SIZE);
+      // 隱藏全部
+      cardItems.forEach((item) => {
+        item.style.display = 'none';
+        item.classList.remove('fade-in');
+      });
+
+      // 取前 6 篇
+      const selected = shuffled.slice(0, PAGE_SIZE);
       selected.forEach((item, idx) => {
         item.style.display = 'block';
         item.style.animationDelay = `${(idx % 6) * 0.04}s`;
         item.classList.add('fade-in');
       });
 
-      // 骰子按鈕動態
+      // 骰子轉動動畫
       if (btnRefresh && animateDice) {
         btnRefresh.classList.add('btn-animating');
         setTimeout(() => btnRefresh.classList.remove('btn-animating'), 450);
       }
 
-      setTimeout(notifyParentHeight, 120);
-    }
-
-    // 搜尋模式處理
-    function handleSearch(term: string) {
-      const cleanTerm = term.trim().toLowerCase();
-
-      if (!cleanTerm) {
-        // 清空搜尋，回到隨機推薦模式
-        if (actionsBar) actionsBar.style.display = 'flex';
-        renderRandomCards(currentCategory, false);
-        return;
-      }
-
-      // 搜尋模式啟動：隱藏換一批按鈕，展開全部符合搜尋條件的文章
-      if (actionsBar) actionsBar.style.display = 'none';
-      let visibleCount = 0;
-
-      cardItems.forEach((item) => {
-        const itemCat = item.dataset.category || '';
-        const itemTitle = item.dataset.title || '';
-        const itemKeywords = item.dataset.keywords || '';
-
-        const matchesCategory = currentCategory === '全部' || itemCat === currentCategory;
-        const matchesSearch = itemTitle.includes(cleanTerm) || itemKeywords.includes(cleanTerm);
-
-        if (matchesCategory && matchesSearch) {
-          item.style.display = 'block';
-          item.classList.remove('fade-in');
-          visibleCount++;
-        } else {
-          item.style.display = 'none';
-        }
-      });
-
-      // 無結果提示
-      if (noPostsBox) {
-        noPostsBox.style.display = visibleCount === 0 ? 'block' : 'none';
-      }
-
       setTimeout(notifyParentHeight, 100);
     }
 
-    // 初始化：載入隨機 12 篇
-    renderRandomCards('全部', false);
+    // 上一頁監聽
+    if (btnPrevPage) {
+      btnPrevPage.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderCurrentPage(true);
+          scrollToGridTop();
+        }
+      });
+    }
 
-    // 點擊「換一批」
+    // 下一頁監聽
+    if (btnNextPage) {
+      btnNextPage.addEventListener('click', () => {
+        const totalCount = getFilteredCards().length;
+        const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderCurrentPage(true);
+          scrollToGridTop();
+        }
+      });
+    }
+
+    // 點擊「換一批（隨機 6 篇）」
     if (btnRefresh) {
       btnRefresh.addEventListener('click', () => {
-        renderRandomCards(currentCategory, true);
+        renderRandom6(true);
       });
     }
 
@@ -962,7 +1227,8 @@ const getCoverImageUrl = (img?: string) => {
         if (clearBtn) {
           clearBtn.style.display = currentSearchTerm ? 'flex' : 'none';
         }
-        handleSearch(currentSearchTerm);
+        currentPage = 1; // 搜尋時重設至第 1 頁
+        renderCurrentPage();
       });
     }
 
@@ -973,7 +1239,8 @@ const getCoverImageUrl = (img?: string) => {
         currentSearchTerm = '';
         clearBtn.style.display = 'none';
         searchInput.focus();
-        handleSearch('');
+        currentPage = 1;
+        renderCurrentPage();
       });
     }
 
@@ -988,13 +1255,8 @@ const getCoverImageUrl = (img?: string) => {
         btn.setAttribute('aria-selected', 'true');
 
         currentCategory = btn.dataset.category || '全部';
-
-        // 若搜尋框有內容，依搜尋篩選；否則隨機挑選 12 篇
-        if (currentSearchTerm) {
-          handleSearch(currentSearchTerm);
-        } else {
-          renderRandomCards(currentCategory, false);
-        }
+        currentPage = 1; // 切換分類時重設至第 1 頁
+        renderCurrentPage();
 
         // 手機版按鈕置中滾動
         btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -1018,9 +1280,13 @@ const getCoverImageUrl = (img?: string) => {
           }
         });
         currentCategory = '全部';
-        renderRandomCards('全部', false);
+        currentPage = 1;
+        renderCurrentPage();
       });
     }
+
+    // 初始化渲染第 1 頁（6 篇）
+    renderCurrentPage();
 
     // 視窗調整回報高度
     window.addEventListener('resize', notifyParentHeight);

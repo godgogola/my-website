@@ -813,10 +813,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   html.is-embed body {
     background: transparent !important;
     overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+  }
+
+  html.is-embed::-webkit-scrollbar,
+  html.is-embed body::-webkit-scrollbar,
+  html.is-embed *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   html.is-embed .page-container {
@@ -825,5 +835,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     max-width: 100% !important;
     width: 100% !important;
     overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  html.is-embed .page-container::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 </style>
