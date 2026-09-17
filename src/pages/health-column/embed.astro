@@ -263,6 +263,34 @@ const getCoverImageUrl = (img?: string) => {
   </div>
 </Layout>
 
+<style is:global>
+  /* ===== 徹底拔除所有捲軸（杜絕右側槓槓） ===== */
+  html,
+  body {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    overflow-x: hidden !important;
+  }
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+  *,
+  *::before,
+  *::after {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+</style>
+
 <style>
   /* ===== 全局隱藏滾動條（徹底消除右側滑動條槓槓） ===== */
   :global(html),
