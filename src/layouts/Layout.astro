@@ -27,7 +27,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
 ---
 
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" class:list={[{ 'is-embed': isEmbed }]}>
   <head>
     <!-- Google tag (gtag.js) - GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2P627PEG5"></script>
@@ -45,13 +45,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     ) : (
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     )}
-    <!-- 嵌入模式智慧偵測 -->
+    <!-- 嵌入模式智慧偵測 (支援跨網域沙盒與 query 參數) -->
     <script is:inline>
-      if (
-        window.self !== window.top ||
-        new URLSearchParams(window.location.search).get('embed') === 'true'
-      ) {
+      try {
+        if (
+          window.self !== window.top ||
+          new URLSearchParams(window.location.search).get('embed') === 'true'
+        ) {
+          document.documentElement.classList.add('is-embed');
+          document.body?.classList.add('is-embed');
+        }
+      } catch (e) {
+        // 若在 iframe 內訪問 window.top 觸發跨網域安全性錯誤，代表必然是 iframe 嵌入模式
         document.documentElement.classList.add('is-embed');
+        document.body?.classList.add('is-embed');
       }
     </script>
     <!-- Favicon & Mobile Web App Icons -->
@@ -123,7 +130,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       }
     })} />
   </head>
-  <body class="veterinary-theme">
+  <body class:list={['veterinary-theme', { 'is-embed': isEmbed }]}>
     <!-- 背景柔光氛圍層 -->
     <div class="ambient-glow-layer" aria-hidden="true">
       <div class="glow-orb glow-orb-1"></div>
@@ -809,12 +816,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   ═══════════════════════════════════════ */
   html.is-embed .navbar-vet-wrapper,
   html.is-embed .footer-vet,
-  html.is-embed .ambient-glow-layer {
+  html.is-embed .ambient-glow-layer,
+  body.is-embed .navbar-vet-wrapper,
+  body.is-embed .footer-vet,
+  body.is-embed .ambient-glow-layer {
     display: none !important;
   }
 
   html.is-embed,
-  html.is-embed body {
+  html.is-embed body,
+  body.is-embed {
     background: transparent !important;
     overflow-x: hidden !important;
     scrollbar-width: none !important;
@@ -825,15 +836,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     padding: 0 !important;
   }
 
+  /* WebKit/Blink 滾動條徹底拔除 */
   html.is-embed::-webkit-scrollbar,
+  body.is-embed::-webkit-scrollbar,
   html.is-embed body::-webkit-scrollbar,
-  html.is-embed *::-webkit-scrollbar {
+  html.is-embed *::-webkit-scrollbar,
+  body.is-embed *::-webkit-scrollbar {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
+    background: transparent !important;
   }
 
-  html.is-embed .page-container {
+  html.is-embed .page-container,
+  body.is-embed .page-container {
     padding-top: 0.5rem !important;
     padding-bottom: 1.5rem !important;
     max-width: 100% !important;
@@ -842,9 +858,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
   }
-  html.is-embed .page-container::-webkit-scrollbar {
+  html.is-embed .page-container::-webkit-scrollbar,
+  body.is-embed .page-container::-webkit-scrollbar {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
+    background: transparent !important;
   }
 </style>

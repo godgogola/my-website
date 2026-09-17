@@ -24,9 +24,9 @@ const posts = allPosts
   });
 
 const CATEGORY_ORDER = [
-  '診間隨筆', '內視鏡檢查', '超音波檢查', '肝膽胰疾病', '胃部疾病', '腸道疾病',
+  '內視鏡檢查', '超音波檢查', '肝膽胰疾病', '胃部疾病', '腸道疾病',
   '慢性病', '高血壓', '高血脂', '糖尿病', '減重',
-  '健康飲食', '各種檢驗檢查', '藥物介紹', '肝病特區'
+  '健康飲食', '健檢項目介紹', '健檢紅字怎麼辦', '各種檢驗檢查', '藥物介紹', '肝病特區', '要活就要動', '閱讀筆記', '疑難雜症'
 ];
 
 const categorizedPosts: Record<string, typeof posts> = {};
@@ -36,9 +36,11 @@ for (const p of posts) {
   categorizedPosts[cat].push(p);
 }
 
+const otherCategoryKeys = Object.keys(categorizedPosts).filter(c => c !== '診間隨筆');
 const sortedCategories = [
-  ...CATEGORY_ORDER.filter(c => categorizedPosts[c]),
-  ...Object.keys(categorizedPosts).filter(c => !CATEGORY_ORDER.includes(c))
+  ...CATEGORY_ORDER.filter(c => categorizedPosts[c] && c !== '診間隨筆'),
+  ...otherCategoryKeys.filter(c => !CATEGORY_ORDER.includes(c)),
+  ...(categorizedPosts['診間隨筆'] ? ['診間隨筆'] : [])
 ];
 
 const currentSlug = post.data.slug || post.id;

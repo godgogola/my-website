@@ -22,12 +22,14 @@ const PREFERRED_CATEGORY_ORDER = [
   '藥物介紹', '肝病特區', '超音波檢查', '要活就要動', '診間隨筆'
 ];
 
-// 取得所有存在的分類
+// 取得所有存在的分類，確保「診間隨筆」排在最後一個
 const existingCategories = [...new Set(posts.map(p => p.data.category || '其他'))];
+const otherCategories = existingCategories.filter(c => c !== '診間隨筆' && c !== '全部');
 const sortedCategories = [
   '全部',
-  ...PREFERRED_CATEGORY_ORDER.filter(c => existingCategories.includes(c)),
-  ...existingCategories.filter(c => !PREFERRED_CATEGORY_ORDER.includes(c) && c !== '全部'),
+  ...PREFERRED_CATEGORY_ORDER.filter(c => otherCategories.includes(c)),
+  ...otherCategories.filter(c => !PREFERRED_CATEGORY_ORDER.includes(c)),
+  ...(existingCategories.includes('診間隨筆') ? ['診間隨筆'] : [])
 ];
 
 // 計算各分類篇數
