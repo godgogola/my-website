@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
@@ -879,7 +879,7 @@ const getCoverImageUrl = (img?: string) => {
       /* 極致滿版：縮小左右 padding，卡片擴充至邊界 */
       padding: 6px 6px 24px;
       width: 100%;
-      max-width: 100vw;
+      max-width: 100%;
       box-sizing: border-box;
       overflow-x: hidden;
     }
@@ -1043,13 +1043,17 @@ const getCoverImageUrl = (img?: string) => {
     let currentSearchTerm = '';
     let currentPage = 1;
 
-    // 回傳高度給 Wix 父視窗
+    // 回傳高度給 Wix 父視窗（使用 body.offsetHeight 避免 scrollHeight 造成的無限成長迴圈）
+    let _lastReportedHeight = 0;
     function notifyParentHeight() {
       try {
         if (window.parent && window.parent !== window) {
           requestAnimationFrame(() => {
-            const height = document.documentElement.scrollHeight;
-            window.parent.postMessage({ type: 'embed-resize', height: height }, '*');
+            const height = document.body.offsetHeight;
+            if (Math.abs(height - _lastReportedHeight) > 10) {
+              _lastReportedHeight = height;
+              window.parent.postMessage({ type: 'embed-resize', height: height }, '*');
+            }
           });
         }
       } catch (e) {}
@@ -1343,8 +1347,7 @@ const getCoverImageUrl = (img?: string) => {
     // 初始化渲染第 1 頁（6 篇）
     renderCurrentPage();
 
-    // 視窗調整回報高度
-    window.addEventListener('resize', notifyParentHeight);
+    // 初始回報高度（移除 resize 監聽以避免無限迴圈）
     window.addEventListener('load', notifyParentHeight);
     notifyParentHeight();
   }
