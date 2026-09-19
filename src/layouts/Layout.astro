@@ -329,6 +329,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     color: var(--color-text-body);
     line-height: 1.75;
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -834,6 +838,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  /* 徹底防止嵌入模式下被 Android Chrome Font Boosting 放大 */
+  html.is-embed *,
+  body.is-embed * {
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
   }
 
   /* WebKit/Blink 滾動條徹底拔除 */

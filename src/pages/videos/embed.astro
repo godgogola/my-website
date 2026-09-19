@@ -233,6 +233,13 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     box-sizing: border-box;
     width: 100%;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  .videos-embed-container * {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
   }
 
   /* 頁面 Hero (嵌入版精簡化，不佔過多空間) */
