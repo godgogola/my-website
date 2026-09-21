@@ -32,16 +32,28 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
-  // --- 2026 最新發布影音 (2026/09/20) ---
+  // --- 2026 最新發布影音 (2026/09/21) ---
   {
-    id: 'FidtR3Zteek',
+    id: '0Ix8__RylaU',
+    title: '糞便潛血陽性就一定是大腸癌嗎',
+    description: '健檢收到糞便潛血（FIT）紅字先別慌！英國NHS大數據揭秘：陽性中息肉佔四成多、癌症約6.4%，痔瘡與發炎也是常見成因。即早進行大腸鏡切除息肉才是關鍵。',
+    category: '腸道疾病',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=0Ix8__RylaU',
+    featured: true,
+    order: 1,
+    articleSlug: '糞便潛血陽性就一定是大腸癌嗎',
+    articleTitle: '【糞便潛血】陽性就一定是大腸癌嗎',
+  },
+  {
+    id: 'ByaMQ7Sopno',
     title: '跑步五大心率區間',
     description: '跑步與耐力訓練量化核心！解析Zone 1至Zone 5的心率儲備、生理供能系統與體感指標，掌握燃脂與強化心肺的最佳訓練區間。',
     category: '要活就要動',
     duration: '1:01',
-    url: 'https://www.youtube.com/watch?v=FidtR3Zteek',
+    url: 'https://www.youtube.com/watch?v=ByaMQ7Sopno',
     featured: true,
-    order: 1,
+    order: 2,
     articleSlug: '跑步五大心率區間',
     articleTitle: '跑步五大心率區間',
   },
