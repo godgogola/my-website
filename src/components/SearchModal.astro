@@ -1,0 +1,603 @@
+---
+/**
+ * SearchModal.astro
+ * 全站全域即時搜尋彈窗 (Command Palette 風格)
+ * 支援快捷鍵 Ctrl+K / Cmd+K，即時模糊檢索文章、短影音與醫學計算機
+ */
+import { getCollection } from 'astro:content';
+import { videos } from '../data/videos';
+
+const posts = await getCollection('posts');
+const unDraftPosts = posts.filter(p => !p.data.draft);
+
+const searchData = [
+  ...unDraftPosts.map(p => ({
+    type: 'article',
+    title: p.data.title,
+    category: p.data.category || '衛教文章',
+    url: `/posts/${p.data.slug || p.id}`,
+    desc: p.data.meta_description || '點擊閱讀完整醫學衛教專文。',
+  })),
+  ...videos.map(v => ({
+    type: 'video',
+    title: v.title,
+    category: v.category,
+    url: `/videos`,
+    videoId: v.id,
+    desc: v.description || '點擊觀看衛教短影音。',
+  })),
+  {
+    type: 'tool',
+    title: 'FIB-4 肝纖維化指數計算機',
+    category: '肝膽專科',
+    url: '/tools#fib4',
+    desc: '利用年齡、AST、ALT、血小板評估脂肪肝之肝纖維化與肝硬化風險。',
+  },
+  {
+    type: 'tool',
+    title: 'AHA PREVENT 10年心血管與心衰竭風險預測',
+    category: '三高慢病',
+    url: '/tools#prevent',
+    desc: '美國心臟協會最新實證模型，預測未來 10 年心血管事件 (ASCVD) 與心衰竭 (Heart Failure) 風險。',
+  },
+  {
+    type: 'tool',
+    title: '冠狀動脈鈣化積分 (CAC / Agatston Score) 判讀',
+    category: '三高慢病',
+    url: '/tools#cac',
+    desc: '電腦斷層鈣化積分斑塊風險分級，提供 Statin 降血脂藥物啟動與心血管預防指引。',
+  },
+  {
+    type: 'tool',
+    title: '代謝症候群自我檢測計算機',
+    category: '減重代謝',
+    url: '/tools#metabolic',
+    desc: '依據台灣國健署 5 大指標（腰圍、血壓、血糖、三酸甘油酯、HDL）快速自評判定。',
+  },
+  {
+    type: 'tool',
+    title: '綜合體態計算機 (BMI / 腰高比 WHtR / BMR / TDEE)',
+    category: '減重代謝',
+    url: '/tools#body',
+    desc: '一站式計算 BMI、腰高比、理想體重、基礎代謝率與減重每日熱量赤字。',
+  },
+  {
+    type: 'tool',
+    title: 'GERD-Q 胃食道逆流臨床自評問卷',
+    category: '腸胃專科',
+    url: '/tools#gerd',
+    desc: '標準 6 題量表評估火燒心、胃酸逆流、上腹痛與生活受影響程度。',
+  },
+  {
+    type: 'tool',
+    title: '大腸鏡檢行事曆與低渣衛教表單',
+    category: '腸胃專科',
+    url: '/bowel-prep',
+    desc: '無痛大腸鏡清腸藥服用時機、低渣飲食指南與準備時間軸。',
+  },
+  {
+    type: 'tool',
+    title: '人體消化系統互動解剖圖鑑',
+    category: '醫學解剖',
+    url: '/anatomy',
+    desc: '食道、胃、十二指腸、肝膽胰與大腸直腸立體圖解與常見疾患。',
+  }
+];
+---
+
+<div id="global-search-backdrop" class="search-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="search-dialog">
+    <!-- 頂部搜尋輸入列 -->
+    <div class="search-header">
+      <div class="search-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <input
+        type="search"
+        id="global-search-input"
+        class="search-input"
+        placeholder="搜尋衛教文章、影音、醫學計算機 (例: 逆流、FIB-4、減重)..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button type="button" id="global-search-close-btn" class="search-close-btn" aria-label="關閉搜尋">
+        <kbd class="search-esc-kbd">ESC</kbd>
+      </button>
+    </div>
+
+    <!-- 快捷分類標籤列 -->
+    <div class="search-tags">
+      <span class="tag-label">快速篩選：</span>
+      <button type="button" class="search-quick-tag active" data-filter="all">全部</button>
+      <button type="button" class="search-quick-tag" data-filter="tool">🧮 計算機 / 工具</button>
+      <button type="button" class="search-quick-tag" data-filter="article">📝 衛教文章</button>
+      <button type="button" class="search-quick-tag" data-filter="video">🎬 衛教短影音</button>
+    </div>
+
+    <!-- 搜尋結果展示區 -->
+    <div class="search-results-wrapper" id="global-search-results">
+      <!-- 動態填入搜尋結果 -->
+    </div>
+
+    <!-- 底部導覽提示 -->
+    <div class="search-footer">
+      <div class="search-shortcuts">
+        <span><kbd>↑</kbd> <kbd>↓</kbd> 選擇</span>
+        <span><kbd>Enter</kbd> 開啟</span>
+        <span><kbd>ESC</kbd> 關閉</span>
+      </div>
+      <span class="search-brand">黃冠智醫師 臨床衛教資料庫</span>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ searchData }}>
+  (function() {
+    const backdrop = document.getElementById('global-search-backdrop');
+    const input = document.getElementById('global-search-input');
+    const resultsWrap = document.getElementById('global-search-results');
+    const closeBtn = document.getElementById('global-search-close-btn');
+    const filterTags = document.querySelectorAll('.search-quick-tag');
+
+    let currentFilter = 'all';
+    let currentSelectedIndex = -1;
+    let visibleItems = [];
+
+    function openSearch() {
+      if (!backdrop) return;
+      backdrop.classList.add('active');
+      backdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => {
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 50);
+      renderResults();
+    }
+
+    function closeSearch() {
+      if (!backdrop) return;
+      backdrop.classList.remove('active');
+      backdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      currentSelectedIndex = -1;
+    }
+
+    function getFilteredData() {
+      const query = (input?.value || '').trim().toLowerCase();
+      return searchData.filter(item => {
+        if (currentFilter !== 'all' && item.type !== currentFilter) return false;
+        if (!query) return true;
+        return (
+          item.title.toLowerCase().includes(query) ||
+          item.category.toLowerCase().includes(query) ||
+          item.desc.toLowerCase().includes(query)
+        );
+      });
+    }
+
+    function renderResults() {
+      if (!resultsWrap) return;
+      visibleItems = getFilteredData();
+      currentSelectedIndex = visibleItems.length > 0 ? 0 : -1;
+
+      if (visibleItems.length === 0) {
+        resultsWrap.innerHTML = `
+          <div class="search-empty">
+            <div class="empty-icon">🔍</div>
+            <p class="empty-title">找不到符合的內容</p>
+            <p class="empty-hint">試著輸入其他關鍵字（例如：胃鏡、脂肪肝、鈣化、膽固醇）</p>
+          </div>
+        `;
+        return;
+      }
+
+      const html = visibleItems.map((item, idx) => {
+        let badgeIcon = '📝';
+        let badgeText = '文章';
+        let badgeClass = 'badge-article';
+
+        if (item.type === 'tool') {
+          badgeIcon = '🧮';
+          badgeText = '工具';
+          badgeClass = 'badge-tool';
+        } else if (item.type === 'video') {
+          badgeIcon = '🎬';
+          badgeText = '影音';
+          badgeClass = 'badge-video';
+        }
+
+        const isSelected = idx === currentSelectedIndex ? 'selected' : '';
+
+        return `
+          <a href="${item.url}" class="search-item ${isSelected}" data-index="${idx}">
+            <div class="item-icon-wrap ${badgeClass}">
+              ${badgeIcon}
+            </div>
+            <div class="item-info">
+              <div class="item-title-row">
+                <span class="item-badge ${badgeClass}">${badgeText} · ${item.category}</span>
+                <span class="item-title">${item.title}</span>
+              </div>
+              <p class="item-desc">${item.desc}</p>
+            </div>
+            <div class="item-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      resultsWrap.innerHTML = html;
+    }
+
+    function updateSelection() {
+      const items = resultsWrap?.querySelectorAll('.search-item');
+      if (!items) return;
+      items.forEach((el, idx) => {
+        if (idx === currentSelectedIndex) {
+          el.classList.add('selected');
+          el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        } else {
+          el.classList.remove('selected');
+        }
+      });
+    }
+
+    if (input) {
+      input.addEventListener('input', () => {
+        renderResults();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (visibleItems.length > 0) {
+            currentSelectedIndex = (currentSelectedIndex + 1) % visibleItems.length;
+            updateSelection();
+          }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (visibleItems.length > 0) {
+            currentSelectedIndex = (currentSelectedIndex - 1 + visibleItems.length) % visibleItems.length;
+            updateSelection();
+          }
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (currentSelectedIndex >= 0 && visibleItems[currentSelectedIndex]) {
+            window.location.href = visibleItems[currentSelectedIndex].url;
+          }
+        } else if (e.key === 'Escape') {
+          closeSearch();
+        }
+      });
+    }
+
+    filterTags.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterTags.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter') || 'all';
+        renderResults();
+      });
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+
+    if (backdrop) {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeSearch();
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (backdrop?.classList.contains('active')) {
+          closeSearch();
+        } else {
+          openSearch();
+        }
+      } else if (e.key === 'Escape' && backdrop?.classList.contains('active')) {
+        closeSearch();
+      }
+    });
+
+    window.openGlobalSearch = openSearch;
+    window.closeGlobalSearch = closeSearch;
+
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('[data-open-search]');
+      if (target) {
+        e.preventDefault();
+        openSearch();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .search-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 32, 45, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px 16px 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+
+  .search-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .search-dialog {
+    width: 100%;
+    max-width: 680px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(74, 144, 164, 0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 82vh;
+    transform: translateY(-16px) scale(0.98);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .search-backdrop.active .search-dialog {
+    transform: translateY(0) scale(1);
+  }
+
+  .search-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1.5px solid #edf4f7;
+    gap: 14px;
+    background: #fbfdfd;
+  }
+
+  .search-icon {
+    color: #4a90a4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1.05rem;
+    color: #1e3a4c;
+    background: transparent;
+    font-family: inherit;
+    font-weight: 500;
+  }
+
+  .search-input::placeholder {
+    color: #8da4af;
+    font-weight: 400;
+  }
+
+  .search-close-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-esc-kbd {
+    background: #eef5f8;
+    border: 1px solid #d0e1e8;
+    color: #5a7a8a;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  .search-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #f8fafc;
+    border-bottom: 1px solid #edf4f7;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .search-tags::-webkit-scrollbar { display: none; }
+
+  .tag-label {
+    font-size: 0.8rem;
+    color: #7b95a3;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .search-quick-tag {
+    border: 1px solid #dbe8ed;
+    background: #ffffff;
+    color: #48687a;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+  }
+
+  .search-quick-tag:hover {
+    border-color: #4a90a4;
+    color: #4a90a4;
+  }
+
+  .search-quick-tag.active {
+    background: #4a90a4;
+    border-color: #4a90a4;
+    color: #ffffff;
+  }
+
+  .search-results-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid transparent;
+    transition: all 0.16s ease;
+  }
+
+  .search-item:hover,
+  .search-item.selected {
+    background: #f0f7f9;
+    border-color: #c7e1ea;
+    transform: translateX(3px);
+  }
+
+  .item-icon-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+  .item-icon-wrap.badge-tool { background: #e8f5e9; }
+  .item-icon-wrap.badge-article { background: #e1f5fe; }
+  .item-icon-wrap.badge-video { background: #fbe9e7; }
+
+  .item-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+  }
+
+  .item-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .item-badge.badge-tool { background: #d4edd9; color: #2e7d32; }
+  .item-badge.badge-article { background: #cfe9f7; color: #0277bd; }
+  .item-badge.badge-video { background: #ffded8; color: #c62828; }
+
+  .item-title {
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: #1e3a4c;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-desc {
+    font-size: 0.82rem;
+    color: #688594;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-arrow {
+    color: #9cb5c2;
+    transition: transform 0.16s ease;
+  }
+  .search-item:hover .item-arrow,
+  .search-item.selected .item-arrow {
+    transform: translateX(3px);
+    color: #4a90a4;
+  }
+
+  .search-empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: #7b95a3;
+  }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .empty-title { font-size: 1.05rem; font-weight: 700; color: #2c4a5c; margin-bottom: 4px; }
+  .empty-hint { font-size: 0.85rem; color: #8fa7b4; }
+
+  .search-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: #fbfdfd;
+    border-top: 1px solid #edf4f7;
+    font-size: 0.78rem;
+    color: #7b95a3;
+  }
+
+  .search-shortcuts {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .search-shortcuts kbd {
+    background: #edf4f7;
+    border: 1px solid #d4e3e8;
+    color: #48687a;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .search-brand {
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .search-backdrop {
+      padding: 10px;
+    }
+    .search-dialog {
+      max-height: 90vh;
+      border-radius: 16px;
+    }
+    .search-footer {
+      display: none;
+    }
+  }
+</style>

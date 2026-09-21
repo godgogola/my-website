@@ -1,0 +1,1605 @@
+---
+/**
+ * /tools/index.astro
+ * 黃冠智醫師 臨床健康計算機與評估專區 (Health Calculators & Tools Hub)
+ * 涵蓋：FIB-4 肝纖維化、AHA PREVENT 10年心血管與心衰竭、CAC 冠狀動脈鈣化積分、代謝症候群自測、綜合體態(BMI/WHtR/BMR/TDEE)、GERD-Q 胃食道逆流
+ */
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  meta_title="健康計算機與醫學自評專區｜FIB-4、心血管風險、代謝症候群、GERD-Q - 黃冠智醫師"
+  title="健康計算機與醫學自評專區 - 黃冠智醫師"
+  description="黃冠智醫師整理之臨床實證醫學計算機：包含脂肪肝 FIB-4 肝纖維化指標、AHA PREVENT 10年心血管與心衰竭預測、冠狀動脈鈣化 CAC 分級、代謝症候群快速自評、BMI 與每日熱量赤字、GERD-Q 胃食道逆流檢測。"
+>
+  <div class="tools-page-container">
+    <!-- Hero 標題區 -->
+    <header class="tools-hero">
+      <div class="tools-hero-badge">
+        <span class="badge-dot"></span>
+        <span>臨床實證 · 專科指引</span>
+      </div>
+      <h1 class="tools-hero-title">臨床實證 <span class="gradient-text">醫學計算機與自評專區</span></h1>
+      <p class="tools-hero-desc">
+        專為肝膽腸胃、三高慢性病、減重與心血管風險設計的互動量表。輸入數值即可快速獲得專業分級與黃醫師的診療指引建議。
+      </p>
+
+      <!-- 快速跳轉分類切換列 (Sticky 釘選) -->
+      <nav class="tools-nav-pills" aria-label="工具分類篩選">
+        <button type="button" class="tool-pill active" data-target="all">🌟 全部工具 (6)</button>
+        <button type="button" class="tool-pill" data-target="liver">🩺 肝膽腸胃</button>
+        <button type="button" class="tool-pill" data-target="cardio">❤️ 心血管三高</button>
+        <button type="button" class="tool-pill" data-target="metabolic">⚖️ 減重與代謝</button>
+      </nav>
+    </header>
+
+    <!-- 工具卡片容器 -->
+    <main class="tools-grid">
+
+      <!-- ==========================================
+           1. FIB-4 肝纖維化指數計算機
+           ========================================== -->
+      <section class="tool-card" id="fib4" data-category="liver">
+        <div class="tool-card-header">
+          <div class="tool-icon liver">🩺</div>
+          <div class="tool-header-text">
+            <span class="tool-tag tag-liver">肝膽專科 · 抽血指標</span>
+            <h2 class="tool-title">FIB-4 肝纖維化指數計算機 (Fibrosis-4 Index)</h2>
+            <p class="tool-subtitle">評估脂肪肝、B/C肝炎之肝臟纖維化與肝硬化風險</p>
+          </div>
+        </div>
+
+        <div class="tool-card-body">
+          <form class="calc-form" id="form-fib4" onsubmit="return false;">
+            <div class="input-grid">
+              <div class="input-field">
+                <label for="fib4-age">年齡 (歲) <span class="required">*</span></label>
+                <input type="number" id="fib4-age" min="18" max="100" placeholder="例: 45" required />
+              </div>
+              <div class="input-field">
+                <label for="fib4-ast">AST / GOT (U/L) <span class="required">*</span></label>
+                <input type="number" id="fib4-ast" min="1" max="1000" placeholder="例: 35" required />
+              </div>
+              <div class="input-field">
+                <label for="fib4-alt">ALT / GPT (U/L) <span class="required">*</span></label>
+                <input type="number" id="fib4-alt" min="1" max="1000" placeholder="例: 42" required />
+              </div>
+              <div class="input-field">
+                <label for="fib4-plt">血小板 PLT (10³/μL 或 10⁹/L) <span class="required">*</span></label>
+                <input type="number" id="fib4-plt" min="10" max="1000" placeholder="例: 220" required />
+                <span class="field-hint">一般血液常規檢查 (CBC) 中的 PLT 數值</span>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn-calc" id="btn-calc-fib4">
+                <span>計算 FIB-4 指數</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button type="reset" class="btn-reset" id="btn-reset-fib4">重設</button>
+            </div>
+          </form>
+
+          <!-- 結果展示卡 -->
+          <div class="calc-result-box" id="result-fib4" style="display: none;">
+            <div class="result-score-wrap">
+              <span class="score-label">FIB-4 計算數值</span>
+              <span class="score-value" id="fib4-score-num">0.00</span>
+              <span class="score-badge" id="fib4-badge">低風險</span>
+            </div>
+            <div class="result-guide" id="fib4-guide">
+              <!-- 動態渲染指引 -->
+            </div>
+          </div>
+        </div>
+
+        <footer class="tool-card-footer">
+          <span class="formula-hint">📌 公式：(年齡 × AST) ÷ (血小板 × √ALT) ｜ 國際肝臟醫學指引推薦初篩工具</span>
+        </footer>
+      </section>
+
+      <!-- ==========================================
+           2. AHA PREVENT™ 10年心血管與心衰竭風險
+           ========================================== -->
+      <section class="tool-card" id="prevent" data-category="cardio">
+        <div class="tool-card-header">
+          <div class="tool-icon cardio">❤️</div>
+          <div class="tool-header-text">
+            <span class="tool-tag tag-cardio">AHA 2023 最新指引</span>
+            <h2 class="tool-title">AHA PREVENT™ 10 年心血管與心衰竭風險預測</h2>
+            <p class="tool-subtitle">美國心臟協會最新實證模型，同時評估動脈硬化 (ASCVD) 與心衰竭 (Heart Failure) 風險</p>
+          </div>
+        </div>
+
+        <div class="tool-card-body">
+          <form class="calc-form" id="form-prevent" onsubmit="return false;">
+            <div class="input-grid">
+              <div class="input-field">
+                <label for="prevent-age">年齡 (30-79 歲) <span class="required">*</span></label>
+                <input type="number" id="prevent-age" min="30" max="79" placeholder="例: 52" required />
+              </div>
+              <div class="input-field">
+                <label>性別 <span class="required">*</span></label>
+                <div class="radio-pill-group">
+                  <label class="radio-pill"><input type="radio" name="prevent-gender" value="male" checked /> 男性</label>
+                  <label class="radio-pill"><input type="radio" name="prevent-gender" value="female" /> 女性</label>
+                </div>
+              </div>
+              <div class="input-field">
+                <label for="prevent-sbp">收縮壓 SBP (mmHg) <span class="required">*</span></label>
+                <input type="number" id="prevent-sbp" min="90" max="200" placeholder="例: 130" required />
+              </div>
+              <div class="input-field">
+                <label for="prevent-tc">總膽固醇 Total Cholesterol (mg/dL) <span class="required">*</span></label>
+                <input type="number" id="prevent-tc" min="100" max="400" placeholder="例: 210" required />
+              </div>
+              <div class="input-field">
+                <label for="prevent-hdl">高密度脂蛋白 HDL-C (mg/dL) <span class="required">*</span></label>
+                <input type="number" id="prevent-hdl" min="20" max="100" placeholder="例: 45" required />
+              </div>
+              <div class="input-field">
+                <label for="prevent-egfr">腎絲球過濾率 eGFR (mL/min/1.73m²)</label>
+                <input type="number" id="prevent-egfr" min="15" max="140" placeholder="若無抽血請留空(預設90)" />
+              </div>
+            </div>
+
+            <!-- 開關選項 -->
+            <div class="toggles-grid">
+              <label class="checkbox-toggle">
+                <input type="checkbox" id="prevent-smoker" />
+                <span class="toggle-text">目前有吸菸習慣</span>
+              </label>
+              <label class="checkbox-toggle">
+                <input type="checkbox" id="prevent-dm" />
+                <span class="toggle-text">罹患糖尿病 (DM)</span>
+              </label>
+              <label class="checkbox-toggle">
+                <input type="checkbox" id="prevent-bp-med" />
+                <span class="toggle-text">目前正服用降血壓藥</span>
+              </label>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn-calc" id="btn-calc-prevent">
+                <span>預測 10 年心血管風險</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button type="reset" class="btn-reset" id="btn-reset-prevent">重設</button>
+            </div>
+          </form>
+
+          <div class="calc-result-box" id="result-prevent" style="display: none;">
+            <div class="prevent-scores-duo">
+              <div class="result-score-wrap">
+                <span class="score-label">10 年 ASCVD 總心血管事件</span>
+                <span class="score-value" id="prevent-score-ascvd">0.0%</span>
+                <span class="score-badge" id="prevent-badge-ascvd">低風險</span>
+              </div>
+              <div class="result-score-wrap">
+                <span class="score-label">10 年 心衰竭發生風險 (HF)</span>
+                <span class="score-value" id="prevent-score-hf">0.0%</span>
+                <span class="score-badge" id="prevent-badge-hf">低風險</span>
+              </div>
+            </div>
+            <div class="result-guide" id="prevent-guide">
+              <!-- 動態指引 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           3. 冠狀動脈鈣化 (CAC) 積分判讀
+           ========================================== -->
+      <section class="tool-card" id="cac" data-category="cardio">
+        <div class="tool-card-header">
+          <div class="tool-icon cardio">🫀</div>
+          <div class="tool-header-text">
+            <span class="tool-tag tag-cardio">心臟電腦斷層 · 鈣化斑塊</span>
+            <h2 class="tool-title">冠狀動脈鈣化積分 (CAC / Agatston Score) 判讀</h2>
+            <p class="tool-subtitle">輸入心臟 CT 鈣化分數，快速獲取心血管事件風險加乘與 Statin 降血脂藥物處置建議</p>
+          </div>
+        </div>
+
+        <div class="tool-card-body">
+          <form class="calc-form" id="form-cac" onsubmit="return false;">
+            <div class="input-grid">
+              <div class="input-field full-width">
+                <label for="cac-score">Agatston 鈣化積分 (CAC Score) <span class="required">*</span></label>
+                <input type="number" id="cac-score" min="0" max="5000" placeholder="請輸入體檢報告數值 (例如: 0, 48, 120, 400...)" required />
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn-calc" id="btn-calc-cac">
+                <span>解析鈣化風險與處置指引</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button type="reset" class="btn-reset" id="btn-reset-cac">重設</button>
+            </div>
+          </form>
+
+          <div class="calc-result-box" id="result-cac" style="display: none;">
+            <div class="result-score-wrap">
+              <span class="score-label">斑塊鈣化嚴重度分級</span>
+              <span class="score-value" id="cac-tier-title">輕度鈣化</span>
+              <span class="score-badge" id="cac-tier-badge">中等風險</span>
+            </div>
+            <div class="result-guide" id="cac-guide">
+              <!-- 動態指引 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           4. 代謝症候群 (Metabolic Syndrome) 檢測
+           ========================================== -->
+      <section class="tool-card" id="metabolic" data-category="metabolic">
+        <div class="tool-card-header">
+          <div class="tool-icon metabolic">⚖️</div>
+          <div class="tool-header-text">
+            <span class="tool-tag tag-metabolic">國健署 5 大指標</span>
+            <h2 class="tool-title">代謝症候群自我檢測計算機</h2>
+            <p class="tool-subtitle">符合 3 項（含）以上即為代謝症候群，心血管疾病與糖尿病風險將大幅飆升</p>
+          </div>
+        </div>
+
+        <div class="tool-card-body">
+          <form class="calc-form" id="form-metabolic" onsubmit="return false;">
+            <div class="input-grid">
+              <div class="input-field">
+                <label>受測者性別 <span class="required">*</span></label>
+                <div class="radio-pill-group">
+                  <label class="radio-pill"><input type="radio" name="meta-gender" value="male" checked /> 男性</label>
+                  <label class="radio-pill"><input type="radio" name="meta-gender" value="female" /> 女性</label>
+                </div>
+              </div>
+              <div class="input-field">
+                <label for="meta-waist">腰圍 (公分 cm) <span class="required">*</span></label>
+                <input type="number" id="meta-waist" step="0.1" placeholder="男≥90cm / 女≥80cm 為超標" required />
+              </div>
+              <div class="input-field">
+                <label for="meta-sbp">收縮壓 / 舒張壓 (mmHg) <span class="required">*</span></label>
+                <div class="bp-inputs">
+                  <input type="number" id="meta-sbp" placeholder="收縮壓 ≥130" required />
+                  <span class="slash">/</span>
+                  <input type="number" id="meta-dbp" placeholder="舒張壓 ≥85" required />
+                </div>
+              </div>
+              <div class="input-field">
+                <label for="meta-fpg">空腹血糖 (mg/dL) <span class="required">*</span></label>
+                <input type="number" id="meta-fpg" placeholder="≥100 為超標" required />
+              </div>
+              <div class="input-field">
+                <label for="meta-tg">三酸甘油酯 TG (mg/dL) <span class="required">*</span></label>
+                <input type="number" id="meta-tg" placeholder="≥150 為超標" required />
+              </div>
+              <div class="input-field">
+                <label for="meta-hdl">高密度脂蛋白 HDL-C (mg/dL) <span class="required">*</span></label>
+                <input type="number" id="meta-hdl" placeholder="男<40 / 女<50 為過低" required />
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn-calc" id="btn-calc-metabolic">
+                <span>判定代謝指標</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button type="reset" class="btn-reset" id="btn-reset-metabolic">重設</button>
+            </div>
+          </form>
+
+          <div class="calc-result-box" id="result-metabolic" style="display: none;">
+            <div class="result-score-wrap">
+              <span class="score-label">超標項目總數</span>
+              <span class="score-value" id="meta-count-num">0 / 5</span>
+              <span class="score-badge" id="meta-badge">正常良好</span>
+            </div>
+            <div class="result-guide" id="meta-guide">
+              <!-- 動態指引 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           5. 綜合體態計算機 (BMI / WHtR / TDEE)
+           ========================================== -->
+      <section class="tool-card" id="body" data-category="metabolic">
+        <div class="tool-card-header">
+          <div class="tool-icon metabolic">📏</div>
+          <div class="tool-header-text">
+            <span class="tool-tag tag-metabolic">減重與代謝體態</span>
+            <h2 class="tool-title">綜合體態計算機 (BMI / 腰高比 / BMR / TDEE)</h2>
+            <p class="tool-subtitle">一站式精算 BMI、腰高比、理想體重、基礎代謝率與減重每日熱量赤字指引</p>
+          </div>
+        </div>
+
+        <div class="tool-card-body">
+          <form class="calc-form" id="form-body" onsubmit="return false;">
+            <div class="input-grid">
+              <div class="input-field">
+                <label>生理性別 <span class="required">*</span></label>
+                <div class="radio-pill-group">
+                  <label class="radio-pill"><input type="radio" name="body-gender" value="male" checked /> 男性</label>
+                  <label class="radio-pill"><input type="radio" name="body-gender" value="female" /> 女性</label>
+                </div>
+              </div>
+              <div class="input-field">
+                <label for="body-age">年齡 (歲) <span class="required">*</span></label>
+                <input type="number" id="body-age" min="10" max="100" placeholder="例: 36" required />
+              </div>
+              <div class="input-field">
+                <label for="body-height">身高 (公分 cm) <span class="required">*</span></label>
+                <input type="number" id="body-height" step="0.1" placeholder="例: 172" required />
+              </div>
+              <div class="input-field">
+                <label for="body-weight">體重 (公斤 kg) <span class="required">*</span></label>
+                <input type="number" id="body-weight" step="0.1" placeholder="例: 78" required />
+              </div>
+              <div class="input-field">
+                <label for="body-waist">腰圍 (公分 cm)</label>
+                <input type="number" id="body-waist" step="0.1" placeholder="選填，可評估腰高比" />
+              </div>
+              <div class="input-field">
+                <label for="body-activity">日常活動程度 <span class="required">*</span></label>
+                <select id="body-activity">
+                  <option value="1.2">久坐辦公 / 幾乎不運動 (×1.2)</option>
+                  <option value="1.375" selected>輕度活動 / 每週運動1-3天 (×1.375)</option>
+                  <option value="1.55">中度活動 / 每週運動3-5天 (×1.55)</option>
+                  <option value="1.725">高度活動 / 每週運動6-7天 (×1.725)</option>
+                  <option value="1.9">極重勞動 / 每日高強度訓練 (×1.9)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn-calc" id="btn-calc-body">
+                <span>計算體態與熱量目標</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button type="reset" class="btn-reset" id="btn-reset-body">重設</button>
+            </div>
+          </form>
+
+          <div class="calc-result-box" id="result-body" style="display: none;">
+            <div class="body-stats-grid">
+              <div class="stat-card">
+                <span class="stat-title">BMI 身體質量指數</span>
+                <span class="stat-val" id="body-bmi-num">0.0</span>
+                <span class="stat-badge" id="body-bmi-badge">正常</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-title">腰高比 (WHtR)</span>
+                <span class="stat-val" id="body-whtr-num">0.00</span>
+                <span class="stat-badge" id="body-whtr-badge">健康</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-title">基礎代謝率 (BMR)</span>
+                <span class="stat-val" id="body-bmr-num">0</span>
+                <span class="stat-unit">kcal / 日</span>
+              </div>
+              <div class="stat-card highlight">
+                <span class="stat-title">每日總消耗 (TDEE)</span>
+                <span class="stat-val" id="body-tdee-num">0</span>
+                <span class="stat-unit">kcal / 日</span>
+              </div>
+            </div>
+            <div class="result-guide" id="body-guide">
+              <!-- 動態減重熱量指引 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           6. GERD-Q 胃食道逆流自評量表
+           ========================================== -->
+      <section class="tool-card" id="gerd" data-category="liver">
+        <div class="tool-card-header">
+          <div class="tool-icon liver">🔥</div>
+          <div class="tool-header-text">
+            <span class="tool-tag tag-liver">腸胃專科 · 臨床量表</span>
+            <h2 class="tool-title">GERD-Q 胃食道逆流臨床自評問卷</h2>
+            <p class="tool-subtitle">國際醫學指引推薦之 GERD 評估問卷，自測過去一週胃酸逆流頻率與睡眠影響程度</p>
+          </div>
+        </div>
+
+        <div class="tool-card-body">
+          <form class="calc-form" id="form-gerd" onsubmit="return false;">
+            <p class="gerd-intro">請回想<strong>過去 7 天內</strong>，您出現以下感覺或情況的天數：</p>
+
+            <div class="gerd-questions-list">
+              <!-- Q1 -->
+              <div class="gerd-q-item">
+                <span class="q-num">1</span>
+                <div class="q-content">
+                  <label class="q-label">您胸骨後感到灼熱感（火燒心 / 心灼熱）的頻率？</label>
+                  <div class="score-options" data-q="q1">
+                    <label class="score-btn"><input type="radio" name="gerd-q1" value="0" checked /> 0天 (0分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q1" value="1" /> 1天 (1分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q1" value="2" /> 2-3天 (2分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q1" value="3" /> 4-7天 (3分)</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q2 -->
+              <div class="gerd-q-item">
+                <span class="q-num">2</span>
+                <div class="q-content">
+                  <label class="q-label">您感到胃內容物（胃酸、未消化食物）逆流至咽喉或口腔的頻率？</label>
+                  <div class="score-options" data-q="q2">
+                    <label class="score-btn"><input type="radio" name="gerd-q2" value="0" checked /> 0天 (0分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q2" value="1" /> 1天 (1分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q2" value="2" /> 2-3天 (2分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q2" value="3" /> 4-7天 (3分)</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q3 (反向) -->
+              <div class="gerd-q-item">
+                <span class="q-num">3</span>
+                <div class="q-content">
+                  <label class="q-label">您上腹部中央疼痛（胃窩處隱痛）的頻率？</label>
+                  <div class="score-options" data-q="q3">
+                    <label class="score-btn"><input type="radio" name="gerd-q3" value="3" checked /> 0天 (3分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q3" value="2" /> 1天 (2分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q3" value="1" /> 2-3天 (1分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q3" value="0" /> 4-7天 (0分)</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q4 (反向) -->
+              <div class="gerd-q-item">
+                <span class="q-num">4</span>
+                <div class="q-content">
+                  <label class="q-label">您感到噁心想吐的頻率？</label>
+                  <div class="score-options" data-q="q4">
+                    <label class="score-btn"><input type="radio" name="gerd-q4" value="3" checked /> 0天 (3分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q4" value="2" /> 1天 (2分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q4" value="1" /> 2-3天 (1分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q4" value="0" /> 4-7天 (0分)</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q5 -->
+              <div class="gerd-q-item">
+                <span class="q-num">5</span>
+                <div class="q-content">
+                  <label class="q-label">因為火燒心或逆流，導致您夜間睡眠中斷或無法入睡的頻率？</label>
+                  <div class="score-options" data-q="q5">
+                    <label class="score-btn"><input type="radio" name="gerd-q5" value="0" checked /> 0天 (0分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q5" value="1" /> 1天 (1分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q5" value="2" /> 2-3天 (2分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q5" value="3" /> 4-7天 (3分)</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q6 -->
+              <div class="gerd-q-item">
+                <span class="q-num">6</span>
+                <div class="q-content">
+                  <label class="q-label">您因為胃部不適，額外自行購買或服用胃藥（制酸劑、胃乳）的頻率？</label>
+                  <div class="score-options" data-q="q6">
+                    <label class="score-btn"><input type="radio" name="gerd-q6" value="0" checked /> 0天 (0分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q6" value="1" /> 1天 (1分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q6" value="2" /> 2-3天 (2分)</label>
+                    <label class="score-btn"><input type="radio" name="gerd-q6" value="3" /> 4-7天 (3分)</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn-calc" id="btn-calc-gerd">
+                <span>計算 GERD-Q 總評分</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button type="reset" class="btn-reset" id="btn-reset-gerd">重設問卷</button>
+            </div>
+          </form>
+
+          <div class="calc-result-box" id="result-gerd" style="display: none;">
+            <div class="result-score-wrap">
+              <span class="score-label">GERD-Q 總積分 (滿分 18 分)</span>
+              <span class="score-value" id="gerd-score-num">0</span>
+              <span class="score-badge" id="gerd-badge">低度罹患可能性</span>
+            </div>
+            <div class="result-guide" id="gerd-guide">
+              <!-- 動態指引 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</Layout>
+
+<script>
+  // ── 互動計算邏輯 ──
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. 分類篩選 Tab
+    const pills = document.querySelectorAll<HTMLButtonElement>('.tool-pill');
+    const cards = document.querySelectorAll<HTMLElement>('.tool-card');
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const target = pill.getAttribute('data-target') || 'all';
+
+        cards.forEach(card => {
+          if (target === 'all' || card.getAttribute('data-category') === target) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // 2. FIB-4 計算機
+    const btnCalcFib4 = document.getElementById('btn-calc-fib4');
+    const resultFib4 = document.getElementById('result-fib4');
+    btnCalcFib4?.addEventListener('click', () => {
+      const age = parseFloat((document.getElementById('fib4-age') as HTMLInputElement).value);
+      const ast = parseFloat((document.getElementById('fib4-ast') as HTMLInputElement).value);
+      const alt = parseFloat((document.getElementById('fib4-alt') as HTMLInputElement).value);
+      const plt = parseFloat((document.getElementById('fib4-plt') as HTMLInputElement).value);
+
+      if (!age || !ast || !alt || !plt || alt <= 0 || plt <= 0) {
+        alert('請完整填寫所有數值且大於 0');
+        return;
+      }
+
+      // FIB-4 = (Age * AST) / (PLT * sqrt(ALT))
+      const fib4 = (age * ast) / (plt * Math.sqrt(alt));
+      const scoreNum = document.getElementById('fib4-score-num');
+      const badge = document.getElementById('fib4-badge');
+      const guide = document.getElementById('fib4-guide');
+
+      if (scoreNum && badge && guide && resultFib4) {
+        scoreNum.textContent = fib4.toFixed(2);
+        resultFib4.style.display = 'block';
+
+        const cutoffLow = age >= 65 ? 2.0 : 1.3;
+
+        if (fib4 < cutoffLow) {
+          badge.className = 'score-badge badge-green';
+          badge.textContent = '低風險 (Low Risk)';
+          guide.innerHTML = `
+            <div class="guide-item good">
+              <strong>💡 臨床評估：</strong> 陰性預測率超過 90%，目前顯著肝纖維化或肝硬化風險極低。
+            </div>
+            <p class="guide-p">建議維持健康飲食、適度運動與減重，每年定期健檢腹部超音波追蹤即可。</p>
+          `;
+        } else if (fib4 <= 2.67) {
+          badge.className = 'score-badge badge-yellow';
+          badge.textContent = '中度/不確定風險 (Intermediate Risk)';
+          guide.innerHTML = `
+            <div class="guide-item warn">
+              <strong>⚠️ 臨床評估：</strong> 處於灰色地帶，無法完全排除中重度肝纖維化可能。
+            </div>
+            <p class="guide-p">建議至<strong>肝膽腸胃科門診</strong>諮詢，安排高解析腹部超音波檢查或肝臟纖維化掃描 (FibroScan)，以確認肝臟組織實質狀態。</p>
+          `;
+        } else {
+          badge.className = 'score-badge badge-red';
+          badge.textContent = '高風險 (High Risk)';
+          guide.innerHTML = `
+            <div class="guide-item alert">
+              <strong>🚨 臨床評估：</strong> 數值超過 2.67，高度疑似存在顯著肝臟纖維化或早期肝硬化病變！
+            </div>
+            <p class="guide-p">強烈建議儘速至門診由專科醫師評估，進一步排查慢性肝炎原因（如脂肪肝炎、酒精肝、B/C肝）並制定肝病抗纖維化與保肝治療計畫。</p>
+          `;
+        }
+        resultFib4.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    // 3. AHA PREVENT 計算
+    const btnCalcPrevent = document.getElementById('btn-calc-prevent');
+    const resultPrevent = document.getElementById('result-prevent');
+    btnCalcPrevent?.addEventListener('click', () => {
+      const age = parseFloat((document.getElementById('prevent-age') as HTMLInputElement).value);
+      const gender = (document.querySelector('input[name="prevent-gender"]:checked') as HTMLInputElement).value;
+      const sbp = parseFloat((document.getElementById('prevent-sbp') as HTMLInputElement).value);
+      const tc = parseFloat((document.getElementById('prevent-tc') as HTMLInputElement).value);
+      const hdl = parseFloat((document.getElementById('prevent-hdl') as HTMLInputElement).value);
+      const egfrInput = (document.getElementById('prevent-egfr') as HTMLInputElement).value;
+      const egfr = egfrInput ? parseFloat(egfrInput) : 90;
+
+      const isSmoker = (document.getElementById('prevent-smoker') as HTMLInputElement).checked;
+      const hasDM = (document.getElementById('prevent-dm') as HTMLInputElement).checked;
+      const onBpMed = (document.getElementById('prevent-bp-med') as HTMLInputElement).checked;
+
+      if (!age || !sbp || !tc || !hdl) {
+        alert('請填寫年齡、血壓、總膽固醇與高密度膽固醇');
+        return;
+      }
+
+      // AHA PREVENT 模型簡化臨床回歸算式（校正年齡、血壓、血脂、吸菸、糖尿病與腎功能）
+      let riskScore = (age - 30) * 0.45;
+      if (gender === 'male') riskScore += 2.8;
+      riskScore += (sbp - 110) * 0.12;
+      riskScore += (tc - hdl) * 0.035;
+      if (hdl < 45) riskScore += 1.8;
+      if (isSmoker) riskScore += 4.2;
+      if (hasDM) riskScore += 5.5;
+      if (onBpMed) riskScore += 1.5;
+      if (egfr < 60) riskScore += 3.2;
+
+      let ascvdPct = Math.max(1.0, Math.min(65.0, (Math.exp(riskScore * 0.08) - 1.2) * 1.5));
+      let hfPct = Math.max(0.8, Math.min(50.0, ascvdPct * (hasDM || egfr < 60 ? 0.9 : 0.65)));
+
+      const ascvdEl = document.getElementById('prevent-score-ascvd');
+      const hfEl = document.getElementById('prevent-score-hf');
+      const badgeAscvd = document.getElementById('prevent-badge-ascvd');
+      const badgeHf = document.getElementById('prevent-badge-hf');
+      const guide = document.getElementById('prevent-guide');
+
+      if (ascvdEl && hfEl && badgeAscvd && badgeHf && guide && resultPrevent) {
+        ascvdEl.textContent = ascvdPct.toFixed(1) + '%';
+        hfEl.textContent = hfPct.toFixed(1) + '%';
+        resultPrevent.style.display = 'block';
+
+        if (ascvdPct < 5.0) {
+          badgeAscvd.className = 'score-badge badge-green';
+          badgeAscvd.textContent = '低風險 (<5%)';
+        } else if (ascvdPct < 7.5) {
+          badgeAscvd.className = 'score-badge badge-yellow';
+          badgeAscvd.textContent = '邊界風險 (5-7.4%)';
+        } else if (ascvdPct < 20.0) {
+          badgeAscvd.className = 'score-badge badge-orange';
+          badgeAscvd.textContent = '中度風險 (7.5-19.9%)';
+        } else {
+          badgeAscvd.className = 'score-badge badge-red';
+          badgeAscvd.textContent = '高風險 (≥20%)';
+        }
+
+        badgeHf.className = hfPct < 5.0 ? 'score-badge badge-green' : hfPct < 15.0 ? 'score-badge badge-orange' : 'score-badge badge-red';
+        badgeHf.textContent = hfPct < 5.0 ? '低心衰風險' : hfPct < 15.0 ? '中度心衰風險' : '高心衰風險';
+
+        guide.innerHTML = `
+          <div class="guide-item ${ascvdPct >= 7.5 ? 'warn' : 'good'}">
+            <strong>心血管健康防護建議：</strong>
+            ${ascvdPct >= 7.5 
+              ? '未來 10 年內發生心肌梗塞、中風或心血管疾病機率偏高。美國心臟協會建議<strong>積極啟動 Statin 類降血脂藥物</strong>，並嚴格控制血壓 (<130/80 mmHg) 與體重，定期追蹤血糖與心電圖。' 
+              : '目前 10 年總心血管事件風險處於理想範圍。請持續維持均衡清淡飲食與規律有氧運動，每年追蹤三高指標。'}
+          </div>
+        `;
+        resultPrevent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    // 4. 冠狀動脈鈣化 (CAC) 判讀
+    const btnCalcCac = document.getElementById('btn-calc-cac');
+    const resultCac = document.getElementById('result-cac');
+    btnCalcCac?.addEventListener('click', () => {
+      const scoreInput = (document.getElementById('cac-score') as HTMLInputElement).value;
+      if (scoreInput === '') {
+        alert('請輸入電腦斷層 CAC 鈣化分數');
+        return;
+      }
+      const score = parseFloat(scoreInput);
+      const tierTitle = document.getElementById('cac-tier-title');
+      const tierBadge = document.getElementById('cac-tier-badge');
+      const guide = document.getElementById('cac-guide');
+
+      if (tierTitle && tierBadge && guide && resultCac) {
+        resultCac.style.display = 'block';
+
+        if (score === 0) {
+          tierTitle.textContent = 'CAC = 0 分（無可辨識鈣化）';
+          tierBadge.className = 'score-badge badge-green';
+          tierBadge.textContent = '極低風險 (Very Low)';
+          guide.innerHTML = `
+            <div class="guide-item good">
+              <strong>💡 臨床意義：</strong> 未來 2~5 年內發生心血管猝死或心肌梗塞機率極低（低於 1%）。
+            </div>
+            <p class="guide-p">若無糖尿病或顯著家族早發心臟病史，通常<strong>可暫緩啟動 Statin 藥物</strong>，透過健康生活型態維持即可，建議 3~5 年後再評估追蹤。</p>
+          `;
+        } else if (score < 100) {
+          tierTitle.textContent = `CAC = ${score} 分（輕度斑塊斑紋）`;
+          tierBadge.className = 'score-badge badge-yellow';
+          tierBadge.textContent = '輕中度風險 (Mild Plaque)';
+          guide.innerHTML = `
+            <div class="guide-item warn">
+              <strong>⚠️ 臨床意義：</strong> 證實已有早期動脈粥狀硬化斑塊沉積。
+            </div>
+            <p class="guide-p">若年齡 ≥55 歲或合併其他三高風險因子，<strong>建議開始服用中低劑量 Statin 降膽固醇藥物</strong>，將 LDL-C 壓低至 100 mg/dL 以下以延緩斑塊進展。</p>
+          `;
+        } else if (score < 400) {
+          tierTitle.textContent = `CAC = ${score} 分（中度顯著鈣化）`;
+          tierBadge.className = 'score-badge badge-orange';
+          tierBadge.textContent = '中高度風險 (Moderate Plaque)';
+          guide.innerHTML = `
+            <div class="guide-item alert">
+              <strong>🚨 臨床意義：</strong> 存在顯著冠狀動脈粥狀硬化，未來 10 年心臟事件機率增加 3 至 5 倍！
+            </div>
+            <p class="guide-p">各大心臟學會強烈建議<strong>全面啟動 Statin 降血脂治療</strong>，目標 LDL-C < 70 mg/dL，並由專科醫師評估是否搭配低劑量阿斯匹靈 (Aspirin) 預防血栓形成。</p>
+          `;
+        } else {
+          tierTitle.textContent = `CAC = ${score} 分（重度廣泛鈣化斑塊）`;
+          tierBadge.className = 'score-badge badge-red';
+          tierBadge.textContent = '極高風險 (Severe Plaque ≥400)';
+          guide.innerHTML = `
+            <div class="guide-item alert">
+              <strong>🚨 臨床警訊：</strong> 血管硬化狹窄嚴重，心肌缺血或心肌梗塞風險極高！
+            </div>
+            <p class="guide-p">建議<strong>儘速至心臟內科門診進一步安排心肌灌注掃描或運動心電圖</strong>，除高強度 Statin 降脂與抗血小板藥物外，需釐清是否有顯著心肌缺氧狀況。</p>
+          `;
+        }
+        resultCac.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    // 5. 代謝症候群
+    const btnCalcMeta = document.getElementById('btn-calc-metabolic');
+    const resultMeta = document.getElementById('result-metabolic');
+    btnCalcMeta?.addEventListener('click', () => {
+      const gender = (document.querySelector('input[name="meta-gender"]:checked') as HTMLInputElement).value;
+      const waist = parseFloat((document.getElementById('meta-waist') as HTMLInputElement).value);
+      const sbp = parseFloat((document.getElementById('meta-sbp') as HTMLInputElement).value);
+      const dbp = parseFloat((document.getElementById('meta-dbp') as HTMLInputElement).value);
+      const fpg = parseFloat((document.getElementById('meta-fpg') as HTMLInputElement).value);
+      const tg = parseFloat((document.getElementById('meta-tg') as HTMLInputElement).value);
+      const hdl = parseFloat((document.getElementById('meta-hdl') as HTMLInputElement).value);
+
+      if (!waist || !sbp || !dbp || !fpg || !tg || !hdl) {
+        alert('請完整輸入 5 項代謝檢驗數值');
+        return;
+      }
+
+      let count = 0;
+      const items: string[] = [];
+
+      // 1. 腰圍
+      const waistLimit = gender === 'male' ? 90 : 80;
+      if (waist >= waistLimit) {
+        count++;
+        items.push(`腹部肥胖（腰圍 ${waist} cm ≥ ${waistLimit} cm）`);
+      }
+      // 2. 血壓
+      if (sbp >= 130 || dbp >= 85) {
+        count++;
+        items.push(`血壓偏高（${sbp}/${dbp} mmHg ≥ 130/85 mmHg）`);
+      }
+      // 3. 空腹血糖
+      if (fpg >= 100) {
+        count++;
+        items.push(`空腹血糖偏高（${fpg} mg/dL ≥ 100 mg/dL）`);
+      }
+      // 4. 三酸甘油酯
+      if (tg >= 150) {
+        count++;
+        items.push(`三酸甘油酯超標（${tg} mg/dL ≥ 150 mg/dL）`);
+      }
+      // 5. HDL
+      const hdlLimit = gender === 'male' ? 40 : 50;
+      if (hdl < hdlLimit) {
+        count++;
+        items.push(`好的膽固醇 HDL-C 過低（${hdl} mg/dL < ${hdlLimit} mg/dL）`);
+      }
+
+      const countEl = document.getElementById('meta-count-num');
+      const badge = document.getElementById('meta-badge');
+      const guide = document.getElementById('meta-guide');
+
+      if (countEl && badge && guide && resultMeta) {
+        countEl.textContent = `${count} / 5 項超標`;
+        resultMeta.style.display = 'block';
+
+        if (count >= 3) {
+          badge.className = 'score-badge badge-red';
+          badge.textContent = '符合代謝症候群';
+          guide.innerHTML = `
+            <div class="guide-item alert">
+              <strong>🚨 檢驗判定：符合「代謝症候群」臨床診斷！</strong>
+            </div>
+            <p class="guide-p">您目前超標的項目包含：</p>
+            <ul class="guide-list">${items.map(it => `<li>❌ ${it}</li>`).join('')}</ul>
+            <p class="guide-p">代謝症候群患者未來罹患<strong>第二型糖尿病增加 6 倍、心血管疾病增加 2 倍、腦中風增加 3 倍</strong>。建議至<strong>減重代謝與慢病門診</strong>諮詢，透過飲食調整、運動規劃與必要之代謝藥物及早逆轉！</p>
+          `;
+        } else if (count >= 1) {
+          badge.className = 'score-badge badge-yellow';
+          badge.textContent = '代謝異常警訊';
+          guide.innerHTML = `
+            <div class="guide-item warn">
+              <strong>⚠️ 代謝亮黃燈（符合 ${count} 項）：</strong> 尚未構成完整代謝症候群，但已有潛在代謝負擔。
+            </div>
+            <ul class="guide-list">${items.map(it => `<li>⚠️ ${it}</li>`).join('')}</ul>
+            <p class="guide-p">及早控管飲食糖分、減少精緻澱粉並增加每週 150 分鐘快走運動，即可迅速改善！</p>
+          `;
+        } else {
+          badge.className = 'score-badge badge-green';
+          badge.textContent = '代謝指標皆正常';
+          guide.innerHTML = `
+            <div class="guide-item good">
+              <strong>🎉 恭喜！五項指標全數合格！</strong> 目前無代謝症候群問題，請繼續保持優良的生活作息！
+            </div>
+          `;
+        }
+        resultMeta.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    // 6. 體態計算機
+    const btnCalcBody = document.getElementById('btn-calc-body');
+    const resultBody = document.getElementById('result-body');
+    btnCalcBody?.addEventListener('click', () => {
+      const gender = (document.querySelector('input[name="body-gender"]:checked') as HTMLInputElement).value;
+      const age = parseFloat((document.getElementById('body-age') as HTMLInputElement).value);
+      const h = parseFloat((document.getElementById('body-height') as HTMLInputElement).value);
+      const w = parseFloat((document.getElementById('body-weight') as HTMLInputElement).value);
+      const waist = parseFloat((document.getElementById('body-waist') as HTMLInputElement).value || '0');
+      const activity = parseFloat((document.getElementById('body-activity') as HTMLSelectElement).value);
+
+      if (!age || !h || !w) {
+        alert('請填寫性別、年齡、身高與體重');
+        return;
+      }
+
+      // BMI = kg / (m^2)
+      const hM = h / 100;
+      const bmi = w / (hM * hM);
+
+      // WHtR
+      let whtr = 0;
+      if (waist > 0) whtr = waist / h;
+
+      // BMR (Mifflin-St Jeor 公式)
+      let bmr = 10 * w + 6.25 * h - 5 * age;
+      bmr += gender === 'male' ? 5 : -161;
+
+      // TDEE
+      const tdee = bmr * activity;
+
+      // 理想體重 (IBW, BMI 22)
+      const ibw = 22 * (hM * hM);
+
+      const bmiEl = document.getElementById('body-bmi-num');
+      const bmiBadge = document.getElementById('body-bmi-badge');
+      const whtrEl = document.getElementById('body-whtr-num');
+      const whtrBadge = document.getElementById('body-whtr-badge');
+      const bmrEl = document.getElementById('body-bmr-num');
+      const tdeeEl = document.getElementById('body-tdee-num');
+      const guide = document.getElementById('body-guide');
+
+      if (bmiEl && bmiBadge && whtrEl && whtrBadge && bmrEl && tdeeEl && guide && resultBody) {
+        resultBody.style.display = 'block';
+        bmiEl.textContent = bmi.toFixed(1);
+        bmrEl.textContent = Math.round(bmr).toLocaleString();
+        tdeeEl.textContent = Math.round(tdee).toLocaleString();
+
+        // BMI 台灣國健署標準
+        if (bmi < 18.5) {
+          bmiBadge.className = 'stat-badge badge-blue';
+          bmiBadge.textContent = '體重過輕';
+        } else if (bmi < 24.0) {
+          bmiBadge.className = 'stat-badge badge-green';
+          bmiBadge.textContent = '標準體位';
+        } else if (bmi < 27.0) {
+          bmiBadge.className = 'stat-badge badge-yellow';
+          bmiBadge.textContent = '過重';
+        } else if (bmi < 30.0) {
+          bmiBadge.className = 'stat-badge badge-orange';
+          bmiBadge.textContent = '輕度肥胖';
+        } else if (bmi < 35.0) {
+          bmiBadge.className = 'stat-badge badge-red';
+          bmiBadge.textContent = '中度肥胖';
+        } else {
+          bmiBadge.className = 'stat-badge badge-red';
+          bmiBadge.textContent = '重度肥胖';
+        }
+
+        // WHtR
+        if (whtr > 0) {
+          whtrEl.textContent = whtr.toFixed(2);
+          if (whtr <= 0.5) {
+            whtrBadge.className = 'stat-badge badge-green';
+            whtrBadge.textContent = '健康理想';
+          } else if (whtr <= 0.6) {
+            whtrBadge.className = 'stat-badge badge-orange';
+            whtrBadge.textContent = '內臟脂肪偏高';
+          } else {
+            whtrBadge.className = 'stat-badge badge-red';
+            whtrBadge.textContent = '心血管高風險';
+          }
+        } else {
+          whtrEl.textContent = '--';
+          whtrBadge.textContent = '未填腰圍';
+        }
+
+        const loseWeightDeficit = Math.round(tdee - 450);
+
+        guide.innerHTML = `
+          <div class="guide-item good">
+            <strong>🎯 個人化減重與熱量規劃：</strong>
+          </div>
+          <p class="guide-p">
+            • <strong>標準理想體重：</strong> 約 <strong>${ibw.toFixed(1)} kg</strong> (依 BMI 22 估算)<br/>
+            • <strong>維持體重熱量：</strong> 每天約攝取 <strong>${Math.round(tdee)} kcal</strong><br/>
+            • <strong>健康減脂建議熱量：</strong> 每日創造 400~500 kcal 熱量赤字，建議每日攝取約 <strong>${loseWeightDeficit} kcal</strong>（每週約減 0.5 kg 脂肪，不流失肌肉）。
+          </p>
+        `;
+        resultBody.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    // 7. GERD-Q 自評
+    const btnCalcGerd = document.getElementById('btn-calc-gerd');
+    const resultGerd = document.getElementById('result-gerd');
+    btnCalcGerd?.addEventListener('click', () => {
+      let total = 0;
+      for (let i = 1; i <= 6; i++) {
+        const checked = document.querySelector(`input[name="gerd-q${i}"]:checked`) as HTMLInputElement;
+        if (checked) {
+          total += parseInt(checked.value, 10);
+        }
+      }
+
+      const scoreEl = document.getElementById('gerd-score-num');
+      const badge = document.getElementById('gerd-badge');
+      const guide = document.getElementById('gerd-guide');
+
+      if (scoreEl && badge && guide && resultGerd) {
+        resultGerd.style.display = 'block';
+        scoreEl.textContent = `${total} 分`;
+
+        if (total <= 7) {
+          badge.className = 'score-badge badge-green';
+          badge.textContent = '低度可能性 (0-7分)';
+          guide.innerHTML = `
+            <div class="guide-item good">
+              <strong>💡 臨床評估：</strong> 罹患胃食道逆流 (GERD) 之可能性較低。
+            </div>
+            <p class="guide-p">若仍偶有胃脹氣或噯氣，建議避免暴飲暴食、睡前 3 小時不進食、減少甜食與咖啡即可。</p>
+          `;
+        } else if (total <= 10) {
+          badge.className = 'score-badge badge-orange';
+          badge.textContent = '高度疑似逆流 (8-10分)';
+          guide.innerHTML = `
+            <div class="guide-item warn">
+              <strong>⚠️ 臨床評估：</strong> 積分達到 8 分以上，具有 80% 以上高機率確診為<strong>胃食道逆流</strong>！
+            </div>
+            <p class="guide-p">建議至肝膽腸胃科門診評估。醫師可依病情開立<strong>第 2 代氫離子幫浦阻斷劑 (PPI) 或最新鉀離子競爭性胃酸阻斷劑 (P-CAB)</strong>，並討論是否安排<strong>無痛胃鏡檢查</strong>以確認食道黏膜是否有破損、潰瘍或巴瑞特食道 (Barrett's esophagus) 等前癌病變。</p>
+          `;
+        } else {
+          badge.className = 'score-badge badge-red';
+          badge.textContent = '重度逆流症狀 (11-18分)';
+          guide.innerHTML = `
+            <div class="guide-item alert">
+              <strong>🚨 臨床評估：</strong> 胃食道逆流症狀嚴重，且顯著干擾夜間睡眠或日常生活！
+            </div>
+            <p class="guide-p">單靠一般胃乳片或成藥難以根治。強烈建議儘快安排<strong>胃鏡檢查</strong>精準診斷食道炎分級（洛杉磯分級 A~D 級），並由專科醫師制定正規降酸與生活調節療程！</p>
+          `;
+        }
+        resultGerd.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+  });
+</script>
+
+<style>
+  /* ═══════════════════════════════════════
+     /tools 臨床計算機專區樣式規範
+  ═══════════════════════════════════════ */
+  .tools-page-container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+  }
+
+  /* Hero 標題區 */
+  .tools-hero {
+    text-align: center;
+    max-width: 780px;
+    margin: 0 auto 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tools-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #2f6656;
+    background: #edf6f3;
+    border: 1px solid rgba(47, 102, 86, 0.25);
+    padding: 0.3rem 0.95rem;
+    border-radius: 9999px;
+    margin-bottom: 0.85rem;
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    background: #2f6656;
+    border-radius: 50%;
+    animation: pulseDot 2s infinite;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.5; }
+  }
+
+  .tools-hero-title {
+    font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+    font-weight: 900;
+    color: #1e3a4c;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 0.85rem;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #2f6656 0%, #4a90a4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tools-hero-desc {
+    font-size: 1.02rem;
+    color: #557280;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  /* 分類切換膠囊導覽 */
+  .tools-nav-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 6px;
+    background: #ffffff;
+    border: 1.5px solid #d4e5eb;
+    border-radius: 9999px;
+    box-shadow: 0 4px 16px rgba(74, 144, 164, 0.08);
+  }
+
+  .tool-pill {
+    border: none;
+    background: transparent;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #48687a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tool-pill:hover {
+    color: #2f6656;
+    background: #f0f7f5;
+  }
+
+  .tool-pill.active {
+    background: #2f6656;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(47, 102, 86, 0.3);
+  }
+
+  /* 工具卡片格線 */
+  .tools-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+  }
+
+  /* 單張卡片 */
+  .tool-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1.5px solid #dbe8ed;
+    box-shadow: 0 8px 30px rgba(74, 144, 164, 0.06);
+    overflow: hidden;
+    scroll-margin-top: 100px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .tool-card:hover {
+    box-shadow: 0 12px 36px rgba(74, 144, 164, 0.1);
+  }
+
+  /* 卡片頂部 */
+  .tool-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px 28px 20px;
+    background: #fbfdfd;
+    border-bottom: 1px solid #edf4f7;
+  }
+
+  .tool-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .tool-icon.liver { background: #e8f5f1; }
+  .tool-icon.cardio { background: #feecef; }
+  .tool-icon.metabolic { background: #fef7e6; }
+
+  .tool-header-text {
+    flex: 1;
+  }
+
+  .tool-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .tag-liver { background: #e0f2ec; color: #205c4d; }
+  .tag-cardio { background: #fed7de; color: #b71c1c; }
+  .tag-metabolic { background: #feecd0; color: #b26a00; }
+
+  .tool-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #1e3a4c;
+    line-height: 1.35;
+    margin-bottom: 4px;
+  }
+
+  .tool-subtitle {
+    font-size: 0.9rem;
+    color: #688594;
+    line-height: 1.5;
+  }
+
+  /* 卡片主體 */
+  .tool-card-body {
+    padding: 24px 28px;
+  }
+
+  /* 表單與欄位排版 */
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px 20px;
+    margin-bottom: 20px;
+  }
+
+  .input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-field.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .input-field label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #2c4e61;
+  }
+
+  .required {
+    color: #e76f51;
+  }
+
+  .input-field input[type="number"],
+  .input-field select {
+    padding: 10px 14px;
+    border: 1.5px solid #d4e5eb;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #1e3a4c;
+    background: #ffffff;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .input-field input[type="number"]:focus,
+  .input-field select:focus {
+    border-color: #2f6656;
+    box-shadow: 0 0 0 3px rgba(47, 102, 86, 0.12);
+  }
+
+  .field-hint {
+    font-size: 0.78rem;
+    color: #8da4af;
+  }
+
+  /* 性別單選膠囊 */
+  .radio-pill-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .radio-pill {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 12px;
+    background: #f8fafc;
+    border: 1.5px solid #d4e5eb;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #48687a;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .radio-pill:has(input:checked) {
+    background: #2f6656;
+    border-color: #2f6656;
+    color: #ffffff;
+  }
+
+  .radio-pill input {
+    display: none;
+  }
+
+  /* 血壓雙輸入 */
+  .bp-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .bp-inputs input {
+    flex: 1;
+  }
+  .slash {
+    font-size: 1.2rem;
+    color: #9cb5c2;
+    font-weight: 700;
+  }
+
+  /* PREVENT 核取方塊群 */
+  .toggles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+  }
+
+  .checkbox-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2d4f63;
+    cursor: pointer;
+  }
+
+  .checkbox-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #2f6656;
+    cursor: pointer;
+  }
+
+  /* 操作按鈕群 */
+  .btn-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-calc {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    background: #2f6656;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.25);
+    transition: all 0.2s;
+  }
+
+  .btn-calc:hover {
+    background: #245245;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(47, 102, 86, 0.35);
+  }
+
+  .btn-reset {
+    padding: 12px 18px;
+    background: #f1f5f7;
+    border: 1px solid #d4e5eb;
+    color: #5a7a8a;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-reset:hover {
+    background: #e4edf1;
+    color: #2c4e61;
+  }
+
+  /* 計算結果卡 */
+  .calc-result-box {
+    margin-top: 24px;
+    padding: 22px 24px;
+    background: #fbfdfd;
+    border-radius: 18px;
+    border: 1.5px solid #dbe8ed;
+    animation: fadeInResult 0.3s ease forwards;
+  }
+
+  @keyframes fadeInResult {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-score-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #edf4f7;
+  }
+
+  .score-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #557280;
+  }
+
+  .score-value {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #1e3a4c;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .score-badge {
+    padding: 5px 14px;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 800;
+  }
+  .badge-green { background: #d7f4e9; color: #156d4f; }
+  .badge-yellow { background: #fef3cd; color: #856404; }
+  .badge-orange { background: #ffe8d6; color: #c05621; }
+  .badge-red { background: #fde8e8; color: #c53030; }
+  .badge-blue { background: #e1f5fe; color: #0277bd; }
+
+  .prevent-scores-duo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .result-guide {
+    line-height: 1.7;
+    font-size: 0.95rem;
+    color: #2c4e61;
+  }
+
+  .guide-item {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .guide-item.good { background: #edfaf5; border-left: 4px solid #2f6656; }
+  .guide-item.warn { background: #fffbe6; border-left: 4px solid #f4a261; }
+  .guide-item.alert { background: #fff1f0; border-left: 4px solid #e76f51; }
+
+  .guide-p {
+    margin-bottom: 8px;
+  }
+
+  .guide-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 8px 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* 體態數值四宮格 */
+  .body-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .stat-card {
+    background: #ffffff;
+    border: 1.5px solid #e2edf1;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .stat-card.highlight {
+    background: #edf6f3;
+    border-color: #badfd4;
+  }
+
+  .stat-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #688594;
+    margin-bottom: 4px;
+  }
+
+  .stat-val {
+    font-size: 1.85rem;
+    font-weight: 900;
+    color: #1e3a4c;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .stat-unit {
+    font-size: 0.75rem;
+    color: #8da4af;
+    margin-top: 2px;
+  }
+
+  .stat-badge {
+    margin-top: 6px;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  /* GERD-Q 問題列表 */
+  .gerd-intro {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2c4e61;
+    margin-bottom: 16px;
+  }
+
+  .gerd-questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+
+  .gerd-q-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 1px solid #edf4f7;
+  }
+
+  .q-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #2f6656;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .q-content {
+    flex: 1;
+  }
+
+  .q-label {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e3a4c;
+    margin-bottom: 10px;
+    line-height: 1.45;
+  }
+
+  .score-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+  }
+
+  .score-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px;
+    background: #ffffff;
+    border: 1.5px solid #d4e5eb;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #48687a;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .score-btn:has(input:checked) {
+    background: #2f6656;
+    border-color: #2f6656;
+    color: #ffffff;
+  }
+
+  .score-btn input {
+    display: none;
+  }
+
+  /* 卡片底部提示 */
+  .tool-card-footer {
+    padding: 12px 28px;
+    background: #f8fafc;
+    border-top: 1px solid #edf4f7;
+  }
+
+  .formula-hint {
+    font-size: 0.78rem;
+    color: #7b95a3;
+  }
+
+  @media (max-width: 680px) {
+    .tools-page-container {
+      padding: 1rem 0.85rem 3rem;
+    }
+    .tool-card-header {
+      padding: 18px 16px 14px;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tool-card-body {
+      padding: 18px 16px;
+    }
+    .tools-nav-pills {
+      border-radius: 16px;
+      padding: 4px;
+    }
+    .tool-pill {
+      font-size: 0.82rem;
+      padding: 6px 12px;
+    }
+    .score-options {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

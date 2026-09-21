@@ -1,4 +1,6 @@
 ---
+import SearchModal from '../components/SearchModal.astro';
+
 interface Props {
   title: string;
   meta_title?: string;
@@ -161,6 +163,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
             <a href="/" class:list={['nav-item', { active: Astro.url.pathname === '/' }]}>首頁</a>
             <a href="/health-column" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/health-column') || Astro.url.pathname.startsWith('/posts') }]}>醫學筆記</a>
             <a href="/videos" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/videos') }]}>影音專區</a>
+            <a href="/tools" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/tools') }]}>健康工具</a>
             <a href="/bowel-prep" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/bowel-prep') }]}>大腸鏡檢表單</a>
             <a href="/anatomy" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/anatomy') }]}>互動解剖圖鑑</a>
           </nav>
@@ -168,6 +171,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
 
         <!-- 桌面版動作按鈕 -->
         <div class="nav-actions">
+          <button type="button" class="btn-search-trigger" data-open-search aria-label="全站搜尋 (Ctrl+K)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>搜尋</span>
+            <kbd class="kbd-badge">⌘K</kbd>
+          </button>
           <a href="/health-column" class="btn-primary">
             <span>衛教專欄</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -205,6 +216,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
               <li><a href="/">首頁總覽</a></li>
               <li><a href="/health-column">實證衛教專欄</a></li>
               <li><a href="/videos">動物農莊衛教短影音</a></li>
+              <li><a href="/tools">健康計算機與評估專區</a></li>
               <li><a href="/bowel-prep">大腸鏡檢前衛教</a></li>
               <li><a href="/anatomy">互動解剖圖鑑</a></li>
             </ul>
@@ -284,6 +296,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
         }
       });
     </script>
+      <!-- 全站即時全域搜尋彈窗 -->
+    <SearchModal />
   </body>
 </html>
 
@@ -513,6 +527,42 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     gap: 10px;
   }
 
+  
+  /* 全站搜尋觸發按鈕 */
+  .btn-search-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1.5px solid rgba(212, 229, 235, 0.95);
+    color: var(--color-text-body);
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.08);
+    transition: all 0.2s ease;
+  }
+
+  .btn-search-trigger:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.16);
+  }
+
+  .kbd-badge {
+    background: #edf4f7;
+    border: 1px solid #d4e3e8;
+    color: #688594;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-family: inherit;
+  }
+
   .btn-primary {
     display: inline-flex;
     align-items: center;
@@ -623,12 +673,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     }
     .nav-item:nth-of-type(1),
     .nav-item:nth-of-type(2),
-    .nav-item:nth-of-type(3) {
-      grid-column: span 2;
-    }
+    .nav-item:nth-of-type(3),
     .nav-item:nth-of-type(4),
-    .nav-item:nth-of-type(5) {
-      grid-column: span 3;
+    .nav-item:nth-of-type(5),
+    .nav-item:nth-of-type(6) {
+      grid-column: span 2;
     }
     .nav-item.active {
       background: linear-gradient(135deg, var(--color-primary), #3b7688);
