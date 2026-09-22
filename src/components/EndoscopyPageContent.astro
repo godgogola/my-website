@@ -1,0 +1,1886 @@
+---
+// 無痛腸胃鏡核心專題組件
+interface Props {
+  isEmbed?: boolean;
+}
+
+const { isEmbed = false } = Astro.props;
+
+// 核心主要影片
+const mainVideo = {
+  id: '-Nfxr0NGDQ0',
+  title: '無痛腸胃鏡',
+  subtitle: '安心睡眠中完成 · 肝膽腸胃專科團隊親自操作',
+  description: '您對做胃鏡、大腸鏡感到恐懼嗎？豐田診所採用專業舒眠鎮靜麻醉技術與醫療級 CO2 充氣，讓您在如同小睡片刻的平穩放鬆狀態下，精準完成全消化道防癌檢查。'
+};
+
+// 四部優先推薦清腸核心影片
+const coreBowelVideos = [
+  {
+    id: 'S2QcETFlIxI',
+    title: '低渣飲食',
+    category: '飲食準備',
+    desc: '清腸成功的一半！掌握紅白綠燈飲食原則，避免纖維殘渣干擾病灶發現。',
+    tag: '飲食關鍵'
+  },
+  {
+    id: 'hBuG7IPxWRQ',
+    title: '【腸鏡前準備】清腸劑比較：保可淨 vs 耐福力散',
+    category: '藥物對比',
+    desc: '兩種常見清腸劑該怎麼選？口感、沖泡水量與適用族群一次看懂。',
+    tag: '藥物挑選'
+  },
+  {
+    id: 'z-gNT0nBsZU',
+    title: '【腸鏡前準備】保可淨 (Bowklean)',
+    category: '服藥教學',
+    desc: '低容量好入口！保可淨兩劑沖泡細節與水分分次補充正確步驟教學。',
+    tag: '保可淨'
+  },
+  {
+    id: 'Eo7sb0VvcTs',
+    title: '【腸鏡前準備】耐福力散 (Niflec)',
+    category: '服藥教學',
+    desc: '大容量等滲透壓清腸劑沖泡與分段飲用技巧，⚠️ 嚴禁直接乾吞藥粉！',
+    tag: '耐福力散'
+  }
+];
+
+// 其餘延伸衛教影片（置於最後）
+const extraVideos = [
+  {
+    id: 'cBAGeNQeMP8',
+    title: '一次做完腸胃篩檢',
+    category: '檢查須知',
+    desc: '胃鏡與大腸鏡能同一天完成嗎？一次麻醉雙重防癌篩檢優勢解析。'
+  },
+  {
+    id: 'VeS9ab3m4eY',
+    title: '高品質大腸鏡',
+    category: '醫療品質',
+    desc: '如何評估一份高品質的大腸鏡檢查？盲腸到達率、清腸度與腺瘤偵測率。'
+  },
+  {
+    id: 'kbVjl-HOKr4',
+    title: '大腸息肉與腺瘤',
+    category: '疾病處置',
+    desc: '息肉一定要切除嗎？大腸癌由息肉演變的致癌路徑與當日切除時機。'
+  },
+  {
+    id: '0Ix8__RylaU',
+    title: '糞便潛血陽性就一定是大腸癌嗎',
+    category: '防癌篩檢',
+    desc: '健檢收到潛血紅字別恐慌！英國NHS大數據揭秘與即時鏡檢的重要性。'
+  },
+  {
+    id: 'lxOZ1KRJDDE',
+    title: '胃幽門螺旋桿菌',
+    category: '胃部疾病',
+    desc: '世界衛生組織認定之一級致癌物！胃潰瘍與胃癌的隱形殺手。'
+  },
+  {
+    id: 'wCFG_s-ToXA',
+    title: '幽門桿菌檢驗方法',
+    category: '檢查須知',
+    desc: '碳13吹氣試驗、切片檢查與糞便抗原檢驗優缺點全面評比。'
+  },
+  {
+    id: '4j84jWlgqlY',
+    title: '巴瑞氏食道炎',
+    category: '胃食道逆流',
+    desc: '胃酸長期逆流導致食道黏膜變性！防範食道腺癌的黃金追蹤期。'
+  },
+  {
+    id: 'c7jElX1VEbE',
+    title: '黑腸症 (Melanosis Coli)',
+    category: '腸道疾病',
+    desc: '長期濫用便秘瀉藥導致大腸黏膜色素沉澱的成因與預後。'
+  }
+];
+---
+
+<div class:list={['endoscopy-special-container', { 'embed-mode': isEmbed }]}>
+  <!-- ═══════════════════════════════════════════════════
+       1. HERO 專題主視覺區
+  ═══════════════════════════════════════════════════ -->
+  <section class="endo-hero">
+    <div class="endo-hero-inner">
+      <div class="endo-badge">
+        <span class="badge-dot"></span>
+        <span>豐田診所 · 專科醫療級無痛內視鏡</span>
+      </div>
+      <h1 class="endo-hero-title">
+        舒眠無痛腸胃鏡 <span class="highlight-text">守護全消化道健康</span>
+      </h1>
+      <p class="endo-hero-sub">
+        給害怕照胃鏡與大腸鏡的您，最溫柔安心的醫療體驗。在舒適平穩的睡眠中完成檢查，採用醫療級 CO2 減脹技術與微創息肉即時處置，醒來即刻為您專業解析報告。
+      </p>
+
+      <!-- 快速跳轉錨點 -->
+      <div class="endo-quick-anchors">
+        <a href="#video-showcase" class="anchor-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          觀看衛教影音
+        </a>
+        <a href="#prep-calculator" class="anchor-btn primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          個人化清腸試算
+        </a>
+        <a href="#diet-guide" class="anchor-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          低渣飲食速查
+        </a>
+        <a href="#flow-steps" class="anchor-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          檢查流程說明
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       2. 診所醫療品質四大王牌特色
+  ═══════════════════════════════════════════════════ -->
+  <section class="endo-features-section">
+    <div class="section-heading">
+      <span class="sub-label">CLINICAL EXCELLENCE</span>
+      <h2 class="main-heading">為什麼選擇豐田診所無痛腸胃鏡？</h2>
+      <p class="desc-heading">超越傳統健檢的細膩照護，兼具醫學中心等級的儀器設備與基層診所的親切便利。</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- 特色 1 -->
+      <div class="feature-card">
+        <div class="card-icon-wrap" style="background: rgba(74, 144, 164, 0.12); color: #4a90a4;">
+          💤
+        </div>
+        <h3 class="card-title">安全靜脈舒眠麻醉</h3>
+        <p class="card-desc">
+          並非插管全身麻醉，而是使用安全短效的靜脈鎮靜藥物。檢查過程如同小睡片刻，全程由受過專業急救與鎮靜訓練的醫護團隊密集監測血壓、心跳與血氧，無痛、無嘔吐反射、無恐懼。
+        </p>
+      </div>
+
+      <!-- 特色 2 -->
+      <div class="feature-card highlight">
+        <div class="card-icon-wrap" style="background: rgba(231, 111, 81, 0.15); color: #e76f51;">
+          💨
+        </div>
+        <div class="popular-tag">大幅減脹</div>
+        <h3 class="card-title">醫療級 CO2 充氣系統</h3>
+        <p class="card-desc">
+          大腸鏡需充氣撐開腸道皺褶以利觀察。傳統灌入空氣難以吸收，術後常腹脹劇痛數小時；我們全面採用<strong>醫療級二氧化碳 (CO2)</strong>，人體吸收速度比空氣快 150 倍，檢查後迅速自然消脹、極速舒緩。
+        </p>
+      </div>
+
+      <!-- 特色 3 -->
+      <div class="feature-card">
+        <div class="card-icon-wrap" style="background: rgba(107, 181, 162, 0.15); color: #429481;">
+          🔬
+        </div>
+        <h3 class="card-title">高解析光學影像系統</h3>
+        <p class="card-desc">
+          引進先進數位高解析內視鏡，搭載窄頻光 (NBI) 與光學放大技術。可清晰顯現微細黏膜表層毛細血管與腺管微結構（Pit Pattern），及時揪出早期平坦型微小腺瘤，防患大腸癌於未然。
+        </p>
+      </div>
+
+      <!-- 特色 4 -->
+      <div class="feature-card">
+        <div class="card-icon-wrap" style="background: rgba(244, 162, 97, 0.15); color: #d67a31;">
+          ✂️
+        </div>
+        <h3 class="card-title">當日瘜肉評估與微創切除</h3>
+        <p class="card-desc">
+          檢查中若發現大腸瘜肉，經醫師專業評估符合適應症者，即可採<strong>微創冷切除／熱切除技術</strong>當場切除並送病理化驗。免除二次回診奔波與重新清腸服藥的痛苦。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       3. 核心衛教影音專題 SHOWCASE (以《無痛腸胃鏡》為首 + 四大清腸影片)
+  ═══════════════════════════════════════════════════ -->
+  <section class="endo-video-showcase" id="video-showcase">
+    <div class="section-heading">
+      <span class="sub-label">VIDEO EDUCATION</span>
+      <h2 class="main-heading">動物農莊 · 內視鏡與清腸影音教室</h2>
+      <p class="desc-heading">由動物界專科醫師出診，以 1 分鐘生動實證短片為您說解檢查大小事。點擊下方卡片即可切換觀看！</p>
+    </div>
+
+    <div class="showcase-container">
+      <!-- 主播放焦點視窗 -->
+      <div class="player-main-card">
+        <div class="video-responsive-wrap">
+          <iframe
+            id="mainPlayerIframe"
+            src={`https://www.youtube.com/embed/${mainVideo.id}?rel=0&enablejsapi=1`}
+            title={mainVideo.title}
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="player-info-bar">
+          <div class="player-badge">當前播放焦點</div>
+          <h3 class="player-active-title" id="activeVideoTitle">{mainVideo.title}</h3>
+          <p class="player-active-desc" id="activeVideoDesc">{mainVideo.description}</p>
+        </div>
+      </div>
+
+      <!-- 四部核心清腸推薦卡片清單 -->
+      <div class="showcase-playlist">
+        <div class="playlist-header">
+          <span class="playlist-icon">🎬</span>
+          <h4>核心清腸與檢查短影音（點選切換）</h4>
+        </div>
+
+        <!-- 主影片本身卡片 -->
+        <button
+          type="button"
+          class="playlist-item active"
+          data-video-id={mainVideo.id}
+          data-video-title={mainVideo.title}
+          data-video-desc={mainVideo.description}
+        >
+          <div class="item-thumb-wrap">
+            <img src={`https://i.ytimg.com/vi/${mainVideo.id}/hqdefault.jpg`} alt={mainVideo.title} loading="lazy" />
+            <span class="play-icon">▶</span>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag tag-primary">主打推薦</span>
+            <div class="item-title">{mainVideo.title}</div>
+            <p class="item-desc">安心睡眠中完成，無懼鏡檢不適。</p>
+          </div>
+        </button>
+
+        {coreBowelVideos.map((video) => (
+          <button
+            type="button"
+            class="playlist-item"
+            data-video-id={video.id}
+            data-video-title={video.title}
+            data-video-desc={video.desc}
+          >
+            <div class="item-thumb-wrap">
+              <img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt={video.title} loading="lazy" />
+              <span class="play-icon">▶</span>
+            </div>
+            <div class="item-meta">
+              <span class="item-tag">{video.tag}</span>
+              <div class="item-title">{video.title}</div>
+              <p class="item-desc">{video.desc}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       4. 核心互動表單與試算模組 (大腸鏡檢個人化時間試算表)
+  ═══════════════════════════════════════════════════ -->
+  <section class="endo-calc-section" id="prep-calculator">
+    <div class="section-heading">
+      <span class="sub-label">INTERACTIVE PREP CALCULATOR</span>
+      <h2 class="main-heading">大腸鏡檢個人化時間試算表</h2>
+      <p class="desc-heading">輸入您已預約的大腸鏡檢查時間，系統將精確為您推算出服藥、補水、飲食控制與絕對禁食禁水時間軸！</p>
+    </div>
+
+    <!-- 步驟 1：輸入時間與選擇藥物 -->
+    <div class="calc-control-card">
+      <div class="control-grid">
+        <!-- 檢查時間 -->
+        <div class="control-box">
+          <label for="endoExamDateTime" class="control-label">
+            <span class="step-num">1</span> 選擇已安排的大腸鏡檢查時間：
+          </label>
+          <input type="datetime-local" id="endoExamDateTime" class="datetime-input" />
+          
+          <div class="quick-chips">
+            <span class="chip-label">快捷預設：</span>
+            <button type="button" class="btn-chip" data-preset="tomorrow-morning">明日上午 08:30</button>
+            <button type="button" class="btn-chip" data-preset="tomorrow-afternoon">明日下午 13:30</button>
+            <button type="button" class="btn-chip" data-preset="dayafter-morning">後天上午 08:30</button>
+          </div>
+        </div>
+
+        <!-- 藥物選擇 -->
+        <div class="control-box">
+          <label class="control-label">
+            <span class="step-num">2</span> 選擇您所領取的清腸劑：
+          </label>
+          <div class="drug-tabs">
+            <label class="drug-tab-label active" id="label-bowklean">
+              <input type="radio" name="endoDrugType" value="bowklean" checked class="drug-radio-hidden" />
+              <div class="drug-tab-content">
+                <span class="drug-pill-badge badge-teal">低容量 / 水分分段喝</span>
+                <span class="drug-name-text">保可淨 (Bowklean)</span>
+                <p class="drug-hint-text">單包以 150c.c. 冷水泡開，分兩劑服用，含鎂成分口感佳。</p>
+              </div>
+            </label>
+
+            <label class="drug-tab-label" id="label-niflec">
+              <input type="radio" name="endoDrugType" value="niflec" class="drug-radio-hidden" />
+              <div class="drug-tab-content">
+                <span class="drug-pill-badge badge-amber">等滲透壓 / 2000c.c.</span>
+                <span class="drug-name-text">耐福利散 (Niflec)</span>
+                <p class="drug-hint-text">整包以 2000c.c. 冷開水沖泡分段飲用，⚠️ 絕不可乾吞藥粉。</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步驟 2：動態生成的時間軸結果卡片 -->
+    <div class="schedule-result-card" id="scheduleResultCard">
+      <div class="result-header">
+        <div class="result-header-main">
+          <span class="result-badge" id="displayDrugBadge">保可淨 (Bowklean) 專屬服藥時間表</span>
+          <h3 class="result-title">您的個人清腸準備時間軸</h3>
+          <div class="result-exam-time" id="displayExamTime">📅 預約檢查時間：載入中...</div>
+        </div>
+        <div class="result-actions">
+          <button type="button" class="btn-tool-action" id="btnEndoPrint">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            列印 / 存 PDF
+          </button>
+          <button type="button" class="btn-tool-action primary" id="btnEndoCopy">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            複製 LINE 提醒
+          </button>
+        </div>
+      </div>
+
+      <!-- 時間軸節點容器 -->
+      <div class="timeline-nodes-wrap" id="endoTimelineContainer">
+        <!-- JS 動態填入 -->
+      </div>
+
+      <div class="timeline-footer-notice">
+        <strong>⚠️ 專科醫師溫馨叮嚀：</strong>
+        若需實施無痛靜脈舒眠麻醉，在「禁水截止時間」過後<strong>嚴格禁止喝水或進食</strong>，以防止麻醉過程嘔吐引發吸入性肺炎。高血壓藥請於第二劑前一小時以少許白開水吞服；降血糖藥與胰島素於檢查當日早晨請暫停使用。
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       5. 飲食準備：低渣飲食指南 (紅黃綠燈圖鑑)
+  ═══════════════════════════════════════════════════ -->
+  <section class="endo-diet-section" id="diet-guide">
+    <div class="section-heading">
+      <span class="sub-label">DIETARY INSTRUCTIONS</span>
+      <h2 class="main-heading">檢查前飲食指南：低渣飲食與清流質</h2>
+      <p class="desc-heading">清腸藥只能排除糞便，無法溶解高纖維蔬菜植物渣。請於檢查前 2 至 3 天落實低渣飲食！</p>
+    </div>
+
+    <div class="diet-cards-grid">
+      <!-- 綠燈：可吃 -->
+      <div class="diet-box allow-box">
+        <div class="diet-box-head">
+          <span class="status-icon">⭕</span>
+          <div>
+            <h3>推薦攝取（低渣精緻食物）</h3>
+            <p>好消化、無粗纖維殘渣</p>
+          </div>
+        </div>
+        <ul class="diet-check-list">
+          <li><strong>主食類：</strong> 白稀飯、白飯、白吐司、白麵條、去包子皮、白饅頭。</li>
+          <li><strong>蛋白質：</strong> 蒸蛋、水煮蛋、去皮去刺魚肉、嫩雞胸肉、清蒸嫩豆腐。</li>
+          <li><strong>湯品飲品：</strong> 過濾清肉湯、清魚湯、去渣蔬果汁、黑咖啡（不加奶）、無渣茶水、運動飲料。</li>
+        </ul>
+      </div>
+
+      <!-- 紅燈：忌吃 -->
+      <div class="diet-box deny-box">
+        <div class="diet-box-head">
+          <span class="status-icon">❌</span>
+          <div>
+            <h3>嚴格禁食（高纖油膩難消化）</h3>
+            <p>會在腸道壁黏附殘渣，影響息肉判讀</p>
+          </div>
+        </div>
+        <ul class="diet-check-list danger">
+          <li><strong>高纖維蔬菜水果：</strong> 蔬菜根莖、葉菜、筍類、芹菜、芭樂、奇異果、番茄、火龍果、草莓等帶籽水果。</li>
+          <li><strong>全穀雜糧與堅果：</strong> 糙米、燕麥、全麥麵包、芝麻、核桃、杏仁、黑豆等。</li>
+          <li><strong>乳製品與豆漿：</strong> 牛奶、優酪乳、起司、未過濾濃豆漿（乳酪與奶類會形成黏稠白色凝乳）。</li>
+          <li><strong>油炸與高油食物：</strong> 油條、炸雞、五花肉、麻辣鍋、高油糕點。</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 慢性病與減重瘦瘦針專題提醒 -->
+    <div class="special-med-alert">
+      <div class="alert-icon-sign">💡</div>
+      <div class="alert-text-body">
+        <h4>慢性病與減重「瘦瘦針 (GLP-1)」用藥重要須知</h4>
+        <div class="med-reminder-grid">
+          <div class="reminder-item">
+            <strong>🫀 高血壓藥物：</strong>
+            <span>檢查當日清晨仍需以一小口水（約 30c.c.）照常服用，維持血壓穩定。</span>
+          </div>
+          <div class="reminder-item">
+            <strong>🩸 糖尿病藥物：</strong>
+            <span>檢查當天早晨因禁食，降血糖口服藥與胰島素<strong>請暫停一次</strong>，避免低血糖。</span>
+          </div>
+          <div class="reminder-item">
+            <strong>💊 抗凝血/抗血小板藥：</strong>
+            <span>若有服用伯基 (Bokey)、保栓通 (Plavix) 等，請於門診事先告知醫師評估是否需暫停 3~7 天（以利瘜肉切除）。</span>
+          </div>
+          <div class="reminder-item highlight-glp1">
+            <strong>💉 瘦瘦針 (GLP-1 腸泌素)：</strong>
+            <span>週效型（如 Ozempic、Wegovy）建議於<strong>檢查前停用一週</strong>；日效型（如 Saxenda）建議<strong>檢查當日停用</strong>，以防胃排空延緩造成麻醉嘔吐。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       6. 檢查流程說明 (六部曲)
+  ═══════════════════════════════════════════════════ -->
+  <section class="endo-flow-section" id="flow-steps">
+    <div class="section-heading">
+      <span class="sub-label">PROCEDURE</span>
+      <h2 class="main-heading">無痛腸胃鏡完整檢查流程</h2>
+      <p class="desc-heading">標準化醫學中心流程，每一步皆由專業醫護細心把關。</p>
+    </div>
+
+    <div class="steps-chain-grid">
+      <div class="chain-step-card">
+        <div class="step-badge-num">01</div>
+        <h4>門診諮詢評估</h4>
+        <p>專業專科醫師評估病史、慢性病用藥與檢查適應症，開立最適清腸藥物。</p>
+      </div>
+
+      <div class="chain-step-card">
+        <div class="step-badge-num">02</div>
+        <h4>居家低渣清腸</h4>
+        <p>遵循個人化試算表時程，實施 2~3 天低渣飲食，並依時喝下清腸劑與充足水分。</p>
+      </div>
+
+      <div class="chain-step-card">
+        <div class="step-badge-num">03</div>
+        <h4>檢查當日報到</h4>
+        <p>核對身分與禁食禁水時間，建立靜脈留置針並由護理人員確認腸道排泄清澈度。</p>
+      </div>
+
+      <div class="chain-step-card">
+        <div class="step-badge-num">04</div>
+        <h4>舒眠鎮靜檢查</h4>
+        <p>由醫師與麻醉專業人員執行無痛靜脈給藥，在舒適熟睡中完成胃鏡與大腸鏡檢查。</p>
+      </div>
+
+      <div class="chain-step-card">
+        <div class="step-badge-num">05</div>
+        <h4>瘜肉微創處置</h4>
+        <p>若發現病灶即時評估，可採微創技術切除並送病理檢驗，使用單次無菌器械。</p>
+      </div>
+
+      <div class="chain-step-card">
+        <div class="step-badge-num">06</div>
+        <h4>甦醒與圖文解說</h4>
+        <p>於舒適恢復室甦醒休息約 30 分鐘，由主治醫師當場提供彩色圖文報告並詳細解說。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       7. 延伸衛教影音專區 (其他內視鏡與腸胃疾病短影音)
+  ═══════════════════════════════════════════════════ -->
+  <section class="endo-extra-videos-section">
+    <div class="section-heading">
+      <span class="sub-label">MORE VIDEOS</span>
+      <h2 class="main-heading">更多內視鏡與腸胃衛教影音</h2>
+      <p class="desc-heading">持續學習消化道保健知識，點擊即可切換至上方焦點視窗觀看！</p>
+    </div>
+
+    <div class="extra-videos-grid">
+      {extraVideos.map((item) => (
+        <button
+          type="button"
+          class="extra-video-card"
+          data-video-id={item.id}
+          data-video-title={item.title}
+          data-video-desc={item.desc}
+        >
+          <div class="extra-thumb">
+            <img src={`https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`} alt={item.title} loading="lazy" />
+            <div class="hover-play-btn">▶ 播放</div>
+          </div>
+          <div class="extra-info">
+            <span class="extra-cat">{item.category}</span>
+            <h4 class="extra-title">{item.title}</h4>
+            <p class="extra-desc">{item.desc}</p>
+          </div>
+        </button>
+      ))}
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       8. 頁底資訊區 (診所衛教聲明)
+  ═══════════════════════════════════════════════════ -->
+  <div class="endo-page-disclaimer">
+    <p>
+      📍 <strong>豐田診所</strong> · 台中市南區建成路 1848 號 · 電話：(04) 2285-0066<br/>
+      💡 本頁內容為黃冠智醫師專業醫學衛教專頁，旨在增進民眾對無痛內視鏡與清腸流程之理解。個人醫療用藥與檢查適應症請務必諮詢專科醫師當面評估。
+    </p>
+  </div>
+</div>
+
+<style>
+  /* ═══════════════════════════════════════════════════
+     全域與容器樣式
+  ═══════════════════════════════════════════════════ */
+  .endoscopy-special-container {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 16px 16px 64px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+    color: #2c3e50;
+    line-height: 1.65;
+  }
+
+  .endoscopy-special-container.embed-mode {
+    padding: 12px 10px 40px;
+    background: transparent;
+  }
+
+  /* 區塊標題公用樣式 */
+  .section-heading {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .sub-label {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #4a90a4;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .main-heading {
+    font-size: 1.85rem;
+    font-weight: 900;
+    color: #1e3a47;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .desc-heading {
+    font-size: 0.98rem;
+    color: #627d88;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     1. HERO 專題主視覺
+  ═══════════════════════════════════════════════════ */
+  .endo-hero {
+    background: linear-gradient(135deg, #234b5b 0%, #3e7b8e 50%, #4a90a4 100%);
+    border-radius: 20px;
+    padding: 44px 28px;
+    color: #ffffff;
+    margin-bottom: 40px;
+    box-shadow: 0 12px 32px rgba(35, 75, 91, 0.16);
+    position: relative;
+    overflow: hidden;
+  }
+  .endo-hero::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+  }
+  .endo-hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .endo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    background: #6ee7b7;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #6ee7b7;
+  }
+  .endo-hero-title {
+    font-size: 2.35rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .highlight-text {
+    background: linear-gradient(120deg, #fcd34d 0%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+  .endo-hero-sub {
+    font-size: 1.05rem;
+    color: #e2f1f5;
+    line-height: 1.7;
+    max-width: 780px;
+    margin: 0 auto 28px;
+  }
+  .endo-quick-anchors {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .anchor-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    padding: 9px 18px;
+    border-radius: 9999px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    transition: all 0.2s ease;
+  }
+  .anchor-btn:hover {
+    background: #ffffff;
+    color: #234b5b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  }
+  .anchor-btn.primary {
+    background: #ffffff;
+    color: #234b5b;
+    border-color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+  .anchor-btn.primary:hover {
+    background: #eef7f9;
+    color: #1e3a47;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     2. 四大品質亮點卡片
+  ═══════════════════════════════════════════════════ */
+  .endo-features-section {
+    margin-bottom: 54px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: #ffffff;
+    border: 1.5px solid #e1edf0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(74, 144, 164, 0.12);
+  }
+  .feature-card.highlight {
+    border-color: #e76f51;
+    background: linear-gradient(180deg, #ffffff 0%, #fff9f7 100%);
+  }
+  .popular-tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #e76f51;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+  }
+  .card-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 1.18rem;
+    font-weight: 800;
+    color: #1e3a47;
+    margin-bottom: 8px;
+  }
+  .card-desc {
+    font-size: 0.9rem;
+    color: #55707d;
+    line-height: 1.6;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     3. 影音 SHOWCASE (主播放器 + 4 核心清腸卡片)
+  ═══════════════════════════════════════════════════ */
+  .endo-video-showcase {
+    margin-bottom: 54px;
+  }
+  .showcase-container {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 24px;
+    background: #ffffff;
+    border: 1.5px solid #e1edf0;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 6px 24px rgba(74, 144, 164, 0.08);
+  }
+  @media (max-width: 900px) {
+    .showcase-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .player-main-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .video-responsive-wrap {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 */
+    background: #0f172a;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+  .video-responsive-wrap iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .player-info-bar {
+    padding: 8px 4px;
+  }
+  .player-badge {
+    display: inline-block;
+    background: #eef7f9;
+    color: #3b7688;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .player-active-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1e3a47;
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .player-active-desc {
+    font-size: 0.9rem;
+    color: #55707d;
+    line-height: 1.55;
+  }
+
+  .showcase-playlist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .playlist-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid #eef3f5;
+  }
+  .playlist-header h4 {
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #1e3a47;
+  }
+  .playlist-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    background: #f8fbfc;
+    border: 1.5px solid #e8f0f3;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    width: 100%;
+  }
+  .playlist-item:hover {
+    background: #eef7f9;
+    border-color: #bcdce5;
+    transform: translateX(3px);
+  }
+  .playlist-item.active {
+    background: #eaf5f8;
+    border-color: #4a90a4;
+    box-shadow: 0 2px 10px rgba(74, 144, 164, 0.15);
+  }
+  .item-thumb-wrap {
+    position: relative;
+    width: 100px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #0f172a;
+  }
+  .item-thumb-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .play-icon {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .item-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .item-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #3b7688;
+    background: #e2f0f4;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+  }
+  .item-tag.tag-primary {
+    background: #e76f51;
+    color: #ffffff;
+  }
+  .item-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #1e3a47;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.35;
+  }
+  .item-desc {
+    font-size: 0.78rem;
+    color: #688594;
+    margin: 2px 0 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     4. 互動表單與個人化時間試算
+  ═══════════════════════════════════════════════════ */
+  .endo-calc-section {
+    margin-bottom: 54px;
+  }
+  .calc-control-card {
+    background: #ffffff;
+    border: 1.5px solid #e1edf0;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(74, 144, 164, 0.08);
+  }
+  .control-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  @media (max-width: 840px) {
+    .control-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .control-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .control-label {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1e3a47;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    background: #4a90a4;
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .datetime-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1.05rem;
+    font-family: inherit;
+    font-weight: 700;
+    color: #1e3a47;
+    background: #f8fbfc;
+    border: 2px solid #d4e5ea;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+  .datetime-input:focus {
+    outline: none;
+    border-color: #4a90a4;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(74, 144, 164, 0.15);
+  }
+  .quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip-label {
+    font-size: 0.82rem;
+    color: #74909e;
+    font-weight: 700;
+  }
+  .btn-chip {
+    background: #f0f7f9;
+    border: 1px solid #d2e4ea;
+    color: #3b7688;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-chip:hover {
+    background: #4a90a4;
+    color: #ffffff;
+    border-color: #4a90a4;
+  }
+
+  .drug-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .drug-tab-label {
+    display: block;
+    cursor: pointer;
+  }
+  .drug-radio-hidden {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .drug-tab-content {
+    background: #f8fbfc;
+    border: 2px solid #dce8ec;
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: all 0.2s ease;
+    height: 100%;
+  }
+  .drug-tab-label.active .drug-tab-content {
+    border-color: #4a90a4;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(74, 144, 164, 0.15);
+  }
+  .drug-pill-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .badge-teal { background: #e0f2f1; color: #00796b; }
+  .badge-amber { background: #fef3c7; color: #b45309; }
+  .drug-name-text {
+    display: block;
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #1e3a47;
+    margin-bottom: 4px;
+  }
+  .drug-hint-text {
+    font-size: 0.78rem;
+    color: #688594;
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  /* 試算結果時間表卡片 */
+  .schedule-result-card {
+    background: #ffffff;
+    border: 2px solid #4a90a4;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 8px 28px rgba(74, 144, 164, 0.12);
+  }
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #edf4f6;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 640px) {
+    .result-header {
+      flex-direction: column;
+    }
+  }
+  .result-badge {
+    display: inline-block;
+    background: #4a90a4;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: 9999px;
+    margin-bottom: 6px;
+  }
+  .result-title {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #1e3a47;
+    margin-bottom: 4px;
+  }
+  .result-exam-time {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #e76f51;
+  }
+  .result-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-tool-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: 1.5px solid #d4e3e8;
+    background: #ffffff;
+    color: #3b7688;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-tool-action:hover {
+    border-color: #4a90a4;
+    background: #f0f7f9;
+  }
+  .btn-tool-action.primary {
+    background: #4a90a4;
+    border-color: #4a90a4;
+    color: #ffffff;
+  }
+  .btn-tool-action.primary:hover {
+    background: #3b7688;
+  }
+
+  /* 時間軸節點 */
+  .timeline-nodes-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 24px;
+  }
+  .timeline-nodes-wrap::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 14px;
+    bottom: 14px;
+    width: 3px;
+    background: #dbeef3;
+    border-radius: 3px;
+  }
+
+  :global(.endo-timeline-item) {
+    position: relative;
+    background: #f8fbfc;
+    border: 1.5px solid #e1edf0;
+    border-radius: 14px;
+    padding: 16px 20px;
+    transition: all 0.2s ease;
+  }
+  :global(.endo-timeline-item::before) {
+    content: "";
+    position: absolute;
+    left: -24px;
+    top: 22px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #4a90a4;
+    z-index: 2;
+  }
+  :global(.endo-timeline-item.item-critical) {
+    border-color: #fca5a5;
+    background: #fffafa;
+  }
+  :global(.endo-timeline-item.item-critical::before) {
+    border-color: #ef4444;
+    background: #fef2f2;
+  }
+  :global(.endo-node-top) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  :global(.endo-node-tag) {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #e0f2f1;
+    color: #00796b;
+  }
+  :global(.endo-node-tag.tag-danger) {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  :global(.endo-node-time) {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #1e3a47;
+  }
+  :global(.endo-node-title) {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #2c5364;
+    margin-bottom: 4px;
+  }
+  :global(.endo-node-desc) {
+    font-size: 0.88rem;
+    color: #55707d;
+    margin: 0;
+    line-height: 1.55;
+  }
+  :global(.endo-node-tip) {
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #f0f7f9;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #3b7688;
+  }
+  :global(.endo-node-tip.tip-danger) {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .timeline-footer-notice {
+    padding: 14px 18px;
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: #92400e;
+    line-height: 1.6;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     5. 低渣飲食指南與用藥專題
+  ═══════════════════════════════════════════════════ */
+  .endo-diet-section {
+    margin-bottom: 54px;
+  }
+  .diet-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 768px) {
+    .diet-cards-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .diet-box {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px;
+    border: 1.5px solid #e1edf0;
+    box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
+  }
+  .diet-box.allow-box {
+    border-color: #86efac;
+    background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+  }
+  .diet-box.deny-box {
+    border-color: #fca5a5;
+    background: linear-gradient(180deg, #ffffff 0%, #fef2f2 100%);
+  }
+  .diet-box-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  .status-icon {
+    font-size: 1.6rem;
+  }
+  .diet-box-head h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1e3a47;
+    margin: 0;
+  }
+  .diet-box-head p {
+    font-size: 0.82rem;
+    color: #688594;
+    margin: 2px 0 0;
+  }
+  .diet-check-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #374151;
+  }
+  .diet-check-list strong {
+    color: #111827;
+  }
+  .diet-check-list.danger strong {
+    color: #991b1b;
+  }
+
+  .special-med-alert {
+    background: #ffffff;
+    border: 1.5px solid #d4e5ea;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
+  }
+  .alert-icon-sign {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+  .alert-text-body h4 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1e3a47;
+    margin-bottom: 14px;
+  }
+  .med-reminder-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 768px) {
+    .med-reminder-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .reminder-item {
+    background: #f8fbfc;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border-left: 3px solid #4a90a4;
+    font-size: 0.85rem;
+    color: #4b6370;
+  }
+  .reminder-item strong {
+    display: block;
+    font-size: 0.92rem;
+    color: #1e3a47;
+    margin-bottom: 2px;
+  }
+  .reminder-item.highlight-glp1 {
+    background: #fff7ed;
+    border-left-color: #ea580c;
+  }
+  .reminder-item.highlight-glp1 strong {
+    color: #c2410c;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     6. 檢查六部曲流程
+  ═══════════════════════════════════════════════════ */
+  .endo-flow-section {
+    margin-bottom: 54px;
+  }
+  .steps-chain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+  }
+  .chain-step-card {
+    background: #ffffff;
+    border: 1.5px solid #e1edf0;
+    border-radius: 14px;
+    padding: 18px 14px;
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.05);
+    position: relative;
+    text-align: center;
+  }
+  .step-badge-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #4a90a4;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .chain-step-card h4 {
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #1e3a47;
+    margin-bottom: 6px;
+  }
+  .chain-step-card p {
+    font-size: 0.82rem;
+    color: #688594;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     7. 延伸短影音專區
+  ═══════════════════════════════════════════════════ */
+  .endo-extra-videos-section {
+    margin-bottom: 48px;
+  }
+  .extra-videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .extra-video-card {
+    background: #ffffff;
+    border: 1.5px solid #e1edf0;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    padding: 0;
+    box-shadow: 0 2px 10px rgba(74, 144, 164, 0.05);
+  }
+  .extra-video-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(74, 144, 164, 0.12);
+    border-color: #4a90a4;
+  }
+  .extra-thumb {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: #0f172a;
+    overflow: hidden;
+  }
+  .extra-thumb img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .extra-video-card:hover .extra-thumb img {
+    transform: scale(1.05);
+  }
+  .hover-play-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .extra-info {
+    padding: 12px 14px;
+  }
+  .extra-cat {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #4a90a4;
+    background: #eef7f9;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .extra-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1e3a47;
+    margin-bottom: 4px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .extra-desc {
+    font-size: 0.8rem;
+    color: #688594;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.45;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     8. 頁底資訊
+  ═══════════════════════════════════════════════════ */
+  .endo-page-disclaimer {
+    background: #f0f7f9;
+    border: 1px solid #d8e8ed;
+    border-radius: 14px;
+    padding: 18px 22px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #627d88;
+    line-height: 1.6;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     RWD 響應式微調
+  ═══════════════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    .endo-hero {
+      padding: 32px 16px;
+    }
+    .endo-hero-title {
+      font-size: 1.85rem;
+    }
+    .endo-hero-sub {
+      font-size: 0.92rem;
+    }
+    .calc-control-card, .schedule-result-card {
+      padding: 16px 14px;
+    }
+    .main-heading {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* 列印樣式 */
+  @media print {
+    .endo-hero, .endo-features-section, .endo-video-showcase, .calc-control-card, .endo-flow-section, .endo-extra-videos-section, .result-actions {
+      display: none !important;
+    }
+    .schedule-result-card {
+      border: 1px solid #000000 !important;
+      box-shadow: none !important;
+    }
+  }
+</style>
+
+<script>
+  // ── 影音切換與時間軸試算客戶端腳本 ──
+  document.addEventListener('DOMContentLoaded', () => {
+    // ═══════════════════════════════════════════════════
+    // 1. 影音 Showcase 切換邏輯
+    // ═══════════════════════════════════════════════════
+    const mainIframe = document.getElementById('mainPlayerIframe') as HTMLIFrameElement;
+    const activeTitle = document.getElementById('activeVideoTitle');
+    const activeDesc = document.getElementById('activeVideoDesc');
+    const playlistItems = document.querySelectorAll('.playlist-item');
+    const extraCards = document.querySelectorAll('.extra-video-card');
+
+    function switchVideo(videoId: string, title: string, desc: string, targetEl?: Element) {
+      if (mainIframe) {
+        mainIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+      }
+      if (activeTitle) activeTitle.textContent = title;
+      if (activeDesc) activeDesc.textContent = desc;
+
+      playlistItems.forEach(item => item.classList.remove('active'));
+      if (targetEl && targetEl.classList.contains('playlist-item')) {
+        targetEl.classList.add('active');
+      }
+
+      // 平滑捲動至播放器
+      const showcase = document.getElementById('video-showcase');
+      if (showcase) {
+        showcase.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    playlistItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.getAttribute('data-video-id') || '';
+        const title = item.getAttribute('data-video-title') || '';
+        const desc = item.getAttribute('data-video-desc') || '';
+        switchVideo(id, title, desc, item);
+      });
+    });
+
+    extraCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-video-id') || '';
+        const title = card.getAttribute('data-video-title') || '';
+        const desc = card.getAttribute('data-video-desc') || '';
+        switchVideo(id, title, desc);
+      });
+    });
+
+    // ═══════════════════════════════════════════════════
+    // 2. 清腸時間軸計算邏輯
+    // ═══════════════════════════════════════════════════
+    const examInput = document.getElementById('endoExamDateTime') as HTMLInputElement;
+    const drugRadios = document.querySelectorAll('input[name="endoDrugType"]') as NodeListOf<HTMLInputElement>;
+    const timelineWrap = document.getElementById('endoTimelineContainer');
+    const displayDrugBadge = document.getElementById('displayDrugBadge');
+    const displayExamTime = document.getElementById('displayExamTime');
+    const labelBowklean = document.getElementById('label-bowklean');
+    const labelNiflec = document.getElementById('label-niflec');
+    const btnPrint = document.getElementById('btnEndoPrint');
+    const btnCopy = document.getElementById('btnEndoCopy');
+    const presetBtns = document.querySelectorAll('.btn-chip');
+
+    // 預設將時間設為「明天 08:30」
+    function setDefaultDateTime() {
+      if (!examInput) return;
+      const now = new Date();
+      const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 8, 30);
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      examInput.value = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}T${pad(tomorrow.getHours())}:${pad(tomorrow.getMinutes())}`;
+    }
+
+    function formatChineseDate(date: Date, showTime = true): string {
+      const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      const str = `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} (${days[date.getDay()]})`;
+      return showTime ? `${str} ${pad(date.getHours())}:${pad(date.getMinutes())}` : str;
+    }
+
+    function updateDrugStyle() {
+      const drug = (document.querySelector('input[name="endoDrugType"]:checked') as HTMLInputElement)?.value || 'bowklean';
+      if (drug === 'bowklean') {
+        labelBowklean?.classList.add('active');
+        labelNiflec?.classList.remove('active');
+      } else {
+        labelNiflec?.classList.add('active');
+        labelBowklean?.classList.remove('active');
+      }
+    }
+
+    function calculateTimeline() {
+      if (!examInput || !examInput.value || !timelineWrap) return;
+      const examDate = new Date(examInput.value);
+      if (isNaN(examDate.getTime())) return;
+
+      const drug = (document.querySelector('input[name="endoDrugType"]:checked') as HTMLInputElement)?.value || 'bowklean';
+
+      // 檢查前2天
+      const dayMinus2 = new Date(examDate);
+      dayMinus2.setDate(examDate.getDate() - 2);
+
+      // 檢查前1天
+      const dayMinus1 = new Date(examDate);
+      dayMinus1.setDate(examDate.getDate() - 1);
+
+      // 前一晚第一劑 (保可淨 17:00-19:00 / 耐福利散 19:00)
+      const dose1Time = new Date(dayMinus1);
+      dose1Time.setHours(drug === 'bowklean' ? 17 : 19, 0, 0);
+
+      // 當天早晨第二劑 (檢查前4~5小時，預設 04:00)
+      const dose2Time = new Date(examDate);
+      dose2Time.setHours(4, 0, 0);
+
+      // 高血壓藥時間 (第二劑前1小時，03:00)
+      const bpTime = new Date(dose2Time);
+      bpTime.setHours(dose2Time.getHours() - 1);
+
+      // 禁水截止時限 (檢查前3小時)
+      const npoTime = new Date(examDate);
+      npoTime.setHours(examDate.getHours() - 3, examDate.getMinutes());
+
+      // 更新頂部顯示
+      if (displayDrugBadge) {
+        displayDrugBadge.textContent = drug === 'bowklean' ? '保可淨 (Bowklean) 專屬服藥時間表' : '耐福利散 (Niflec Powder) 專屬服藥時間表';
+      }
+      if (displayExamTime) {
+        displayExamTime.textContent = `📅 預約檢查時間：${formatChineseDate(examDate)}`;
+      }
+
+      let html = '';
+
+      // 節點 1：前 2~3 天低渣飲食
+      html += `
+        <div class="endo-timeline-item">
+          <div class="endo-node-top">
+            <span class="endo-node-tag">飲食準備</span>
+            <span class="endo-node-time">${formatChineseDate(dayMinus2, false)} 起</span>
+          </div>
+          <div class="endo-node-title">開始嚴格採行「低渣飲食」</div>
+          <p class="endo-node-desc">食用白粥、白吐司、去皮魚肉、去皮蒸蛋。絕對禁食高纖蔬菜、水果、堅果、乳製品與豆漿。</p>
+          <div class="endo-node-tip">💡 習慣性便秘者建議提前於檢查前 5~7 天即開始進行低渣飲食。</div>
+        </div>
+      `;
+
+      // 節點 2：檢查前一天清流質與早晚餐
+      html += `
+        <div class="endo-timeline-item">
+          <div class="endo-node-top">
+            <span class="endo-node-tag">前日飲食</span>
+            <span class="endo-node-time">${formatChineseDate(dayMinus1, false)}</span>
+          </div>
+          <div class="endo-node-title">檢查前一天飲食與晚餐禁食</div>
+          <p class="endo-node-desc">早餐與午餐僅可食用白稀飯或白吐司。<strong>下午 16:00 起全面禁食固體食物</strong>，僅可飲用無渣清流質（如過濾清肉湯、無渣運動飲料、冬瓜茶、蜂蜜水）。</p>
+        </div>
+      `;
+
+      // 節點 3：第一劑服藥
+      if (drug === 'bowklean') {
+        html += `
+          <div class="endo-timeline-item">
+            <div class="endo-node-top">
+              <span class="endo-node-tag">第一劑服藥</span>
+              <span class="endo-node-time">${formatChineseDate(dose1Time, false)} 17:00 ~ 19:00</span>
+            </div>
+            <div class="endo-node-title">服用保可淨 (Bowklean) 第 1 劑</div>
+            <p class="endo-node-desc">以 150c.c. 冷水沖泡攪拌均勻後一口飲盡。並於服藥後 2 小時內<strong>分次補充 1500 ~ 2000c.c. 水分或清流質</strong>。</p>
+            <div class="endo-node-tip">⚠️ 保可淨遇水會微放熱，絕不可直接乾吞藥粉！</div>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="endo-timeline-item">
+            <div class="endo-node-top">
+              <span class="endo-node-tag">第一劑服藥</span>
+              <span class="endo-node-time">${formatChineseDate(dose1Time, false)} 19:00</span>
+            </div>
+            <div class="endo-node-title">沖泡並飲用耐福利散 (Niflec) 前 1000c.c.</div>
+            <p class="endo-node-desc">將整包藥粉倒入耐福力散專用塑膠罐中，加入冷開水至 2000c.c. 刻度搖勻。今晚先每 15 分鐘飲用 250c.c.，2 小時內喝完前 1000c.c.。</p>
+            <div class="endo-node-tip">⚠️ 耐福利散為等滲透壓劑型，務必整罐加足 2 公升冷開水沖泡！</div>
+          </div>
+        `;
+      }
+
+      // 節點 4：高血壓用藥注意 (當日清晨 03:00)
+      html += `
+        <div class="endo-timeline-item">
+          <div class="endo-node-top">
+            <span class="endo-node-tag">藥物調整</span>
+            <span class="endo-node-time">${formatChineseDate(bpTime)}</span>
+          </div>
+          <div class="endo-node-title">高血壓用藥服用（第二劑清腸藥前 1 小時）</div>
+          <p class="endo-node-desc">若有服用高血壓藥物，請配<strong>一小口白開水 (約 30c.c.)</strong>吞服，維持血壓平穩。糖尿病降血糖藥物與胰島素於今晨暫停使用。</p>
+        </div>
+      `;
+
+      // 節點 5：第二劑服藥
+      if (drug === 'bowklean') {
+        html += `
+          <div class="endo-timeline-item">
+            <div class="endo-node-top">
+              <span class="endo-node-tag">第二劑服藥</span>
+              <span class="endo-node-time">${formatChineseDate(dose2Time)}</span>
+            </div>
+            <div class="endo-node-title">服用保可淨 (Bowklean) 第 2 劑</div>
+            <p class="endo-node-desc">同樣以 150c.c. 冷水沖泡一口飲盡。隨後於 1~2 小時內<strong>分次補充至少 750 ~ 1000c.c. 開水</strong>，促使腸道殘餘糞水徹底排空呈清澈黃色液體。</p>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="endo-timeline-item">
+            <div class="endo-node-top">
+              <span class="endo-node-tag">第二劑服藥</span>
+              <span class="endo-node-time">${formatChineseDate(dose2Time)}</span>
+            </div>
+            <div class="endo-node-title">飲用耐福利散 (Niflec) 剩餘 1000c.c.</div>
+            <p class="endo-node-desc">將冷藏之剩餘 1000c.c. 藥水，以每 15 分鐘喝 250c.c. 的速度飲用完畢，並配合適度室內走動促進排便。</p>
+          </div>
+        `;
+      }
+
+      // 節點 6：絕對禁食禁水 (Critical)
+      html += `
+        <div class="endo-timeline-item item-critical">
+          <div class="endo-node-top">
+            <span class="endo-node-tag tag-danger">重要時限</span>
+            <span class="endo-node-time">${formatChineseDate(npoTime)}</span>
+          </div>
+          <div class="endo-node-title">⛔ 嚴格禁止喝水與進食 (NPO 截止)</div>
+          <p class="endo-node-desc">此時間點為<strong>檢查前 3 小時</strong>。若實施舒眠無痛麻醉，此時起<strong>滴水不沾、連藥水與白開水都不可喝</strong>，避免麻醉引起嗆咳與吸入性肺炎危險！</p>
+          <div class="endo-node-tip tip-danger">🚨 務必確保腸道排出物已呈現「無渣清澈透明淡黃色液體」。</div>
+        </div>
+      `;
+
+      // 節點 7：報到與檢查
+      html += `
+        <div class="endo-timeline-item">
+          <div class="endo-node-top">
+            <span class="endo-node-tag">當日檢查</span>
+            <span class="endo-node-time">${formatChineseDate(examDate)}</span>
+          </div>
+          <div class="endo-node-title">🏥 準時至豐田診所報到接受無痛腸胃鏡檢查</div>
+          <p class="endo-node-desc">請攜帶健保卡、身分證，著輕便寬鬆衣物，勿配戴隱形眼鏡與金屬飾品。舒眠麻醉後<strong>請勿自行騎車或開車</strong>，建議由親友陪同。</p>
+        </div>
+      `;
+
+      timelineWrap.innerHTML = html;
+    }
+
+    // 快速按鈕事件
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.getAttribute('data-preset');
+        const now = new Date();
+        let target = new Date();
+        if (type === 'tomorrow-morning') {
+          target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 8, 30);
+        } else if (type === 'tomorrow-afternoon') {
+          target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 13, 30);
+        } else if (type === 'dayafter-morning') {
+          target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2, 8, 30);
+        }
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        if (examInput) {
+          examInput.value = `${target.getFullYear()}-${pad(target.getMonth() + 1)}-${pad(target.getDate())}T${pad(target.getHours())}:${pad(target.getMinutes())}`;
+          calculateTimeline();
+        }
+      });
+    });
+
+    if (examInput) {
+      examInput.addEventListener('change', calculateTimeline);
+    }
+    drugRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        updateDrugStyle();
+        calculateTimeline();
+      });
+    });
+
+    // 列印按鈕
+    btnPrint?.addEventListener('click', () => {
+      window.print();
+    });
+
+    // 複製文字按鈕
+    btnCopy?.addEventListener('click', () => {
+      if (!examInput || !examInput.value) return;
+      const examDate = new Date(examInput.value);
+      const drug = (document.querySelector('input[name="endoDrugType"]:checked') as HTMLInputElement)?.value || 'bowklean';
+      const drugName = drug === 'bowklean' ? '保可淨 (Bowklean)' : '耐福利散 (Niflec)';
+
+      const text = `【豐田診所 大腸鏡清腸提醒】
+📅 預約檢查時間：${formatChineseDate(examDate)}
+💊 清腸藥物：${drugName}
+📌 重點時程：
+1. 檢查前 2~3 天開始採行低渣飲食（禁食蔬菜水果與奶製品）
+2. 檢查前一日 16:00 起禁食固體食物，僅飲用清流質
+3. 依時程服用第 1 劑與第 2 劑藥水並補足水分
+4. 檢查前 3 小時起全面「嚴格禁食禁水（滴水不沾）」
+⚠️ 檢查當日請攜帶健保卡，勿自行開車騎車。
+更多詳情：${window.location.href}`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已成功複製大腸鏡清腸提醒文字！可直接貼上至 LINE 傳給家人或受檢者。');
+      }).catch(() => {
+        prompt('請複製以下提醒文字：', text);
+      });
+    });
+
+    // 初始化
+    setDefaultDateTime();
+    updateDrugStyle();
+    calculateTimeline();
+
+    // ═══════════════════════════════════════════════════
+    // 3. 自動向父視窗回報高度 (Wix iFrame Auto-Resize 通訊)
+    // ═══════════════════════════════════════════════════
+    function notifyParentHeight() {
+      if (window.parent && window.parent !== window) {
+        const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+        window.parent.postMessage({ type: 'resize', height: height }, '*');
+      }
+    }
+    window.addEventListener('load', notifyParentHeight);
+    window.addEventListener('resize', notifyParentHeight);
+    setTimeout(notifyParentHeight, 500);
+    setTimeout(notifyParentHeight, 1500);
+  });
+</script>
