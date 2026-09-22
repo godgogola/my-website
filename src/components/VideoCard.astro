@@ -218,31 +218,31 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
   /* 時長標籤 (右下角) */
   .duration-badge {
     position: absolute;
-    bottom: 0.65rem;
-    right: 0.65rem;
+    bottom: 0.75rem;
+    right: 0.75rem;
     z-index: 2;
-    background: rgba(15, 30, 42, 0.85);
+    background: rgba(15, 30, 42, 0.88);
     backdrop-filter: blur(4px);
     color: #ffffff;
-    font-size: 0.75rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    padding: 0.22rem 0.55rem;
+    padding: 0.25rem 0.6rem;
     border-radius: var(--radius-sm, 6px);
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.35rem;
     letter-spacing: 0.05em;
   }
 
   /* 分類標籤 (浮動於左上角) */
   .category-tag {
     position: absolute;
-    top: 0.65rem;
-    left: 0.65rem;
+    top: 0.75rem;
+    left: 0.75rem;
     z-index: 2;
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 800;
-    padding: 0.22rem 0.65rem;
+    padding: 0.28rem 0.75rem;
     border-radius: var(--radius-full, 9999px);
     backdrop-filter: blur(8px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -311,7 +311,7 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
 
   /* 卡片內容 (簡潔、緊湊) */
   .card-content {
-    padding: 1.1rem 1.25rem 1.25rem 1.25rem;
+    padding: 1.25rem 1.4rem 1.4rem 1.4rem;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -322,15 +322,15 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
-    margin-bottom: 0.65rem;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
   }
 
   .doctor-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    font-size: 0.8rem;
+    gap: 0.4rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--color-primary-dark, #3b7688);
     white-space: nowrap;
@@ -338,25 +338,27 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
 
   .doctor-badge svg {
     color: var(--color-primary, #4a90a4);
+    width: 15px;
+    height: 15px;
   }
 
   /* 閱讀專文互動藥丸按鈕 (置於作者旁) */
   .header-article-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.32rem;
-    font-size: 0.74rem;
+    gap: 0.38rem;
+    font-size: 0.86rem;
     font-weight: 700;
     color: #1e6b5c;
     background: #eef8f5;
     border: 1px solid rgba(43, 122, 104, 0.28);
-    padding: 0.22rem 0.62rem;
+    padding: 0.28rem 0.75rem;
     border-radius: var(--radius-full, 9999px);
     text-decoration: none;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     white-space: nowrap;
     cursor: pointer;
-    line-height: 1.2;
+    line-height: 1.25;
   }
 
   .header-article-link:hover {
@@ -378,11 +380,11 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
   }
 
   .video-title {
-    font-size: 1.12rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--color-text-title, #1e3a4c);
-    line-height: 1.42;
-    margin: 0 0 0.45rem 0;
+    line-height: 1.45;
+    margin: 0 0 0.55rem 0;
     transition: color 0.2s ease;
   }
 
@@ -391,28 +393,47 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
   }
 
   .video-desc {
-    font-size: 0.86rem;
+    font-size: 0.98rem;
     color: var(--color-text-body, #2d4f63);
-    line-height: 1.58;
+    line-height: 1.62;
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    opacity: 0.88;
+    opacity: 0.9;
   }
 
   /* 緊湊模式 */
   .video-card-compact .card-content {
-    padding: 0.95rem 1rem 1.05rem 1rem;
+    padding: 1rem 1.1rem 1.15rem 1.1rem;
   }
 
   .video-card-compact .video-title {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
   }
 
   .video-card-compact .header-article-link {
-    padding: 0.18rem 0.5rem;
-    font-size: 0.72rem;
+    padding: 0.22rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    .card-content {
+      padding: 1rem 1.1rem 1.15rem 1.1rem;
+    }
+    .video-title {
+      font-size: 1.1rem;
+    }
+    .video-desc {
+      font-size: 0.88rem;
+    }
+    .doctor-badge {
+      font-size: 0.85rem;
+    }
+    .header-article-link {
+      font-size: 0.78rem;
+      padding: 0.2rem 0.6rem;
+    }
   }
 </style>

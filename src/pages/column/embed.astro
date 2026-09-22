@@ -1,10 +1,13 @@
-﻿---
+---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-// ── 取得所有已發布文章 ──
+// ── 取得所有已發布文章（排除草稿與個人網站建站手記，僅收錄診所衛教文章） ──
 const allPosts = await getCollection('posts');
-const unDraftPosts = allPosts.filter(post => !post.data.draft);
+const unDraftPosts = allPosts.filter(post => 
+  !post.data.draft && 
+  !post.data.title.includes('為什麼想建這個網站')
+);
 
 // ── 排序：優先依 order，再依發布日期排序 ──
 const posts = [...unDraftPosts].sort((a, b) => {
@@ -338,39 +341,39 @@ const getCoverImageUrl = (img?: string) => {
 
   /* ===== 頂部宣傳 Banner ===== */
   .promo-banner-wrapper {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
   .promo-banner {
     background: linear-gradient(135deg, #2F6656 0%, #3D8B75 100%);
     border-radius: 14px;
-    padding: 10px 18px;
+    padding: 12px 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
+    gap: 16px;
     box-shadow: 0 4px 14px rgba(47, 102, 86, 0.14);
     color: #FFFFFF;
   }
   .promo-text {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.92rem;
+    gap: 10px;
+    font-size: 1.02rem;
     font-weight: 600;
   }
   .promo-icon {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     flex-shrink: 0;
   }
   .promo-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 16px;
+    padding: 8px 18px;
     background-color: #FAF3E0;
     color: #2F6656;
     border-radius: 30px;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
@@ -386,18 +389,18 @@ const getCoverImageUrl = (img?: string) => {
 
   /* ===== 緊湊 Hero 標題區 ===== */
   .column-hero-section {
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     text-align: center;
   }
   .hero-title-row {
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 12px;
+    margin-bottom: 12px;
   }
   .hero-title {
-    font-size: 1.65rem;
+    font-size: 2.1rem;
     font-weight: 800;
     color: #1F362F;
     margin: 0;
@@ -406,7 +409,7 @@ const getCoverImageUrl = (img?: string) => {
     white-space: nowrap;
   }
   .hero-subtitle {
-    font-size: 0.85rem;
+    font-size: 1.05rem;
     color: #6C847C;
     font-weight: 600;
     white-space: nowrap;
@@ -419,7 +422,7 @@ const getCoverImageUrl = (img?: string) => {
 
   /* ===== 寬版即時搜尋列 ===== */
   .search-box-wrapper {
-    max-width: 640px;
+    max-width: 680px;
     margin: 0 auto;
   }
   .search-input-inner {
@@ -430,18 +433,20 @@ const getCoverImageUrl = (img?: string) => {
   }
   .search-icon {
     position: absolute;
-    left: 16px;
+    left: 18px;
     color: #7A968D;
     pointer-events: none;
+    width: 18px;
+    height: 18px;
   }
   .search-input {
     width: 100%;
-    height: 44px;
-    padding: 0 42px 0 44px;
+    height: 48px;
+    padding: 0 44px 0 48px;
     border: 1.5px solid var(--clinic-border);
-    border-radius: 26px;
+    border-radius: 28px;
     background: #FFFFFF;
-    font-size: 0.94rem;
+    font-size: 1.05rem;
     color: var(--text-primary);
     box-shadow: 0 2px 10px rgba(47, 102, 86, 0.05);
     outline: none;
@@ -455,19 +460,19 @@ const getCoverImageUrl = (img?: string) => {
   }
   .search-input::placeholder {
     color: #92A7A0;
-    font-size: 0.88rem;
+    font-size: 0.98rem;
   }
   .clear-btn {
     position: absolute;
-    right: 12px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     background: #E5EDE9;
     border: none;
     color: #5C736B;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -481,7 +486,7 @@ const getCoverImageUrl = (img?: string) => {
 
   /* ===== 分類篩選膠囊 (Capsules) 自然隨頁面捲動 ===== */
   .category-nav {
-    margin: 12px 0 18px;
+    margin: 14px 0 20px;
     position: relative;
     z-index: 10;
     padding: 4px 0;
@@ -493,7 +498,7 @@ const getCoverImageUrl = (img?: string) => {
   .capsules-track {
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: 8px;
     justify-content: center;
     width: 100%;
     max-width: 100%;
@@ -503,14 +508,14 @@ const getCoverImageUrl = (img?: string) => {
   .capsule-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 6px 14px;
-    border-radius: 20px;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 22px;
     background: #FFFFFF;
     color: #4A635B;
     border: 1.2px solid #D6E2DD;
-    font-size: 0.86rem;
-    font-weight: 600;
+    font-size: 0.98rem;
+    font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -534,11 +539,11 @@ const getCoverImageUrl = (img?: string) => {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 1px 6px;
-    border-radius: 10px;
+    padding: 2px 7px;
+    border-radius: 12px;
     background: #E8F0EC;
     color: #2F6656;
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     font-weight: 700;
     line-height: 1.1;
   }
@@ -551,7 +556,7 @@ const getCoverImageUrl = (img?: string) => {
   .posts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 18px;
   }
   .post-card-item {
     transition: opacity 0.3s ease;
@@ -611,35 +616,36 @@ const getCoverImageUrl = (img?: string) => {
     inset: 0;
     background: linear-gradient(
       to top,
-      rgba(15, 31, 26, 0.92) 0%,
-      rgba(15, 31, 26, 0.6) 28%,
-      rgba(15, 31, 26, 0.1) 48%,
-      transparent 70%
+      rgba(15, 31, 26, 0.94) 0%,
+      rgba(15, 31, 26, 0.65) 32%,
+      rgba(15, 31, 26, 0.15) 52%,
+      transparent 72%
     );
     pointer-events: none;
   }
 
-  /* 疊圖文字層：僅保留簡潔標題，完全不遮圖 */
+  /* 疊圖文字層：字體更大、更醒目 */
   .card-text-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 10px 12px 12px;
+    padding: 12px 16px 14px;
     z-index: 2;
     pointer-events: none;
   }
   .card-title {
     color: #FFFFFF;
-    font-size: 0.95rem;
-    font-weight: 700;
-    line-height: 1.35;
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.4;
     margin: 0;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    letter-spacing: 0.01em;
   }
 
   /* ===== 分頁導覽控制列 (每頁 6 篇) ===== */
@@ -733,13 +739,13 @@ const getCoverImageUrl = (img?: string) => {
   .btn-action-random {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 10px 22px;
+    gap: 8px;
+    padding: 12px 24px;
     border-radius: 9999px;
     background: #FFFFFF;
     color: #2F6656;
     border: 1.5px solid #2F6656;
-    font-size: 0.92rem;
+    font-size: 1.02rem;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(47, 102, 86, 0.08);
@@ -764,13 +770,13 @@ const getCoverImageUrl = (img?: string) => {
   .btn-action-viewall {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 11px 24px;
+    gap: 8px;
+    padding: 12px 26px;
     border-radius: 9999px;
     background: linear-gradient(135deg, #2F6656, #3D8B75);
     color: #FFFFFF;
     border: none;
-    font-size: 0.92rem;
+    font-size: 1.02rem;
     font-weight: 700;
     text-decoration: none;
     box-shadow: 0 4px 12px rgba(47, 102, 86, 0.22);
@@ -796,13 +802,13 @@ const getCoverImageUrl = (img?: string) => {
     margin-bottom: 8px;
   }
   .no-posts-box h3 {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 4px;
   }
   .no-posts-box p {
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
     margin: 0 0 14px;
   }
@@ -810,12 +816,12 @@ const getCoverImageUrl = (img?: string) => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 9px 20px;
+    padding: 10px 22px;
     border-radius: 26px;
     background: var(--clinic-green);
     color: #FFFFFF;
     border: none;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 3px 10px rgba(47, 102, 86, 0.18);
@@ -828,40 +834,40 @@ const getCoverImageUrl = (img?: string) => {
 
   /* ===== 底部導流卡片 (緊湊化以適配 Wix 嵌入高度) ===== */
   .bottom-callout-section {
-    margin-top: 20px;
+    margin-top: 24px;
   }
   .callout-box {
     background: linear-gradient(135deg, #FAFDFC 0%, #EDF5F2 100%);
     border: 1.5px solid var(--clinic-border);
     border-radius: 14px;
-    padding: 14px 18px;
+    padding: 16px 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
+    gap: 16px;
     box-shadow: 0 2px 8px rgba(47, 102, 86, 0.04);
   }
   .callout-info h3 {
-    font-size: 1.05rem;
+    font-size: 1.18rem;
     font-weight: 800;
     color: var(--clinic-green);
     margin: 0 0 4px;
   }
   .callout-info p {
-    font-size: 0.88rem;
+    font-size: 0.98rem;
     color: var(--text-muted);
     margin: 0;
-    line-height: 1.45;
+    line-height: 1.5;
   }
   .callout-primary-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 20px;
+    padding: 11px 22px;
     border-radius: 26px;
     background: var(--clinic-green);
     color: #FFFFFF;
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
