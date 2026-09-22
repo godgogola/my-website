@@ -353,6 +353,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     overflow-x: hidden;
   }
 
+  /* 嵌入模式 (Wix / iframe 容器自適應，消除雙滾輪與邊界外溢) */
+  html.is-embed,
+  body.is-embed {
+    background-color: transparent !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html.is-embed {
+    font-size: 16px; /* 嵌入手機版時稍微收斂基礎字級，避免元件過寬破版 */
+  }
+
   /* ── 氛圍柔光球 ── */
   .ambient-glow-layer {
     position: fixed;

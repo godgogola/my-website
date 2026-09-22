@@ -4,6 +4,7 @@ category: "肝病特區"
 publishDate: "2026-09-19"
 draft: false
 slug: "b型肝炎以前有b肝現在hbsag-"
+coverImage: "【B型肝炎】以前有B肝，現在HBsAg (-).webp"
 ---
 當病人目前的 **HBsAg（表面抗原）為陰性**，但病人表示「以前曾經有過 B 肝（陽性）」時，臨床上這是相當常見的情形。
 

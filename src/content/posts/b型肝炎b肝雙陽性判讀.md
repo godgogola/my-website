@@ -4,6 +4,7 @@ category: "肝病特區"
 publishDate: "2026-09-19"
 draft: false
 slug: "b型肝炎b肝雙陽性判讀"
+coverImage: "【B型肝炎】B肝雙陽性判讀.webp"
 ---
 為您將 B 型肝炎臨床上常見的**兩種「雙陽性」**狀況（**HBsAg + HBeAg** 以及 **HBsAg + Anti-HBs**）做完整的整理與對照：
 
