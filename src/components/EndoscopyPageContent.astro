@@ -105,16 +105,9 @@ const extraVideos = [
   ═══════════════════════════════════════════════════ -->
   <section class="endo-hero">
     <div class="endo-hero-inner">
-      <div class="endo-badge">
-        <span class="badge-dot"></span>
-        <span>豐田診所 · 專科醫療級無痛內視鏡</span>
-      </div>
       <h1 class="endo-hero-title">
         舒眠無痛腸胃鏡 <span class="highlight-text">守護全消化道健康</span>
       </h1>
-      <p class="endo-hero-sub">
-        給害怕照胃鏡與大腸鏡的您，最溫柔安心的醫療體驗。在舒適平穩的睡眠中完成檢查，採用醫療級 CO2 減脹技術與微創息肉即時處置，醒來即刻為您專業解析報告。
-      </p>
 
       <!-- 快速跳轉錨點 -->
       <div class="endo-quick-anchors">
@@ -151,9 +144,6 @@ const extraVideos = [
     <div class="features-grid">
       <!-- 特色 1 -->
       <div class="feature-card">
-        <div class="card-icon-wrap" style="background: rgba(74, 144, 164, 0.12); color: #4a90a4;">
-          💤
-        </div>
         <h3 class="card-title">安全靜脈舒眠麻醉</h3>
         <p class="card-desc">
           並非插管全身麻醉，而是使用安全短效的靜脈鎮靜藥物。檢查過程如同小睡片刻，全程由受過專業急救與鎮靜訓練的醫護團隊密集監測血壓、心跳與血氧，無痛、無嘔吐反射、無恐懼。
@@ -162,9 +152,6 @@ const extraVideos = [
 
       <!-- 特色 2 -->
       <div class="feature-card highlight">
-        <div class="card-icon-wrap" style="background: rgba(231, 111, 81, 0.15); color: #e76f51;">
-          💨
-        </div>
         <div class="popular-tag">大幅減脹</div>
         <h3 class="card-title">醫療級 CO2 充氣系統</h3>
         <p class="card-desc">
@@ -174,9 +161,6 @@ const extraVideos = [
 
       <!-- 特色 3 -->
       <div class="feature-card">
-        <div class="card-icon-wrap" style="background: rgba(107, 181, 162, 0.15); color: #429481;">
-          🔬
-        </div>
         <h3 class="card-title">高解析光學影像系統</h3>
         <p class="card-desc">
           引進先進數位高解析內視鏡，搭載窄頻光 (NBI) 與光學放大技術。可清晰顯現微細黏膜表層毛細血管與腺管微結構（Pit Pattern），及時揪出早期平坦型微小腺瘤，防患大腸癌於未然。
@@ -185,9 +169,6 @@ const extraVideos = [
 
       <!-- 特色 4 -->
       <div class="feature-card">
-        <div class="card-icon-wrap" style="background: rgba(244, 162, 97, 0.15); color: #d67a31;">
-          ✂️
-        </div>
         <h3 class="card-title">當日瘜肉評估與微創切除</h3>
         <p class="card-desc">
           檢查中若發現大腸瘜肉，經醫師專業評估符合適應症者，即可採<strong>微創冷切除／熱切除技術</strong>當場切除並送病理化驗。免除二次回診奔波與重新清腸服藥的痛苦。
@@ -447,39 +428,51 @@ const extraVideos = [
 
     <div class="steps-chain-grid">
       <div class="chain-step-card">
-        <div class="step-badge-num">01</div>
-        <h4>門診諮詢評估</h4>
-        <p>專業專科醫師評估病史、慢性病用藥與檢查適應症，開立最適清腸藥物。</p>
+        <div class="step-card-header">
+          <span class="step-badge-num">01</span>
+          <h4 class="chain-step-title">門診諮詢評估</h4>
+        </div>
+        <p class="chain-step-desc">專業專科醫師評估病史、慢性病用藥與檢查適應症，開立最適清腸藥物。</p>
       </div>
 
       <div class="chain-step-card">
-        <div class="step-badge-num">02</div>
-        <h4>居家低渣清腸</h4>
-        <p>遵循個人化試算表時程，實施 2~3 天低渣飲食，並依時喝下清腸劑與充足水分。</p>
+        <div class="step-card-header">
+          <span class="step-badge-num">02</span>
+          <h4 class="chain-step-title">居家低渣清腸</h4>
+        </div>
+        <p class="chain-step-desc">遵循個人化試算表時程，實施 2~3 天低渣飲食，並依時喝下清腸劑與充足水分。</p>
       </div>
 
       <div class="chain-step-card">
-        <div class="step-badge-num">03</div>
-        <h4>檢查當日報到</h4>
-        <p>核對身分與禁食禁水時間，建立靜脈留置針並由護理人員確認腸道排泄清澈度。</p>
+        <div class="step-card-header">
+          <span class="step-badge-num">03</span>
+          <h4 class="chain-step-title">檢查當日報到</h4>
+        </div>
+        <p class="chain-step-desc">核對身分與禁食禁水時間，建立靜脈留置針並由護理人員確認腸道排泄清澈度。</p>
       </div>
 
       <div class="chain-step-card">
-        <div class="step-badge-num">04</div>
-        <h4>舒眠鎮靜檢查</h4>
-        <p>由醫師與麻醉專業人員執行無痛靜脈給藥，在舒適熟睡中完成胃鏡與大腸鏡檢查。</p>
+        <div class="step-card-header">
+          <span class="step-badge-num">04</span>
+          <h4 class="chain-step-title">舒眠鎮靜檢查</h4>
+        </div>
+        <p class="chain-step-desc">由醫師與麻醉專業人員執行無痛靜脈給藥，在舒適熟睡中完成胃鏡與大腸鏡檢查。</p>
       </div>
 
       <div class="chain-step-card">
-        <div class="step-badge-num">05</div>
-        <h4>瘜肉微創處置</h4>
-        <p>若發現病灶即時評估，可採微創技術切除並送病理檢驗，使用單次無菌器械。</p>
+        <div class="step-card-header">
+          <span class="step-badge-num">05</span>
+          <h4 class="chain-step-title">瘜肉微創處置</h4>
+        </div>
+        <p class="chain-step-desc">若發現病灶即時評估，可採微創技術切除並送病理檢驗，使用單次無菌器械。</p>
       </div>
 
       <div class="chain-step-card">
-        <div class="step-badge-num">06</div>
-        <h4>甦醒與圖文解說</h4>
-        <p>於舒適恢復室甦醒休息約 30 分鐘，由主治醫師當場提供彩色圖文報告並詳細解說。</p>
+        <div class="step-card-header">
+          <span class="step-badge-num">06</span>
+          <h4 class="chain-step-title">甦醒與圖文解說</h4>
+        </div>
+        <p class="chain-step-desc">於舒適恢復室甦醒休息約 30 分鐘，由主治醫師當場提供彩色圖文報告並詳細解說。</p>
       </div>
     </div>
   </section>
@@ -549,29 +542,37 @@ const extraVideos = [
   /* 區塊標題公用樣式 */
   .section-heading {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
+    padding: 0 4px;
   }
   .sub-label {
     display: inline-block;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 2px;
     color: #4a90a4;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
   .main-heading {
-    font-size: 1.85rem;
+    font-size: 1.8rem;
     font-weight: 900;
     color: #1e3a47;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     line-height: 1.35;
+    text-wrap: balance;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
   .desc-heading {
-    font-size: 0.98rem;
+    font-size: 0.94rem;
     color: #627d88;
     max-width: 720px;
     margin: 0 auto;
+    text-wrap: balance;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: 1.6;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -580,9 +581,9 @@ const extraVideos = [
   .endo-hero {
     background: linear-gradient(135deg, #234b5b 0%, #3e7b8e 50%, #4a90a4 100%);
     border-radius: 20px;
-    padding: 44px 28px;
+    padding: 32px 24px 28px;
     color: #ffffff;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     box-shadow: 0 12px 32px rgba(35, 75, 91, 0.16);
     position: relative;
     overflow: hidden;
@@ -605,45 +606,21 @@ const extraVideos = [
     position: relative;
     z-index: 2;
   }
-  .endo-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 6px 16px;
-    border-radius: 9999px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    margin-bottom: 18px;
-  }
-  .badge-dot {
-    width: 8px;
-    height: 8px;
-    background: #6ee7b7;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #6ee7b7;
-  }
   .endo-hero-title {
-    font-size: 2.35rem;
+    font-size: 2.1rem;
     font-weight: 900;
     letter-spacing: -0.5px;
-    line-height: 1.25;
-    margin-bottom: 16px;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    text-wrap: balance;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
   .highlight-text {
     background: linear-gradient(120deg, #fcd34d 0%, #f59e0b 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline-block;
-  }
-  .endo-hero-sub {
-    font-size: 1.05rem;
-    color: #e2f1f5;
-    line-height: 1.7;
-    max-width: 780px;
-    margin: 0 auto 28px;
   }
   .endo-quick-anchors {
     display: flex;
@@ -657,9 +634,9 @@ const extraVideos = [
     gap: 7px;
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
-    padding: 9px 18px;
+    padding: 8px 16px;
     border-radius: 9999px;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 700;
     text-decoration: none;
     border: 1.5px solid rgba(255, 255, 255, 0.25);
@@ -686,18 +663,18 @@ const extraVideos = [
      2. 四大品質亮點卡片
   ═══════════════════════════════════════════════════ */
   .endo-features-section {
-    margin-bottom: 54px;
+    margin-bottom: 40px;
   }
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
   }
   .feature-card {
     background: #ffffff;
     border: 1.5px solid #e1edf0;
-    border-radius: 16px;
-    padding: 24px;
+    border-radius: 14px;
+    padding: 18px 18px;
     box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
     position: relative;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -721,25 +698,18 @@ const extraVideos = [
     padding: 2px 8px;
     border-radius: 9999px;
   }
-  .card-icon-wrap {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 14px;
-  }
   .card-title {
-    font-size: 1.18rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #1e3a47;
     margin-bottom: 8px;
+    line-height: 1.35;
+    text-wrap: balance;
   }
   .card-desc {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: #55707d;
+    line-height: 1.55;
     line-height: 1.6;
   }
 
@@ -1387,46 +1357,54 @@ const extraVideos = [
      6. 檢查六部曲流程
   ═══════════════════════════════════════════════════ */
   .endo-flow-section {
-    margin-bottom: 54px;
+    margin-bottom: 40px;
   }
   .steps-chain-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
   .chain-step-card {
     background: #ffffff;
     border: 1.5px solid #e1edf0;
-    border-radius: 14px;
-    padding: 18px 14px;
-    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.05);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.05);
     position: relative;
-    text-align: center;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .step-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .step-badge-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #4a90a4;
-    color: #ffffff;
-    font-size: 0.85rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: #eef7f9;
+    color: #2b7084;
+    font-size: 0.78rem;
     font-weight: 900;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 10px;
+    flex-shrink: 0;
   }
-  .chain-step-card h4 {
-    font-size: 0.98rem;
+  .chain-step-title {
+    font-size: 0.95rem;
     font-weight: 800;
     color: #1e3a47;
-    margin-bottom: 6px;
+    margin: 0;
   }
-  .chain-step-card p {
-    font-size: 0.82rem;
+  .chain-step-desc {
+    font-size: 0.8rem;
     color: #688594;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -1574,19 +1552,17 @@ const extraVideos = [
       overflow-x: hidden !important;
     }
     .endo-hero {
-      padding: 20px 10px !important;
+      padding: 16px 12px !important;
       border-radius: 12px !important;
-      margin-bottom: 20px !important;
+      margin-bottom: 16px !important;
     }
     .endo-hero-title {
-      font-size: 1.55rem !important;
-      line-height: 1.3 !important;
-      word-break: break-word !important;
-    }
-    .endo-hero-sub {
-      font-size: 0.85rem !important;
-      margin-bottom: 16px !important;
-      word-break: break-word !important;
+      font-size: 1.45rem !important;
+      line-height: 1.35 !important;
+      margin-bottom: 14px !important;
+      text-wrap: balance !important;
+      word-break: keep-all !important;
+      overflow-wrap: break-word !important;
     }
     .anchor-btn {
       padding: 6px 10px !important;
@@ -1597,7 +1573,15 @@ const extraVideos = [
       gap: 10px !important;
     }
     .feature-card {
-      padding: 14px 10px !important;
+      padding: 12px 12px !important;
+    }
+    .card-title {
+      font-size: 1.05rem !important;
+      margin-bottom: 4px !important;
+    }
+    .card-desc {
+      font-size: 0.82rem !important;
+      line-height: 1.5 !important;
     }
     .drug-tabs {
       grid-template-columns: minmax(0, 1fr) !important;
@@ -1612,12 +1596,18 @@ const extraVideos = [
       overflow: hidden !important;
     }
     .main-heading {
-      font-size: 1.35rem !important;
-      word-break: break-word !important;
+      font-size: 1.22rem !important;
+      line-height: 1.35 !important;
+      text-wrap: balance !important;
+      word-break: keep-all !important;
+      overflow-wrap: break-word !important;
     }
     .desc-heading {
-      font-size: 0.85rem !important;
-      word-break: break-word !important;
+      font-size: 0.82rem !important;
+      line-height: 1.45 !important;
+      text-wrap: balance !important;
+      word-break: keep-all !important;
+      overflow-wrap: break-word !important;
     }
     .showcase-container {
       padding: 8px 6px !important;
@@ -1686,7 +1676,25 @@ const extraVideos = [
       gap: 6px !important;
     }
     .chain-step-card {
-      padding: 10px 6px !important;
+      padding: 8px 8px !important;
+      gap: 4px !important;
+    }
+    .step-card-header {
+      gap: 5px !important;
+    }
+    .step-badge-num {
+      width: 20px !important;
+      height: 20px !important;
+      font-size: 0.68rem !important;
+      border-radius: 4px !important;
+    }
+    .chain-step-title {
+      font-size: 0.82rem !important;
+      line-height: 1.25 !important;
+    }
+    .chain-step-desc {
+      font-size: 0.72rem !important;
+      line-height: 1.35 !important;
     }
     .extra-videos-grid {
       grid-template-columns: minmax(0, 1fr) !important;
