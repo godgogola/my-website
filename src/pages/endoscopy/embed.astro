@@ -14,3 +14,25 @@ import EndoscopyPageContent from '../../components/EndoscopyPageContent.astro';
 >
   <EndoscopyPageContent isEmbed={true} />
 </Layout>
+
+<style is:global>
+  /* 專門為 Wix 嵌入環境設計的極限防切邊與 100% 自適應重設 */
+  html, body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    background: transparent !important;
+  }
+  @media (max-width: 640px) {
+    html {
+      font-size: 15px !important; /* 手機嵌入模式使用 15px 基礎字級，釋放約 20% 橫向空間 */
+    }
+  }
+  @media (max-width: 360px) {
+    html {
+      font-size: 14px !important; /* 極窄螢幕（如 320px Wix 編輯器邊界）微調為 14px，保證完全不貼邊 */
+    }
+  }
+</style>

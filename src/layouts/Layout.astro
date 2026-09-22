@@ -366,6 +366,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
   html.is-embed {
     font-size: 16px; /* 嵌入手機版時稍微收斂基礎字級，避免元件過寬破版 */
   }
+  @media (max-width: 640px) {
+    html.is-embed {
+      font-size: 15px !important;
+    }
+  }
+  @media (max-width: 360px) {
+    html.is-embed {
+      font-size: 14px !important;
+    }
+  }
 
   /* ── 氛圍柔光球 ── */
   .ambient-glow-layer {
