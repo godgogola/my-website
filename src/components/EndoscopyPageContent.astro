@@ -542,37 +542,38 @@ const extraVideos = [
   /* 區塊標題公用樣式 */
   .section-heading {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     padding: 0 4px;
   }
   .sub-label {
     display: inline-block;
-    font-size: 0.78rem;
+    font-size: 0.84rem;
     font-weight: 800;
     letter-spacing: 2px;
     color: #4a90a4;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .main-heading {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 900;
     color: #1e3a47;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     line-height: 1.35;
     text-wrap: balance;
     word-break: keep-all;
     overflow-wrap: break-word;
   }
   .desc-heading {
-    font-size: 0.94rem;
-    color: #627d88;
-    max-width: 720px;
+    font-size: 1.08rem;
+    color: #475569;
+    max-width: 760px;
     margin: 0 auto;
     text-wrap: balance;
     word-break: keep-all;
     overflow-wrap: break-word;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-weight: 500;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -607,7 +608,7 @@ const extraVideos = [
     z-index: 2;
   }
   .endo-hero-title {
-    font-size: 2.1rem;
+    font-size: 2.15rem;
     font-weight: 900;
     letter-spacing: -0.5px;
     line-height: 1.3;
@@ -634,9 +635,9 @@ const extraVideos = [
     gap: 7px;
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
-    padding: 8px 16px;
+    padding: 9px 18px;
     border-radius: 9999px;
-    font-size: 0.9rem;
+    font-size: 0.94rem;
     font-weight: 700;
     text-decoration: none;
     border: 1.5px solid rgba(255, 255, 255, 0.25);
@@ -660,22 +661,28 @@ const extraVideos = [
   }
 
   /* ═══════════════════════════════════════════════════
-     2. 四大品質亮點卡片
+     2. 四大品質亮點卡片 (大氣雙欄 2x2 排版，對齊診所圖二風格)
   ═══════════════════════════════════════════════════ */
   .endo-features-section {
-    margin-bottom: 40px;
+    margin-bottom: 48px;
   }
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+  @media (max-width: 768px) {
+    .features-grid {
+      grid-template-columns: minmax(0, 1fr) !important;
+      gap: 14px !important;
+    }
   }
   .feature-card {
     background: #ffffff;
     border: 1.5px solid #e1edf0;
-    border-radius: 14px;
-    padding: 18px 18px;
-    box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
+    border-radius: 16px;
+    padding: 24px 26px;
+    box-shadow: 0 4px 18px rgba(74, 144, 164, 0.07);
     position: relative;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -689,28 +696,31 @@ const extraVideos = [
   }
   .popular-tag {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: 18px;
+    right: 18px;
     background: #e76f51;
     color: #ffffff;
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 800;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 9999px;
   }
   .card-title {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #1e3a47;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     line-height: 1.35;
     text-wrap: balance;
   }
   .card-desc {
-    font-size: 0.88rem;
-    color: #55707d;
-    line-height: 1.55;
-    line-height: 1.6;
+    font-size: 1.06rem;
+    color: #334155;
+    line-height: 1.75;
+  }
+  .card-desc strong {
+    color: #0f172a;
+    font-weight: 800;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -777,46 +787,46 @@ const extraVideos = [
     display: inline-block;
     background: #eef7f9;
     color: #3b7688;
-    font-size: 0.74rem;
+    font-size: 0.8rem;
     font-weight: 800;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 6px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
   .player-active-title {
-    font-size: 1.25rem;
+    font-size: 1.45rem;
     font-weight: 800;
     color: #1e3a47;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     line-height: 1.35;
   }
   .player-active-desc {
-    font-size: 0.9rem;
-    color: #55707d;
-    line-height: 1.55;
+    font-size: 1.06rem;
+    color: #334155;
+    line-height: 1.75;
   }
 
   .showcase-playlist {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
   }
   .playlist-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
     border-bottom: 1.5px solid #eef3f5;
   }
   .playlist-header h4 {
-    font-size: 0.98rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: #1e3a47;
   }
   .playlist-item {
     display: flex;
     gap: 12px;
-    padding: 10px;
+    padding: 12px;
     border-radius: 12px;
     background: #f8fbfc;
     border: 1.5px solid #e8f0f3;
@@ -838,8 +848,8 @@ const extraVideos = [
   }
   .item-thumb-wrap {
     position: relative;
-    width: 100px;
-    height: 56px;
+    width: 106px;
+    height: 60px;
     border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
@@ -870,20 +880,20 @@ const extraVideos = [
   }
   .item-tag {
     display: inline-block;
-    font-size: 0.7rem;
+    font-size: 0.76rem;
     font-weight: 800;
     color: #3b7688;
     background: #e2f0f4;
-    padding: 1px 6px;
+    padding: 2px 8px;
     border-radius: 4px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
   .item-tag.tag-primary {
     background: #e76f51;
     color: #ffffff;
   }
   .item-title {
-    font-size: 0.92rem;
+    font-size: 1.02rem;
     font-weight: 800;
     color: #1e3a47;
     white-space: nowrap;
@@ -892,8 +902,8 @@ const extraVideos = [
     line-height: 1.35;
   }
   .item-desc {
-    font-size: 0.78rem;
-    color: #688594;
+    font-size: 0.86rem;
+    color: #55707d;
     margin: 2px 0 0;
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -932,7 +942,7 @@ const extraVideos = [
     gap: 12px;
   }
   .control-label {
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #1e3a47;
     display: flex;
@@ -940,12 +950,12 @@ const extraVideos = [
     gap: 8px;
   }
   .step-num {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     background: #4a90a4;
     color: #ffffff;
     border-radius: 50%;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 900;
     display: flex;
     align-items: center;
@@ -954,7 +964,7 @@ const extraVideos = [
   .datetime-input {
     width: 100%;
     padding: 12px 16px;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-family: inherit;
     font-weight: 700;
     color: #1e3a47;
@@ -976,7 +986,7 @@ const extraVideos = [
     gap: 6px;
   }
   .chip-label {
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     color: #74909e;
     font-weight: 700;
   }
@@ -984,9 +994,9 @@ const extraVideos = [
     background: #f0f7f9;
     border: 1px solid #d2e4ea;
     color: #3b7688;
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 5px 12px;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -1015,7 +1025,7 @@ const extraVideos = [
     background: #f8fbfc;
     border: 2px solid #dce8ec;
     border-radius: 12px;
-    padding: 12px 14px;
+    padding: 14px 16px;
     transition: all 0.2s ease;
     height: 100%;
   }
@@ -1026,9 +1036,9 @@ const extraVideos = [
   }
   .drug-pill-badge {
     display: inline-block;
-    font-size: 0.7rem;
+    font-size: 0.76rem;
     font-weight: 800;
-    padding: 2px 7px;
+    padding: 3px 8px;
     border-radius: 4px;
     margin-bottom: 4px;
   }
@@ -1036,16 +1046,16 @@ const extraVideos = [
   .badge-amber { background: #fef3c7; color: #b45309; }
   .drug-name-text {
     display: block;
-    font-size: 1.02rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #1e3a47;
     margin-bottom: 4px;
   }
   .drug-hint-text {
-    font-size: 0.78rem;
-    color: #688594;
+    font-size: 0.88rem;
+    color: #55707d;
     margin: 0;
-    line-height: 1.45;
+    line-height: 1.5;
   }
 
   /* 試算結果時間表卡片 */
@@ -1074,20 +1084,20 @@ const extraVideos = [
     display: inline-block;
     background: #4a90a4;
     color: #ffffff;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 800;
     padding: 3px 12px;
     border-radius: 9999px;
     margin-bottom: 6px;
   }
   .result-title {
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     font-weight: 900;
     color: #1e3a47;
     margin-bottom: 4px;
   }
   .result-exam-time {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #e76f51;
   }
@@ -1099,8 +1109,8 @@ const extraVideos = [
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
-    font-size: 0.85rem;
+    padding: 8px 16px;
+    font-size: 0.9rem;
     font-weight: 700;
     border-radius: 8px;
     border: 1.5px solid #d4e3e8;
@@ -1147,7 +1157,7 @@ const extraVideos = [
     background: #f8fbfc;
     border: 1.5px solid #e1edf0;
     border-radius: 14px;
-    padding: 16px 20px;
+    padding: 18px 22px;
     transition: all 0.2s ease;
   }
   :global(.endo-timeline-item::before) {
@@ -1178,7 +1188,7 @@ const extraVideos = [
     margin-bottom: 6px;
   }
   :global(.endo-node-tag) {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     font-weight: 800;
     padding: 2px 8px;
     border-radius: 4px;
@@ -1190,28 +1200,28 @@ const extraVideos = [
     color: #b91c1c;
   }
   :global(.endo-node-time) {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #1e3a47;
   }
   :global(.endo-node-title) {
-    font-size: 1.02rem;
+    font-size: 1.12rem;
     font-weight: 800;
     color: #2c5364;
     margin-bottom: 4px;
   }
   :global(.endo-node-desc) {
-    font-size: 0.88rem;
-    color: #55707d;
+    font-size: 1.02rem;
+    color: #334155;
     margin: 0;
-    line-height: 1.55;
+    line-height: 1.7;
   }
   :global(.endo-node-tip) {
     margin-top: 8px;
-    padding: 6px 12px;
+    padding: 8px 14px;
     border-radius: 6px;
     background: #f0f7f9;
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #3b7688;
   }
@@ -1221,13 +1231,13 @@ const extraVideos = [
   }
 
   .timeline-footer-notice {
-    padding: 14px 18px;
+    padding: 16px 20px;
     background: #fffbeb;
     border-left: 4px solid #f59e0b;
     border-radius: 8px;
-    font-size: 0.88rem;
+    font-size: 0.96rem;
     color: #92400e;
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -1251,7 +1261,7 @@ const extraVideos = [
   .diet-box {
     background: #ffffff;
     border-radius: 16px;
-    padding: 22px;
+    padding: 24px 26px;
     border: 1.5px solid #e1edf0;
     box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
   }
@@ -1272,16 +1282,16 @@ const extraVideos = [
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
   .status-icon {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
   .diet-box-head h3 {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #1e3a47;
     margin: 0;
   }
   .diet-box-head p {
-    font-size: 0.82rem;
+    font-size: 0.95rem;
     color: #688594;
     margin: 2px 0 0;
   }
@@ -1291,12 +1301,14 @@ const extraVideos = [
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    font-size: 0.88rem;
-    color: #374151;
+    gap: 12px;
+    font-size: 1.05rem;
+    color: #334155;
+    line-height: 1.75;
   }
   .diet-check-list strong {
-    color: #111827;
+    color: #0f172a;
+    font-weight: 800;
   }
   .diet-check-list.danger strong {
     color: #991b1b;
@@ -1306,20 +1318,20 @@ const extraVideos = [
     background: #ffffff;
     border: 1.5px solid #d4e5ea;
     border-radius: 16px;
-    padding: 22px;
+    padding: 24px 26px;
     display: flex;
     gap: 16px;
     box-shadow: 0 4px 16px rgba(74, 144, 164, 0.06);
   }
   .alert-icon-sign {
-    font-size: 1.8rem;
+    font-size: 2rem;
     flex-shrink: 0;
   }
   .alert-text-body h4 {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #1e3a47;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
   .med-reminder-grid {
     display: grid;
@@ -1333,17 +1345,19 @@ const extraVideos = [
   }
   .reminder-item {
     background: #f8fbfc;
-    padding: 12px 14px;
+    padding: 14px 16px;
     border-radius: 10px;
-    border-left: 3px solid #4a90a4;
-    font-size: 0.85rem;
-    color: #4b6370;
+    border-left: 3.5px solid #4a90a4;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    color: #334155;
   }
   .reminder-item strong {
     display: block;
-    font-size: 0.92rem;
+    font-size: 1.1rem;
+    font-weight: 800;
     color: #1e3a47;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
   .reminder-item.highlight-glp1 {
     background: #fff7ed;
@@ -1357,24 +1371,24 @@ const extraVideos = [
      6. 檢查六部曲流程
   ═══════════════════════════════════════════════════ */
   .endo-flow-section {
-    margin-bottom: 40px;
+    margin-bottom: 44px;
   }
   .steps-chain-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 14px;
   }
   .chain-step-card {
     background: #ffffff;
     border: 1.5px solid #e1edf0;
     border-radius: 12px;
-    padding: 12px 14px;
+    padding: 16px 18px;
     box-shadow: 0 2px 8px rgba(74, 144, 164, 0.05);
     position: relative;
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
   .step-card-header {
     display: flex;
@@ -1382,12 +1396,12 @@ const extraVideos = [
     gap: 8px;
   }
   .step-badge-num {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 6px;
     background: #eef7f9;
     color: #2b7084;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 900;
     display: flex;
     align-items: center;
@@ -1395,16 +1409,16 @@ const extraVideos = [
     flex-shrink: 0;
   }
   .chain-step-title {
-    font-size: 0.95rem;
+    font-size: 1.12rem;
     font-weight: 800;
     color: #1e3a47;
     margin: 0;
   }
   .chain-step-desc {
-    font-size: 0.8rem;
-    color: #688594;
+    font-size: 0.95rem;
+    color: #475569;
     margin: 0;
-    line-height: 1.45;
+    line-height: 1.6;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -1466,20 +1480,20 @@ const extraVideos = [
     border-radius: 6px;
   }
   .extra-info {
-    padding: 12px 14px;
+    padding: 14px 16px;
   }
   .extra-cat {
     display: inline-block;
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     font-weight: 800;
     color: #4a90a4;
     background: #eef7f9;
-    padding: 1px 6px;
+    padding: 2px 8px;
     border-radius: 4px;
     margin-bottom: 4px;
   }
   .extra-title {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: #1e3a47;
     margin-bottom: 4px;
@@ -1489,14 +1503,14 @@ const extraVideos = [
     text-overflow: ellipsis;
   }
   .extra-desc {
-    font-size: 0.8rem;
-    color: #688594;
+    font-size: 0.92rem;
+    color: #475569;
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.45;
+    line-height: 1.6;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -1506,11 +1520,11 @@ const extraVideos = [
     background: #f0f7f9;
     border: 1px solid #d8e8ed;
     border-radius: 14px;
-    padding: 18px 22px;
+    padding: 20px 24px;
     text-align: center;
-    font-size: 0.85rem;
-    color: #627d88;
-    line-height: 1.6;
+    font-size: 0.96rem;
+    color: #475569;
+    line-height: 1.7;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -1570,18 +1584,18 @@ const extraVideos = [
     }
     .features-grid {
       grid-template-columns: minmax(0, 1fr) !important;
-      gap: 10px !important;
+      gap: 12px !important;
     }
     .feature-card {
-      padding: 12px 12px !important;
+      padding: 16px 14px !important;
     }
     .card-title {
-      font-size: 1.05rem !important;
-      margin-bottom: 4px !important;
+      font-size: 1.15rem !important;
+      margin-bottom: 6px !important;
     }
     .card-desc {
-      font-size: 0.82rem !important;
-      line-height: 1.5 !important;
+      font-size: 0.9rem !important;
+      line-height: 1.55 !important;
     }
     .drug-tabs {
       grid-template-columns: minmax(0, 1fr) !important;
@@ -1596,15 +1610,15 @@ const extraVideos = [
       overflow: hidden !important;
     }
     .main-heading {
-      font-size: 1.22rem !important;
+      font-size: 1.28rem !important;
       line-height: 1.35 !important;
       text-wrap: balance !important;
       word-break: keep-all !important;
       overflow-wrap: break-word !important;
     }
     .desc-heading {
-      font-size: 0.82rem !important;
-      line-height: 1.45 !important;
+      font-size: 0.88rem !important;
+      line-height: 1.5 !important;
       text-wrap: balance !important;
       word-break: keep-all !important;
       overflow-wrap: break-word !important;
