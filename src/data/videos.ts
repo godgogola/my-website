@@ -32,6 +32,19 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/09/30) ---
+  {
+    id: 'VHAj3C0k-9U',
+    title: '打瘦瘦針前要先測身體組成',
+    description: '減重不只是看體重！為什麼打瘦瘦針（腸泌素）前一定要測身體組成？解析避免20%~40%骨骼肌流失的關鍵價值，確保減掉內臟脂肪、守護基礎代謝不復胖。',
+    category: '減重',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=VHAj3C0k-9U',
+    featured: true,
+    order: 1,
+    articleSlug: '瘦瘦針打瘦瘦針前要先測身體組成',
+    articleTitle: '【瘦瘦針】打瘦瘦針前要先測身體組成',
+  },
   // --- 2026 最新發布影音 (2026/09/21) ---
   {
     id: '0Ix8__RylaU',
@@ -41,7 +54,7 @@ export const videos: VideoItem[] = [
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=0Ix8__RylaU',
     featured: true,
-    order: 1,
+    order: 2,
     articleSlug: '糞便潛血陽性就一定是大腸癌嗎',
     articleTitle: '【糞便潛血】陽性就一定是大腸癌嗎',
   },

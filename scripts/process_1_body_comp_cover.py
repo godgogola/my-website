@@ -6,24 +6,19 @@ from PIL import Image
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-title = "打瘦瘦針前要先測身體組成"
-file_name = "打瘦瘦針前要先測身體組成.md"
-webp_name = f"{title}.webp"
-
 brain_img_path = r"C:\Users\X1 Yoga Gen7\.gemini\antigravity-ide\brain\0afe64a2-54c6-470d-ba27-fd45f6391450\cover_body_composition_glp1_1790775039509.jpg"
 drive_dir = r"G:\我的雲端硬碟\衛教文章圖片"
 public_images_dir = os.path.join(os.getcwd(), "public", "images")
 public_og_images_dir = os.path.join(os.getcwd(), "public", "og-images")
+assets_images_dir = os.path.join(os.getcwd(), "src", "assets", "images")
 posts_dir = os.path.join(os.getcwd(), "src", "content", "posts")
 mapping_file = os.path.join(os.getcwd(), "scripts", "cover-mapping.json")
 
-os.makedirs(public_images_dir, exist_ok=True)
-os.makedirs(public_og_images_dir, exist_ok=True)
+for d in [public_images_dir, public_og_images_dir, assets_images_dir]:
+    os.makedirs(d, exist_ok=True)
 
 img = Image.open(brain_img_path)
 w, h = img.size
-print(f"原始尺寸: {w}x{h}")
-
 target_ratio = 16.0 / 9.0
 current_ratio = w / h
 
@@ -40,60 +35,60 @@ else:
     cropped = img
 
 final_img = cropped.resize((1400, 781), Image.Resampling.LANCZOS)
-print(f"調整後尺寸: {final_img.size}")
+print("Prepared final_img 1400x781")
 
-# 1. 備份 16:9 PNG 至 Google Drive
-if os.path.exists(drive_dir):
-    drive_png_path = os.path.join(drive_dir, f"{title}.png")
-    final_img.save(drive_png_path, format="PNG")
-    print(f"💾 1. Drive PNG 備份成功: {drive_png_path}")
-else:
-    print(f"⚠️ Drive 目錄未找到: {drive_dir}")
+variants = ["打瘦瘦針前要先測身體組成", "【瘦瘦針】打瘦瘦針前要先測身體組成"]
 
-# 2. 轉檔為 WebP 發布至 public/images 與 public/og-images
-pub_img_path = os.path.join(public_images_dir, webp_name)
-pub_og_path = os.path.join(public_og_images_dir, webp_name)
+for name in variants:
+    # 1. Drive PNG
+    if os.path.exists(drive_dir):
+        png_path = os.path.join(drive_dir, f"{name}.png")
+        final_img.save(png_path, format="PNG")
+        print(f"Saved Drive PNG: {png_path}")
+    # 2. Public WebP
+    w1 = os.path.join(public_images_dir, f"{name}.webp")
+    final_img.save(w1, format="WEBP", quality=92)
+    # 3. OG WebP
+    w2 = os.path.join(public_og_images_dir, f"{name}.webp")
+    final_img.save(w2, format="WEBP", quality=92)
+    # 4. Assets WebP
+    w3 = os.path.join(assets_images_dir, f"{name}.webp")
+    final_img.save(w3, format="WEBP", quality=92)
+    print(f"Saved WebP versions for: {name}")
 
-final_img.save(pub_img_path, format="WEBP", quality=92)
-print(f"🌐 2. WebP 發布成功: {pub_img_path}")
-final_img.save(pub_og_path, format="WEBP", quality=92)
-print(f"🌐 2. OG-WebP 發布成功: {pub_og_path}")
-
-# 3. 更新 Markdown coverImage
-md_path = os.path.join(posts_dir, file_name)
-if os.path.exists(md_path):
-    with open(md_path, 'r', encoding='utf-8') as f:
+# Update post frontmatter
+post_file = "瘦瘦針打瘦瘦針前要先測身體組成.md"
+post_path = os.path.join(posts_dir, post_file)
+if os.path.exists(post_path):
+    with open(post_path, 'r', encoding='utf-8') as f:
         content = f.read()
     if 'coverImage:' in content:
-        content = re.sub(r'^coverImage:\s*["\']?.+?["\']?\s*$', f'coverImage: "{webp_name}"', content, flags=re.MULTILINE)
+        content = re.sub(r'^coverImage:\s*["\']?.+?["\']?\s*$', 'coverImage: "【瘦瘦針】打瘦瘦針前要先測身體組成.webp"', content, flags=re.MULTILINE)
     else:
-        content = re.sub(r'(^title:.*$)', f'\\1\ncoverImage: "{webp_name}"', content, flags=re.MULTILINE)
-    with open(md_path, 'w', encoding='utf-8') as f:
+        content = re.sub(r'(^title:.*$)', '\\1\ncoverImage: "【瘦瘦針】打瘦瘦針前要先測身體組成.webp"', content, flags=re.MULTILINE)
+    with open(post_path, 'w', encoding='utf-8') as f:
         f.write(content)
-    print(f"📝 3. Markdown coverImage 綁定完成: {file_name}")
-else:
-    print(f"⚠️ Markdown 檔案不存在: {md_path}")
+    print("Updated Markdown frontmatter!")
 
-# 4. 更新 cover-mapping.json
+# Update cover-mapping.json
 if os.path.exists(mapping_file):
     with open(mapping_file, 'r', encoding='utf-8') as f:
         mapping_data = json.load(f)
-    found = False
-    for entry in mapping_data:
-        if entry.get("title") == title or entry.get("file") == file_name:
-            entry["coverImage"] = webp_name
-            entry["file"] = file_name
-            entry["title"] = title
-            found = True
-            break
-    if not found:
-        mapping_data.append({
-            "file": file_name,
-            "title": title,
-            "coverImage": webp_name
-        })
+    mapping_titles = {entry.get("title"): entry for entry in mapping_data}
+    
+    for name in variants:
+        webp_file = f"{name}.webp"
+        if name in mapping_titles:
+            mapping_titles[name]["coverImage"] = webp_file
+            mapping_titles[name]["file"] = post_file
+        else:
+            mapping_data.append({
+                "file": post_file,
+                "title": name,
+                "coverImage": webp_file
+            })
     with open(mapping_file, 'w', encoding='utf-8') as f:
         json.dump(mapping_data, f, ensure_ascii=False, indent=2)
-    print("📑 4. cover-mapping.json 更新成功！")
+    print("Updated cover-mapping.json successfully!")
 
-print("✨ 全部 SOP 步驟執行完畢！")
+print("🎉 Complete execution finished!")

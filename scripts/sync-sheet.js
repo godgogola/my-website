@@ -76,9 +76,15 @@ for (const mdFile of mdFiles) {
   }
 
   articlesToSync.push({ title, category, articleUrl, imgUrl });
+
+  // 若標題含有 【...】 前綴，亦加入無前綴之純標題備援，確保相容 Google Sheet 之舊標題格式
+  const cleanTitle = title.replace(/^【.*?】\s*/, '').trim();
+  if (cleanTitle && cleanTitle !== title) {
+    articlesToSync.push({ title: cleanTitle, category, articleUrl, imgUrl });
+  }
 }
 
-console.log(`\n📋 共找到 ${articlesToSync.length} 篇文章，準備同步至 Google Sheet...\n`);
+console.log(`\n📋 共找到 ${articlesToSync.length} 筆文章同步項目（含別名備援），準備同步至 Google Sheet...\n`);
 
 // 批次 POST 到 GAS（使用 fetch 自動處理 302 重定向）
 async function postToGAS(payload) {
