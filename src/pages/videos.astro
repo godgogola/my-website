@@ -36,6 +36,20 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
         我們特別邀請動物界的各科專科醫師出診！用精簡生動的實證短片，為您深入講解常見腸胃疾病、內視鏡檢查與代謝保健，輕鬆簡單就能守護健康。
       </p>
 
+      <!-- 旗艦專題特輯入口卡片 -->
+      <a href="/weight-loss" class="special-topic-hero-card" aria-label="前往健康享瘦攻略專頁">
+        <div class="special-card-left">
+          <div class="special-badge">
+            <span class="sparkle">✦</span>
+            <span>旗艦專題特輯</span>
+          </div>
+          <h2 class="special-title">健康享瘦攻略：瘦瘦針與飲食運動全解析</h2>
+          <p class="special-desc">以 2026 ADA 指南、GLP-1 腸泌素科學用藥、真食物原則與 ACSM 運動處方，完整 15 部實證影音闖關地圖</p>
+        </div>
+        <div class="special-card-right">
+          <span class="btn-enter-special">進入通關地圖 →</span>
+        </div>
+      </a>
     </header>
 
     <!-- 分類過濾篩選器 (Tabs) -->
@@ -211,8 +225,96 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     color: var(--color-text-body, #2d4f63);
     line-height: 1.8;
     max-width: 760px;
-    margin: 0 auto 2rem auto;
+    margin: 0 auto 1.5rem auto;
     opacity: 0.9;
+  }
+
+  /* 旗艦專題特輯入口卡片 */
+  .special-topic-hero-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    max-width: 820px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #e6f8f3 50%, #e0f2fe 100%);
+    border: 1.5px solid rgba(16, 185, 129, 0.35);
+    border-radius: 20px;
+    padding: 20px 28px;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-align: left;
+    margin-top: 0.5rem;
+  }
+  .special-topic-hero-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+  }
+  .special-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #10b981;
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+  .special-title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #065f46;
+    margin: 0 0 4px 0;
+    line-height: 1.35;
+  }
+  .special-desc {
+    font-size: 0.9rem;
+    color: #334155;
+    margin: 0;
+    line-height: 1.55;
+  }
+  .special-card-right {
+    flex-shrink: 0;
+  }
+  .btn-enter-special {
+    display: inline-flex;
+    align-items: center;
+    background: #059669;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .special-topic-hero-card:hover .btn-enter-special {
+    background: #047857;
+    transform: scale(1.05);
+  }
+  @media (max-width: 768px) {
+    .special-topic-hero-card {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 16px;
+      gap: 12px;
+    }
+    .special-title {
+      font-size: 1.1rem;
+    }
+    .special-card-right {
+      width: 100%;
+    }
+    .btn-enter-special {
+      width: 100%;
+      justify-content: center;
+    }
   }
 
   .videos-hero-actions {
