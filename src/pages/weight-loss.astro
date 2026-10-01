@@ -252,6 +252,68 @@ const videoMap = new Map(videos.map((v) => [v.id, v]));
 
 // 統計資訊
 const totalVideos = 15;
+
+const isEmbed = false;
+
+interface WeightLossSolution {
+  title: string;
+  tag: string;
+  category: 'oral' | 'injection' | 'procedure';
+  description: string;
+  articleSlug: string;
+}
+
+const solutions: WeightLossSolution[] = [
+  {
+    title: '康纖芙 (Contrave)',
+    tag: '口服藥物',
+    category: 'oral',
+    description: '每日服用，有助延緩胃排空，增加飽足感。適合不喜打針，希望能透過口服控制食慾的族群。',
+    articleSlug: '康纖芙-contrave',
+  },
+  {
+    title: '善纖達 (Saxenda)',
+    tag: '每日注射',
+    category: 'injection',
+    description: '每天注射一次，透過調節腦部中樞抑制食慾。上市已久，安全性高，適合建立規律減重習慣。',
+    articleSlug: '善纖達-saxenda',
+  },
+  {
+    title: '瑞倍適 (Rybelsus)',
+    tag: '口服 GLP-1',
+    category: 'oral',
+    description: '第一款口服 GLP-1 類藥物，突破性技術。免去針劑恐懼，同時享有腸泌素帶來的代謝優勢。',
+    articleSlug: '瑞倍適-rybelsus',
+  },
+  {
+    title: '週纖達 (Wegovy)',
+    tag: '每週注射',
+    category: 'injection',
+    description: '新一代 GLP-1 藥物，只需每週注射一次。大幅提升便利性，且在臨床數據上展現優異的體重控制效果。',
+    articleSlug: '週纖達-wegovy',
+  },
+  {
+    title: '猛健樂 (Mounjaro)',
+    tag: '雙重機轉',
+    category: 'injection',
+    description: '結合雙重腸泌素機轉，是目前強效的減重針劑之一。針對頑固型肥胖或代謝症候群效果顯著。',
+    articleSlug: '猛健樂-mounjaro',
+  },
+  {
+    title: '胃內肉毒注射',
+    tag: '微創療程',
+    category: 'procedure',
+    description: '將肉毒桿菌素注射於胃壁，降低胃蠕動速度，延長飽足感。無須開刀，恢復期極短。',
+    articleSlug: '胃肉毒減重',
+  },
+  {
+    title: '胃內縫合術',
+    tag: '無創手術',
+    category: 'procedure',
+    description: '透過內視鏡將胃部縫合縮小，限制進食容量。體表無傷口，是安全且有效的微創減重手術選擇。',
+    articleSlug: '胃內縫合手術',
+  },
+];
 ---
 
 <Layout
@@ -276,24 +338,6 @@ const totalVideos = 15;
         跳脫盲目挨餓與意志力內耗！由<strong>黃冠智醫師</strong>規劃：以 2026 最新 ADA 實證指引、GLP-1 腸泌素科學用藥、真食物飲食原則與 ACSM 運動醫學處方，為您量身打造一條「知己知彼 ➔ 醫學介入 ➔ 安全下車 ➔ 終生不復胖」的四部曲通關地圖。
       </p>
 
-      <!-- 核心指標與進度看板 -->
-      <div class="wl-dashboard">
-        <div class="dash-stat">
-          <span class="stat-number">4</span>
-          <span class="stat-label">大進階通關階段</span>
-        </div>
-        <div class="dash-stat-divider"></div>
-        <div class="dash-stat">
-          <span class="stat-number">15</span>
-          <span class="stat-label">部高解析實證影音</span>
-        </div>
-        <div class="dash-stat-divider"></div>
-        <div class="dash-stat">
-          <span class="stat-number">100%</span>
-          <span class="stat-label">配套專文與重點整理</span>
-        </div>
-      </div>
-
       <!-- 即時互動式通關進度條 -->
       <div class="interactive-tracker-card" id="trackerCard">
         <div class="tracker-header">
@@ -316,7 +360,7 @@ const totalVideos = 15;
         </div>
       </div>
 
-      <!-- 四大階段快捷錨點跳轉膠囊 -->
+      <!-- 四大階段快捷錨點跳轉 -->
       <nav class="stage-nav-anchors" aria-label="章節快捷跳轉">
         {acts.map((act, idx) => (
           <a href={`#act-${idx + 1}`} class={`anchor-pill ${act.actColor}`}>
@@ -464,20 +508,9 @@ const totalVideos = 15;
                             </ul>
                           </div>
 
-                          <!-- 雙態按鈕列：立即觀賞與閱讀專文 -->
-                          <div class="step-card-footer-buttons">
-                            <button
-                              type="button"
-                              class="btn-step-play"
-                              data-trigger-play={video.id}
-                            >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <polygon points="6 3 20 12 6 21 6 3" />
-                              </svg>
-                              <span>觀看衛教影片 ({video.duration})</span>
-                            </button>
-
-                            {articleUrl && (
+                          <!-- 閱讀專文連結 -->
+                          {articleUrl && (
+                            <div class="step-card-footer-buttons">
                               <a
                                 href={articleUrl}
                                 target="_blank"
@@ -496,11 +529,68 @@ const totalVideos = 15;
                                   <line x1="10" y1="14" x2="21" y2="3"></line>
                                 </svg>
                               </a>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </article>
+
+                    {st.step === 4 && (
+                      <div class="stage-solutions-guide" id="solutions-guide">
+                        <div class="solutions-header">
+                          <div class="solutions-badge-pill">
+                            <span class="sol-pill-icon">⚕️</span>
+                            <span>臨床方案選擇</span>
+                          </div>
+                          <h3 class="solutions-main-title">健康減重方案指南</h3>
+                          <div class="solutions-title-divider"></div>
+                          <p class="solutions-desc">
+                            為您介紹符合科學實證的合法減重方式，包含口服藥物、注射針劑與微創療程，助您找到最適合的健康減重計劃。
+                          </p>
+                        </div>
+
+                        <!-- 方案分類標籤 -->
+                        <nav class="solutions-tab-nav" role="tablist" aria-label="減重方案分類">
+                          <button type="button" class="sol-tab-btn active" data-filter="all">全部方案 (7)</button>
+                          <button type="button" class="sol-tab-btn" data-filter="oral">口服藥物 (2)</button>
+                          <button type="button" class="sol-tab-btn" data-filter="injection">注射針劑 (3)</button>
+                          <button type="button" class="sol-tab-btn" data-filter="procedure">微創 / 手術 (2)</button>
+                        </nav>
+
+                        <!-- 7 大方案卡片網格 -->
+                        <div class="solutions-cards-grid" id="solutionsGrid">
+                          {solutions.map((item) => {
+                            const articleUrl = isEmbed
+                              ? `https://drhuanggi.vercel.app/posts/${item.articleSlug}`
+                              : `/posts/${item.articleSlug}`;
+                            return (
+                              <article class="sol-card" data-sol-cat={item.category}>
+                                <div class="sol-card-top-accent"></div>
+                                <div class="sol-card-body">
+                                  <div class="sol-card-tag-row">
+                                    <span class="sol-card-tag">{item.tag}</span>
+                                  </div>
+                                  <h4 class="sol-card-title">{item.title}</h4>
+                                  <p class="sol-card-desc">{item.description}</p>
+                                  <a
+                                    href={articleUrl}
+                                    target={isEmbed ? "_blank" : undefined}
+                                    rel={isEmbed ? "noopener noreferrer" : undefined}
+                                    class="sol-card-action"
+                                  >
+                                    <span>閱讀專文</span>
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sol-arrow-icon">
+                                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                                      <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                  </a>
+                                </div>
+                              </article>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
 
                     <!-- 黃醫師關鍵銜接橋樑 (Bridge Narrative) -->
                     {st.bridgeNarrative && (
@@ -536,7 +626,7 @@ const totalVideos = 15;
             <h2>豐田診所 · 減重與代謝整合醫療門診</h2>
           </div>
           <p class="callout-p">
-            若您在減重路上遭遇卡關、疑慮瘦瘦針是否適合自身體質，或希望在用藥前進行完整<strong>高階身體組成分析（InBody）</strong>與<strong>代謝指標血液檢查（血糖、糖化血色素、胰島素抗性、三酸甘油酯、肝腎功能）</strong>，歡迎親臨台中豐田診所，由黃冠智院長為您精準評估把關。
+            若您在減重路上遭遇卡關、疑慮瘦瘦針是否適合自身體質，或希望在用藥前進行完整<strong>高階身體組成分析（InBody）</strong>與<strong>代謝指標血液檢查（血糖、糖化血色素、胰島素抗性、三酸甘油酯、肝腎功能）</strong>，歡迎親臨台中豐田診所，由黃冠智醫師為您精準評估把關。
           </p>
 
           <div class="callout-features-grid">
@@ -548,7 +638,7 @@ const totalVideos = 15;
             <div class="feat-card">
               <div class="feat-icon">🩺</div>
               <h4>GLP-1 瘦瘦筆安全指導</h4>
-              <p>由肝膽腸胃專科醫師親自評估劑量調整、副作用預防照護與個人化下車計劃。</p>
+              <p>由肝膽腸胃專科醫師評估劑量調整、副作用預防照護與個人化下車計劃。</p>
             </div>
             <div class="feat-card">
               <div class="feat-icon">🧬</div>
@@ -701,9 +791,42 @@ const totalVideos = 15;
     });
   }
 
+  // ── 臨床方案切換 Tab ──
+  function initSolutionTabs() {
+    const tabBtns = document.querySelectorAll<HTMLButtonElement>('.sol-tab-btn');
+    const cards = document.querySelectorAll<HTMLElement>('.sol-card');
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter || 'all';
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        cards.forEach((card) => {
+          const cat = card.dataset.solCat;
+          if (filter === 'all' || cat === filter) {
+            card.classList.remove('is-hidden');
+          } else {
+            card.classList.add('is-hidden');
+          }
+        });
+
+        // 嵌入模式時通知父視窗更新高度
+        if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'resize',
+            height: document.documentElement.scrollHeight
+          }, '*');
+        }
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     initProgressTracker();
     initPlayTriggers();
+    initSolutionTabs();
   });
 </script>
 
@@ -817,43 +940,6 @@ const totalVideos = 15;
   }
   .wl-hero-subtitle strong {
     color: #10667e;
-  }
-
-  /* 儀表數據 */
-  .wl-dashboard {
-    position: relative;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    background: #ffffff;
-    border: 1px solid rgba(212, 229, 235, 0.9);
-    border-radius: 18px;
-    padding: 14px 28px;
-    gap: 28px;
-    box-shadow: 0 4px 18px rgba(74, 144, 164, 0.08);
-    margin-bottom: 30px;
-  }
-
-  .dash-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .stat-number {
-    font-size: 1.75rem;
-    font-weight: 900;
-    color: #0f766e;
-    line-height: 1.2;
-  }
-  .stat-label {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #64748b;
-  }
-  .dash-stat-divider {
-    width: 1px;
-    height: 32px;
-    background: #e2e8f0;
   }
 
   /* 互動進度看板 */
@@ -1418,26 +1504,6 @@ const totalVideos = 15;
     flex-wrap: wrap;
   }
 
-  .btn-step-play {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
-    color: #ffffff;
-    font-size: 0.88rem;
-    font-weight: 800;
-    padding: 8px 16px;
-    border-radius: 9999px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
-    transition: all 0.2s ease;
-  }
-  .btn-step-play:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
-  }
-
   .btn-step-article {
     display: inline-flex;
     align-items: center;
@@ -1460,6 +1526,202 @@ const totalVideos = 15;
   }
   .external-arrow {
     opacity: 0.6;
+  }
+
+  /* ══════════════════════════════════════════════
+     方案 A：健康減重方案指南 (STAGE 02 模組)
+  ══════════════════════════════════════════════ */
+  .stage-solutions-guide {
+    background: #ffffff;
+    border: 1px solid #dbece5;
+    border-radius: 20px;
+    padding: 30px 22px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(47, 102, 86, 0.06);
+  }
+
+  .solutions-header {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .solutions-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(47, 102, 86, 0.1);
+    color: #2F6656;
+    padding: 4px 14px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .sol-pill-icon {
+    font-size: 0.95rem;
+  }
+
+  .solutions-main-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #2F6656;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.01em;
+  }
+
+  .solutions-title-divider {
+    width: 48px;
+    height: 3.5px;
+    background: linear-gradient(90deg, #2F6656 0%, #4A8C7A 100%);
+    border-radius: 2px;
+    margin: 0 auto 12px;
+  }
+
+  .solutions-desc {
+    font-size: 0.95rem;
+    color: #4b635d;
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  /* Tab 導覽列 */
+  .solutions-tab-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 26px;
+  }
+
+  .sol-tab-btn {
+    padding: 8px 18px;
+    border-radius: 9999px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    background-color: #f1f5f9;
+    color: #475569;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+  }
+
+  .sol-tab-btn:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+    transform: translateY(-1px);
+  }
+
+  .sol-tab-btn.active {
+    background-color: #2F6656;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(47, 102, 86, 0.25);
+  }
+
+  /* 卡片網格 */
+  .solutions-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .sol-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(47, 102, 86, 0.12);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sol-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(47, 102, 86, 0.12);
+    border-color: rgba(47, 102, 86, 0.25);
+  }
+
+  .sol-card.is-hidden {
+    display: none !important;
+  }
+
+  .sol-card-top-accent {
+    height: 5px;
+    background: linear-gradient(90deg, #2F6656 0%, #4A8C7A 100%);
+    width: 100%;
+  }
+
+  .sol-card-body {
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .sol-card-tag-row {
+    margin-bottom: 12px;
+  }
+
+  .sol-card-tag {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2F6656;
+    background-color: rgba(47, 102, 86, 0.08);
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+
+  .sol-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e3a4c;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+  }
+
+  .sol-card-desc {
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.65;
+    margin: 0 0 18px 0;
+    flex-grow: 1;
+  }
+
+  .sol-card-action {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    background-color: transparent;
+    color: #2F6656;
+    border: 1.5px solid #2F6656;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    transition: all 0.25s ease;
+  }
+
+  .sol-card-action:hover {
+    background-color: #2F6656;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .sol-arrow-icon {
+    transition: transform 0.25s ease;
+  }
+
+  .sol-card-action:hover .sol-arrow-icon {
+    transform: translateX(3px);
   }
 
   /* ══════════════════════════════════════════════
@@ -1648,8 +1910,23 @@ const totalVideos = 15;
     .step-card-grid {
       grid-template-columns: 1fr;
     }
+    .solutions-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
     .callout-features-grid {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stage-solutions-guide {
+      padding: 20px 14px;
+    }
+    .solutions-cards-grid {
+      grid-template-columns: 1fr;
+    }
+    .solutions-main-title {
+      font-size: 1.35rem;
     }
   }
 
@@ -1663,16 +1940,6 @@ const totalVideos = 15;
     }
     .gradient-text-hero {
       font-size: 1.45rem;
-    }
-    .wl-dashboard {
-      gap: 16px;
-      padding: 10px 18px;
-    }
-    .stat-number {
-      font-size: 1.4rem;
-    }
-    .stat-label {
-      font-size: 0.74rem;
     }
     .timeline-spine-col {
       width: 36px;
