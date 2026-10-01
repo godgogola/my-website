@@ -60,30 +60,6 @@ const getCoverImageUrl = (img?: string) => {
   isEmbed={true}
 >
   <div class="column-embed-container">
-    <!-- 頂部宣傳導流 Banner (桌面版保留，手機版自動隱藏以節省高度) -->
-    <section class="promo-banner-wrapper">
-      <div class="promo-banner">
-        <div class="promo-text">
-          <span class="promo-icon" aria-hidden="true">💡</span>
-          <span>想要搜尋更豐富完整的衛教圖文與專題影音？</span>
-        </div>
-        <a
-          href="https://drhuanggi.vercel.app"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="promo-btn"
-          aria-label="前往黃冠智醫師個人衛教網站（新視窗開啟）"
-        >
-          <span>造訪黃冠智醫師個人衛教網站</span>
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-        </a>
-      </div>
-    </section>
-
     <!-- 緊湊標題與搜尋列區塊 -->
     <header class="column-hero-section">
       <div class="hero-title-row">
@@ -337,54 +313,6 @@ const getCoverImageUrl = (img?: string) => {
   .column-embed-container * {
     -webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
-  }
-
-  /* ===== 頂部宣傳 Banner ===== */
-  .promo-banner-wrapper {
-    margin-bottom: 18px;
-  }
-  .promo-banner {
-    background: linear-gradient(135deg, #2F6656 0%, #3D8B75 100%);
-    border-radius: 14px;
-    padding: 12px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.14);
-    color: #FFFFFF;
-  }
-  .promo-text {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.02rem;
-    font-weight: 600;
-  }
-  .promo-icon {
-    font-size: 1.25rem;
-    flex-shrink: 0;
-  }
-  .promo-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 18px;
-    background-color: #FAF3E0;
-    color: #2F6656;
-    border-radius: 30px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: all 0.25s ease;
-  }
-  .promo-btn:hover {
-    background-color: #FFFFFF;
-    color: #1E483D;
-    transform: translateY(-2px);
   }
 
   /* ===== 緊湊 Hero 標題區 ===== */
@@ -901,10 +829,6 @@ const getCoverImageUrl = (img?: string) => {
       max-width: 100%;
       box-sizing: border-box;
       overflow-x: hidden;
-    }
-    /* 手機版隱藏頂部大 Banner，省下超過 140px 高度直奔文章 */
-    .promo-banner-wrapper {
-      display: none;
     }
     .column-hero-section {
       margin-bottom: 10px;
