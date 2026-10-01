@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>健康享瘦專區 | 豐田診所嵌入範本</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-color: #0f766e;
+    --primary-light: #10b981;
+    --bg-color: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --radius-lg: 20px;
+    --shadow-md: 0 4px 24px rgba(15, 118, 110, 0.08);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Noto Sans TC', 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+    padding: 24px 16px 48px;
+  }
+
+  .embed-page-wrapper {
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+
+  /* 診所頂部說明區 */
+  .clinic-embed-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+  }
+
+  .clinic-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--primary-color);
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 4px 14px;
+    border-radius: 9999px;
+    margin-bottom: 10px;
+  }
+
+  .clinic-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary-light);
+    border-radius: 50%;
+  }
+
+  .clinic-embed-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .clinic-embed-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Iframe 外層容器 */
+  .iframe-container {
+    width: 100%;
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(15, 118, 110, 0.12);
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .iframe-container:hover {
+    box-shadow: 0 8px 32px rgba(15, 118, 110, 0.14);
+  }
+
+  #weight-loss-iframe {
+    width: 100%;
+    min-height: 900px;
+    height: 1200px;
+    border: none;
+    display: block;
+    background: transparent;
+  }
+
+  /* 貼心整合指南卡片 (供院長/診所網站工程師參考) */
+  .integration-guide-card {
+    margin-top: 32px;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px dashed rgba(15, 118, 110, 0.3);
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+
+  .integration-guide-card h3 {
+    color: var(--primary-color);
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+
+  .code-snippet {
+    background: #0f172a;
+    color: #6ee7b7;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 0.88rem;
+    overflow-x: auto;
+    margin: 12px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+
+<div class="embed-page-wrapper">
+  <!-- 診所網頁標頭示範 (嵌入至診所網站時可視需要調整或省略) -->
+  <header class="clinic-embed-header">
+    <div class="clinic-badge">
+      <span class="dot"></span>
+      <span>豐田診所 · 減重代謝整合專區</span>
+    </div>
+    <h1 class="clinic-embed-title">健康享瘦：瘦瘦針、飲食與運動</h1>
+    <p class="clinic-embed-subtitle">
+      由黃冠智醫師規劃：以 2026 最新 ADA 實證指引、GLP-1 腸泌素科學用藥、真食物原則與 ACSM 運動處方，解構「知己知彼 ➔ 醫學介入 ➔ 安全下車 ➔ 終生不復胖」四部曲地圖。
+    </p>
+  </header>
+
+  <!-- 智慧 iframe 嵌入區塊 -->
+  <main class="iframe-container">
+    <iframe
+      id="weight-loss-iframe"
+      src="https://drhuanggi.vercel.app/weight-loss/embed"
+      title="健康享瘦：瘦瘦針、飲食與運動"
+      loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+  </main>
+
+  <!-- 整合代碼指南 -->
+  <aside class="integration-guide-card">
+    <h3>💡 診所網站嵌入代碼（複製以下一行即可貼入診所官網任何頁面）：</h3>
+    <div class="code-snippet">&lt;iframe src="https://drhuanggi.vercel.app/weight-loss/embed" width="100%" height="1200px" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border: none; border-radius: 16px; width: 100%; min-height: 900px; display: block;"&gt;&lt;/iframe&gt;</div>
+    <p>✅ <strong>專屬嵌入網址：</strong><code>https://drhuanggi.vercel.app/weight-loss/embed</code></p>
+    <p>✅ <strong>優勢：</strong>已移除主站導覽列與頁尾，專屬純淨背景，且支援 YouTube 影片無彈窗阻礙播放與文章外開新分頁！</p>
+  </aside>
+</div>
+
+<!-- 智慧自適應高度監聽腳本 (可選，讓 iframe 依內容自動展開) -->
+<script>
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'embed-resize' && e.data.height) {
+      var iframe = document.getElementById('weight-loss-iframe');
+      if (iframe && typeof e.data.height === 'number') {
+        iframe.style.height = (e.data.height + 30) + 'px';
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
