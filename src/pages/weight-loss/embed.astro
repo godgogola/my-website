@@ -147,7 +147,7 @@ const acts: ActGroup[] = [
           '體重設定點記憶：大腦需要數月至一年以上才能適應新體重，在此之前會竭盡所能儲存脂肪。'
         ],
         bridgeNarrative:
-          '既然知道大腦與荷爾蒙會在停藥後發動強烈反撲，黃醫師教你如何「漸進式平穩下車」，把戰果牢牢鎖在終點線！'
+          '既然知道大腦與荷爾蒙會在停藥後發動強烈反撲，這裡帶你拆解如何「漸進式平穩下車」，把戰果牢牢鎖在終點線！'
       },
       {
         step: 9,
@@ -218,7 +218,7 @@ const acts: ActGroup[] = [
           '漸進超負荷（Progressive Overload）：隨著肌力增長適度微調重量或次數，確保肌肉持續受到良性刺激。'
         ],
         bridgeNarrative:
-          '理論觀念清楚了，在家沒有啞鈴槓鈴該怎麼練？跟著黃醫師整理的 8 大全身動作套餐，一張瑜珈墊就能開練！'
+          '理論觀念清楚了，在家沒有啞鈴槓鈴該怎麼練？跟著這套精選的 8 大全身動作套餐，一張瑜珈墊就能開練！'
       },
       {
         step: 14,
@@ -256,58 +256,90 @@ interface WeightLossSolution {
   title: string;
   tag: string;
   category: 'oral' | 'injection' | 'procedure';
+  badge: string;
+  icon: string;
   description: string;
+  chips: string[];
+  coverImage: string;
   articleSlug: string;
 }
 
 const solutions: WeightLossSolution[] = [
   {
     title: '康纖芙 (Contrave)',
-    tag: '口服藥物',
+    tag: '雙重神經機轉',
     category: 'oral',
-    description: '每日服用，有助延緩胃排空，增加飽足感。適合不喜打針，希望能透過口服控制食慾的族群。',
+    badge: '口服藥物',
+    icon: '💊',
+    description: '結合大腦下視丘食慾中樞與獎勵迴路雙重機轉，有效減弱對甜食與高脂垃圾食物的心理渴望與嘴饞，特別適合食慾旺盛者。',
+    chips: ['口服複方錠劑', '控制嘴饞渴望', '非腸泌素機轉', '延緩胃排空'],
+    coverImage: '/images/康纖芙 Contrave.webp',
     articleSlug: '康纖芙-contrave',
   },
   {
     title: '善纖達 (Saxenda)',
-    tag: '每日注射',
+    tag: '第一代腸泌素',
     category: 'injection',
-    description: '每天注射一次，透過調節腦部中樞抑制食慾。上市已久，安全性高，適合建立規律減重習慣。',
+    badge: '每日注射',
+    icon: '💉',
+    description: '每天皮下注射一次，調節下視丘飽足信號並延緩胃排空。臨床使用年資最久、全球安全數據最齊全，適合建立規律減重習慣。',
+    chips: ['每日注射一次', '調節中樞飽足感', '全球實證歷史最久', '平穩胃排空'],
+    coverImage: '/images/善纖達 Saxenda.webp',
     articleSlug: '善纖達-saxenda',
   },
   {
     title: '瑞倍適 (Rybelsus)',
-    tag: '口服 GLP-1',
+    tag: '免打針專利吸收',
     category: 'oral',
-    description: '第一款口服 GLP-1 類藥物，突破性技術。免去針劑恐懼，同時享有腸泌素帶來的代謝優勢。',
+    badge: '口服 GLP-1',
+    icon: '💊',
+    description: '突破胃胜肽酵素分解限制的革命性口服 GLP-1，免去針劑恐懼，同時享有腸泌素帶來的代謝優勢與強效食慾調控。',
+    chips: ['早晨空腹口服', '免打針無痛感', '強效抑制食慾', '提升胰島素敏感度'],
+    coverImage: '/images/瑞倍適 Rybelsus.webp',
     articleSlug: '瑞倍適-rybelsus',
   },
   {
     title: '週纖達 (Wegovy)',
-    tag: '每週注射',
+    tag: '新一代高劑量 GLP-1',
     category: 'injection',
-    description: '新一代 GLP-1 藥物，只需每週注射一次。大幅提升便利性，且在臨床數據上展現優異的體重控制效果。',
+    badge: '每週注射',
+    icon: '💉',
+    description: '新一代長效 Semaglutide 高劑量規格，每週僅需施打一次。平均減重幅度高達 15% 以上，便利性與代謝改善成效極高。',
+    chips: ['每週施打一次', '平均減重達 15%', '心血管保護效益', '極高便利性'],
+    coverImage: '/images/週纖達 Wegovy.webp',
     articleSlug: '週纖達-wegovy',
   },
   {
     title: '猛健樂 (Mounjaro)',
-    tag: '雙重機轉',
+    tag: '雙重腸泌素 GLP-1/GIP',
     category: 'injection',
-    description: '結合雙重腸泌素機轉，是目前強效的減重針劑之一。針對頑固型肥胖或代謝症候群效果顯著。',
+    badge: '雙重機轉',
+    icon: '🧬',
+    description: '同時刺激 GLP-1 與 GIP 兩大受體，協同調控脂肪代謝與胰島素分泌，臨床數據展現突破 20% 的減重爆發力與脂肪肝改善。',
+    chips: ['每週施打一次', '雙重腸泌素受體', '減重突破 20%', '顯著改善脂肪肝'],
+    coverImage: '/images/猛健樂 Mounjaro.webp',
     articleSlug: '猛健樂-mounjaro',
   },
   {
     title: '胃內肉毒注射',
-    tag: '微創療程',
+    tag: '門診微創無傷口',
     category: 'procedure',
-    description: '將肉毒桿菌素注射於胃壁，降低胃蠕動速度，延長飽足感。無須開刀，恢復期極短。',
+    badge: '微創療程',
+    icon: '⚕️',
+    description: '利用無痛胃鏡在胃壁關鍵肌層注射肉毒桿菌素，大幅減緩胃蠕動、維持長時間飽足感，門診當日施作即可返家正常作息。',
+    chips: ['無皮膚體表傷口', '舒眠門診 30 分鐘', '維持 4~6 個月飽足', '無需終生服藥'],
+    coverImage: '/images/胃肉毒減重.webp',
     articleSlug: '胃肉毒減重',
   },
   {
     title: '胃內縫合術',
-    tag: '無創手術',
+    tag: 'ESG 內視鏡胃縮小',
     category: 'procedure',
-    description: '透過內視鏡將胃部縫合縮小，限制進食容量。體表無傷口，是安全且有效的微創減重手術選擇。',
+    badge: '無創手術',
+    icon: '🪡',
+    description: '經口腔無痛胃鏡以全層連續縫合方式將胃容積縮小 70%~80%，無外在傷口、保留解剖構造完整，安全且長期減重效果卓越。',
+    chips: ['經胃鏡無傷口', '縮小胃容積 70%+', '保留器官解剖結構', '長期減重成效卓越'],
+    coverImage: '/images/胃內縫合手術.webp',
     articleSlug: '胃內縫合手術',
   },
 ];
@@ -316,7 +348,7 @@ const solutions: WeightLossSolution[] = [
 <Layout
   title="健康享瘦｜瘦瘦針、飲食與運動 - 豐田診所 × 黃冠智醫師"
   meta_title="健康享瘦｜瘦瘦針、飲食與運動 - 豐田診所 × 黃冠智醫師"
-  description="由黃冠智醫師規劃「健康享瘦通關地圖」：跳脫無效節食，結合 2026 最新 ADA 減重指南、GLP-1 瘦瘦針正確打法與停藥下車策略、真食物飲食指南與 ACSM 運動處方，15 部實證衛教影音與專文完整說明。"
+  description="「健康享瘦通關地圖」：跳脫無效節食，結合 2026 最新 ADA 減重指南、GLP-1 瘦瘦針正確打法與停藥下車策略、真食物飲食指南與 ACSM 運動處方，15 部實證衛教影音與專文完整說明。"
   hideHeader={true}
   hideFooter={true}
   isEmbed={true}
@@ -335,30 +367,8 @@ const solutions: WeightLossSolution[] = [
       </h1>
 
       <p class="wl-hero-subtitle">
-        跳脫盲目挨餓與意志力內耗！由<strong>黃冠智醫師</strong>規劃：以 2026 最新 ADA 實證指引、GLP-1 腸泌素科學用藥、真食物飲食原則與 ACSM 運動醫學處方，為您量身打造一條「知己知彼 ➔ 醫學介入 ➔ 安全下車 ➔ 終生不復胖」的四部曲通關地圖。
+        跳脫盲目挨餓與意志力內耗！以 2026 最新 ADA 實證指引、GLP-1 腸泌素科學用藥、真食物飲食原則與 ACSM 運動醫學處方，為您量身打造一條「知己知彼 ➔ 醫學介入 ➔ 安全下車 ➔ 終生不復胖」的四部曲通關地圖。
       </p>
-
-      <!-- 即時互動式通關進度條 -->
-      <div class="interactive-tracker-card" id="trackerCard">
-        <div class="tracker-header">
-          <div class="tracker-title-wrap">
-            <span class="tracker-icon">🏆</span>
-            <span class="tracker-title">您的科學減重探索進度</span>
-          </div>
-          <div class="tracker-badge" id="trackerBadge">
-            已掌握 <strong id="unlockedCount">0</strong> / 15 部觀念 (<span id="unlockedPercent">0%</span>)
-          </div>
-        </div>
-        <div class="tracker-progress-bg">
-          <div class="tracker-progress-fill" id="trackerFill" style="width: 0%;"></div>
-        </div>
-        <div class="tracker-footer-hint">
-          <span>💡 觀看影片後可點擊下方卡片「標記已掌握」，進度將自動為您保存在此瀏覽器！</span>
-          <button type="button" class="btn-reset-tracker" id="btnResetTracker" title="重置觀看進度">
-            重設進度
-          </button>
-        </div>
-      </div>
 
       <!-- 四大階段快捷錨點跳轉 -->
       <nav class="stage-nav-anchors" aria-label="章節快捷跳轉">
@@ -394,7 +404,7 @@ const solutions: WeightLossSolution[] = [
                 </svg>
               </div>
               <p class="act-intro-text">
-                <strong>黃醫師導讀：</strong>{act.actIntro}
+                {act.actIntro}
               </p>
             </div>
           </div>
@@ -412,9 +422,8 @@ const solutions: WeightLossSolution[] = [
                 <div class="timeline-node-wrap" id={`step-${st.step}`}>
                   <!-- 左側軌道節點序號 -->
                   <div class="timeline-spine-col">
-                    <div class="timeline-node-circle" data-step-circle={st.step}>
+                    <div class="timeline-node-circle">
                       <span class="node-num">{String(st.step).padStart(2, '0')}</span>
-                      <span class="node-checked-icon">✓</span>
                     </div>
                     <div class="timeline-line"></div>
                   </div>
@@ -426,25 +435,12 @@ const solutions: WeightLossSolution[] = [
                       data-video-id={video.id}
                       data-video-title={video.title}
                       data-video-category={video.category}
-                      data-step-id={st.step}
                     >
-                      <!-- 頂部資訊列：階段序號、影片時長與解鎖狀態按鈕 -->
+                      <!-- 頂部資訊列：階段序號與重點標籤 -->
                       <div class="step-card-meta-bar">
                         <div class="step-tags-left">
                           <span class="step-index-badge">STEP {String(st.step).padStart(2, '0')}</span>
                           <span class="step-badge-label">{st.badge}</span>
-                        </div>
-                        <div class="step-actions-right">
-                          <button
-                            type="button"
-                            class="btn-toggle-unlocked"
-                            data-toggle-step={st.step}
-                            title="點擊標記已掌握此觀念"
-                            aria-label={`標記第 ${st.step} 步觀念為已掌握`}
-                          >
-                            <span class="check-box-square"></span>
-                            <span class="toggle-text">標記已掌握</span>
-                          </button>
                         </div>
                       </div>
 
@@ -493,12 +489,8 @@ const solutions: WeightLossSolution[] = [
                             {video.description}
                           </p>
 
-                          <!-- 醫師精選 Takeaways -->
+                          <!-- 核心重點 Takeaways -->
                           <div class="step-takeaways-block">
-                            <h4 class="takeaways-heading">
-                              <span class="sparkle-icon">💡</span>
-                              <span>醫師劃重點：</span>
-                            </h4>
                             <ul class="takeaways-list">
                               {st.coreTakeaways.map((point) => (
                                 <li>
@@ -558,27 +550,66 @@ const solutions: WeightLossSolution[] = [
                           <button type="button" class="sol-tab-btn" data-filter="procedure">微創 / 手術 (2)</button>
                         </nav>
 
-                        <!-- 7 大方案卡片網格 -->
-                        <div class="solutions-cards-grid" id="solutionsGrid">
-                          {solutions.map((item) => {
+                        <!-- 臨床方案選擇：手風琴動態畫廊 (圖二風格：電腦版懸停展開 / 手機版手風琴) -->
+                        <div class="solutions-expand-gallery" id="solutionsGallery">
+                          {solutions.map((item, idx) => {
                             const articleUrl = `https://drhuanggi.vercel.app/posts/${item.articleSlug}`;
+                            const isActive = idx === 0;
+
                             return (
-                              <article class="sol-card" data-sol-cat={item.category}>
-                                <div class="sol-card-top-accent"></div>
-                                <div class="sol-card-body">
-                                  <div class="sol-card-tag-row">
-                                    <span class="sol-card-tag">{item.tag}</span>
+                              <article
+                                class={`solution-expand-card ${isActive ? 'is-active' : ''}`}
+                                data-sol-cat={item.category}
+                                data-index={idx}
+                              >
+                                <!-- 手機版收合狀態頂部橫條 -->
+                                <div class="solution-card-mobile-bar">
+                                  <div class="solution-mobile-bar-title">
+                                    <span class="solution-mobile-bar-icon">{item.icon}</span>
+                                    <span class="solution-mobile-bar-name">{item.title}</span>
+                                    <span class="solution-mobile-bar-pill">{item.badge}</span>
                                   </div>
-                                  <h4 class="sol-card-title">{item.title}</h4>
-                                  <p class="sol-card-desc">{item.description}</p>
+                                  <svg class="solution-mobile-arrow" viewBox="0 0 24 24">
+                                    <polyline points="6 9 12 15 18 9" />
+                                  </svg>
+                                </div>
+
+                                <!-- 背景封面圖 (衛教文章對應圖 + 暗部漸層) -->
+                                <img
+                                  src={item.coverImage}
+                                  alt={item.title}
+                                  class="solution-expand-bg"
+                                  loading="lazy"
+                                />
+                                <div class="solution-expand-overlay"></div>
+
+                                <!-- 電腦版收合狀態縱向標籤 -->
+                                <div class="solution-collapsed-indicator">
+                                  <div class="solution-collapsed-icon">{item.icon}</div>
+                                  <span class="solution-collapsed-title">{item.title.split(' (')[0]}</span>
+                                </div>
+
+                                <!-- 展開後詳細資訊 (圖二大字體排版風格) -->
+                                <div class="solution-expanded-content">
+                                  <div class="solution-card-top-badges">
+                                    <span class="solution-card-badge">{item.badge}</span>
+                                    <span class="solution-card-subtag">{item.tag}</span>
+                                  </div>
+                                  <h4 class="solution-expand-title">{item.title}</h4>
+                                  <p class="solution-desc-text">{item.description}</p>
+                                  <div class="solution-chips-grid">
+                                    {item.chips.map((chip, cIdx) => (
+                                      <span class={`solution-chip ${cIdx === 0 ? 'chip-highlight' : ''}`}>{chip}</span>
+                                    ))}
+                                  </div>
                                   <a
                                     href={articleUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="sol-card-action"
+                                    class="solution-btn"
                                   >
-                                    <span>閱讀專文</span>
-                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sol-arrow-icon">
+                                    <span>閱讀完整專文</span>
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4">
                                       <line x1="5" y1="12" x2="19" y2="12"></line>
                                       <polyline points="12 5 19 12 12 19"></polyline>
                                     </svg>
@@ -591,16 +622,13 @@ const solutions: WeightLossSolution[] = [
                       </div>
                     )}
 
-                    <!-- 黃醫師關鍵銜接橋樑 (Bridge Narrative) -->
+                    <!-- 觀念銜接思考 (Bridge Narrative) -->
                     {st.bridgeNarrative && (
                       <div class="narrative-bridge-box">
                         <div class="bridge-avatar-wrap">
-                          <img src="/turtle-transparent.png?v=20260910" alt="黃醫師觀念橋樑" class="bridge-turtle-icon" />
+                          <img src="/turtle-transparent.png?v=20260910" alt="觀念思考" class="bridge-turtle-icon" />
                         </div>
                         <div class="bridge-bubble">
-                          <div class="bridge-bubble-tag">
-                            <span>🔗 關鍵承先啟後 · 黃醫師思考題</span>
-                          </div>
                           <p class="bridge-bubble-text">
                             「{st.bridgeNarrative}」
                           </p>
@@ -670,26 +698,6 @@ const solutions: WeightLossSolution[] = [
 </Layout>
 
 <script>
-  // ── 通關進度管理 (LocalStorage 存取與動態更新) ──
-  const STORAGE_KEY = 'dr_huang_weight_loss_unlocked_steps';
-
-  function getUnlockedSteps(): number[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveUnlockedSteps(steps: number[]) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(steps));
-    } catch (e) {
-      console.warn('無法存取 localStorage', e);
-    }
-  }
-
   // 智慧 iframe 自適應高度回報
   function notifyParentHeight() {
     try {
@@ -700,78 +708,6 @@ const solutions: WeightLossSolution[] = [
     } catch (e) {
       // ignore cross-origin error
     }
-  }
-
-  function updateTrackerUI() {
-    const unlocked = getUnlockedSteps();
-    const count = unlocked.length;
-    const total = 15;
-    const pct = Math.round((count / total) * 100);
-
-    const countEl = document.getElementById('unlockedCount');
-    const pctEl = document.getElementById('unlockedPercent');
-    const fillEl = document.getElementById('trackerFill');
-
-    if (countEl) countEl.textContent = String(count);
-    if (pctEl) pctEl.textContent = `${pct}%`;
-    if (fillEl) fillEl.style.width = `${pct}%`;
-
-    // 更新節點卡片打勾樣式與左側圓圈樣式
-    for (let i = 1; i <= total; i++) {
-      const isDone = unlocked.includes(i);
-      const circleEl = document.querySelector(`[data-step-circle="${i}"]`);
-      const toggleBtn = document.querySelector(`[data-toggle-step="${i}"]`);
-      const cardEl = document.querySelector(`[data-step-id="${i}"]`);
-
-      if (circleEl) {
-        circleEl.classList.toggle('is-completed', isDone);
-      }
-      if (toggleBtn) {
-        toggleBtn.classList.toggle('active', isDone);
-        const toggleText = toggleBtn.querySelector('.toggle-text');
-        if (toggleText) {
-          toggleText.textContent = isDone ? '已掌握觀念 ✓' : '標記已掌握';
-        }
-      }
-      if (cardEl) {
-        cardEl.classList.toggle('step-card-completed', isDone);
-      }
-    }
-
-    notifyParentHeight();
-  }
-
-  function initProgressTracker() {
-    // 綁定所有打勾切換按鈕
-    const toggleButtons = document.querySelectorAll<HTMLButtonElement>('[data-toggle-step]');
-    toggleButtons.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const stepNum = Number(btn.getAttribute('data-toggle-step'));
-        if (!stepNum) return;
-
-        let unlocked = getUnlockedSteps();
-        if (unlocked.includes(stepNum)) {
-          unlocked = unlocked.filter((s) => s !== stepNum);
-        } else {
-          unlocked.push(stepNum);
-        }
-        saveUnlockedSteps(unlocked);
-        updateTrackerUI();
-      });
-    });
-
-    // 綁定重設按鈕
-    const resetBtn = document.getElementById('btnResetTracker');
-    resetBtn?.addEventListener('click', () => {
-      if (confirm('確定要重置這 15 部影片的已掌握進度嗎？')) {
-        saveUnlockedSteps([]);
-        updateTrackerUI();
-      }
-    });
-
-    // 初始載入渲染
-    updateTrackerUI();
   }
 
   // ── 播放影片觸發 ──
@@ -791,11 +727,76 @@ const solutions: WeightLossSolution[] = [
     });
   }
 
-  // ── 臨床方案切換 Tab ──
-  function initSolutionTabs() {
-    const tabBtns = document.querySelectorAll<HTMLButtonElement>('.sol-tab-btn');
-    const cards = document.querySelectorAll<HTMLElement>('.sol-card');
+  // ── 臨床方案手風琴動態畫廊與分類切換機制 ──
+  function initSolutionGallery() {
+    const gallery = document.getElementById('solutionsGallery');
+    if (!gallery) return;
 
+    const cards = gallery.querySelectorAll<HTMLElement>('.solution-expand-card');
+    const tabBtns = document.querySelectorAll<HTMLButtonElement>('.sol-tab-btn');
+    let lastActiveCard = gallery.querySelector<HTMLElement>('.solution-expand-card.is-active') || cards[0];
+
+    function setActiveCard(targetCard: HTMLElement, isToggleAllowed: boolean = false) {
+      const isMobile = window.innerWidth < 900;
+      const wasActive = targetCard.classList.contains('is-active');
+
+      if (isMobile && isToggleAllowed && wasActive) {
+        // 手機版點擊已展開卡片的標題列可切換收合
+        targetCard.classList.remove('is-active');
+        notifyParentHeight();
+        return;
+      }
+
+      cards.forEach((c) => c.classList.remove('is-active'));
+      targetCard.classList.add('is-active');
+      lastActiveCard = targetCard;
+      notifyParentHeight();
+    }
+
+    // 1. 卡片懸停與點擊互動
+    cards.forEach((card) => {
+      // 電腦版懸停（僅實體滑鼠）
+      card.addEventListener('mouseenter', () => {
+        if (window.innerWidth >= 900 && window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+          cards.forEach((c) => c.classList.remove('is-active'));
+          card.classList.add('is-active');
+        }
+      });
+
+      // 點擊事件 (手機手風琴切換 / 電腦版固定選擇)
+      card.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('a') || target.closest('button')) {
+          return; // 點擊閱讀專文連結不攔截
+        }
+
+        const isMobile = window.innerWidth < 900;
+        const isMobileBar = !!target.closest('.solution-card-mobile-bar');
+        const wasActive = card.classList.contains('is-active');
+
+        // 手機版若點擊已展開的內文區，避免誤觸關閉
+        if (isMobile && wasActive && !isMobileBar) {
+          return;
+        }
+
+        setActiveCard(card, isMobileBar);
+      });
+    });
+
+    // 電腦版滑鼠移出畫廊時復原到最後選定的卡片
+    gallery.addEventListener('mouseleave', () => {
+      if (window.innerWidth >= 900 && window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+        cards.forEach((c) => c.classList.remove('is-active'));
+        if (lastActiveCard && !lastActiveCard.classList.contains('is-hidden')) {
+          lastActiveCard.classList.add('is-active');
+        } else {
+          const firstVisible = Array.from(cards).find((c) => !c.classList.contains('is-hidden'));
+          firstVisible?.classList.add('is-active');
+        }
+      }
+    });
+
+    // 2. 分類篩選 Tab
     tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const filter = btn.dataset.filter || 'all';
@@ -803,24 +804,34 @@ const solutions: WeightLossSolution[] = [
         tabBtns.forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
 
+        let firstVisible: HTMLElement | null = null;
+        let isCurrentActiveVisible = false;
+
         cards.forEach((card) => {
           const cat = card.dataset.solCat;
-          if (filter === 'all' || cat === filter) {
+          const isMatch = filter === 'all' || cat === filter;
+          if (isMatch) {
             card.classList.remove('is-hidden');
+            if (!firstVisible) firstVisible = card;
+            if (card.classList.contains('is-active')) isCurrentActiveVisible = true;
           } else {
             card.classList.add('is-hidden');
           }
         });
 
-        notifyParentHeight();
+        // 若原先 active 的卡片被隱藏了，自動切換至第一個可見卡片
+        if (!isCurrentActiveVisible && firstVisible) {
+          setActiveCard(firstVisible);
+        } else {
+          notifyParentHeight();
+        }
       });
     });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    initProgressTracker();
     initPlayTriggers();
-    initSolutionTabs();
+    initSolutionGallery();
     notifyParentHeight();
   });
 
@@ -1584,107 +1595,389 @@ const solutions: WeightLossSolution[] = [
     box-shadow: 0 4px 12px rgba(47, 102, 86, 0.25);
   }
 
-  /* 卡片網格 */
-  .solutions-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .sol-card {
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(47, 102, 86, 0.12);
+  /* ══════════════════════════════════════════════
+     SOLUTIONS EXPAND GALLERY: 手風琴動態畫廊 (圖二風格)
+  ══════════════════════════════════════════════ */
+  .solutions-expand-gallery {
     display: flex;
     flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
   }
 
-  .sol-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(47, 102, 86, 0.12);
-    border-color: rgba(47, 102, 86, 0.25);
+  .solution-expand-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #0f241d;
+    border: 1.5px solid rgba(16, 185, 129, 0.28);
+    transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .sol-card.is-hidden {
+  .solution-expand-card.is-hidden {
     display: none !important;
   }
 
-  .sol-card-top-accent {
-    height: 5px;
-    background: linear-gradient(90deg, #2F6656 0%, #4A8C7A 100%);
-    width: 100%;
-  }
-
-  .sol-card-body {
-    padding: 18px 16px;
+  /* 手機版：頂部收合狀態條 (Mobile Accordion Bar) */
+  .solution-card-mobile-bar {
+    position: relative;
+    z-index: 10;
     display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(20, 48, 39, 0.95) 0%, rgba(13, 33, 27, 0.98) 100%);
+    color: #ffffff;
+    user-select: none;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.3s ease, border-color 0.3s ease;
+    min-height: 54px;
+    box-sizing: border-box;
   }
 
-  .sol-card-tag-row {
-    margin-bottom: 10px;
+  .solution-expand-card.is-active .solution-card-mobile-bar {
+    background: linear-gradient(135deg, rgba(16, 92, 70, 0.98) 0%, rgba(10, 48, 37, 0.98) 100%);
+    border-bottom-color: rgba(255, 255, 255, 0.16);
   }
 
-  .sol-card-tag {
-    display: inline-block;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #2F6656;
-    background-color: rgba(47, 102, 86, 0.08);
-    padding: 4px 10px;
-    border-radius: 6px;
-  }
-
-  .sol-card-title {
-    font-size: 1.3rem;
+  .solution-mobile-bar-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.12rem;
     font-weight: 800;
-    color: #1e3a4c;
-    margin: 0 0 10px 0;
-    line-height: 1.35;
+    flex-wrap: wrap;
   }
 
-  .sol-card-desc {
-    font-size: 1.05rem;
-    color: #334155;
-    line-height: 1.7;
-    margin: 0 0 16px 0;
-    flex-grow: 1;
+  .solution-mobile-bar-icon {
+    font-size: 1.25rem;
+    line-height: 1;
   }
 
-  .sol-card-action {
-    margin-top: auto;
+  .solution-mobile-bar-name {
+    color: #ffffff;
+    font-size: 1.12rem;
+    font-weight: 800;
+  }
+
+  .solution-mobile-bar-pill {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #a7f3d0;
+    background: rgba(16, 185, 129, 0.22);
+    border: 1px solid rgba(16, 185, 129, 0.38);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    margin-left: 2px;
+    white-space: nowrap;
+  }
+
+  .solution-mobile-arrow {
+    width: 22px;
+    height: 22px;
+    stroke: #a7f3d0;
+    fill: none;
+    stroke-width: 2.5;
+    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), stroke 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .solution-expand-card.is-active .solution-mobile-arrow {
+    transform: rotate(180deg);
+    stroke: #ffffff;
+  }
+
+  /* 背景圖與電影感暗部漸層遮罩 */
+  .solution-expand-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    filter: brightness(0.65);
+    pointer-events: none;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s ease;
+  }
+
+  .solution-expand-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(8, 24, 19, 0.4) 0%, rgba(8, 24, 19, 0.8) 55%, rgba(6, 18, 14, 0.98) 100%);
+    pointer-events: none;
+    transition: background 0.4s ease;
+  }
+
+  /* 電腦版收合標籤 (手機版隱藏) */
+  .solution-collapsed-indicator {
+    display: none;
+  }
+
+  /* 展開內容 */
+  .solution-expanded-content {
+    position: relative;
+    z-index: 10;
+    padding: 24px 22px 26px;
+    color: #ffffff;
+    display: none;
+  }
+
+  .solution-expand-card.is-active .solution-expanded-content {
+    display: block;
+    animation: fadeInSolContent 0.35s ease forwards;
+  }
+
+  @keyframes fadeInSolContent {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .solution-card-top-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .solution-card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.28);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #a7f3d0;
+    font-size: 0.92rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    letter-spacing: 0.02em;
+  }
+
+  .solution-card-subtag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .solution-expand-title {
+    font-size: 1.65rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  }
+
+  .solution-desc-text {
+    font-size: 1.1rem;
+    color: #e2e8f0;
+    line-height: 1.75;
+    margin: 0 0 18px 0;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  }
+
+  .solution-chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .solution-chip {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    backdrop-filter: blur(4px);
+    padding: 4px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .solution-chip.chip-highlight {
+    background: rgba(245, 158, 11, 0.3);
+    border-color: #f59e0b;
+    color: #fef3c7;
+    font-weight: 800;
+  }
+
+  .solution-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    text-decoration: none;
-    background-color: transparent;
-    color: #2F6656;
-    border: 1.5px solid #2F6656;
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 0.96rem;
-    font-weight: 700;
-    transition: all 0.25s ease;
-  }
-
-  .sol-card-action:hover {
-    background-color: #2F6656;
+    gap: 8px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(47, 102, 86, 0.2);
-    transform: translateY(-2px);
+    font-size: 1.02rem;
+    padding: 11px 24px;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 800;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    width: fit-content;
   }
 
-  .sol-arrow-icon {
+  .solution-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.55);
+    color: #ffffff;
+  }
+
+  .solution-btn svg {
     transition: transform 0.25s ease;
   }
 
-  .sol-card-action:hover .sol-arrow-icon {
-    transform: translateX(3px);
+  .solution-btn:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* ── 電腦版 Hover Expand 動態畫廊 (Desktop ≥ 900px) ── */
+  @media (min-width: 900px) {
+    .solutions-expand-gallery {
+      flex-direction: row;
+      height: 480px;
+      gap: 10px;
+    }
+
+    .solution-expand-card {
+      flex: 1;
+      min-width: 58px;
+      height: 100%;
+      border-radius: 18px;
+      transition: flex 0.55s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    .solution-card-mobile-bar {
+      display: none !important;
+    }
+
+    /* 電腦版收合指示條 */
+    .solution-collapsed-indicator {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 24px 8px;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .solution-collapsed-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .solution-collapsed-title {
+      writing-mode: vertical-rl;
+      letter-spacing: 4px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+      white-space: nowrap;
+    }
+
+    /* 電腦版展開內容 */
+    .solution-expanded-content {
+      position: relative;
+      z-index: 4;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 34px 30px;
+      box-sizing: border-box;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(16px);
+      transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1) 0.08s, transform 0.45s cubic-bezier(0.25, 1, 0.5, 1) 0.08s;
+      visibility: hidden;
+      overflow: hidden;
+    }
+
+    /* 展開卡片樣式 */
+    .solution-expand-card.is-active {
+      flex: 4.5;
+      border-color: #10b981;
+      box-shadow: 0 16px 40px rgba(10, 30, 24, 0.4);
+    }
+
+    .solution-expand-card.is-active .solution-expand-bg {
+      transform: scale(1.04);
+      filter: brightness(0.85);
+    }
+
+    .solution-expand-card.is-active .solution-collapsed-indicator {
+      opacity: 0;
+    }
+
+    .solution-expand-card.is-active .solution-expanded-content {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      visibility: visible;
+    }
+
+    /* 支援實體滑鼠裝置的 hover 動畫 */
+    @media (hover: hover) and (pointer: fine) {
+      .solution-expand-card:hover {
+        flex: 4.5;
+        border-color: #10b981;
+        box-shadow: 0 16px 40px rgba(10, 30, 24, 0.4);
+      }
+
+      .solution-expand-card:hover .solution-expand-bg {
+        transform: scale(1.04);
+        filter: brightness(0.85);
+      }
+
+      .solution-expand-card:hover .solution-collapsed-indicator {
+        opacity: 0;
+      }
+
+      .solution-expand-card:hover .solution-expanded-content {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        visibility: visible;
+      }
+    }
   }
 
   /* ══════════════════════════════════════════════
@@ -2011,19 +2304,12 @@ const solutions: WeightLossSolution[] = [
       font-size: 0.92rem !important;
       padding: 6px 14px !important;
     }
-    .sol-card-body {
-      padding: 14px !important;
+    .solution-expand-title {
+      font-size: 1.35rem !important;
     }
-    .sol-card-title {
-      font-size: 1.22rem !important;
-    }
-    .sol-card-desc {
+    .solution-desc-text {
       font-size: 0.98rem !important;
       line-height: 1.65 !important;
-    }
-    .sol-card-action {
-      font-size: 0.92rem !important;
-      padding: 7px 14px !important;
     }
     .callout-glass-card {
       padding: 24px 18px !important;
@@ -2049,12 +2335,6 @@ const solutions: WeightLossSolution[] = [
     .btn-clinic-tel {
       font-size: 0.95rem !important;
       padding: 8px 16px !important;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .solutions-cards-grid {
-      grid-template-columns: 1fr;
     }
   }
 </style>
