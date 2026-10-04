@@ -459,14 +459,15 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
     background: #000000;
   }
 
-  .inline-player-iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
+  .inline-player-container :global(iframe),
+  :global(.inline-player-iframe) {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    display: block !important;
   }
 
   .inline-player-close-btn {
@@ -557,6 +558,9 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
             src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
             title="${card.dataset.videoTitle || '衛教短影音'}"
             class="inline-player-iframe"
+            width="100%"
+            height="100%"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; display: block;"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
           ></iframe>
