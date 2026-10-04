@@ -32,7 +32,7 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
 ---
 
 <article
-  class:list={['video-card', { 'video-card-compact': compact }]}
+  class:list={['video-card', { 'video-card-compact': compact, 'is-embed-card': isEmbed }]}
   data-video-id={video.id}
   data-video-title={video.title}
   data-video-category={video.category}
@@ -40,7 +40,7 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
   role="region"
   aria-label={`衛教短影音：${video.title}`}
 >
-  <!-- 16:9 影片縮圖與播放按鈕 (點擊觸發燈箱播放) -->
+  <!-- 16:9 影片縮圖與播放按鈕 (點擊觸發播放) -->
   <div class="thumbnail-wrapper" role="button" aria-label={`播放影片：${video.title}`}>
     <img
       src={thumbnail}
@@ -74,6 +74,18 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
     <span class:list={['category-tag', categoryClass]}>
       {video.category}
     </span>
+
+    <!-- 原地播放容器 (點擊後動態載入 YouTube iframe，不離開原位) -->
+    <div class="inline-player-container" style="display: none;"></div>
+
+    <!-- 原地播放關閉按鈕 (浮於播放器右上角) -->
+    <button type="button" class="inline-player-close-btn" style="display: none;" aria-label="關閉影片回到縮圖" title="關閉影片回到縮圖">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      <span>關閉</span>
+    </button>
   </div>
 
   <!-- 卡片文字內容 -->
@@ -436,4 +448,186 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
       padding: 0.2rem 0.6rem;
     }
   }
+
+  /* ═══ 原地播放器樣式 (Inline Player) ═══ */
+  .inline-player-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background: #000000;
+  }
+
+  .inline-player-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  .inline-player-close-btn {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    z-index: 25;
+    background: rgba(15, 30, 42, 0.88);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 0.28rem 0.72rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    line-height: 1.2;
+  }
+
+  .inline-player-close-btn:hover {
+    background: #e76f51;
+    border-color: #e76f51;
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: 0 6px 18px rgba(231, 111, 81, 0.55);
+  }
+
+  .inline-player-close-btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .video-card.is-playing {
+    border-color: var(--color-primary, #4a90a4);
+    box-shadow: 0 12px 32px rgba(74, 144, 164, 0.28), 0 0 0 2px rgba(74, 144, 164, 0.35);
+    transform: translateY(-2px);
+  }
+
+  .video-card.is-playing .thumbnail-play-btn,
+  .video-card.is-playing .duration-badge,
+  .video-card.is-playing .category-tag,
+  .video-card.is-playing .thumbnail-scrim {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
 </style>
+
+<script>
+  // 卡片原地播放控制核心 (支援 Wix / Iframe 嵌入與獨立頁面)
+  function initInlineVideoPlayers() {
+    function stopAllInlinePlayers() {
+      document.querySelectorAll<HTMLElement>('.video-card.is-playing').forEach((card) => {
+        card.classList.remove('is-playing');
+        const container = card.querySelector<HTMLElement>('.inline-player-container');
+        const closeBtn = card.querySelector<HTMLElement>('.inline-player-close-btn');
+        if (container) {
+          container.innerHTML = '';
+          container.style.display = 'none';
+        }
+        if (closeBtn) {
+          closeBtn.style.display = 'none';
+        }
+      });
+    }
+
+    // 註冊至全域供換頁或隨機換一批時統一呼叫
+    (window as any).stopAllInlinePlayers = stopAllInlinePlayers;
+
+    function playInlineVideo(card: HTMLElement) {
+      const videoId = card.dataset.videoId;
+      if (!videoId) return;
+
+      if (card.classList.contains('is-playing')) return;
+
+      // 停止其他正在播放的卡片
+      stopAllInlinePlayers();
+
+      const container = card.querySelector<HTMLElement>('.inline-player-container');
+      const closeBtn = card.querySelector<HTMLElement>('.inline-player-close-btn');
+
+      if (container) {
+        container.innerHTML = `
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+            title="${card.dataset.videoTitle || '衛教短影音'}"
+            class="inline-player-iframe"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        `;
+        container.style.display = 'block';
+      }
+
+      if (closeBtn) {
+        closeBtn.style.display = 'inline-flex';
+      }
+
+      card.classList.add('is-playing');
+    }
+
+    // 關閉按鈕點擊事件
+    document.addEventListener('click', (e) => {
+      const closeBtn = (e.target as HTMLElement).closest<HTMLElement>('.inline-player-close-btn');
+      if (closeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const card = closeBtn.closest<HTMLElement>('.video-card');
+        if (card) {
+          card.classList.remove('is-playing');
+          const container = card.querySelector<HTMLElement>('.inline-player-container');
+          if (container) {
+            container.innerHTML = '';
+            container.style.display = 'none';
+          }
+          closeBtn.style.display = 'none';
+        }
+      }
+    });
+
+    // 卡片點擊事件
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+
+      // 排除專文按鈕、關閉按鈕
+      if (target.closest('a[data-article-link], .header-article-link, .twin-btn-article, .inline-player-close-btn')) {
+        return;
+      }
+
+      const card = target.closest<HTMLElement>('.video-card');
+      if (!card) return;
+
+      // 判斷是否為嵌入模式卡片或處於嵌入環境 (例如 Wix iframe)
+      const isEmbedMode = card.classList.contains('is-embed-card') ||
+                          document.documentElement.classList.contains('is-embed') ||
+                          document.body?.classList.contains('is-embed') ||
+                          Boolean(document.querySelector('.videos-embed-container')) ||
+                          (window.self !== window.top);
+
+      if (isEmbedMode) {
+        e.preventDefault();
+        if (!card.classList.contains('is-playing')) {
+          playInlineVideo(card);
+        }
+      }
+    });
+
+    // 支援 ESC 鍵快速停止播放
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        stopAllInlinePlayers();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initInlineVideoPlayers);
+  } else {
+    initInlineVideoPlayers();
+  }
+</script>

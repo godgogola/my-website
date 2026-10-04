@@ -111,7 +111,7 @@
       }
     });
 
-    // 綁定全站所有帶有 data-video-id 的觸發元素（排除專文閱讀連結）
+    // 綁定全站所有帶有 data-video-id 的觸發元素（排除專文閱讀連結與嵌入原地播放）
     document.addEventListener('click', (e) => {
       const articleLink = (e.target as HTMLElement).closest<HTMLElement>('a[data-article-link], .header-article-link, .twin-btn-article');
       if (articleLink) {
@@ -119,8 +119,25 @@
         return;
       }
 
+      // 排除原地播放控制按鈕
+      if ((e.target as HTMLElement).closest('.inline-player-close-btn, .inline-player-container')) {
+        return;
+      }
+
+      // 若在嵌入環境 (iframe、is-embed、或嵌入專區)，全面採用原地播放，不觸發燈箱彈窗
+      const isEmbedMode = document.documentElement.classList.contains('is-embed') ||
+                          document.body?.classList.contains('is-embed') ||
+                          Boolean(document.querySelector('.videos-embed-container')) ||
+                          (window.self !== window.top);
+      if (isEmbedMode) {
+        return;
+      }
+
       const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-video-id]');
       if (trigger) {
+        if (trigger.classList.contains('is-embed-card')) {
+          return;
+        }
         e.preventDefault();
         const videoId = trigger.dataset.videoId;
         const videoTitle = trigger.dataset.videoTitle || '衛教影片';

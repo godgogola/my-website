@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import VideoCard from '../../components/VideoCard.astro';
-import VideoModal from '../../components/VideoModal.astro';
 import { videos, videoCategories } from '../../data/videos';
 
 // 計算各分類數量
@@ -111,9 +110,6 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
       </div>
     </section>
   </div>
-
-  <!-- 沉浸式燈箱彈窗播放器 -->
-  <VideoModal />
 </Layout>
 
 <script>
@@ -141,6 +137,11 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     // 隨機抽選 N 部影片並呈現
     function showRandomVideos(category: string, isShuffle = false) {
       currentCategory = category;
+
+      // 切換分類或換一批時，先停止任何正在播放的原地播放器
+      if (typeof (window as any).stopAllInlinePlayers === 'function') {
+        (window as any).stopAllInlinePlayers();
+      }
 
       // 取得符合目前分類的所有卡片
       const matchedItems = allItems.filter(item => {
