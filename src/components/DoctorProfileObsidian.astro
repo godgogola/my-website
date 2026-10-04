@@ -1,0 +1,1227 @@
+---
+// DoctorProfileObsidian.astro
+// 極致深邃黑曜岩與液態鍍鉻風格（Precision Obsidian & Liquid Chrome）
+// 萃取自診所網站「醫師介紹」核心視覺系統
+---
+
+<section class="obsidian-hero-section" id="about-doctor-section" aria-label="黃冠智院長介紹">
+  <!-- 頂部黑曜微光背景裝飾 -->
+  <div class="ambient-mesh-glow" aria-hidden="true"></div>
+
+  <div class="obsidian-container">
+    
+    <!-- 頂部精準醫療膠囊標籤 (Eyebrow Badge) -->
+    <div class="header-eyebrow-wrap">
+      <div class="header-eyebrow">
+        <span class="eyebrow-dot"></span>
+        <span>FTHEALTHY MEDICAL DIRECTOR</span>
+        <span class="eyebrow-pill">院長介紹</span>
+      </div>
+    </div>
+
+    <div class="obsidian-layout-grid">
+      
+      <!-- 左欄：核心黑曜岩立體卡片 (包含棚拍舞台、鍍鉻姓名、滑升抽屜) -->
+      <div class="card-column">
+        <article class="doctor-card" id="dr-huang-obsidian-card">
+          
+          <!-- 照片舞台 (深色棚拍聚光 + 底部羽化漸層) -->
+          <div class="card-photo-wrapper">
+            <span class="card-specialty-badge">肝膽腸胃內科</span>
+            <img 
+              src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg"
+              alt="黃冠智 院長" 
+              class="card-photo-img" 
+              loading="eager"
+            />
+          </div>
+
+          <!-- 底部黑曜毛玻璃質感面板 -->
+          <div class="card-glass-panel">
+            <div class="card-header-row">
+              <div class="doctor-name-title">
+                <h2 class="doctor-name">黃冠智 醫師</h2>
+                <span class="role-pill role-director">豐田診所院長</span>
+              </div>
+              <div class="card-arrow-btn" aria-hidden="true" title="點擊查看詳細資歷">
+                <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+              </div>
+            </div>
+
+            <p class="card-summary-text">
+              大里仁愛/長庚消化內科內視鏡室主任・肝癌團隊召集人・中山醫學大學附醫主治醫師
+            </p>
+
+            <div class="card-footer-row">
+              <span class="card-sub-tag">專責消化道微創內視鏡</span>
+              <!-- 液態彩光鍍鉻按鈕 -->
+              <button 
+                type="button" 
+                class="card-detail-btn" 
+                id="btn-open-drawer" 
+                aria-label="查看完整學經歷資歷"
+              >
+                <span>完整學經歷</span>
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- 內建滑升抽屜 (零跳頁原地平滑升起) -->
+          <div class="card-detail-drawer" id="dr-huang-drawer" aria-hidden="true">
+            <div class="drawer-header">
+              <div class="drawer-title-box">
+                <h3 class="drawer-name">黃冠智 醫師</h3>
+                <span class="drawer-specialty">院長 / 肝膽腸胃專科</span>
+              </div>
+              <button type="button" class="drawer-close-btn" id="btn-close-drawer" aria-label="收合資歷抽屜">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+
+            <div class="drawer-body">
+              <!-- 院長引言 -->
+              <div class="drawer-quote-box">
+                本網站由本人親自設計與撰寫內容，期望透過專業且易懂的衛教，幫助大家照顧腸胃健康。
+              </div>
+
+              <!-- 學歷與專業證照 -->
+              <div class="drawer-section">
+                <h4 class="drawer-sec-title">
+                  <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                  專業學歷與證照
+                </h4>
+                <ul class="drawer-list">
+                  <li class="drawer-item">中山醫學大學醫學系學士</li>
+                  <li class="drawer-item">中華民國內科專科醫師</li>
+                  <li class="drawer-item">中華民國消化內科專科醫師</li>
+                  <li class="drawer-item">中華民國消化內視鏡專科醫師</li>
+                  <li class="drawer-item">中華民國糖尿病共同照護網合格醫師</li>
+                  <li class="drawer-item">中華民國勞工健檢專責醫師</li>
+                </ul>
+              </div>
+
+              <!-- 臨床主要經歷 -->
+              <div class="drawer-section">
+                <h4 class="drawer-sec-title">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                  臨床醫療經歷
+                </h4>
+                <ul class="drawer-list">
+                  <li class="drawer-item">中山醫學大學附設醫院胃腸肝膽科主治醫師</li>
+                  <li class="drawer-item">大里仁愛醫院 / 長庚醫院 消化內科內視鏡室主任</li>
+                  <li class="drawer-item">大里仁愛醫院 / 長庚醫院 肝癌多專科診療團隊召集人</li>
+                  <li class="drawer-item">現任 豐田診所 院長</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="drawer-footer">
+              <button type="button" class="drawer-back-btn" id="btn-back-drawer">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>返回醫師卡片</span>
+              </button>
+              <a href="#clinic-section-title" class="drawer-action-link">
+                <span>門診指引</span>
+                <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+              </a>
+            </div>
+          </div>
+
+        </article>
+      </div>
+
+      <!-- 右欄：大標題、專長領域液態彩光膠囊、看診初心 -->
+      <div class="info-column">
+        
+        <div class="hero-title-group">
+          <h1 class="hero-main-title">
+            <span class="text-steel">關於</span>
+            <span class="text-chrome">黃冠智 院長</span>
+          </h1>
+          <p class="hero-sub-title">
+            長庚、仁愛醫學中心主任級專科實力，專注消化道內視鏡、肝膽健康、代謝減重與慢性病整合管理，細膩傾聽每位就診病患的身心需求。
+          </p>
+        </div>
+
+        <!-- 專長領域與特色診療 (全面升級為液態彩光金屬標籤) -->
+        <div class="specialty-block">
+          <div class="specialty-header">
+            <span class="specialty-icon-dot"></span>
+            <span class="specialty-header-text">專長領域與特色診療</span>
+            <span class="specialty-count">8 大專科項目</span>
+          </div>
+
+          <div class="specialty-metal-grid">
+            <a href="/health-column?filter=內視鏡檢查" class="metal-badge" title="查看無痛胃鏡·大腸鏡相關衛教">
+              <span class="badge-dot"></span>
+              <span>消化道內視鏡</span>
+            </a>
+            <a href="/health-column?filter=超音波檢查" class="metal-badge" title="查看腹部超音波衛教">
+              <span class="badge-dot"></span>
+              <span>腹部超音波</span>
+            </a>
+            <a href="/health-column?filter=胃部疾病" class="metal-badge" title="查看胃食道逆流整合衛教">
+              <span class="badge-dot"></span>
+              <span>胃食道逆流</span>
+            </a>
+            <a href="/health-column?filter=肝病特區" class="metal-badge" title="查看肝病追蹤衛教">
+              <span class="badge-dot"></span>
+              <span>肝病慢性追蹤</span>
+            </a>
+            <a href="/health-column?filter=減重" class="metal-badge" title="查看健康享瘦專題">
+              <span class="badge-dot"></span>
+              <span>減重代謝門診</span>
+            </a>
+            <a href="/health-column?filter=慢性病" class="metal-badge" title="查看三高慢性病照護">
+              <span class="badge-dot"></span>
+              <span>三高慢性病照護</span>
+            </a>
+            <a href="/health-column?filter=腸道疾病" class="metal-badge" title="查看內痔微創門診">
+              <span class="badge-dot"></span>
+              <span>內痔微創結紮</span>
+            </a>
+            <a href="/health-column?filter=各種檢驗檢查" class="metal-badge" title="查看健康檢查資訊">
+              <span class="badge-dot"></span>
+              <span>勞工健康檢查</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 診間手帳理念金句卡片 -->
+        <div class="philosophy-quote-card">
+          <div class="philosophy-header">
+            <span class="philosophy-badge">CLINICAL PHILOSOPHY</span>
+            <span class="philosophy-author">黃冠智 院長 · 診間筆記</span>
+          </div>
+          <p class="philosophy-text">
+            「看診，是用我們重複的日常，去排除病人的焦慮。堅持以嚴謹的實證醫學為後盾，用易懂而有溫度的語言，守護大家的腸胃健康。」
+          </p>
+          <div class="philosophy-action-row">
+            <a href="/posts/為什麼想建這個網站從一本臨床筆記到線上衛教小站" class="philosophy-link">
+              <span>閱讀完整建站手記</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="#schedule-table-wrap" class="philosophy-schedule-btn">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>查看本週門診表</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ================================================================
+     UI/UX Pro Max — Precision Obsidian & Liquid Chrome Design System
+     專屬封裝樣式（完全隔離，不影響其他版面）
+     ================================================================ */
+
+  /* 區域外容器 (黑曜岩夜幕底色與細緻點陣) */
+  .obsidian-hero-section {
+    position: relative;
+    background-color: #090B0F;
+    background-image: 
+      radial-gradient(1100px 520px at 50% -80px, rgba(148, 163, 184, 0.12), transparent 70%),
+      radial-gradient(800px 400px at 85% 30%, rgba(16, 185, 129, 0.06), transparent 60%),
+      radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 32px 32px;
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    padding: 42px 36px 46px;
+    margin-bottom: 48px;
+    overflow: hidden;
+    color: #F1F5F9;
+    isolation: isolate;
+  }
+
+  .ambient-mesh-glow {
+    position: absolute;
+    top: -100px;
+    right: 10%;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(56, 189, 248, 0.05) 50%, transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .obsidian-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  /* 頂部科技膠囊標籤 (Eyebrow Badge) */
+  .header-eyebrow-wrap {
+    display: flex;
+    align-items: center;
+  }
+  .header-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9999px;
+    color: #94A3B8;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+  }
+  .eyebrow-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+  }
+  .eyebrow-pill {
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%);
+    color: #090B0E;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+
+  /* 雙欄主架構 (左卡片，右內容) */
+  .obsidian-layout-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 36px;
+    align-items: stretch;
+  }
+
+  @media (max-width: 1024px) {
+    .obsidian-layout-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  /* ════════════════════════════════════════
+     醫師立體卡片 (Titanium Obsidian Crystal Chassis)
+     ════════════════════════════════════════ */
+  .card-column {
+    display: flex;
+    justify-content: center;
+  }
+
+  .doctor-card {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    background: #11141B;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    isolation: isolate;
+  }
+  .doctor-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.85), 0 0 24px rgba(255, 255, 255, 0.06), 0 0 1px 1px rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  /* 卡片照片舞台 (深色棚拍聚光 + 底部羽化漸層) */
+  .card-photo-wrapper {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: radial-gradient(circle at 50% 30%, #1A202C 0%, #0F131A 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .card-photo-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    mask-image: linear-gradient(to bottom, black 70%, rgba(0,0,0,0.8) 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, rgba(0,0,0,0.8) 85%, transparent 100%);
+  }
+  .doctor-card:hover .card-photo-img {
+    transform: scale(1.04);
+  }
+
+  /* 懸浮於照片左上角：科別微光膠囊 */
+  .card-specialty-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 3;
+    background: rgba(10, 13, 19, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #E2E8F0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-specialty-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 6px #10B981;
+  }
+
+  /* 底部黑曜毛玻璃質感面板 */
+  .card-glass-panel {
+    position: relative;
+    background: linear-gradient(180deg, rgba(17, 21, 28, 0.92) 0%, rgba(10, 13, 18, 0.98) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 22px 22px 20px;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .doctor-name-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* 醫師姓名拋光鍍鉻效果 */
+  .doctor-name {
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    background: linear-gradient(135deg, 
+      #FFFFFF 0%, 
+      #F8FAFC 24%, 
+      #E2E8F0 44%, 
+      #94A3B8 58%, 
+      #CBD5E1 74%, 
+      #FFFFFF 88%, 
+      #A0AEC0 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+    margin: 0;
+  }
+
+  /* 院長琥珀金徽章 */
+  .role-pill {
+    position: relative;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .role-pill.role-director {
+    background: linear-gradient(180deg, #FFFFFF 0%, #FEF3C7 30%, #FDE68A 55%, #F59E0B 85%, #D97706 100%);
+    color: #451A03 !important;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 
+      0 2px 6px rgba(0, 0, 0, 0.35),
+      0 0 14px rgba(245, 158, 11, 0.45),
+      inset 0 1px 1px #FFFFFF,
+      inset 0 -1px 2px rgba(120, 53, 15, 0.35);
+  }
+  .role-pill.role-director::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(115deg, rgba(251, 191, 36, 0.7) 0%, rgba(245, 158, 11, 0.8) 50%, rgba(217, 119, 6, 0.6) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  /* 卡片右上圓形箭頭按鈕 */
+  .card-arrow-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #CBD5E1;
+    flex-shrink: 0;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card-arrow-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.3s ease;
+  }
+  .doctor-card:hover .card-arrow-btn {
+    background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 40%, #94A3B8 100%);
+    color: #0A0D12;
+    border-color: #FFFFFF;
+    transform: scale(1.08);
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+  }
+  .doctor-card:hover .card-arrow-btn svg {
+    transform: translate(2px, -2px);
+  }
+
+  .card-summary-text {
+    font-size: 0.92rem;
+    color: #94A3B8;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 10px;
+  }
+  .card-sub-tag {
+    font-size: 0.8rem;
+    color: #A7F3D0;
+    font-weight: 600;
+  }
+
+  /* ════════════════════════════════════════
+     核心亮點：液態彩光金屬按鈕 (Liquid Chrome Button)
+     ════════════════════════════════════════ */
+  .card-detail-btn {
+    position: relative;
+    background: 
+      radial-gradient(circle at var(--mx, 50%) var(--my, 20%), rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 65%),
+      linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 25%, #CBD5E1 55%, #F8FAFC 80%, #94A3B8 100%);
+    border: 1px solid #FFFFFF;
+    color: #0A0D12 !important;
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 7px 16px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 
+      0 3px 8px rgba(0, 0, 0, 0.4),
+      0 8px 24px -4px rgba(255, 255, 255, 0.35),
+      0 0 16px rgba(56, 189, 248, 0.22),
+      inset 0 1px 1px #FFFFFF,
+      inset 0 -1.5px 2px rgba(15, 23, 42, 0.4);
+    outline: none;
+    font-family: inherit;
+  }
+
+  /* 虹彩稜鏡折射外框 */
+  .card-detail-btn::before {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(125deg, 
+      rgba(244, 114, 182, 0.8) 0%, 
+      rgba(56, 189, 248, 0.85) 35%, 
+      rgba(250, 204, 21, 0.8) 70%, 
+      rgba(168, 85, 247, 0.7) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  /* 底部漫射投影光暈 */
+  .card-detail-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 15%;
+    width: 70%;
+    height: 10px;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.6) 0%, rgba(56, 189, 248, 0.4) 45%, transparent 75%);
+    filter: blur(6px);
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .card-detail-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s ease;
+  }
+
+  .card-detail-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 6px 16px rgba(0, 0, 0, 0.5),
+      0 12px 28px -2px rgba(255, 255, 255, 0.5),
+      0 0 22px rgba(56, 189, 248, 0.4),
+      inset 0 1px 1px #FFFFFF;
+  }
+  .card-detail-btn:hover::after {
+    opacity: 0.95;
+    transform: scale(1.15);
+  }
+  .card-detail-btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* ════════════════════════════════════════
+     卡片內建滑升抽屜 (Slide-up Drawer)
+     ════════════════════════════════════════ */
+  .card-detail-drawer {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(180deg, #131720 0%, #0A0D13 100%);
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transform: translateY(102%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  }
+
+  .doctor-card.is-expanded .card-detail-drawer {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+  }
+  .drawer-title-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .drawer-name {
+    font-size: 1.25rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+  .drawer-specialty {
+    font-size: 0.8rem;
+    color: #10B981;
+    font-weight: 700;
+    padding: 2px 8px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 9999px;
+  }
+  .drawer-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #CBD5E1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.35s ease;
+  }
+  .drawer-close-btn:hover {
+    background: #EF4444;
+    border-color: #EF4444;
+    color: #FFFFFF;
+    transform: rotate(90deg);
+  }
+  .drawer-close-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+  .drawer-quote-box {
+    background: rgba(255, 255, 255, 0.04);
+    border-left: 3px solid #10B981;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.86rem;
+    color: #E2E8F0;
+    line-height: 1.55;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .drawer-section {
+    display: flex;
+    flex-direction: column;
+  }
+  .drawer-sec-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .drawer-sec-title svg {
+    width: 15px;
+    height: 15px;
+    stroke: #10B981;
+    fill: none;
+    stroke-width: 2.2;
+  }
+
+  .drawer-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 0;
+    margin: 0;
+  }
+  .drawer-item {
+    position: relative;
+    padding-left: 20px;
+    font-size: 0.86rem;
+    color: #94A3B8;
+    line-height: 1.5;
+  }
+  .drawer-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 13px;
+    height: 13px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .drawer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+  }
+  .drawer-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.35s ease;
+  }
+  .drawer-back-btn:hover {
+    background: #FFFFFF;
+    color: #0A0D12;
+    border-color: #FFFFFF;
+  }
+  .drawer-back-btn svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    fill: none;
+  }
+
+  .drawer-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.35s ease;
+  }
+  .drawer-action-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.55);
+  }
+  .drawer-action-link svg {
+    width: 12px;
+    height: 12px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  /* ════════════════════════════════════════
+     右欄：鍍鉻文字、金屬專長膠囊、理念卡片
+     ════════════════════════════════════════ */
+  .info-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .hero-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hero-main-title {
+    font-size: clamp(2rem, 3.2vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin: 0;
+  }
+  .text-steel {
+    background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 50%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    margin-right: 6px;
+  }
+  .text-chrome {
+    background: linear-gradient(135deg, 
+      #FFFFFF 0%, 
+      #F8FAFC 24%, 
+      #E2E8F0 44%, 
+      #94A3B8 58%, 
+      #CBD5E1 74%, 
+      #FFFFFF 88%, 
+      #A0AEC0 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.15));
+    font-weight: 900;
+  }
+  .hero-sub-title {
+    color: #94A3B8;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    margin: 0;
+    max-width: 680px;
+  }
+
+  /* 專長領域金屬膠囊清單 */
+  .specialty-block {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px 22px;
+    background: rgba(17, 20, 27, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
+  }
+  .specialty-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+  }
+  .specialty-icon-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+  }
+  .specialty-header-text {
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: 0.02em;
+  }
+  .specialty-count {
+    font-size: 0.76rem;
+    color: #64748B;
+    margin-left: auto;
+  }
+
+  /* 8 顆 MetalBadge 網格排版 */
+  .specialty-metal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 768px) {
+    .specialty-metal-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ================================================================
+     MetalBadge (立體流動液態金屬標籤)
+     ================================================================ */
+  .metal-badge {
+    position: relative;
+    background: 
+      radial-gradient(circle at var(--mx, 50%) var(--my, 20%), rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 65%),
+      linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 25%, #CBD5E1 55%, #F8FAFC 80%, #94A3B8 100%);
+    border: 1px solid #FFFFFF;
+    color: #0A0D12 !important;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 7px 12px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 
+      0 2px 6px rgba(0, 0, 0, 0.35),
+      0 6px 18px -4px rgba(255, 255, 255, 0.3),
+      0 0 12px rgba(56, 189, 248, 0.2),
+      inset 0 1px 1px #FFFFFF,
+      inset 0 -1px 2px rgba(15, 23, 42, 0.35);
+    white-space: nowrap;
+  }
+
+  /* 虹彩稜鏡折射邊框 */
+  .metal-badge::before {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(125deg, 
+      rgba(244, 114, 182, 0.75) 0%, 
+      rgba(56, 189, 248, 0.8) 35%, 
+      rgba(250, 204, 21, 0.75) 70%, 
+      rgba(168, 85, 247, 0.65) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+
+  /* 實體漫射光暈 */
+  .metal-badge::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 15%;
+    width: 70%;
+    height: 8px;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.6) 0%, rgba(56, 189, 248, 0.35) 45%, transparent 75%);
+    filter: blur(4px);
+    pointer-events: none;
+    opacity: 0.65;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .metal-badge .badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #059669;
+    flex-shrink: 0;
+  }
+
+  .metal-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      0 8px 22px rgba(255, 255, 255, 0.45),
+      0 0 16px rgba(56, 189, 248, 0.35),
+      inset 0 1px 1px #FFFFFF;
+  }
+  .metal-badge:hover::after {
+    opacity: 0.9;
+    transform: scale(1.15);
+  }
+
+  /* 理念手帳卡片 */
+  .philosophy-quote-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(16, 185, 129, 0.04) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 3px solid #10B981;
+    border-radius: 16px;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .philosophy-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .philosophy-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #10B981;
+    letter-spacing: 0.08em;
+  }
+  .philosophy-author {
+    font-size: 0.8rem;
+    color: #94A3B8;
+    font-weight: 600;
+  }
+  .philosophy-text {
+    font-size: 0.94rem;
+    color: #E2E8F0;
+    line-height: 1.65;
+    margin: 0;
+    font-style: italic;
+  }
+  .philosophy-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .philosophy-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #A7F3D0;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .philosophy-link:hover {
+    color: #FFFFFF;
+  }
+  .philosophy-link svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    fill: none;
+  }
+
+  .philosophy-schedule-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #F1F5F9;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 5px 13px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .philosophy-schedule-btn:hover {
+    background: #FFFFFF;
+    color: #0A0D12;
+    border-color: #FFFFFF;
+  }
+  .philosophy-schedule-btn svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* 手機版適應響應式 */
+  @media (max-width: 640px) {
+    .obsidian-hero-section {
+      padding: 24px 18px 28px;
+      border-radius: 20px;
+      margin-bottom: 32px;
+    }
+    .card-photo-wrapper {
+      height: 320px;
+    }
+    .hero-main-title {
+      font-size: 1.85rem;
+    }
+    .specialty-metal-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<script>
+  // 抽屜開關與全域事件監聽
+  function setupObsidianCard() {
+    const card = document.getElementById('dr-huang-obsidian-card');
+    const openBtn = document.getElementById('btn-open-drawer');
+    const closeBtn = document.getElementById('btn-close-drawer');
+    const backBtn = document.getElementById('btn-back-drawer');
+
+    if (!card) return;
+
+    function openDrawer(e?: Event) {
+      if (e) e.stopPropagation();
+      card?.classList.add('is-expanded');
+    }
+
+    function closeDrawer(e?: Event) {
+      if (e) e.stopPropagation();
+      card?.classList.remove('is-expanded');
+    }
+
+    // 點擊「完整學經歷」或箭頭按鈕打開抽屜
+    openBtn?.addEventListener('click', openDrawer);
+    closeBtn?.addEventListener('click', closeDrawer);
+    backBtn?.addEventListener('click', closeDrawer);
+
+    // 點擊未展開的卡片本體時自動展開
+    card.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('.card-detail-drawer') || target.closest('.card-detail-btn')) {
+        return;
+      }
+      if (!card.classList.contains('is-expanded')) {
+        openDrawer(e);
+      }
+    });
+
+    // 點擊卡片外部時關閉
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('#dr-huang-obsidian-card')) {
+        closeDrawer();
+      }
+    });
+
+    // ESC 鍵關閉
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDrawer();
+      }
+    });
+
+    // 游標感應實體光影追蹤 (Physical Cursor Reflection)
+    const interactiveEls = document.querySelectorAll<HTMLElement>(
+      '#dr-huang-obsidian-card, .card-detail-btn, .metal-badge'
+    );
+    interactiveEls.forEach((el) => {
+      el.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = el.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        el.style.setProperty('--mx', `${x.toFixed(1)}%`);
+        el.style.setProperty('--my', `${y.toFixed(1)}%`);
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.setProperty('--mx', '50%');
+        el.style.setProperty('--my', '20%');
+      });
+    });
+  }
+
+  // 支援 Astro 頁面初次載入及路由切換
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupObsidianCard);
+  } else {
+    setupObsidianCard();
+  }
+  document.addEventListener('astro:page-load', setupObsidianCard);
+</script>

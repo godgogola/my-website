@@ -45,14 +45,17 @@ const formatDate = (date: string | Date) => {
     />
   </div>
 
-  <!-- 深色漸層覆蓋層 (確保文字清晰度) -->
+  <!-- 深色黑曜漸層覆蓋層 -->
   <div class="card-gradient-overlay"></div>
 
-  <!-- 內容層 (毛玻璃標籤 + 標題與動作) -->
+  <!-- 內容層 (黑曜毛玻璃標籤 + 標題與動作) -->
   <div class="card-overlay-content">
     <!-- 頂部：分類標籤與日期 -->
     <div class="card-top-row">
-      <span class="category-pill-badge">{category}</span>
+      <span class="category-pill-badge">
+        <span class="pill-emerald-dot"></span>
+        <span>{category}</span>
+      </span>
       <span class="date-badge">{formatDate(publishDate)}</span>
     </div>
 
@@ -60,11 +63,11 @@ const formatDate = (date: string | Date) => {
     <div class="card-bottom-row">
       <h3 class="card-article-title">{title}</h3>
       <div class="card-action-hint">
-        <span class="action-text">閱讀文章</span>
+        <span class="action-text">閱讀完整筆記</span>
         <div class="action-arrow-circle" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
           </svg>
         </div>
       </div>
@@ -73,30 +76,31 @@ const formatDate = (date: string | Date) => {
 </a>
 
 <style>
+  /* ================================================================
+     UI/UX Pro Max — Obsidian & Liquid Chrome Article Card
+     ================================================================ */
   .media-post-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 280px;
+    height: 290px;
     width: 100%;
     border-radius: 20px;
     overflow: hidden;
-    background-color: var(--color-bg-dark, #2c5364);
-    border: 1px solid var(--color-border, #d4e5eb);
-    box-shadow: 0 6px 20px rgba(74, 144, 164, 0.1);
+    background-color: #11141B;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.06);
     text-decoration: none;
     color: #FFFFFF;
     box-sizing: border-box;
-    transition:
-      transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 0.32s ease,
-      border-color 0.32s ease;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    isolation: isolate;
   }
 
   .media-post-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 16px 36px rgba(74, 144, 164, 0.25);
-    border-color: var(--color-primary, #4a90a4);
+    box-shadow: 0 22px 48px -8px rgba(0, 0, 0, 0.85), 0 0 24px rgba(16, 185, 129, 0.12), 0 0 1px 1px rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.28);
   }
 
   /* 滿版背景圖層 */
@@ -106,6 +110,7 @@ const formatDate = (date: string | Date) => {
     width: 100%;
     height: 100%;
     z-index: 0;
+    background: #0B0E14;
   }
 
   .card-img {
@@ -114,34 +119,36 @@ const formatDate = (date: string | Date) => {
     object-fit: cover;
     object-position: center;
     display: block;
-    transition: transform 0.45s ease;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+    filter: brightness(0.92) contrast(1.05);
   }
 
   .media-post-card:hover .card-img {
-    transform: scale(1.05);
+    transform: scale(1.06);
+    filter: brightness(1) contrast(1.08);
   }
 
-  /* 深色漸層覆蓋層 */
+  /* 黑曜漸層覆蓋層 */
   .card-gradient-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       180deg,
-      rgba(30, 58, 76, 0.45) 0%,
-      rgba(30, 58, 76, 0.12) 40%,
-      rgba(20, 42, 56, 0.9) 100%
+      rgba(9, 11, 15, 0.55) 0%,
+      rgba(9, 11, 15, 0.2) 35%,
+      rgba(9, 11, 15, 0.96) 100%
     );
     z-index: 1;
     pointer-events: none;
-    transition: background 0.3s ease;
+    transition: background 0.35s ease;
   }
 
   .media-post-card:hover .card-gradient-overlay {
     background: linear-gradient(
       180deg,
-      rgba(30, 58, 76, 0.5) 0%,
-      rgba(30, 58, 76, 0.18) 35%,
-      rgba(15, 34, 46, 0.95) 100%
+      rgba(9, 11, 15, 0.65) 0%,
+      rgba(9, 11, 15, 0.25) 30%,
+      rgba(9, 11, 15, 0.98) 100%
     );
   }
 
@@ -165,25 +172,38 @@ const formatDate = (date: string | Date) => {
     gap: 8px;
   }
 
+  /* 科技黑曜微光膠囊標籤 */
   .category-pill-badge {
-    background: rgba(255, 255, 255, 0.26);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #FFFFFF;
+    background: rgba(10, 13, 19, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #E2E8F0;
     font-size: 0.78rem;
     font-weight: 700;
     padding: 4px 12px;
     border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  }
+  .pill-emerald-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 6px #10B981;
+    flex-shrink: 0;
   }
 
   .date-badge {
     font-size: 0.76rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    color: #94A3B8;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
   }
 
   /* 底部排版 */
@@ -196,80 +216,78 @@ const formatDate = (date: string | Date) => {
   .card-article-title {
     font-size: 1.15rem;
     font-weight: 800;
-    line-height: 1.38;
-    color: #FFFFFF;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    line-height: 1.4;
+    color: #F8FAFC;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 0;
+    letter-spacing: -0.01em;
+    transition: color 0.25s ease;
+  }
+
+  .media-post-card:hover .card-article-title {
+    color: #FFFFFF;
+    text-shadow: 0 0 16px rgba(255, 255, 255, 0.35);
   }
 
   .card-action-hint {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: rgba(255, 255, 255, 0.92);
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94A3B8;
+    transition: color 0.25s ease;
+  }
+  .media-post-card:hover .card-action-hint {
+    color: #FFFFFF;
+    border-top-color: rgba(255, 255, 255, 0.18);
   }
 
   .action-text {
     font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    letter-spacing: 0.02em;
   }
 
+  /* 右下角拉絲鈦金轉鍍鉻圓形光碟鈕 */
   .action-arrow-circle {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #FFFFFF;
-    transition: transform 0.25s ease, background 0.25s ease;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #CBD5E1;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
   }
 
   .media-post-card:hover .action-arrow-circle {
-    transform: translateX(4px);
-    background: linear-gradient(135deg, var(--color-primary, #4a90a4), #5ba3b8);
-    border-color: transparent;
+    background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 40%, #94A3B8 100%);
+    color: #0A0D12;
+    border-color: #FFFFFF;
+    transform: scale(1.1) translate(2px, -2px);
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.4), inset 0 1px 1px #FFFFFF;
   }
 
   @media (max-width: 640px) {
     .media-post-card {
-      height: 260px;
+      height: 270px;
       border-radius: 18px;
     }
     .card-overlay-content {
       padding: 16px 18px;
     }
-    .category-pill-badge {
-      font-size: 0.85rem;
-      padding: 4px 12px;
-      font-weight: 800;
-    }
-    .date-badge {
-      font-size: 0.84rem;
-      font-weight: 600;
-    }
     .card-article-title {
-      font-size: 1.25rem;
-      line-height: 1.38;
-      font-weight: 800;
-    }
-    .action-text {
-      font-size: 0.92rem;
-      font-weight: 800;
-    }
-    .action-arrow-circle {
-      width: 28px;
-      height: 28px;
+      font-size: 1.1rem;
     }
   }
 </style>

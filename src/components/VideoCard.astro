@@ -517,6 +517,85 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
     opacity: 0 !important;
     pointer-events: none !important;
   }
+
+  /* ================================================================
+     UI/UX Pro Max — Obsidian & Liquid Chrome Styles for VideoCard
+     ================================================================ */
+  .video-card {
+    background: #11141B !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.06) !important;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    overflow: hidden !important;
+  }
+  .video-card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 22px 48px -8px rgba(0, 0, 0, 0.85), 0 0 24px rgba(16, 185, 129, 0.12), 0 0 1px 1px rgba(255, 255, 255, 0.28) !important;
+    border-color: rgba(255, 255, 255, 0.28) !important;
+  }
+
+  .thumbnail-wrapper {
+    background: #0B0E14 !important;
+  }
+
+  /* 拋光鍍鉻光碟播放按鈕 */
+  .play-btn-circle {
+    background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 40%, #94A3B8 100%) !important;
+    color: #0A0D12 !important;
+    border: 1px solid #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 16px rgba(255, 255, 255, 0.4) !important;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
+  }
+  .video-card:hover .play-btn-circle {
+    transform: scale(1.15) !important;
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.65), 0 0 22px rgba(56, 189, 248, 0.4) !important;
+  }
+
+  /* 底部黑曜毛玻璃質感內容區 */
+  .card-content {
+    background: linear-gradient(180deg, rgba(17, 21, 28, 0.95) 0%, rgba(10, 13, 18, 0.98) 100%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #F1F5F9 !important;
+  }
+
+  .doctor-badge {
+    color: #A7F3D0 !important;
+  }
+  .doctor-badge svg {
+    color: #10B981 !important;
+  }
+
+  /* 液態銀彩專文連結膠囊 */
+  .header-article-link {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #E2E8F0 !important;
+    border-radius: 9999px !important;
+    padding: 4px 12px !important;
+    font-weight: 700 !important;
+    transition: all 0.25s ease !important;
+  }
+  .header-article-link:hover {
+    background: #FFFFFF !important;
+    color: #0A0D12 !important;
+    border-color: #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .video-title {
+    color: #F8FAFC !important;
+    transition: color 0.25s ease !important;
+  }
+  .video-card:hover .video-title {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .video-desc {
+    color: #94A3B8 !important;
+  }
+
 </style>
 
 <script>

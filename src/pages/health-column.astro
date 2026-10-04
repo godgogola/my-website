@@ -49,12 +49,21 @@ const sortedCategories = [
   title="醫學筆記｜胃腸鏡、減重與三高控制筆記 - 黃冠智醫師"
   description={`黃冠智醫師的胃腸肝膽醫學筆記，共 ${posts.length} 篇實證文章，涵蓋胃食道逆流、無痛胃腸鏡、肝病追蹤、減重醫學與三高慢病管理等主題。`}
 >
-  <!-- ── 頁面 Hero 標題 ── -->
+  <!-- ── 頁面 Hero 標題 (Obsidian & Liquid Chrome Style) ── -->
   <div class="column-hero">
+    <div class="ambient-mesh-glow" aria-hidden="true"></div>
     <div class="column-hero-inner">
-      <h1 class="column-hero-title">臨床實證 <span class="gradient-text">醫學筆記</span></h1>
+      <div class="header-eyebrow">
+        <span class="eyebrow-dot"></span>
+        <span>FTHEALTHY CLINICAL NOTES</span>
+        <span class="eyebrow-pill">實證專欄</span>
+      </div>
+      <h1 class="column-hero-title">
+        <span class="text-steel">臨床實證</span>
+        <span class="text-chrome">醫學筆記</span>
+      </h1>
       <p class="column-hero-desc">
-        共收錄 <strong>{posts.length}</strong> 篇專業衛教文章，為您解析胃腸鏡、慢性病防治與健康飲食
+        由長庚仁愛主任級醫師親筆撰寫，共收錄 <strong>{posts.length}</strong> 篇專業衛教文章，為您深度解析無痛胃腸鏡、肝病追蹤、慢性病防治與健康代謝飲食。
       </p>
     </div>
   </div>
@@ -988,4 +997,173 @@ const sortedCategories = [
       margin-bottom: 36px;
     }
   }
+
+  /* ================================================================
+     UI/UX Pro Max — Obsidian & Liquid Chrome Styles for Health Column
+     ================================================================ */
+  .column-hero {
+    position: relative;
+    background-color: #090B0F;
+    background-image: 
+      radial-gradient(1100px 520px at 50% -80px, rgba(148, 163, 184, 0.12), transparent 70%),
+      radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 100% 100%, 32px 32px;
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    text-align: center;
+    padding: 38px 20px 34px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .ambient-mesh-glow {
+    position: absolute;
+    top: -100px;
+    right: 15%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(56, 189, 248, 0.05) 50%, transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .header-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9999px;
+    color: #94A3B8;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+    margin-bottom: 12px;
+  }
+  .eyebrow-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+  }
+  .eyebrow-pill {
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%);
+    color: #090B0E;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .text-steel {
+    background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 50%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    margin-right: 6px;
+  }
+  .text-chrome {
+    background: linear-gradient(135deg, 
+      #FFFFFF 0%, 
+      #F8FAFC 24%, 
+      #E2E8F0 44%, 
+      #94A3B8 58%, 
+      #CBD5E1 74%, 
+      #FFFFFF 88%, 
+      #A0AEC0 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.15));
+    font-weight: 900;
+  }
+
+  /* 搜尋欄夜幕升級 */
+  .search-input {
+    background-color: #11141B !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+    color: #FFFFFF !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  }
+  .search-input:focus {
+    border-color: #10B981 !important;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.35) !important;
+  }
+  .search-input::placeholder {
+    color: #64748B !important;
+  }
+
+  .open-drawer-btn {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    color: #F1F5F9 !important;
+  }
+  .open-drawer-btn:hover {
+    background: #FFFFFF !important;
+    color: #0A0D12 !important;
+    border-color: #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3) !important;
+  }
+
+  /* 分類頁籤列黑曜與液態彩光膠囊 */
+  .filter-bar-track {
+    background: rgba(17, 21, 28, 0.8) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .filter-spring-indicator {
+    background: 
+      radial-gradient(circle at 50% 20%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 65%),
+      linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 25%, #CBD5E1 55%, #F8FAFC 80%, #94A3B8 100%) !important;
+    border: 1px solid #FFFFFF !important;
+    box-shadow: 
+      0 4px 16px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(255, 255, 255, 0.35),
+      0 0 16px rgba(56, 189, 248, 0.25),
+      inset 0 1px 1px #FFFFFF,
+      inset 0 -1.5px 2px rgba(15, 23, 42, 0.4) !important;
+  }
+
+  .filter-tab-btn {
+    color: #94A3B8 !important;
+  }
+  .filter-tab-btn:hover {
+    color: #FFFFFF !important;
+  }
+  .filter-tab-btn.active {
+    color: #0A0D12 !important;
+    font-weight: 800 !important;
+  }
+  .filter-tab-btn.active .tab-count {
+    background: rgba(10, 13, 18, 0.15) !important;
+    color: #0A0D12 !important;
+  }
+
+  .category-drawer {
+    background: #0D1016 !important;
+    color: #FFFFFF !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.14) !important;
+  }
+  .drawer-folder-btn {
+    color: #E2E8F0 !important;
+  }
+  .drawer-file-item {
+    color: #94A3B8 !important;
+  }
+  .drawer-file-item:hover {
+    color: #10B981 !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+  }
+
 </style>

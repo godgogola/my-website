@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PostCard from '../components/PostCard.astro';
 import VideoCard from '../components/VideoCard.astro';
 import VideoModal from '../components/VideoModal.astro';
+import DoctorProfileObsidian from '../components/DoctorProfileObsidian.astro';
 import { getCollection } from 'astro:content';
 import { videos } from '../data/videos';
 
@@ -57,65 +58,8 @@ const formatDate = (date: Date) => {
     <img src="/images/turtle-banner.jpg" alt="海龜悠遊海洋" class="banner-bg-img" />
   </section>
 
-  <!-- Hero Section (關於我 - 專業醫師介紹) -->
-  <section class="about-hero">
-    <!-- SmoothUI Interactive 3D Perspective Grid -->
-    <div class="interactive-grid-container" aria-hidden="true">
-      <div class="main-3d-grid" id="about-hero-grid"></div>
-    </div>
-
-    <div class="hero-image-wrapper">
-      <img src="https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg" alt="黃冠智 醫師" class="hero-image" />
-    </div>
-
-    <div class="hero-text-content">
-      <div class="hero-header-info">
-        <h1 class="hero-name">關於 <span class="gradient-text">黃冠智 醫師</span></h1>
-        <p class="hero-title">豐田診所院長 / 肝膽腸胃內科主治醫師</p>
-      </div>
-
-      <div class="hero-meta">
-        <div class="meta-header">
-          <strong>專長領域與特色診療</strong>
-        </div>
-        <div class="specialty-pill-grid">
-          <a href="/health-column?filter=內視鏡檢查" class="specialty-pill">消化道內視鏡</a>
-          <a href="/health-column?filter=超音波檢查" class="specialty-pill">腹部超音波</a>
-          <a href="/health-column?filter=胃部疾病" class="specialty-pill">胃食道逆流</a>
-          <a href="/health-column?filter=肝病特區" class="specialty-pill">肝病慢性追蹤</a>
-          <a href="/health-column?filter=減重" class="specialty-pill">減重代謝門診</a>
-          <a href="/health-column?filter=慢性病" class="specialty-pill">三高慢性病</a>
-          <a href="/health-column?filter=腸道疾病" class="specialty-pill">內痔微創結紮</a>
-          <a href="/health-column?filter=各種檢驗檢查" class="specialty-pill">勞工健康檢查</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Profile Details (專業學歷 & 臨床經歷) -->
-  <section class="profile-details">
-    <div class="details-card">
-      <h2>專業學歷</h2>
-      <ul class="details-list">
-        <li>中山醫學大學醫學系學士</li>
-        <li>中華民國內科專科醫師</li>
-        <li>中華民國消化內科專科醫師</li>
-        <li>中華民國消化內視鏡專科醫師</li>
-        <li>中華民國糖尿病共同照護網合格醫師</li>
-        <li>中華民國勞工健檢專責醫師</li>
-      </ul>
-    </div>
-
-    <div class="details-card">
-      <h2>臨床經歷</h2>
-      <ul class="details-list">
-        <li>中山醫學大學附設醫院胃腸肝膽科主治醫師</li>
-        <li>大里仁愛醫院/長庚醫院 消化內科內視鏡室主任</li>
-        <li>大里仁愛醫院/長庚醫院 肝癌多專科診療團隊召集人</li>
-        <li>現任 豐田診所 院長</li>
-      </ul>
-    </div>
-  </section>
+  <!-- 旗艦黑曜岩與液態鍍鉻 院長專業介紹 (Precision Obsidian & Liquid Chrome) -->
+  <DoctorProfileObsidian />
 
   <!-- Doctor Story Section (建站初心 · 診間隨筆) -->
   <section class="doctor-story-section" aria-labelledby="story-card-title">
