@@ -32,6 +32,19 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/02) ---
+  {
+    id: 'y2E0G9_vBNE',
+    title: '一份蛋白質要怎麼吃',
+    description: '到底什麼是「一份」蛋白質？掌握衛福部食物代換表核心：每份含7g蛋白質！手把手解析豆魚蛋肉類份量代換技巧，外食族也能輕鬆吃足每日優質蛋白質。',
+    category: '健康飲食',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=y2E0G9_vBNE',
+    featured: true,
+    order: 1,
+    articleSlug: '一份蛋白質要怎麼吃',
+    articleTitle: '一份蛋白質要怎麼吃',
+  },
   // --- 2026 最新發布影音 (2026/09/30) ---
   {
     id: 'VHAj3C0k-9U',

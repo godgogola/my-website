@@ -170,22 +170,24 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+    filter: brightness(1.08) contrast(1.02);
   }
 
   .video-card:hover .thumbnail-img {
     transform: scale(1.05);
+    filter: brightness(1.15) contrast(1.04);
   }
 
-  /* 光影遮罩 (底部漸層確保控制項清晰對比) */
+  /* 光影遮罩 (柔和底層微漸層，保持底圖明亮乾淨同時確保控制項清晰) */
   .thumbnail-scrim {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.2) 0%,
-      rgba(0, 0, 0, 0) 40%,
-      rgba(0, 0, 0, 0.6) 100%
+      rgba(0, 0, 0, 0.08) 0%,
+      rgba(0, 0, 0, 0) 45%,
+      rgba(0, 0, 0, 0.38) 100%
     );
     pointer-events: none;
   }

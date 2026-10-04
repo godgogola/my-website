@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import VideoModal from '../components/VideoModal.astro';
 import { videos, getYouTubeThumbnail, getArticleUrl } from '../data/videos';
 
-// ── 定義 15 部通關影片的精準排程與橋樑文案 ──
+// ── 定義 16 部通關影片的精準排程與橋樑文案 ──
 interface StepItem {
   step: number;
   id: string;
@@ -194,10 +194,22 @@ const acts: ActGroup[] = [
           '終身可行的永續飲食模式：跳脫嚴苛節食，建立自己能享受一輩子的營養餐盤比例。'
         ],
         bridgeNarrative:
-          '除了挑對真食物，日常用餐的「進食順序」與生活小習慣，更是決定餐後是否昏睡、脂肪是否偷堆積的秘密武器！'
+          '掌握了原型真食物的大原則後，減重保肌最關鍵的「蛋白質」，到底一份是多少？該怎麼吃才算達標？'
       },
       {
         step: 12,
+        id: 'y2E0G9_vBNE',
+        badge: '一份蛋白質要怎麼吃',
+        coreTakeaways: [
+          '每 1 份蛋白質含有 7 公克優質蛋白，是減重保肌與維持基礎代謝率的最核心基石。',
+          '掌心法則輕鬆代換：一份肉魚約三指幅、雞蛋一顆、半盒嫩豆腐或一杯豆漿，外食也能精準掌握。',
+          '優先攝取植物性豆製品與白肉海鮮，避免高脂加工肉品，穩健打造高燃脂肌肉體質。'
+        ],
+        bridgeNarrative:
+          '了解了原型真食物與優質蛋白質的具體份量，接下來是日常用餐的「進食順序」，這更是決定餐後是否昏睡、脂肪是否偷堆積的秘密武器！'
+      },
+      {
+        step: 13,
         id: 'w3L4lQW7HKU',
         badge: '血糖平穩生活好習慣',
         coreTakeaways: [
@@ -209,7 +221,7 @@ const acts: ActGroup[] = [
           '吃對了食物、穩住了血糖，現在來為全身肌群啟動阻力引擎！跟著 2026 ACSM 最新運動醫學指引，零基礎也能安全起跑。'
       },
       {
-        step: 13,
+        step: 14,
         id: 'qO9JWpIJuoI',
         badge: '2026 ACSM 阻力訓練指引',
         coreTakeaways: [
@@ -221,7 +233,7 @@ const acts: ActGroup[] = [
           '理論觀念清楚了，在家沒有啞鈴槓鈴該怎麼練？跟著這套精選的 8 大全身動作套餐，一張瑜珈墊就能開練！'
       },
       {
-        step: 14,
+        step: 15,
         id: 'rcDzG-v3JlA',
         badge: 'ACSM 居家阻力套餐實作',
         coreTakeaways: [
@@ -233,7 +245,7 @@ const acts: ActGroup[] = [
           '完成了肌力訓練，來補上有氧運動的最後一塊拼圖！跑得氣喘吁吁不等於燃脂最多，看懂心率區間才叫專業。'
       },
       {
-        step: 15,
+        step: 16,
         id: 'ByaMQ7Sopno',
         badge: '跑步心率區間精準燃脂',
         coreTakeaways: [
@@ -251,7 +263,7 @@ const acts: ActGroup[] = [
 const videoMap = new Map(videos.map((v) => [v.id, v]));
 
 // 統計資訊
-const totalVideos = 15;
+const totalVideos = 16;
 
 const isEmbed = false;
 
@@ -351,7 +363,7 @@ const solutions: WeightLossSolution[] = [
 <Layout
   title="健康享瘦｜瘦瘦針、飲食與運動 - 黃冠智醫師"
   meta_title="健康享瘦｜瘦瘦針、飲食與運動 - 黃冠智醫師 豐田診所"
-  description="「健康享瘦通關地圖」：跳脫無效節食，結合 2026 最新 ADA 減重指南、GLP-1 瘦瘦針正確打法與停藥下車策略、真食物飲食指南與 ACSM 運動處方，15 部實證衛教影音與專文完整說明。"
+  description="「健康享瘦通關地圖」：跳脫無效節食，結合 2026 最新 ADA 減重指南、GLP-1 瘦瘦針正確打法與停藥下車策略、真食物飲食指南與 ACSM 運動處方，16 部實證衛教影音與專文完整說明。"
 >
   <div class="weight-loss-page">
     <!-- ══════════════════════════════════════════════
@@ -1370,18 +1382,20 @@ const solutions: WeightLossSolution[] = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.35s ease;
+    transition: transform 0.35s ease, filter 0.35s ease;
+    filter: brightness(1.08) contrast(1.02);
     display: block;
   }
 
   .step-video-thumbnail-box:hover .step-thumb-img {
     transform: scale(1.04);
+    filter: brightness(1.15) contrast(1.04);
   }
 
   .step-thumb-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.6) 100%);
+    background: linear-gradient(180deg, transparent 50%, rgba(15, 23, 42, 0.38) 100%);
     pointer-events: none;
   }
 
