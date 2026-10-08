@@ -33,6 +33,19 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/08) ---
+  {
+    id: '2kJNETkTM8g',
+    title: 'GI 值大解密',
+    description: '吃對食物遠離血糖震盪！高GI食物如何刺激大量胰島素分泌？一次搞懂升糖指數與升糖負荷差異，掌握糊化作用、熟度影響與先菜肉後澱粉的穩糖進食法。',
+    category: '健康飲食',
+    duration: '1:00',
+    url: 'https://www.youtube.com/watch?v=2kJNETkTM8g',
+    featured: true,
+    order: 1,
+    articleSlug: 'gi-值大解密',
+    articleTitle: 'GI 值大解密',
+  },
   // --- 2026 最新發布影音 (2026/10/06) ---
   {
     id: 'ogqU3y1DJ8c',
