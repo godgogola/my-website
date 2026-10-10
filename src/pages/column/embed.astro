@@ -22,17 +22,18 @@ const PREFERRED_CATEGORY_ORDER = [
   '內視鏡檢查', '胃部疾病', '腸道疾病', '肝膽胰疾病',
   '慢性病', '糖尿病', '高血壓', '高血脂', '減重',
   '健檢項目介紹', '健檢紅字怎麼辦', '健康飲食', '各種檢驗檢查',
-  '藥物介紹', '肝病特區', '超音波檢查', '要活就要動', '診間隨筆'
+  '藥物介紹', '肝病特區', '超音波檢查', '要活就要動'
 ];
 
-// 取得所有存在的分類，確保「診間隨筆」排在最後一個
+// 取得所有存在的分類，確保「診間隨筆」與「診間說書房」排在最末端（診間說書房放最後一個）
 const existingCategories = [...new Set(posts.map(p => p.data.category || '其他'))];
-const otherCategories = existingCategories.filter(c => c !== '診間隨筆' && c !== '全部');
+const otherCategories = existingCategories.filter(c => c !== '診間隨筆' && c !== '診間說書房' && c !== '全部');
 const sortedCategories = [
   '全部',
   ...PREFERRED_CATEGORY_ORDER.filter(c => otherCategories.includes(c)),
   ...otherCategories.filter(c => !PREFERRED_CATEGORY_ORDER.includes(c)),
-  ...(existingCategories.includes('診間隨筆') ? ['診間隨筆'] : [])
+  ...(existingCategories.includes('診間隨筆') ? ['診間隨筆'] : []),
+  ...(existingCategories.includes('診間說書房') ? ['診間說書房'] : [])
 ];
 
 // 計算各分類篇數

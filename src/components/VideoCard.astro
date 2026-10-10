@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { video, compact = false, isEmbed = false } = Astro.props;
-const thumbnail = getYouTubeThumbnail(video.id);
+const thumbnail = video.thumbnail || getYouTubeThumbnail(video.id);
 const hasArticle = Boolean(video.articleSlug);
 const articleUrl = hasArticle ? getArticleUrl(video.articleSlug, isEmbed) : '';
 
@@ -27,6 +27,7 @@ const categoryColorMap: Record<string, string> = {
   '健康飲食': 'badge-diet',
   '要活就要動': 'badge-exercise',
   '健檢項目介紹': 'badge-exam',
+  '診間說書房': 'badge-reading',
 };
 
 const categoryClass = categoryColorMap[video.category] || 'badge-default';
@@ -317,6 +318,12 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
   .badge-exercise {
     background: rgba(6, 182, 212, 0.92);
     color: #ffffff;
+  }
+
+  .badge-reading {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.95), rgba(79, 70, 229, 0.95));
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
   }
 
   .badge-default {

@@ -12,6 +12,7 @@ export interface VideoItem {
   url: string;            // YouTube 觀看連結
   featured: boolean;      // 是否列為首頁精選（展示於首頁影音專區）
   order: number;          // 排序序號
+  thumbnail?: string;     // 自訂縮圖（選填，若有則優先使用，支援本地 WebP）
   articleSlug?: string;   // 【雙態卡片】對應衛教文章 Slug（選填，有填則自動點亮「閱讀專文」按鈕）
   articleTitle?: string;  // 【雙態卡片】對應衛教文章標題（選填）
 }
@@ -30,9 +31,24 @@ export const videoCategories = [
   '健康飲食',
   '要活就要動',
   '健檢項目介紹',
+  '診間說書房',
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/10) ---
+  {
+    id: 'neurotransmitters-david-jp-phillips',
+    title: '大腦的天使特調：六大神經傳導物質',
+    description: '在大腦的調酒櫃中，有六款最核心的神經傳導物質與激素！瑞典勵志演說家大衛·JP·菲利浦斯將它們比喻為調製人生雞尾酒的素材，只要微調多巴胺、催產素、血清素、皮質醇、腦內啡與睪固酮的生化比例，就能有效化解焦慮與疲憊，激發行動力與幸福感。',
+    category: '診間說書房',
+    duration: '1:01',
+    url: 'https://www.youtube.com/@godgogola',
+    thumbnail: '/images/大腦的天使特調：六大神經傳導物質簡介.webp',
+    featured: true,
+    order: 1,
+    articleSlug: '大腦的天使特調六大神經傳導物質簡介',
+    articleTitle: '大腦的天使特調：六大神經傳導物質簡介',
+  },
   // --- 2026 最新發布影音 (2026/10/08) ---
   {
     id: '2kJNETkTM8g',
