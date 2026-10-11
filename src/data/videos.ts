@@ -35,14 +35,28 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/11) ---
+  {
+    id: 'IwFh90jcMvg',
+    title: '【大腦的天使特調】多巴胺：動機與渴望的動力引擎',
+    description: '多巴胺不是「快樂分子」，而是負責在大腦中喊著「我想要」的動力引擎！解析期待與落差的生理機制，破除速效多巴胺帶來的耐受與宿醉，建立健康持久的緩效微習慣。',
+    category: '診間說書房',
+    duration: '0:40',
+    url: 'https://www.youtube.com/watch?v=IwFh90jcMvg',
+    thumbnail: '/images/【大腦的天使特調】多巴胺_動機與渴望的動力引擎.webp',
+    featured: true,
+    order: 1,
+    articleSlug: '大腦的天使特調多巴胺_動機與渴望的動力引擎',
+    articleTitle: '【大腦的天使特調】多巴胺_動機與渴望的動力引擎',
+  },
   // --- 2026 最新發布影音 (2026/10/10) ---
   {
-    id: 'neurotransmitters-david-jp-phillips',
+    id: 'G0PAfeJwS4w',
     title: '大腦的天使特調：六大神經傳導物質',
     description: '在大腦的調酒櫃中，有六款最核心的神經傳導物質與激素！瑞典勵志演說家大衛·JP·菲利浦斯將它們比喻為調製人生雞尾酒的素材，只要微調多巴胺、催產素、血清素、皮質醇、腦內啡與睪固酮的生化比例，就能有效化解焦慮與疲憊，激發行動力與幸福感。',
     category: '診間說書房',
     duration: '1:01',
-    url: 'https://www.youtube.com/@godgogola',
+    url: 'https://www.youtube.com/watch?v=G0PAfeJwS4w',
     thumbnail: '/images/大腦的天使特調：六大神經傳導物質簡介.webp',
     featured: true,
     order: 1,
