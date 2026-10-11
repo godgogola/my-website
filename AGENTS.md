@@ -100,3 +100,14 @@ order: 1                  # 選填，排序序號
 2. **禁止**修改 Obsidian 文章的 frontmatter `category` 欄位（分類由資料夾決定，sync 會覆蓋）
 3. **禁止**在衛教文章正文插入 Dataview、Templater 等外掛語法
 4. **修改 `sync-obsidian.js` 前**，必須先確認改動不影響 frontmatter 欄位的繼承邏輯（特別是 `coverImage` 和 `order`）
+
+---
+
+## 💼 非醫學個人專欄分流規範 (Personal vs. Clinic Separation)
+
+- **情境說明**：院長在 Obsidian 會撰寫非醫學個人專欄（例如資料夾命名為「指數投資」或「投資理財」）。
+- **個人網站展示**：在個人網站 (`/health-column`) 正常展示，並自動排在分類標籤列最末端。
+- **診所官網與 LINE 隔離**：
+  1. `src/pages/health-column/embed.astro` 與 `src/pages/column/embed.astro` 已設置 `CLINIC_EXCLUDED_CATEGORIES = ['指數投資', '投資理財']`，確保豐田診所官網嵌入專區絕不出現任何投資理財文章。
+  2. `scripts/sync-sheet.js` 已設置 `EXCLUDED_CATEGORIES`，確保投資理財文章不會同步至診所 Google Sheet 或 LINE 官方帳號圖文選單。
+  3. `src/pages/index.astro` 首頁「最新醫學筆記」區塊已設置排除過濾，確保首頁維持純粹醫學專業。

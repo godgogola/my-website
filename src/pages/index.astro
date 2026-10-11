@@ -10,10 +10,11 @@ import { videos } from '../data/videos';
 // 取得首頁精選 4 部短影音
 const featuredVideos = videos.filter(v => v.featured).slice(0, 4);
 
-// 取得所有未草稿的文章，並依日期排序
+// 取得所有未草稿的衛教文章，並依日期排序（首頁最新醫學筆記專區排除個人投資理財）
+const NON_MEDICAL_CATEGORIES = ['指數投資', '投資理財'];
 const allPosts = await getCollection('posts');
 const latestPosts = allPosts
-  .filter(post => !post.data.draft)
+  .filter(post => !post.data.draft && !NON_MEDICAL_CATEGORIES.includes(post.data.category || ''))
   .sort((a, b) => {
     const dateDiff = new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
     if (dateDiff !== 0) return dateDiff;

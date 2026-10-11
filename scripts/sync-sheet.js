@@ -53,9 +53,17 @@ for (const mdFile of mdFiles) {
   if (!titleMatch) { skipCount++; continue; }
   if (draftMatch && draftMatch[1].trim() === 'true') { skipCount++; continue; }
 
+  const category = categoryMatch ? categoryMatch[1].trim() : '';
+
+  // 排除非診所衛教分類（如指數投資、投資理財），不同步至診所 Google Sheet 與 LINE 官方帳號
+  const EXCLUDED_CATEGORIES = new Set(['指數投資', '投資理財']);
+  if (EXCLUDED_CATEGORIES.has(category)) {
+    skipCount++;
+    continue;
+  }
+
   const title    = titleMatch[1].trim();
   const slug     = slugMatch ? slugMatch[1].trim() : path.basename(mdFile, '.md');
-  const category = categoryMatch ? categoryMatch[1].trim() : '';
   const cover    = coverMatch ? coverMatch[1].trim() : '';
 
   const articleUrl = `${SITE_URL}/posts/${slug}`;

@@ -2,11 +2,15 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-// ── 取得所有已發布文章（排除草稿與個人網站建站手記，僅收錄診所衛教文章） ──
+// ── 診所官網排除分類（非診所衛教之個人領域，如指數投資、投資理財） ──
+const CLINIC_EXCLUDED_CATEGORIES = ['指數投資', '投資理財'];
+
+// ── 取得所有已發布文章（排除草稿、建站手記與非診所衛教分類，僅收錄診所衛教文章） ──
 const allPosts = await getCollection('posts');
 const unDraftPosts = allPosts.filter(post => 
   !post.data.draft && 
-  !post.data.title.includes('為什麼想建這個網站')
+  !post.data.title.includes('為什麼想建這個網站') &&
+  !CLINIC_EXCLUDED_CATEGORIES.includes(post.data.category || '')
 );
 
 // ── 排序：優先依 order，再依發布日期排序 ──
