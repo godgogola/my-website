@@ -35,6 +35,19 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/12) ---
+  {
+    id: 'Mq6Ndlq3G7E',
+    title: '【大腦的天使特調】血清素：滿足感與穩定情緒的基石',
+    description: '血清素不只是快樂分子，更是穩定情緒與自尊的煞車！高達九成血清素由腸道製造，解析腦腸軸、色胺酸原料與日照快走機制，遠離虛擬地位焦慮，建立內在踏實的幸福感。',
+    category: '診間說書房',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=Mq6Ndlq3G7E',
+    featured: true,
+    order: 1,
+    articleSlug: '大腦的天使特調血清素_滿足感與穩定情緒的基石',
+    articleTitle: '【大腦的天使特調】血清素_滿足感與穩定情緒的基石',
+  },
   // --- 2026 最新發布影音 (2026/10/11) ---
   {
     id: 'IwFh90jcMvg',
