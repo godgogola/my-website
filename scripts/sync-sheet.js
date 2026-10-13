@@ -85,10 +85,27 @@ for (const mdFile of mdFiles) {
 
   articlesToSync.push({ title, category, articleUrl, imgUrl });
 
-  // 若標題含有 【...】 前綴，亦加入無前綴之純標題備援，確保相容 Google Sheet 之舊標題格式
+  // 標題別名備援（確保相容 Google Sheet 中可能有的空格差異）
+  const variants = new Set();
+
+  // 1. 去除 【...】 前綴的純標題
   const cleanTitle = title.replace(/^【.*?】\s*/, '').trim();
-  if (cleanTitle && cleanTitle !== title) {
-    articlesToSync.push({ title: cleanTitle, category, articleUrl, imgUrl });
+  if (cleanTitle && cleanTitle !== title) variants.add(cleanTitle);
+
+  // 2. 處理 【...】 後方有無空格的差異
+  if (title.startsWith('【')) {
+    variants.add(title.replace(/^【(.*?)】\s*/, '【$1】'));
+    variants.add(title.replace(/^【(.*?)】\s*/, '【$1】 '));
+  }
+
+  // 3. 處理英數與中文字符間有無空格的差異
+  variants.add(title.replace(/([a-zA-Z0-9])\s+([\u4e00-\u9fa5])/g, '$1$2'));
+  variants.add(title.replace(/([a-zA-Z0-9])([\u4e00-\u9fa5])/g, '$1 $2'));
+
+  for (const v of variants) {
+    if (v && v !== title) {
+      articlesToSync.push({ title: v, category, articleUrl, imgUrl });
+    }
   }
 }
 

@@ -4,6 +4,7 @@ category: "藥物介紹"
 publishDate: "2026-10-07"
 draft: false
 slug: "glp-1-新藥二合一與三合一受體促效劑"
+coverImage: "【GLP-1】 新藥、二合一與三合一受體促效劑.webp"
 ---
 
 本資料夾收錄近一年（2025-2026）發表於 **New England Journal of Medicine (NEJM)**、**Lancet**、**JAMA**、**Nature Medicine**、**Nature** 及 **Lancet Diabetes & Endocrinology** 等頂尖醫學期刊中，關於 **三合一受體促效劑 (Retatrutide)**、**二合一雙重促效劑 (Tirzepatide, CagriSema, Amycretin/Zenagamtide, Mazdutide, Survodutide)** 及 **新一代口服小分子非胜肽 GLP-1 (Orforglipron)** 第 2/3 期臨床試驗文獻。

@@ -35,6 +35,43 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/13) ---
+  {
+    id: 'qy6YD2DZots',
+    title: '【大腦的天使特調】皮質醇 應變挑戰與警覺的雙面刃',
+    description: '皮質醇不是純毒素，而是體內的生存危機管理者！適量能提供警覺與專注，但長期慢性暴雨會摧毀身心花園、燒毀血清素原料。學會壓力地圖劃分控制圈，運用生理性嘆息秒速重啟副交感神經。',
+    category: '診間說書房',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=qy6YD2DZots',
+    featured: true,
+    order: 1,
+    articleSlug: '大腦的天使特調皮質醇_應變挑戰與警覺的雙面刃',
+    articleTitle: '【大腦的天使特調】皮質醇_應變挑戰與警覺的雙面刃',
+  },
+  {
+    id: 'TJ5mJQRNY3Y',
+    title: '【大腦的天使特調】腦內啡 天然止痛劑與極致愉悅感',
+    description: '大腦自帶的嗎啡！痛苦之後才是至福，演化機制用以阻斷疼痛並帶來宛如登頂的極致愉悅。解析對痛苦成癮的化學陷阱，掌握刻意微笑、大笑、吃辣痛覺代償、規律運動與冷水浴等 9 大安全爆發協議。',
+    category: '診間說書房',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=TJ5mJQRNY3Y',
+    featured: true,
+    order: 1,
+    articleSlug: '大腦的天使特調腦內啡_天然止痛劑與極致愉悅感',
+    articleTitle: '【大腦的天使特調】腦內啡_天然止痛劑與極致愉悅感',
+  },
+  {
+    id: 'HF5rHh3Df4I',
+    title: '【大腦的天使特調】催產素 信任與歸屬感的愛的荷爾蒙',
+    description: '不只是愛情荷爾蒙，更是大腦感知安全與歸屬感的核心！直接抑制杏仁核警報，切換至放鬆修復模式，是皮質醇最強效的拮抗劑。解鎖 20 秒擁抱、重力毯、親人照片與敬畏感等 10 大催產素噴發協議。',
+    category: '診間說書房',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=HF5rHh3Df4I',
+    featured: true,
+    order: 1,
+    articleSlug: '大腦的天使特調催產素_信任與歸屬感的愛的荷爾蒙',
+    articleTitle: '【大腦的天使特調】催產素_信任與歸屬感的愛的荷爾蒙',
+  },
   // --- 2026 最新發布影音 (2026/10/12) ---
   {
     id: 'Mq6Ndlq3G7E',
