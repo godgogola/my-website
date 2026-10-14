@@ -10,6 +10,9 @@ import { videos } from '../data/videos';
 const posts = await getCollection('posts');
 const unDraftPosts = posts.filter(p => !p.data.draft);
 
+const books = await getCollection('books');
+const unDraftBooks = books.filter(b => !b.data.draft);
+
 const searchData = [
   ...unDraftPosts.map(p => ({
     type: 'article',
@@ -17,6 +20,13 @@ const searchData = [
     category: p.data.category || '衛教文章',
     url: `/posts/${p.data.slug || p.id}`,
     desc: p.data.meta_description || '點擊閱讀完整醫學衛教專文。',
+  })),
+  ...unDraftBooks.map(b => ({
+    type: 'book',
+    title: b.data.title,
+    category: b.data.book,
+    url: `/books/${encodeURIComponent(b.data.book)}/${b.data.slug}`,
+    desc: `《${b.data.book}》精讀筆記 · 第 ${b.data.order ?? 1} 節`,
   })),
   ...videos.map(v => ({
     type: 'video',
@@ -115,6 +125,7 @@ const searchData = [
       <button type="button" class="search-quick-tag" data-filter="tool">🧮 計算機 / 工具</button>
       <button type="button" class="search-quick-tag" data-filter="article">📝 衛教文章</button>
       <button type="button" class="search-quick-tag" data-filter="video">🎬 衛教短影音</button>
+      <button type="button" class="search-quick-tag" data-filter="book">📚 讀書筆記</button>
     </div>
 
     <!-- 搜尋結果展示區 -->
@@ -210,6 +221,10 @@ const searchData = [
           badgeIcon = '🎬';
           badgeText = '影音';
           badgeClass = 'badge-video';
+        } else if (item.type === 'book') {
+          badgeIcon = '📚';
+          badgeText = '讀書';
+          badgeClass = 'badge-book';
         }
 
         const isSelected = idx === currentSelectedIndex ? 'selected' : '';
@@ -496,6 +511,7 @@ const searchData = [
   .item-icon-wrap.badge-tool { background: #e8f5e9; }
   .item-icon-wrap.badge-article { background: #e1f5fe; }
   .item-icon-wrap.badge-video { background: #fbe9e7; }
+  .item-icon-wrap.badge-book { background: #f3e8ff; }
 
   .item-info {
     flex: 1;
@@ -519,6 +535,7 @@ const searchData = [
   .item-badge.badge-tool { background: #d4edd9; color: #2e7d32; }
   .item-badge.badge-article { background: #cfe9f7; color: #0277bd; }
   .item-badge.badge-video { background: #ffded8; color: #c62828; }
+  .item-badge.badge-book { background: #ede9fe; color: #6d28d9; }
 
   .item-title {
     font-size: 0.96rem;

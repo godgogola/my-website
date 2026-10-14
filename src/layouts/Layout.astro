@@ -167,6 +167,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
             <a href="/health-column" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/health-column') || Astro.url.pathname.startsWith('/posts') }]}>醫學筆記</a>
             <a href="/anatomy" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/anatomy') }]}>互動解剖圖鑑</a>
             <a href="/tools" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/tools') }]}>健康工具</a>
+            <a href="/books" class:list={['nav-item', { active: Astro.url.pathname.startsWith('/books') }]}>讀書筆記</a>
           </nav>
         </div>
 
@@ -217,6 +218,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
               <li><a href="/health-column">實證衛教專欄</a></li>
               <li><a href="/anatomy">互動解剖圖鑑</a></li>
               <li><a href="/tools">健康計算機與評估專區</a></li>
+              <li><a href="/books">院長私房讀書筆記</a></li>
             </ul>
           </div>
 
@@ -700,11 +702,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     .nav-item:nth-of-type(4) {
       grid-column: span 3;
     }
-    /* 第二排 3 個項目均分：醫學筆記、互動解剖圖鑑、健康工具 */
+    /* 第二排 4 個項目均分：醫學筆記、互動解剖圖鑑、健康工具、讀書筆記 */
     .nav-item:nth-of-type(5),
     .nav-item:nth-of-type(6),
-    .nav-item:nth-of-type(7) {
-      grid-column: span 4;
+    .nav-item:nth-of-type(7),
+    .nav-item:nth-of-type(8) {
+      grid-column: span 3;
     }
     .nav-item.active {
       background: linear-gradient(135deg, var(--color-primary), #3b7688);

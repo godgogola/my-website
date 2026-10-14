@@ -1,0 +1,870 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+// ── 取得所有已發布讀書筆記 ──
+const allBooks = await getCollection('books');
+const unDraftBooks = allBooks.filter(book => !book.data.draft);
+
+// 1. 「全部」分類預設排序：優先依書籍分組，同書內依 order 由小到大排序
+const books = [...unDraftBooks].sort((a, b) => {
+  if (a.data.book !== b.data.book) {
+    return a.data.book.localeCompare(b.data.book, 'zh-Hant');
+  }
+  const orderA = a.data.order ?? 999;
+  const orderB = b.data.order ?? 999;
+  return orderA - orderB;
+});
+
+// 2. 取得所有書籍清單（作為分類標籤）
+const bookTitles = [...new Set(books.map(b => b.data.book))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+const sortedCategories = ['全部', ...bookTitles];
+---
+
+<Layout
+  meta_title="讀書筆記｜經典商業思維與投資理財實證筆記 - 黃冠智醫師"
+  title="讀書筆記｜經典商業思維與投資理財實證筆記 - 黃冠智醫師"
+  description={`黃冠智醫師的私房讀書筆記，共收錄 ${books.length} 篇精選章節筆記，深度解析《漫步華爾街》、行為財務學、資產配置與經典思維模型。`}
+>
+  <!-- ── 頁面 Hero 標題 (Obsidian & Liquid Chrome Style) ── -->
+  <div class="column-hero">
+    <div class="ambient-mesh-glow" aria-hidden="true"></div>
+    <div class="column-hero-inner">
+      <div class="header-eyebrow">
+        <span class="eyebrow-dot"></span>
+        <span>FTHEALTHY READING NOTES</span>
+        <span class="eyebrow-pill">院長書房</span>
+      </div>
+      <h1 class="column-hero-title">
+        <span class="text-steel">院長私房</span>
+        <span class="text-chrome">讀書筆記</span>
+      </h1>
+      <p class="column-hero-desc">
+        由長庚仁愛主任級醫師親自研讀並提煉核心架構，共收錄 <strong>{books.length}</strong> 篇章節讀書筆記，帶您探索投資科學、隨機漫步、心理行為學與經典思維模型。
+      </p>
+    </div>
+  </div>
+
+  <!-- ── 搜尋欄與目錄按鈕 ── -->
+  <div class="search-row">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="search"
+        id="articleSearch"
+        class="search-input"
+        placeholder="搜尋筆記標題、書名或章節關鍵字..."
+        autocomplete="off"
+        aria-label="搜尋讀書筆記"
+      />
+    </div>
+    <div class="search-actions">
+      <button class="open-drawer-btn" id="openDrawerBtn" aria-label="展開完整書籍目錄">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+        </svg>
+        <span>書庫目錄</span>
+      </button>
+      <p class="result-count" id="resultCount" aria-live="polite">共 {books.length} 篇</p>
+    </div>
+  </div>
+
+  <!-- ── AnimatedTabs 彈簧磁吸滑塊分類選單 ── -->
+  <div class="filter-bar-wrapper">
+    <div class="filter-bar-track" id="filterBarTrack" role="tablist" aria-label="書籍分類篩選">
+      <!-- 彈簧磁吸滑動背景 Indicator -->
+      <div class="filter-spring-indicator" id="filterSpringIndicator" aria-hidden="true"></div>
+      
+      {sortedCategories.map((cat, i) => (
+        <button
+          class={`filter-tab-btn ${i === 0 ? 'active' : ''}`}
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          data-filter={cat}
+          id={`tab-${cat}`}
+          type="button"
+        >
+          <span class="tab-label">{cat === '全部' ? '全部書籍' : `《${cat}》`}</span>
+          <span class="tab-count">
+            {cat === '全部' ? books.length : books.filter(b => b.data.book === cat).length}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- ── 文章卡片網格 ── -->
+  <div class="posts-grid" id="postsGrid">
+    {books.map((book) => (
+      <article
+        class="grid-item"
+        data-category={book.data.book}
+        data-title={book.data.title.toLowerCase()}
+        data-publish-date={book.data.publishDate}
+        data-order={book.data.order ?? 999}
+      >
+        <PostCard
+          title={book.data.title}
+          href={`/books/${encodeURIComponent(book.data.book)}/${book.data.slug}`}
+          category={book.data.book}
+          publishDate={book.data.publishDate}
+          coverImage={book.data.coverImage}
+        />
+      </article>
+    ))}
+  </div>
+
+  <!-- ── 無結果提示 ── -->
+  <div class="no-results" id="noResults" hidden aria-live="polite">
+    <div class="no-results-icon">📚</div>
+    <h3>找不到相符的讀書筆記</h3>
+    <p>請嘗試其他關鍵字，或點擊「全部書籍」瀏覽所有筆記。</p>
+    <button class="reset-btn" id="resetFilter">清除篩選條件</button>
+  </div>
+
+  <!-- ── 側滑書籍目錄抽屜 ── -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="category-drawer" id="categoryDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+        <span>讀書筆記庫目錄</span>
+        <span class="drawer-badge">{books.length}</span>
+      </div>
+      <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="關閉目錄">×</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="drawer-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="drawerSearch" placeholder="在目錄中搜尋章節..." autocomplete="off" />
+      </div>
+
+      <nav class="drawer-tree">
+        {bookTitles.map((title) => {
+          const bookChapters = books.filter(b => b.data.book === title).sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+          return (
+            <div class="drawer-folder" data-drawer-cat={title}>
+              <button class="drawer-folder-btn" data-toggle-cat={title}>
+                <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="folder-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                <span class="cat-name">《{title}》</span>
+                <span class="cat-count">{bookChapters.length}</span>
+              </button>
+              <div class="drawer-file-list" id={`drawer-list-${title}`}>
+                {bookChapters.map(p => (
+                  <a href={`/books/${encodeURIComponent(p.data.book)}/${p.data.slug}`} class="drawer-file-item" data-title={p.data.title.toLowerCase()}>
+                    <svg class="file-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>{p.data.title}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </nav>
+    </div>
+  </aside>
+</Layout>
+
+<!-- ── 互動篩選與 AnimatedTabs Spring 動效 JS ── -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterTrack = document.getElementById('filterBarTrack');
+    const springIndicator = document.getElementById('filterSpringIndicator');
+    const tabBtns = document.querySelectorAll<HTMLButtonElement>('.filter-tab-btn');
+    const searchInput = document.getElementById('articleSearch') as HTMLInputElement | null;
+    const postsGrid = document.getElementById('postsGrid');
+    const resultCount = document.getElementById('resultCount');
+    const noResults = document.getElementById('noResults');
+    const resetBtn = document.getElementById('resetFilter');
+
+    if (!postsGrid || !resultCount) return;
+    const items = Array.from(postsGrid.querySelectorAll<HTMLElement>('.grid-item'));
+
+    let currentCategory = '全部';
+    let currentSearchTerm = '';
+
+    const moveSpringIndicator = (targetBtn: HTMLElement, immediate = false) => {
+      if (!springIndicator || !filterTrack) return;
+      const trackRect = filterTrack.getBoundingClientRect();
+      const btnRect = targetBtn.getBoundingClientRect();
+      const targetLeft = btnRect.left - trackRect.left + filterTrack.scrollLeft;
+      const targetWidth = btnRect.width;
+
+      if (immediate) {
+        springIndicator.style.transition = 'none';
+        springIndicator.style.transform = `translateX(${targetLeft}px)`;
+        springIndicator.style.width = `${targetWidth}px`;
+        springIndicator.offsetHeight;
+        springIndicator.style.transition = '';
+      } else {
+        springIndicator.style.transform = `translateX(${targetLeft}px)`;
+        springIndicator.style.width = `${targetWidth}px`;
+      }
+    };
+
+    const activeBtn = document.querySelector<HTMLButtonElement>('.filter-tab-btn.active');
+    if (activeBtn) {
+      setTimeout(() => moveSpringIndicator(activeBtn, true), 50);
+    }
+
+    const sortCards = (visibleItems: HTMLElement[], category: string) => {
+      visibleItems.sort((a, b) => {
+        const orderA = parseInt(a.dataset.order || '999', 10);
+        const orderB = parseInt(b.dataset.order || '999', 10);
+        return orderA - orderB;
+      });
+      visibleItems.forEach(el => postsGrid.appendChild(el));
+    };
+
+    const filterArticles = () => {
+      let count = 0;
+      const visibleItems: HTMLElement[] = [];
+
+      items.forEach((item) => {
+        const cat = item.dataset.category || '';
+        const title = item.dataset.title || '';
+
+        const matchesCat = (currentCategory === '全部') || (cat === currentCategory);
+        const matchesSearch = !currentSearchTerm || title.includes(currentSearchTerm);
+
+        if (matchesCat && matchesSearch) {
+          item.style.display = '';
+          item.classList.remove('fade-out');
+          visibleItems.push(item);
+          count++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      sortCards(visibleItems, currentCategory);
+
+      resultCount.textContent = `共 ${count} 篇`;
+      if (noResults) {
+        noResults.hidden = count > 0;
+      }
+    };
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+
+        moveSpringIndicator(btn);
+
+        currentCategory = btn.dataset.filter || '全部';
+        filterArticles();
+
+        const track = filterTrack;
+        if (track) {
+          const btnRect = btn.getBoundingClientRect();
+          const trackRect = track.getBoundingClientRect();
+          if (btnRect.left < trackRect.left || btnRect.right > trackRect.right) {
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      });
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentSearchTerm = (e.target as HTMLInputElement).value.toLowerCase().trim();
+        filterArticles();
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        currentSearchTerm = '';
+        const allTab = document.querySelector<HTMLButtonElement>('.filter-tab-btn[data-filter="全部"]');
+        if (allTab) allTab.click();
+      });
+    }
+
+    // ── 側滑目錄抽屜邏輯 ──
+    const drawer = document.getElementById('categoryDrawer');
+    const overlay = document.getElementById('drawerOverlay');
+    const openBtn = document.getElementById('openDrawerBtn');
+    const closeBtn = document.getElementById('drawerCloseBtn');
+    const drawerSearch = document.getElementById('drawerSearch') as HTMLInputElement | null;
+
+    const openDrawer = () => {
+      drawer?.classList.add('open');
+      overlay?.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (drawerSearch) drawerSearch.focus();
+    };
+
+    const closeDrawer = () => {
+      drawer?.classList.remove('open');
+      overlay?.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    openBtn?.addEventListener('click', openDrawer);
+    closeBtn?.addEventListener('click', closeDrawer);
+    overlay?.addEventListener('click', closeDrawer);
+
+    document.querySelectorAll<HTMLButtonElement>('.drawer-folder-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const folder = btn.closest('.drawer-folder');
+        folder?.classList.toggle('expanded');
+      });
+    });
+
+    // 預設展開全部資料夾
+    document.querySelectorAll('.drawer-folder').forEach(f => f.classList.add('expanded'));
+
+    if (drawerSearch) {
+      drawerSearch.addEventListener('input', (e) => {
+        const q = (e.target as HTMLInputElement).value.toLowerCase().trim();
+        document.querySelectorAll<HTMLElement>('.drawer-file-item').forEach((item) => {
+          const title = item.dataset.title || '';
+          const match = !q || title.includes(q);
+          item.style.display = match ? 'flex' : 'none';
+        });
+      });
+    }
+
+    // 支援 URL query 參數直接過濾
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterParam = urlParams.get('filter');
+    if (filterParam) {
+      const targetTab = document.querySelector<HTMLButtonElement>(`.filter-tab-btn[data-filter="${filterParam}"]`);
+      if (targetTab) {
+        setTimeout(() => targetTab.click(), 100);
+      }
+    }
+  });
+</script>
+
+<style>
+  /* ── 頁面 Hero 標題 (Obsidian & Liquid Chrome Style) ── */
+  .column-hero {
+    position: relative;
+    padding: 48px 24px 32px;
+    margin-bottom: 24px;
+    border-radius: 24px;
+    background: radial-gradient(120% 120% at 50% 0%, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  }
+
+  .ambient-mesh-glow {
+    position: absolute;
+    top: -50%;
+    left: 20%;
+    width: 60%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(74, 144, 164, 0.25) 0%, rgba(99, 102, 241, 0.1) 50%, transparent 80%);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .column-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .header-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+    margin-bottom: 16px;
+    backdrop-filter: blur(8px);
+  }
+
+  .eyebrow-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+  }
+
+  .eyebrow-pill {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  .column-hero-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .text-steel {
+    color: #94a3b8;
+    margin-right: 8px;
+  }
+
+  .text-chrome {
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .column-hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #94a3b8;
+    margin: 0 auto;
+    font-weight: 400;
+  }
+
+  .column-hero-desc strong {
+    color: #38bdf8;
+    font-weight: 700;
+  }
+
+  /* ── 搜尋欄與動作區 ── */
+  .search-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 260px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border-radius: 14px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  }
+
+  .search-input::placeholder {
+    color: #64748b;
+  }
+
+  .search-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .open-drawer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .open-drawer-btn:hover {
+    background: rgba(51, 65, 85, 0.9);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #38bdf8;
+  }
+
+  .result-count {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* ── AnimatedTabs 彈簧滑塊分類 ── */
+  .filter-bar-wrapper {
+    position: relative;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+
+  .filter-bar-track {
+    position: relative;
+    display: inline-flex;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .filter-spring-indicator {
+    position: absolute;
+    top: 6px;
+    left: 0;
+    height: calc(100% - 12px);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+    pointer-events: none;
+    z-index: 1;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .filter-tab-btn {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+  }
+
+  .filter-tab-btn:hover {
+    color: #f1f5f9;
+  }
+
+  .filter-tab-btn.active {
+    color: #ffffff;
+  }
+
+  .tab-count {
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.25);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  /* ── 卡片網格 ── */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .grid-item {
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  /* ── 無結果提示 ── */
+  .no-results {
+    text-align: center;
+    padding: 64px 24px;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    margin: 32px 0;
+  }
+
+  .no-results-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+  }
+
+  .no-results h3 {
+    font-size: 1.3rem;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+  }
+
+  .no-results p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+
+  .reset-btn {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    background: #0284c7;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .reset-btn:hover {
+    background: #0369a1;
+  }
+
+  /* ── 側滑目錄抽屜 ── */
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .drawer-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .category-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 380px;
+    max-width: 85vw;
+    background: #0f172a;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 999;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .category-drawer.open {
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .drawer-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f1f5f9;
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  .drawer-badge {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  .drawer-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: #94a3b8;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .drawer-close-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .drawer-search {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .drawer-search svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+  }
+
+  .drawer-search input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    border-radius: 10px;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #f1f5f9;
+    font-size: 0.88rem;
+    outline: none;
+  }
+
+  .drawer-search input:focus {
+    border-color: #38bdf8;
+  }
+
+  .drawer-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .drawer-folder {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .drawer-folder-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(30, 41, 59, 0.5);
+    border: none;
+    color: #e2e8f0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    transition: background 0.15s;
+  }
+
+  .drawer-folder-btn:hover {
+    background: rgba(51, 65, 85, 0.7);
+  }
+
+  .drawer-folder .chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .drawer-folder.expanded .chevron {
+    transform: rotate(90deg);
+  }
+
+  .folder-ic {
+    color: #38bdf8;
+  }
+
+  .cat-name {
+    flex: 1;
+  }
+
+  .cat-count {
+    font-size: 0.75rem;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+  }
+
+  .drawer-file-list {
+    display: none;
+    flex-direction: column;
+    padding: 4px 0 4px 24px;
+  }
+
+  .drawer-folder.expanded .drawer-file-list {
+    display: flex;
+  }
+
+  .drawer-file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.15s ease;
+  }
+
+  .drawer-file-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #38bdf8;
+  }
+
+  .file-ic {
+    color: #64748b;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .column-hero {
+      padding: 32px 16px 24px;
+    }
+
+    .column-hero-title {
+      font-size: 1.85rem;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>

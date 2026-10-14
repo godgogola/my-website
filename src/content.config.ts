@@ -19,6 +19,24 @@ const postsCollection = defineCollection({
   }),
 });
 
+const booksCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: "./src/content/books" }),
+  schema: z.object({
+    title: z.string(),
+    book: z.string(),
+    category: z.string().default('讀書筆記'),
+    publishDate: z.string().or(z.date()).transform((val) => new Date(val)),
+    draft: z.boolean().default(false),
+    slug: z.string(),
+    coverImage: z.string().optional(),
+    order: z.number().default(999),
+    meta_title: z.string().optional(),
+    meta_description: z.string().optional(),
+  }),
+});
+
 export const collections = {
   posts: postsCollection,
+  books: booksCollection,
 };
+

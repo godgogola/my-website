@@ -10,7 +10,7 @@ drive_dir = r"G:\我的雲端硬碟\衛教文章圖片"
 public_images_dir = os.path.join(os.getcwd(), "public", "images")
 og_images_dir = os.path.join(os.getcwd(), "public", "og-images")
 posts_dir = os.path.join(os.getcwd(), "src", "content", "posts")
-vault_dir = r"G:\我的雲端硬碟\Wix衛教文章\Wix衛教文章庫"
+vault_dir = r"G:\我的雲端硬碟\衛教文章\衛教文章庫"
 
 os.makedirs(public_images_dir, exist_ok=True)
 os.makedirs(og_images_dir, exist_ok=True)

@@ -13,9 +13,10 @@ echo   Dr Huang - Update and Publish
 echo ==========================================
 echo.
 
-echo [1/7] Syncing Obsidian articles...
-echo [1/7] Syncing Obsidian articles >> "%LOGFILE%"
+echo [1/7] Syncing Obsidian articles and books...
+echo [1/7] Syncing Obsidian articles and books >> "%LOGFILE%"
 node scripts/sync-obsidian.js
+node scripts/sync-books-content.js
 if %errorlevel% neq 0 (
     echo [ERROR] Step 1 failed
     pause
@@ -51,7 +52,9 @@ echo.
 echo [6/7] Writing to Google Sheet...
 echo [6/7] Sync sheet >> "%LOGFILE%"
 node scripts/sync-sheet.js
+node scripts/sync-books.js
 echo.
+
 
 echo [7/7] Deploying to Vercel...
 echo [7/7] Deploying >> "%LOGFILE%"

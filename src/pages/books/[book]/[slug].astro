@@ -1,0 +1,829 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const allBooks = await getCollection('books');
+  return allBooks.map(post => ({
+    params: {
+      book: post.data.book,
+      slug: post.data.slug
+    },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+// 取得同本書籍的所有章節，依序號由小到大排序
+const allBooks = await getCollection('books');
+const allValidBooks = allBooks.filter(p => !p.data.draft);
+
+const bookChapters = allValidBooks
+  .filter(p => p.data.book === post.data.book)
+  .sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+
+// 上一章 / 下一章 計算
+const currentIndex = bookChapters.findIndex(p => p.data.slug === post.data.slug);
+const prevChapter = currentIndex > 0 ? bookChapters[currentIndex - 1] : null;
+const nextChapter = currentIndex < bookChapters.length - 1 ? bookChapters[currentIndex + 1] : null;
+
+// 取得所有書籍分組（用於左側 Obsidian 側邊欄樹狀目錄）
+const bookGroups: Record<string, typeof allValidBooks> = {};
+for (const b of allValidBooks) {
+  if (!bookGroups[b.data.book]) bookGroups[b.data.book] = [];
+  bookGroups[b.data.book].push(b);
+}
+
+for (const k in bookGroups) {
+  bookGroups[k].sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+}
+
+const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+---
+
+<Layout
+  title={`${post.data.title} - 《${post.data.book}》讀書筆記｜黃冠智醫師`}
+  description={`${post.data.title} - 黃冠智醫師精讀《${post.data.book}》之章節筆記與核心觀點提煉。`}
+  fullWidth={true}
+>
+  <div class="obsidian-workspace">
+    <!-- 左側：Obsidian 風格樹狀側邊欄 -->
+    <aside class="obs-sidebar" id="obsSidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title-row">
+          <a href="/books" class="home-link" title="返回讀書筆記總覽">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </a>
+          <span>讀書筆記目錄</span>
+          <span class="post-count-badge">{allValidBooks.length}</span>
+        </div>
+        <div class="sidebar-search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="sidebarSearch" placeholder="搜尋章節標題..." autocomplete="off" />
+          <button id="sidebarSearchClear" class="search-clear" hidden>×</button>
+        </div>
+      </div>
+
+      <nav class="file-tree" id="fileTree">
+        {sortedBooks.map(bName => (
+          <div class="folder-group expanded" data-category={bName}>
+            <button class="folder-btn" data-folder={bName}>
+              <svg class="folder-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg class="folder-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+              <span class="folder-name">《{bName}》</span>
+              <span class="folder-count">{bookGroups[bName].length}</span>
+            </button>
+            <div class="folder-contents" id={`folder-${bName}`}>
+              {bookGroups[bName].map(item => (
+                <a
+                  href={`/books/${encodeURIComponent(item.data.book)}/${item.data.slug}`}
+                  class:list={['file-item', { active: item.data.book === post.data.book && item.data.slug === post.data.slug }]}
+                  data-slug={item.data.slug}
+                  data-title={item.data.title.toLowerCase()}
+                  data-category={item.data.book}
+                >
+                  <svg class="file-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span class="file-name">{item.data.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </nav>
+      <button class="sidebar-close-btn" id="sidebarClose" aria-label="關閉側邊欄">×</button>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- 右側：章節正文內容 -->
+    <div class="obs-main">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="開啟章節目錄">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        書籍目錄清單
+      </button>
+
+      <article class="article-detail">
+        <nav class="article-breadcrumb" aria-label="Breadcrumb">
+          <a href="/books">← 返回讀書筆記</a>
+          <span class="divider">/</span>
+          <a href={`/books?filter=${encodeURIComponent(post.data.book)}`} class="bc-cat">《{post.data.book}》</a>
+          <span class="divider">/</span>
+          <span class="current">{post.data.title}</span>
+        </nav>
+
+        <header class="article-header">
+          <div class="article-meta">
+            <span class="article-category">《{post.data.book}》章節精讀</span>
+            <span class="meta-dot">·</span>
+            <span class="article-order">第 {post.data.order ?? (currentIndex + 1)} 節</span>
+          </div>
+          <h1 class="article-title">{post.data.title}</h1>
+          <div class="header-divider"></div>
+        </header>
+
+        <div class="article-content">
+          <Content />
+        </div>
+
+        <!-- 循序閱讀章節導覽 (上一章 / 下一章) -->
+        <nav class="chapter-nav" aria-label="章節導覽">
+          {prevChapter ? (
+            <a href={`/books/${encodeURIComponent(prevChapter.data.book)}/${prevChapter.data.slug}`} class="chapter-nav-btn prev-btn">
+              <span class="nav-sub">← 上一章</span>
+              <span class="nav-title">{prevChapter.data.title}</span>
+            </a>
+          ) : (
+            <div class="chapter-nav-btn disabled">
+              <span class="nav-sub">本書第一章</span>
+              <span class="nav-title">起點</span>
+            </div>
+          )}
+
+          {nextChapter ? (
+            <a href={`/books/${encodeURIComponent(nextChapter.data.book)}/${nextChapter.data.slug}`} class="chapter-nav-btn next-btn">
+              <span class="nav-sub">下一章 →</span>
+              <span class="nav-title">{nextChapter.data.title}</span>
+            </a>
+          ) : (
+            <div class="chapter-nav-btn disabled">
+              <span class="nav-sub">本書完結</span>
+              <span class="nav-title">全書閱讀完畢</span>
+            </div>
+          )}
+        </nav>
+
+        <footer class="article-footer">
+          <div class="footer-card">
+            <div class="doctor-mini-bio">
+              <img src="/turtle-transparent.png" alt="黃冠智醫師" class="bio-avatar" />
+              <div class="bio-text">
+                <div class="bio-name">黃冠智 醫師</div>
+                <div class="bio-title">豐田診所院長 · 肝膽腸胃內科專科</div>
+                <p class="bio-desc">熱愛閱讀經典理論與跨學科知識，透過筆記萃取本質，探索心智、投資科學與健康醫學的底層連結。</p>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 側邊欄折疊邏輯
+    document.querySelectorAll<HTMLButtonElement>('.folder-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.closest('.folder-group');
+        group?.classList.toggle('expanded');
+      });
+    });
+
+    // 手機版側邊欄開關
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('obsSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const closeBtn = document.getElementById('sidebarClose');
+
+    const openSidebar = () => {
+      sidebar?.classList.add('mobile-open');
+      overlay?.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeSidebar = () => {
+      sidebar?.classList.remove('mobile-open');
+      overlay?.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    mobileBtn?.addEventListener('click', openSidebar);
+    overlay?.addEventListener('click', closeSidebar);
+    closeBtn?.addEventListener('click', closeSidebar);
+
+    // 側邊欄即時搜尋
+    const searchInput = document.getElementById('sidebarSearch') as HTMLInputElement | null;
+    const clearBtn = document.getElementById('sidebarSearchClear') as HTMLButtonElement | null;
+    const fileItems = document.querySelectorAll<HTMLElement>('.file-item');
+    const folderGroups = document.querySelectorAll<HTMLElement>('.folder-group');
+
+    searchInput?.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      if (clearBtn) clearBtn.hidden = !q;
+
+      if (!q) {
+        fileItems.forEach(el => (el.style.display = ''));
+        folderGroups.forEach(el => (el.style.display = ''));
+        return;
+      }
+
+      folderGroups.forEach(group => {
+        let hasVisible = false;
+        group.querySelectorAll<HTMLElement>('.file-item').forEach(item => {
+          const match = (item.dataset.title || '').includes(q);
+          item.style.display = match ? '' : 'none';
+          if (match) hasVisible = true;
+        });
+        group.style.display = hasVisible ? '' : 'none';
+        if (hasVisible) group.classList.add('expanded');
+      });
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+        searchInput.focus();
+      }
+    });
+
+    // 自動捲動到當前作用的章節
+    const activeItem = document.querySelector('.file-item.active');
+    if (activeItem) {
+      activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+</script>
+
+<style>
+  /* ── Obsidian 工作區雙欄排版 ── */
+  .obsidian-workspace {
+    display: flex;
+    min-height: calc(100vh - 120px);
+    background: #0f172a;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    margin: 16px 0 40px;
+  }
+
+  /* ── 左側 Obsidian 側邊欄 ── */
+  .obs-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    background: #111827;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    z-index: 20;
+  }
+
+  .sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  .sidebar-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 12px;
+  }
+
+  .home-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #94a3b8;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .home-link:hover {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+  }
+
+  .post-count-badge {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+  }
+
+  .sidebar-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .sidebar-search svg {
+    position: absolute;
+    left: 10px;
+    color: #64748b;
+  }
+
+  .sidebar-search input {
+    width: 100%;
+    padding: 7px 28px 7px 30px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(30, 41, 59, 0.7);
+    color: #f1f5f9;
+    font-size: 0.84rem;
+    outline: none;
+  }
+
+  .sidebar-search input:focus {
+    border-color: #38bdf8;
+  }
+
+  .search-clear {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .file-tree {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 8px;
+  }
+
+  .folder-group {
+    margin-bottom: 4px;
+  }
+
+  .folder-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #cbd5e1;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+  }
+
+  .folder-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+  }
+
+  .folder-chevron {
+    transition: transform 0.2s ease;
+    color: #64748b;
+  }
+
+  .folder-group.expanded .folder-chevron {
+    transform: rotate(90deg);
+    color: #38bdf8;
+  }
+
+  .folder-icon-svg {
+    color: #38bdf8;
+    flex-shrink: 0;
+  }
+
+  .folder-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .folder-count {
+    font-size: 0.72rem;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #94a3b8;
+  }
+
+  .folder-contents {
+    display: none;
+    flex-direction: column;
+    padding-left: 18px;
+    margin-top: 2px;
+  }
+
+  .folder-group.expanded .folder-contents {
+    display: flex;
+  }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.83rem;
+    line-height: 1.4;
+    transition: all 0.15s ease;
+  }
+
+  .file-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #f1f5f9;
+  }
+
+  .file-item.active {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    font-weight: 700;
+  }
+
+  .file-icon {
+    flex-shrink: 0;
+    color: #64748b;
+  }
+
+  .file-item.active .file-icon {
+    color: #38bdf8;
+  }
+
+  .file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-close-btn {
+    display: none;
+  }
+
+  /* ── 右側正文區 ── */
+  .obs-main {
+    flex: 1;
+    min-width: 0;
+    padding: 36px 48px;
+    background: #0f172a;
+    overflow-y: auto;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+  }
+
+  .article-detail {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .article-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+    color: #64748b;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .article-breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .article-breadcrumb a:hover {
+    color: #38bdf8;
+  }
+
+  .article-breadcrumb .divider {
+    color: #475569;
+  }
+
+  .article-breadcrumb .current {
+    color: #cbd5e1;
+    font-weight: 600;
+  }
+
+  .article-header {
+    margin-bottom: 32px;
+  }
+
+  .article-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .article-category {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .article-order {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .meta-dot {
+    color: #475569;
+  }
+
+  .article-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #f8fafc;
+    line-height: 1.3;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .header-divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.4), rgba(255, 255, 255, 0.05));
+    margin-top: 20px;
+  }
+
+  /* ── Markdown 內文樣式 ── */
+  .article-content {
+    color: #cbd5e1;
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 48px;
+  }
+
+  .article-content :global(h1),
+  .article-content :global(h2),
+  .article-content :global(h3) {
+    color: #f1f5f9;
+    font-weight: 800;
+    margin-top: 36px;
+    margin-bottom: 16px;
+    line-height: 1.35;
+  }
+
+  .article-content :global(h2) {
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 8px;
+  }
+
+  .article-content :global(h3) {
+    font-size: 1.25rem;
+  }
+
+  .article-content :global(p) {
+    margin-bottom: 20px;
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    padding-left: 24px;
+    margin-bottom: 24px;
+  }
+
+  .article-content :global(li) {
+    margin-bottom: 8px;
+  }
+
+  .article-content :global(strong) {
+    color: #38bdf8;
+    font-weight: 700;
+  }
+
+  .article-content :global(blockquote) {
+    margin: 24px 0;
+    padding: 16px 20px;
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid #38bdf8;
+    border-radius: 0 12px 12px 0;
+    color: #94a3b8;
+    font-style: normal;
+  }
+
+  .article-content :global(hr) {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 36px 0;
+  }
+
+  .article-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.95rem;
+  }
+
+  .article-content :global(th),
+  .article-content :global(td) {
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .article-content :global(th) {
+    background: rgba(30, 41, 59, 0.8);
+    color: #f8fafc;
+    font-weight: 700;
+  }
+
+  /* ── 循序閱讀章節導覽 ── */
+  .chapter-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 48px 0;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .chapter-nav-btn {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .chapter-nav-btn:hover:not(.disabled) {
+    background: rgba(51, 65, 85, 0.8);
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .next-btn {
+    text-align: right;
+  }
+
+  .chapter-nav-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .nav-sub {
+    font-size: 0.78rem;
+    color: #38bdf8;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .nav-title {
+    font-size: 0.95rem;
+    color: #f1f5f9;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ── 頁尾迷你作者卡片 ── */
+  .article-footer {
+    margin-top: 32px;
+  }
+
+  .footer-card {
+    padding: 24px;
+    border-radius: 16px;
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .doctor-mini-bio {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .bio-avatar {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(56, 189, 248, 0.5);
+    background: #0f172a;
+    padding: 4px;
+  }
+
+  .bio-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #f8fafc;
+  }
+
+  .bio-title {
+    font-size: 0.82rem;
+    color: #38bdf8;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .bio-desc {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── RWD 手機版響應 ── */
+  @media (max-width: 900px) {
+    .obs-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 290px;
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 8px 0 32px rgba(0, 0, 0, 0.6);
+    }
+
+    .obs-sidebar.mobile-open {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar-close-btn {
+      display: block;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #94a3b8;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .mobile-menu-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #38bdf8;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .obs-main {
+      padding: 24px 16px;
+    }
+
+    .article-title {
+      font-size: 1.65rem;
+    }
+
+    .chapter-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .doctor-mini-bio {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

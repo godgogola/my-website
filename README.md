@@ -111,7 +111,7 @@ Antigravity 會自動完成一條龍作業：
 
 設定在專案根目錄的 `.env` 檔案：
 ```env
-OBSIDIAN_VAULT_PATH=G:/我的雲端硬碟/Wix衛教文章
+OBSIDIAN_VAULT_PATH=G:/我的雲端硬碟/衛教文章
 ```
 
 圖片資料夾路徑（固定寫在腳本裡）：
@@ -166,7 +166,7 @@ G:\我的雲端硬碟\衛教文章圖片\
 |------|--------|
 | 程式碼 + 文章 + 圖片 | ✅ GitHub（每次一鍵更新都會自動同步） |
 | 原始 PNG 圖片 | ✅ Google Drive → `衛教文章圖片/` |
-| Obsidian 文章原稿 | ✅ Google Drive → `Wix衛教文章/` |
+| Obsidian 文章原稿 | ✅ Google Drive → `衛教文章/` |
 | 已上線網站 | ✅ Vercel（持續運作中） |
 
 ### 換機清單（依序執行）
@@ -185,7 +185,7 @@ G:\我的雲端硬碟\衛教文章圖片\
    npm install
 
 ④ 建立 .env 檔（在專案根目錄新建 .env 檔，貼入以下內容）：
-   OBSIDIAN_VAULT_PATH=G:/我的雲端硬碟/Wix衛教文章
+   OBSIDIAN_VAULT_PATH=G:/我的雲端硬碟/衛教文章
 
 ⑤ 登入 Vercel：
    npx vercel login

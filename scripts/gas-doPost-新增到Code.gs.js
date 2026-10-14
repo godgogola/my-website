@@ -1,17 +1,38 @@
 // ============================================
-// Code.gs - 豐田診所衛教專欄 (雙層快取極速版 v2)
-// UI/UX Pro Max — 後端優化 + 安全同步機制
+// Code.gs - 豐田診所衛教專欄 & 讀書筆記 (雙庫架構極速版 v3)
+// 徹底移除主分類依賴，全面支援【衛教文章】與【讀書筆記】雙分頁
 // ============================================
 
 const SHEET_ID = '1zqiRJw2hp0vGqthOo4p9F1aUFk24dDBDgKHWV3bDR2U';
-const CACHE_KEY = 'fengtien_clinic_data_v2';
+const CACHE_KEY = 'fengtien_clinic_data_v3';
 const CACHE_TTL = 600; // 快取存活時間：600秒 (10分鐘)
+
+// 取得目標工作表（支援舊名相容自動 fallback）
+function getTargetSheet(ss, sheetName) {
+  if (sheetName === '讀書筆記' || sheetName === 'books') {
+    return ss.getSheetByName('讀書筆記');
+  }
+  // 衛教文章：優先抓「衛教文章」，找不到則自動抓舊名「次分類」
+  return ss.getSheetByName('衛教文章') || ss.getSheetByName('次分類');
+}
 
 function doGet(e) {
   var output = (e && e.parameter && e.parameter.output) || '';
+  var sheetParam = (e && e.parameter && e.parameter.sheet) || '';
   
   if (output === 'json') {
-    var data = getCategoriesData();
+    var data;
+    if (sheetParam === 'books' || sheetParam === '讀書筆記') {
+      data = getSheetDataGrouped('讀書筆記');
+    } else if (sheetParam === 'all') {
+      data = {
+        articles: getSheetDataGrouped('衛教文章'),
+        books: getSheetDataGrouped('讀書筆記')
+      };
+    } else {
+      // 預設回傳衛教文章
+      data = getSheetDataGrouped('衛教文章');
+    }
     return ContentService.createTextOutput(JSON.stringify(data))
       .setMimeType(ContentService.MimeType.JSON);
   }
@@ -22,79 +43,67 @@ function doGet(e) {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-function getCategoriesData() {
+// 依指定工作表讀取並依 A 欄自動分組，不再需要「主分類」工作表
+function getSheetDataGrouped(targetName) {
   var cache = CacheService.getScriptCache();
-  var cachedData = cache.get(CACHE_KEY);
+  var cacheKey = CACHE_KEY + '_' + targetName;
+  var cachedData = cache.get(cacheKey);
   
   if (cachedData) {
-    return JSON.parse(cachedData);
+    try { return JSON.parse(cachedData); } catch(e) {}
   }
 
   try {
     var ss = SpreadsheetApp.openById(SHEET_ID);
-    
-    var mainSheet = ss.getSheetByName('主分類');
-    var mainData = mainSheet.getDataRange().getValues();
-    var mainRows = mainData.slice(1);
+    var targetSheet = getTargetSheet(ss, targetName);
+    if (!targetSheet) return [];
 
-    var subSheet = ss.getSheetByName('次分類');
-    var subData = subSheet.getDataRange().getValues();
-    var subRows = subData.slice(1);
+    var rows = targetSheet.getDataRange().getValues().slice(1);
+    var groupMap = {};
+    var groupOrder = [];
 
-    var subMap = {};
-    subRows.forEach(function(sub) {
-      var subMainName = sub[0]; 
-      var subSort     = sub[1]; 
-      var subTitle    = sub[2]; 
-      var subType     = sub[3]; 
-      var subImg      = sub[4]; 
-      var subUrl      = sub[5]; 
-      var subVisible  = sub[6] === true || String(sub[6]).toUpperCase() === 'TRUE'; 
+    rows.forEach(function(r) {
+      var groupName = String(r[0] || '').trim(); // A欄：主分類 或 書名
+      var sortVal   = r[1] || 999;               // B欄：排序
+      var title     = String(r[2] || '').trim(); // C欄：標題 或 章節
+      var type      = r[3] || '圖片卡片';         // D欄：類型
+      var img       = r[4] || '';                // E欄：圖片網址
+      var url       = r[5] || '';                // F欄：文章網址
+      var visible   = r[6] === true || String(r[6]).toUpperCase() === 'TRUE'; // G欄：是否公開
 
-      if (subVisible && subMainName) {
-        if (!subMap[subMainName]) subMap[subMainName] = [];
-        subMap[subMainName].push({
-          sort: subSort || 999,
-          title: subTitle,
-          type: subType,
-          img: subImg,
-          url: subUrl
+      if (visible && groupName && title) {
+        if (!groupMap[groupName]) {
+          groupMap[groupName] = [];
+          groupOrder.push(groupName);
+        }
+        groupMap[groupName].push({
+          sort: sortVal,
+          title: title,
+          type: type,
+          img: img,
+          url: url
         });
       }
     });
 
-    var categories = [];
-
-    mainRows.forEach(function(row) {
-      var sortOrder = row[0]; 
-      var name      = row[1]; 
-      var desc      = row[2]; 
-      var icon      = row[3]; 
-      var visible   = row[4] === true || String(row[4]).toUpperCase() === 'TRUE'; 
-
-      if (!visible || !name) return;
-
-      var items = (subMap[name] || []).slice();
+    var result = [];
+    groupOrder.forEach(function(name, idx) {
+      var items = (groupMap[name] || []).slice();
       items.sort(function(a, b) { return a.sort - b.sort; });
-
-      categories.push({
-        sort: sortOrder || 999,
+      result.push({
+        sort: idx + 1,
         title: name,
-        subtitle: desc,
-        icon: icon,
         items: items
       });
     });
 
-    categories.sort(function(a, b) { return a.sort - b.sort; });
-
     try {
-      cache.put(CACHE_KEY, JSON.stringify(categories), CACHE_TTL);
+      cache.put(cacheKey, JSON.stringify(result), CACHE_TTL);
     } catch (cacheError) {
-      Logger.log('快取寫入失敗（可能超過 100KB）：' + cacheError.toString());
+      Logger.log('快取寫入略過：' + cacheError.toString());
     }
 
-    return categories;
+    return result;
 
   } catch (error) {
     throw new Error("資料讀取失敗：" + error.toString());
@@ -102,90 +111,128 @@ function getCategoriesData() {
 }
 
 // ============================================
-// doPost — 接收新網站同步請求
-// 規則：圖片網址永遠覆蓋；文章網址只填空白；找不到標題則略過
+// doPost — 支援【衛教文章】與【讀書筆記】雙分頁操作：
+//   updateArticleUrl：更新圖片/文章網址
+//   appendRow：新增不存在的文章列或章節列
+//   fixCategory：修正 A 欄分類或書名
+//   fixSheetTitle：修正 C 欄標題（舊→新）
 // ============================================
 
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.openById(SHEET_ID);
+    
+    // 依參數決定操作「衛教文章」或「讀書筆記」分頁（預設為衛教文章）
+    var targetSheetName = data.sheet || data.targetSheet || '衛教文章';
+    var sheet = getTargetSheet(ss, targetSheetName);
 
-    // ── fixCategory：依文章標題修正 A 欄（主分類名稱）──
+    if (!sheet) {
+      return jsonResponse({ success: false, error: '找不到目標工作表：' + targetSheetName });
+    }
+
+    var sheetRows = sheet.getDataRange().getValues();
+
+    // ── 1. fixCategory：修正 A 欄主分類或書名 ──
     if (data.action === 'fixCategory') {
-      var ss2      = SpreadsheetApp.openById(SHEET_ID);
-      var sub2     = ss2.getSheetByName('次分類');
-      var rows2    = sub2.getDataRange().getValues();
-      var found2   = false;
-      for (var j = 1; j < rows2.length; j++) {
-        if (String(rows2[j][2]).trim() === String(data.title).trim()) {
-          var currentCat = String(rows2[j][0]).trim();
-          if (currentCat !== String(data.category).trim()) {
-            sub2.getRange(j + 1, 1).setValue(data.category);
-            CacheService.getScriptCache().remove(CACHE_KEY);
-            return jsonResponse({ success: true, action: '分類已修正', title: data.title, from: currentCat, to: data.category });
-          } else {
-            return jsonResponse({ success: true, action: '分類正確無需修正', title: data.title });
+      for (var j = 1; j < sheetRows.length; j++) {
+        if (String(sheetRows[j][2]).trim() === String(data.title).trim()) {
+          var cur = String(sheetRows[j][0]).trim();
+          if (cur !== String(data.category).trim()) {
+            sheet.getRange(j + 1, 1).setValue(data.category);
+            clearAllCache();
+            return jsonResponse({ success: true, action: '分類已修正', title: data.title, from: cur, to: data.category });
           }
-          found2 = true;
+          return jsonResponse({ success: true, action: '分類正確無需修正', title: data.title });
+        }
+      }
+      return jsonResponse({ success: true, action: '未找到標題', title: data.title });
+    }
+
+    // ── 2. fixSheetTitle：修正 C 欄標題 ──
+    if (data.action === 'fixSheetTitle') {
+      for (var k = 1; k < sheetRows.length; k++) {
+        if (String(sheetRows[k][2]).trim() === String(data.oldTitle).trim()) {
+          if (String(data.newTitle).trim() === String(data.oldTitle).trim()) {
+            return jsonResponse({ success: true, action: '標題相同無需修改', title: data.oldTitle });
+          }
+          sheet.getRange(k + 1, 3).setValue(data.newTitle);
+          clearAllCache();
+          return jsonResponse({ success: true, action: '標題已更新', oldTitle: data.oldTitle, newTitle: data.newTitle });
+        }
+      }
+      return jsonResponse({ success: true, action: '找不到舊標題', oldTitle: data.oldTitle });
+    }
+
+    // ── 3. appendRow：新增不存在的文章列或讀書筆記列 ──
+    if (data.action === 'appendRow') {
+      for (var m = 1; m < sheetRows.length; m++) {
+        if (String(sheetRows[m][2]).trim() === String(data.title).trim()) {
+          return jsonResponse({ success: true, action: '已存在略過', title: data.title });
+        }
+      }
+      sheet.appendRow([
+        data.category || data.bookTitle || '', // A欄：分類或書名
+        data.sort || 999,                      // B欄：排序
+        data.title || '',                      // C欄：標題或章節名
+        data.type || '圖片卡片',                // D欄：類型
+        data.imgUrl || '',                     // E欄：圖片網址
+        data.articleUrl || '',                 // F欄：文章網址
+        data.visible !== undefined ? (data.visible ? 'TRUE' : 'FALSE') : 'TRUE' // G欄：是否公開
+      ]);
+      clearAllCache();
+      return jsonResponse({ success: true, action: '新增成功', title: data.title, sheet: targetSheetName });
+    }
+
+    // ── 4. updateArticleUrl：更新圖片/文章網址 ──
+    if (data.action === 'updateArticleUrl' || data.action === 'updateBookNote') {
+      var rowIndex = -1;
+      for (var i = 1; i < sheetRows.length; i++) {
+        if (String(sheetRows[i][2]).trim() === String(data.title).trim()) {
+          rowIndex = i + 1;
           break;
         }
       }
-      if (!found2) {
-        return jsonResponse({ success: true, action: '未找到標題', title: data.title });
-      }
-    }
 
-    if (data.action !== 'updateArticleUrl') {
-      return jsonResponse({ success: false, error: '不支援的 action' });
-    }
+      if (rowIndex > 0) {
+        var existUrl = String(sheet.getRange(rowIndex, 6).getValue()).trim();
+        var updated = false;
 
-    var ss       = SpreadsheetApp.openById(SHEET_ID);
-    var subSheet = ss.getSheetByName('次分類');
-    var subData  = subSheet.getDataRange().getValues();
+        // 圖片網址：永遠覆蓋最新版
+        if (data.imgUrl) {
+          sheet.getRange(rowIndex, 5).setValue(data.imgUrl);
+          updated = true;
+        }
+        // 文章網址：空白時寫入
+        if (!existUrl && data.articleUrl) {
+          sheet.getRange(rowIndex, 6).setValue(data.articleUrl);
+          updated = true;
+        }
 
-    // 依「標題」尋找對應列（欄位 C = index 2）
-    var rowIndex = -1;
-    for (var i = 1; i < subData.length; i++) {
-      if (String(subData[i][2]).trim() === String(data.title).trim()) {
-        rowIndex = i + 1; // Google Sheet 1-indexed
-        break;
-      }
-    }
-
-    // 只在找到對應列時處理（找不到直接忽略，不自動 appendRow）
-    if (rowIndex > 0) {
-      var existingArticleUrl = String(subSheet.getRange(rowIndex, 6).getValue()).trim();
-
-      var updated = false;
-
-      // 圖片網址：永遠覆蓋（確保換圖後能即時更新）
-      if (data.imgUrl) {
-        subSheet.getRange(rowIndex, 5).setValue(data.imgUrl);
-        updated = true;
-      }
-      // 文章網址：只有空白時才寫入（網址不會變，不需要蓋掉）
-      if (!existingArticleUrl && data.articleUrl) {
-        subSheet.getRange(rowIndex, 6).setValue(data.articleUrl);
-        updated = true;
-      }
-
-      if (updated) {
-        CacheService.getScriptCache().remove(CACHE_KEY);
-        return jsonResponse({ success: true, action: '更新成功', title: data.title });
-      } else {
+        if (updated) {
+          clearAllCache();
+          return jsonResponse({ success: true, action: '更新成功', title: data.title, sheet: targetSheetName });
+        }
         return jsonResponse({ success: true, action: '已有資料略過', title: data.title });
       }
-    } else {
       return jsonResponse({ success: true, action: '未匹配略過', title: data.title });
     }
+
+    return jsonResponse({ success: false, error: '不支援的 action' });
 
   } catch (err) {
     return jsonResponse({ success: false, error: err.toString() });
   }
 }
 
+function clearAllCache() {
+  var cache = CacheService.getScriptCache();
+  cache.remove(CACHE_KEY + '_衛教文章');
+  cache.remove(CACHE_KEY + '_讀書筆記');
+  cache.remove(CACHE_KEY);
+}
+
 function jsonResponse(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
+  return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }

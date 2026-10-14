@@ -38,7 +38,7 @@ function slugify(text) {
 }
 
 // 頂層根目錄名稱（不應被視為分類的資料夾）
-const ROOT_LEVEL_FOLDERS = new Set(['Wix衛教文章', 'Wix衛教文章庫']);
+const ROOT_LEVEL_FOLDERS = new Set(['Wix衛教文章', 'Wix衛教文章庫', '衛教文章', '衛教文章庫']);
 
 // 應跳過不需匯入網站的特殊資料夾（模板、設定、範本等）
 const IGNORED_FOLDERS = new Set(['.obsidian', '.git', 'node_modules', 'templates', 'template', '模板', '範本']);
