@@ -35,6 +35,19 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/14) ---
+  {
+    id: 'jyOxM3nfrso',
+    title: '【大腦的天使特調】睪固酮 自信心與行為傾向的增幅器',
+    description: '談到「睪固酮（Testosterone）」，許多人腦中浮現的往往是肌肉猛男、侵略性或路怒症的代名詞。但在神經科學與行為學中，這其實是極大的誤解！睪固酮絕非男性的專屬激素，女性同樣維持著關鍵基線；它是兩性體內最重要的「增幅與勝利荷爾蒙」，能強化認知注意力與抗壓適應力。',
+    category: '診間說書房',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=jyOxM3nfrso',
+    featured: true,
+    order: 1,
+    articleSlug: '大腦的天使特調睪固酮_自信心與行為傾向的增幅器',
+    articleTitle: '【大腦的天使特調】睪固酮_自信心與行為傾向的增幅器',
+  },
   // --- 2026 最新發布影音 (2026/10/13) ---
   {
     id: 'qy6YD2DZots',

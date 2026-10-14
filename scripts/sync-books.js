@@ -56,13 +56,16 @@ function parseChapterOrder(filename) {
   return 999;
 }
 
-// 檢查封面圖是否存在
+// 檢查章節專屬封面圖是否存在（嚴格比對章節標題，不抓整本書共用圖，確保新文章在 Sheet 保持 E/F 欄空白）
 function findCoverImage(chapterTitle, bookTitle) {
+  const cleanTitle = chapterTitle.replace(/^\d+[、.\s]+/, '');
   const candidates = [
     `${chapterTitle}.webp`,
-    `${bookTitle}-${chapterTitle}.webp`,
     `${chapterTitle}.png`,
-    `${bookTitle}.webp`
+    `${cleanTitle}.webp`,
+    `${cleanTitle}.png`,
+    `${bookTitle}-${chapterTitle}.webp`,
+    `${bookTitle}-${chapterTitle}.png`
   ];
 
   for (const name of candidates) {
@@ -114,7 +117,8 @@ async function main() {
 
   let totalItems = 0;
   let addedCount = 0;
-  let skippedCount = 0;
+  let updatedCount = 0;
+  let waitingImageCount = 0;
 
   for (const folder of bookFolders) {
     const bookTitle = folder.name;
@@ -135,6 +139,9 @@ async function main() {
 
     for (const chapter of chapters) {
       totalItems++;
+      const hasImage = !!chapter.imgUrl;
+
+      // 新文章寫入 Sheet：若尚未生成圖片，E 欄 (圖片網址) 與 F 欄 (文章網址) 留空，僅有 ABCDG 欄
       const appendPayload = {
         action: 'appendRow',
         sheet: '讀書筆記',
@@ -142,59 +149,50 @@ async function main() {
         sort: chapter.sort,
         title: chapter.chapterTitle,
         type: '圖片卡片',
-        imgUrl: chapter.imgUrl,
-        articleUrl: chapter.articleUrl,
+        imgUrl: hasImage ? chapter.imgUrl : '',
+        articleUrl: hasImage ? chapter.articleUrl : '',
         visible: true
       };
 
       const res = await postToGAS(appendPayload);
       if (res.action === '新增成功') {
-        console.log(`  ✅ [新增成功] ${chapter.chapterTitle} (排序: ${chapter.sort})`);
+        if (hasImage) {
+          console.log(`  ✅ [新增成功] ${chapter.chapterTitle} (排序: ${chapter.sort}) - 已帶圖片與網址`);
+        } else {
+          console.log(`  📝 [新增成功] ${chapter.chapterTitle} (排序: ${chapter.sort}) - 僅前置 ABCDG 欄（待生圖）`);
+          waitingImageCount++;
+        }
         addedCount++;
       } else {
-        console.log(`  ⭕ [已存在，進行網址與圖片更新] ${chapter.chapterTitle}`);
-        skippedCount++;
+        // 已存在於 Sheet：只有在「有圖片」時才更新 E 欄與 F 欄
+        if (hasImage) {
+          const updatePayload = {
+            action: 'updateArticleUrl',
+            sheet: '讀書筆記',
+            title: chapter.chapterTitle,
+            imgUrl: chapter.imgUrl,
+            articleUrl: chapter.articleUrl
+          };
+          const updateRes = await postToGAS(updatePayload);
+          if (updateRes.success) {
+            console.log(`  🔗 [一鍵同步完成] ${chapter.chapterTitle} (已填入 E/F 欄圖片與網址)`);
+            updatedCount++;
+          }
+        } else {
+          console.log(`  ⏳ [等待生圖] ${chapter.chapterTitle} (E/F 欄維持空白)`);
+          waitingImageCount++;
+        }
       }
 
-      // 永遠調用 updateArticleUrl 確保圖片與文章網址更新至最新版
-      const updatePayload = {
-        action: 'updateArticleUrl',
-        sheet: '讀書筆記',
-        title: chapter.chapterTitle,
-        imgUrl: chapter.imgUrl,
-        articleUrl: chapter.articleUrl
-      };
-      const updateRes = await postToGAS(updatePayload);
-      if (updateRes.success) {
-        console.log(`    🔗 [網址與圖片已更新] ${chapter.chapterTitle} (圖片: ${chapter.imgUrl ? '有' : '無'})`);
-      }
-
-      // 相容舊的中文數字格式標題（如「一、...」）
-      const cnTitleMap = {
-        '01、漫步華爾街理論': '一、漫步華爾街理論',
-        '02、瘋狂的群眾': '二、瘋狂的群眾',
-        '03、投機泡沫史': '三、投機泡沫史',
-        '04、世紀資產泡沫': '四、世紀資產泡沫'
-      };
-      if (cnTitleMap[chapter.chapterTitle]) {
-        await postToGAS({
-          action: 'updateArticleUrl',
-          sheet: '讀書筆記',
-          title: cnTitleMap[chapter.chapterTitle],
-          imgUrl: chapter.imgUrl,
-          articleUrl: chapter.articleUrl
-        });
-      }
-
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 200));
     }
     console.log('');
   }
 
   console.log('='.repeat(50));
-  console.log(`🎉 讀書筆記同步完成！`);
-  console.log(`📊 總檢查項目: ${totalItems} | 新增: ${addedCount} | 已存在: ${skippedCount}`);
-  console.log(`🌐 請重新整理 Google Sheet【讀書筆記】分頁確認！`);
+  console.log(`🎉 讀書筆記同步處理完成！`);
+  console.log(`📊 總檢查項目: ${totalItems} | 新增: ${addedCount} | 更新網址: ${updatedCount} | 待生圖(E/F空白): ${waitingImageCount}`);
+  console.log(`🌐 請前往 Google Sheet【讀書筆記】分頁確認！`);
 }
 
 main().catch(console.error);

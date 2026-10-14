@@ -100,14 +100,30 @@ if (fs.existsSync(DRIVE_IMAGES_DIR)) {
   console.warn(`[警告] 找不到 Google Drive 圖片資料夾：${DRIVE_IMAGES_DIR}`);
 }
 
-// 2. 更新文章 frontmatter 的 coverImage（改成 .webp 副檔名）
-const mdFiles = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.md'));
+const BOOKS_DIR         = path.join(PROJECT_ROOT, 'src', 'content', 'books');
+
+// 2. 更新文章與讀書筆記 frontmatter 的 coverImage（改成 .webp 副檔名）
+function getAllMdFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  let results = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results = results.concat(getAllMdFiles(fullPath));
+    } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+const allMdFiles = [...getAllMdFiles(POSTS_DIR), ...getAllMdFiles(BOOKS_DIR)];
 
 let validCoverCount = 0;
 let removedCoverCount = 0;
 
-for (const file of mdFiles) {
-  const filePath = path.join(POSTS_DIR, file);
+for (const filePath of allMdFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
 
   const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
