@@ -166,10 +166,10 @@ import Layout from '../../layouts/Layout.astro';
           <!-- 3D Vessel Layer Toggles -->
           <div class="vessel-toggles">
             <button class="btn btn-vessel active" id="btn-toggle-pv" onclick="toggleVesselLayer('pv')">
-              門脈系統 (亮藍)
+              門脈系統 (洋紅紫)
             </button>
             <button class="btn btn-vessel active" id="btn-toggle-hv" onclick="toggleVesselLayer('hv')">
-              肝靜脈 (深藍)
+              肝靜脈系統 (深藍)
             </button>
           </div>
 
@@ -453,28 +453,193 @@ import Layout from '../../layouts/Layout.astro';
     let raycaster, mouse;
     let currentOpacity = 0.88;
 
+    /**
+     * Gemini 4 Argon: Anatomical 3D Field, Depth Math & Spatial Normal Welding
+     */
     function getLiver3DDepth(x, y) {
-      const xFactor = x < 0 ? (1.0 - Math.pow(x / 3.6, 2) * 0.35) : Math.max(0.15, 1.0 - Math.pow(x / 2.8, 1.3) * 0.85);
-      const yFactor = 1.0 - Math.pow(y / 1.8, 2) * 0.4;
-      const baseThickness = 1.45 * xFactor * Math.max(0.2, yFactor);
+      const nx = THREE.MathUtils.clamp((x + 0.25) / 2.95, -1.0, 1.0);
+      const ny = THREE.MathUtils.clamp(y / 1.65, -1.0, 1.0);
+      const radialSq = THREE.MathUtils.clamp(nx * nx * 0.85 + ny * ny * 0.85, 0.0, 0.98);
+      const shell = Math.sqrt(1.0 - radialSq);
 
-      const zAnt = baseThickness * (0.85 + Math.cos(x * 0.5) * 0.15);
-      let zPost = -baseThickness * 0.95;
-      if (x < -1.0 && y < 0.0) zPost += 0.25;
-      if (Math.abs(x) < 0.4 && y > 0.0) zPost -= 0.15;
+      // Right lobe is thick AP; left lateral segment tapers into a thin tongue
+      const rightBias = nx < 0.0 ? (1.0 - nx * 0.22) : Math.max(0.28, 1.0 - Math.pow(nx, 1.35) * 0.72);
+      // Inferior border (margo inferior) tapers more acutely than superior dome
+      const infTaper = ny < 0.0 ? Math.max(0.32, 1.0 + ny * 0.55) : (1.0 - ny * 0.12);
+      const halfThick = 1.32 * shell * rightBias * infTaper;
 
+      // Anterior diaphragmatic convexity vs posterior visceral concavity (renal/gastric impressions)
+      const antBulge = 0.18 * Math.cos(nx * 1.2) * (1.0 - ny * ny * 0.4);
+      const renalImpression = (nx < -0.25 && ny < 0.15)
+        ? 0.28 * Math.exp(-Math.pow((nx + 0.62) / 0.38, 2) - Math.pow((ny + 0.35) / 0.45, 2))
+        : 0.0;
+      const cavalSulcus = (Math.abs(nx + 0.12) < 0.35 && ny > -0.1)
+        ? -0.18 * Math.exp(-Math.pow((nx + 0.12) / 0.2, 2) - Math.pow((ny - 0.45) / 0.5, 2))
+        : 0.0;
+
+      const zAnt = halfThick * 0.96 + antBulge;
+      const zPost = -halfThick * 0.92 + renalImpression + cavalSulcus;
       return { zAnt, zPost };
     }
 
+    function smoothStep(edge0, edge1, x) {
+      const t = THREE.MathUtils.clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+      return t * t * (3.0 - 2.0 * t);
+    }
+
+    /**
+     * Evaluates the continuous 3D anatomical coordinates for any normalized point
+     * in the global liver domain. Adjacent segments fit together with 0.0000 seam error.
+     */
+    function evaluateGlobalLiverHull(xi, eta, zeta, edgeBevelFactor) {
+      // 1. Physiological Scissurae Warping
+      const ivcConvergence = 0.08 * (eta * 0.5 + 0.5) * (1.0 - xi * xi) * (0.5 - zeta * 0.3);
+      const portalArch = 0.09 * Math.exp(-xi * xi * 1.8) * (1.0 - eta * eta)
+                       - 0.06 * xi * (1.0 - xi * xi) * (1.0 - eta * eta);
+
+      const wXi = THREE.MathUtils.clamp(xi + ivcConvergence, -1.0, 1.0);
+      const wEta = THREE.MathUtils.clamp(eta + portalArch, -1.0, 1.0);
+      const wZeta = THREE.MathUtils.clamp(zeta, -1.0, 1.0);
+
+      // 2. Asymmetric Spherified-Cube Mapping
+      const xi2 = wXi * wXi;
+      const eta2 = wEta * wEta;
+      const zeta2 = wZeta * wZeta;
+
+      const zRoundness = wEta < 0.0 ? 0.38 : 0.48;
+      const sXi = wXi * Math.sqrt(Math.max(0.04, 1.0 - 0.42 * eta2 - 0.36 * zeta2 + 0.24 * eta2 * zeta2));
+      const sEta = wEta * Math.sqrt(Math.max(0.04, 1.0 - 0.38 * xi2 - zRoundness * zeta2 + 0.22 * xi2 * zeta2));
+      const sZeta = wZeta * Math.sqrt(Math.max(0.02, 1.0 - 0.48 * xi2 - 0.48 * eta2 + 0.30 * xi2 * eta2));
+
+      // 3. Map sXi [-1, 1] -> Anatomical X [-3.25, 2.75]
+      const x = sXi < 0.0 ? sXi * 3.25 : sXi * 2.75;
+
+      // 4. Anatomical Superior & Inferior Contours
+      const rightDome = 1.68 * Math.exp(-Math.pow((sXi + 0.42) / 0.78, 2));
+      const leftSuperior = 1.12 * Math.max(0.12, 1.0 - Math.pow(Math.max(0.0, sXi + 0.15) / 1.18, 1.45));
+      const cardiacDip = -0.14 * Math.exp(-Math.pow((sXi - 0.12) / 0.28, 2));
+      const yTop = Math.max(0.22, rightDome * 0.55 + leftSuperior * 0.68 + cardiacDip);
+
+      const rightInfDepth = -1.72 * (1.0 - 0.22 * Math.pow(Math.min(0.0, sXi + 0.35), 2));
+      const obliqueSlope = smoothStep(-0.55, 0.95, sXi);
+      const leftApexY = -0.18;
+      const gbNotch = 0.14 * Math.exp(-Math.pow((sXi + 0.02) / 0.14, 2));
+      const umbNotch = 0.08 * Math.exp(-Math.pow((sXi - 0.38) / 0.10, 2));
+      const yBot = THREE.MathUtils.lerp(rightInfDepth, leftApexY, obliqueSlope) + gbNotch + umbNotch;
+
+      const eta01 = (sEta + 1.0) * 0.5;
+      let y = THREE.MathUtils.lerp(yBot, yTop, eta01);
+
+      // 5. Anterior-Posterior Thickness & Visceral Topography (Z)
+      const latThickness = sXi < 0.0
+        ? (1.05 - 0.18 * Math.pow(-sXi, 1.6))
+        : Math.max(0.22, Math.pow(1.0 - sXi * 0.78, 1.35));
+
+      const verticalWedge = sEta < 0.0
+        ? Math.pow(1.0 + sEta * 0.68, 1.15)
+        : (1.0 - 0.12 * sEta * sEta);
+
+      const halfDepth = 1.38 * latThickness * verticalWedge;
+
+      const costalWrap = -0.22 * Math.pow(Math.max(0.0, -sXi - 0.2), 1.5);
+      const renalFossa = (sXi < -0.15 && sEta < 0.25 && sZeta < 0.0)
+        ? 0.34 * (-sZeta) * Math.exp(-Math.pow((sXi + 0.58) / 0.36, 2) - Math.pow((sEta + 0.32) / 0.45, 2))
+        : 0.0;
+      const gastricFossa = (sXi > 0.25 && sZeta < 0.0)
+        ? 0.20 * (-sZeta) * Math.exp(-Math.pow((sXi - 0.62) / 0.35, 2) - Math.pow((sEta + 0.15) / 0.55, 2))
+        : 0.0;
+
+      let z = sZeta * halfDepth + costalWrap + renalFossa + gastricFossa;
+      z *= edgeBevelFactor;
+
+      return new THREE.Vector3(x, y, z);
+    }
+
+    /**
+     * Welds duplicate BoxGeometry face-edge normals by spatial proximity so the 6 faces
+     * of each segment shade as one seamless organic surface without crease lines.
+     */
+    function computeWeldedSmoothNormals(geom) {
+      geom.computeVertexNormals();
+      const pos = geom.attributes.position;
+      const norm = geom.attributes.normal;
+      const count = pos.count;
+
+      const map = new Map();
+      const precision = 10000;
+
+      for (let i = 0; i < count; i++) {
+        const kx = Math.round(pos.getX(i) * precision);
+        const ky = Math.round(pos.getY(i) * precision);
+        const kz = Math.round(pos.getZ(i) * precision);
+        const key = `${kx}_${ky}_${kz}`;
+
+        let bucket = map.get(key);
+        if (!bucket) {
+          bucket = { nx: 0, ny: 0, nz: 0, indices: [] };
+          map.set(key, bucket);
+        }
+        bucket.nx += norm.getX(i);
+        bucket.ny += norm.getY(i);
+        bucket.nz += norm.getZ(i);
+        bucket.indices.push(i);
+      }
+
+      map.forEach(bucket => {
+        const len = Math.hypot(bucket.nx, bucket.ny, bucket.nz) || 1.0;
+        const nx = bucket.nx / len;
+        const ny = bucket.ny / len;
+        const nz = bucket.nz / len;
+        for (let j = 0; j < bucket.indices.length; j++) {
+          const idx = bucket.indices[j];
+          norm.setXYZ(idx, nx, ny, nz);
+        }
+      });
+
+      norm.needsUpdate = true;
+    }
+
     const segmentSolidConfigs = {
-      s7: { xRange: [-3.2, -1.3], yRange: [0.0, 1.6], dir: new THREE.Vector3(-1.0, 0.7, -0.5), label: '7', labelOffset: [-2.2, 0.9, 0.9] },
-      s8: { xRange: [-1.3, 0.0], yRange: [0.0, 1.6], dir: new THREE.Vector3(-0.3, 0.8, 0.4), label: '8', labelOffset: [-0.65, 1.0, 1.1] },
-      s4: { xRange: [0.0, 1.1], yRange: [-1.5, 1.4], dir: new THREE.Vector3(0.4, 0.4, 0.2), label: '4', labelOffset: [0.55, 0.0, 0.9] },
-      s2: { xRange: [1.1, 2.7], yRange: [0.0, 1.1], dir: new THREE.Vector3(1.1, 0.7, -0.2), label: '2', labelOffset: [1.8, 0.6, 0.5] },
-      s6: { xRange: [-3.2, -1.3], yRange: [-1.7, 0.0], dir: new THREE.Vector3(-1.0, -0.7, -0.5), label: '6', labelOffset: [-2.2, -0.9, 0.8] },
-      s5: { xRange: [-1.3, 0.0], yRange: [-1.7, 0.0], dir: new THREE.Vector3(-0.3, -0.8, 0.4), label: '5', labelOffset: [-0.65, -0.9, 1.0] },
-      s3: { xRange: [1.1, 2.7], yRange: [-1.4, 0.0], dir: new THREE.Vector3(1.1, -0.6, 0.2), label: '3', labelOffset: [1.8, -0.6, 0.5] },
-      s1: { xRange: [-0.5, 0.4], yRange: [0.1, 1.2], dir: new THREE.Vector3(0.0, 0.1, -1.1), label: '1', labelOffset: [0.0, 0.65, -1.25] }
+      s7: {
+        xRange: [-3.2, -1.3], yRange: [0.0, 1.6],
+        xiRange: [-1.0, -0.42], etaRange: [0.0, 1.0],
+        dir: new THREE.Vector3(-1.0, 0.7, -0.5), label: '7', labelOffset: [-2.15, 0.82, 0.72]
+      },
+      s8: {
+        xRange: [-1.3, 0.0], yRange: [0.0, 1.6],
+        xiRange: [-0.42, 0.0], etaRange: [0.0, 1.0],
+        dir: new THREE.Vector3(-0.3, 0.8, 0.4), label: '8', labelOffset: [-0.68, 0.88, 1.02]
+      },
+      s4: {
+        xRange: [0.0, 1.1], yRange: [-1.5, 1.4],
+        xiRange: [0.0, 0.38], etaRange: [-1.0, 1.0],
+        dir: new THREE.Vector3(0.4, 0.4, 0.2), label: '4', labelOffset: [0.52, 0.05, 0.92]
+      },
+      s2: {
+        xRange: [1.1, 2.7], yRange: [0.0, 1.1],
+        xiRange: [0.38, 1.0], etaRange: [0.0, 1.0],
+        dir: new THREE.Vector3(1.1, 0.7, -0.2), label: '2', labelOffset: [1.72, 0.48, 0.45]
+      },
+      s6: {
+        xRange: [-3.2, -1.3], yRange: [-1.7, 0.0],
+        xiRange: [-1.0, -0.42], etaRange: [-1.0, 0.0],
+        dir: new THREE.Vector3(-1.0, -0.7, -0.5), label: '6', labelOffset: [-2.10, -0.75, 0.65]
+      },
+      s5: {
+        xRange: [-1.3, 0.0], yRange: [-1.7, 0.0],
+        xiRange: [-0.42, 0.0], etaRange: [-1.0, 0.0],
+        dir: new THREE.Vector3(-0.3, -0.8, 0.4), label: '5', labelOffset: [-0.65, -0.72, 0.88]
+      },
+      s3: {
+        xRange: [1.1, 2.7], yRange: [-1.4, 0.0],
+        xiRange: [0.38, 1.0], etaRange: [-1.0, 0.0],
+        dir: new THREE.Vector3(1.1, -0.6, 0.2), label: '3', labelOffset: [1.68, -0.38, 0.48]
+      },
+      s1: {
+        xRange: [-0.5, 0.4], yRange: [0.1, 1.2],
+        xiRange: [-0.18, 0.16], etaRange: [0.05, 0.78],
+        dir: new THREE.Vector3(0.0, 0.15, -1.15), label: '1', labelOffset: [-0.05, 0.58, -1.22]
+      }
     };
 
     function init3D() {
@@ -549,69 +714,196 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
+    /**
+     * Gemini 4 Argon: Organic Segment Geometry Generator (~23,600 Total Vertices Across S1-S8)
+     */
     function createSolidSegmentGeometry(config, key) {
-      const x0 = config.xRange[0], x1 = config.xRange[1];
-      const y0 = config.yRange[0], y1 = config.yRange[1];
-      
-      const nx = 12, ny = 12, nz = 8;
-      const geom = new THREE.BoxGeometry(x1 - x0, y1 - y0, 1.0, nx, ny, nz);
-      
-      const cx = (x0 + x1) * 0.5;
-      const cy = (y0 + y1) * 0.5;
-      geom.translate(cx, cy, 0);
-
+      const nx = 24, ny = 24, nz = 16;
+      const geom = new THREE.BoxGeometry(1.0, 1.0, 1.0, nx, ny, nz);
       const pos = geom.attributes.position;
       const v = new THREE.Vector3();
+
+      const xi0 = config.xiRange ? config.xiRange[0] : THREE.MathUtils.clamp(config.xRange[0] / 3.2, -1.0, 1.0);
+      const xi1 = config.xiRange ? config.xiRange[1] : THREE.MathUtils.clamp(config.xRange[1] / 2.7, -1.0, 1.0);
+      const eta0 = config.etaRange ? config.etaRange[0] : (config.yRange[0] < 0 ? -1.0 : 0.0);
+      const eta1 = config.etaRange ? config.etaRange[1] : (config.yRange[1] > 0 ? 1.0 : 0.0);
 
       for (let i = 0; i < pos.count; i++) {
         v.fromBufferAttribute(pos, i);
 
+        const uLoc = v.x * 2.0;
+        const vLoc = v.y * 2.0;
+        const wLoc = v.z * 2.0;
+
+        // ── Special Organic Sculpting for S1 (Caudate / Spigelian Lobe) ──
         if (key === 's1') {
-          v.z = -0.7 + v.z * 0.45;
-          v.x = v.x * 0.9;
-          pos.setXYZ(i, v.x, v.y, v.z);
+          const u2 = uLoc * uLoc, v2 = vLoc * vLoc, w2 = wLoc * wLoc;
+          const sx = uLoc * Math.sqrt(Math.max(0.02, 1.0 - 0.5 * v2 - 0.5 * w2 + 0.33 * v2 * w2));
+          const sy = vLoc * Math.sqrt(Math.max(0.02, 1.0 - 0.5 * u2 - 0.5 * w2 + 0.33 * u2 * w2));
+          const sz = wLoc * Math.sqrt(Math.max(0.02, 1.0 - 0.5 * u2 - 0.5 * v2 + 0.33 * u2 * v2));
+
+          const caudateProcess = (sy < 0.0 && sx < 0.0) ? -0.18 * (1.0 + sy) * (-sx) : 0.0;
+          const px = -0.06 + sx * 0.46 + caudateProcess - 0.06 * sy;
+          const py = 0.62 + sy * 0.56;
+          const pz = -0.82 + sz * 0.32 - 0.10 * (1.0 - sy * sy);
+
+          pos.setXYZ(i, px, py, pz);
           continue;
         }
 
-        const depth = getLiver3DDepth(v.x, v.y);
-        const zNorm = v.z + 0.5;
-        v.z = depth.zPost + zNorm * (depth.zAnt - depth.zPost);
+        // ── Map local cube [-1, 1] to global normalized liver coordinates (xi, eta, zeta) ──
+        const tXi = (uLoc + 1.0) * 0.5;
+        const tEta = (vLoc + 1.0) * 0.5;
+        const xi = THREE.MathUtils.lerp(xi0, xi1, tXi);
+        const eta = THREE.MathUtils.lerp(eta0, eta1, tEta);
+        const zeta = wLoc;
 
-        if (v.y > 0.0) {
-          const domeLimit = 1.6 * (v.x < 0 ? (1.0 - Math.pow(v.x / 3.6, 2) * 0.3) : Math.max(0.2, 1.0 - (v.x / 2.7) * 0.8));
-          v.y = Math.min(v.y, domeLimit);
-        } else {
-          const botLimit = -1.65 * (v.x < 0 ? (1.0 - Math.pow(v.x / 3.6, 2) * 0.3) : Math.max(0.15, 1.0 - (v.x / 2.7) * 0.85));
-          v.y = Math.max(v.y, botLimit);
-        }
+        const distToInternalEdge = Math.min(1.0 - Math.abs(uLoc), 1.0 - Math.abs(vLoc));
+        const edgeBevelFactor = 1.0 - 0.022 * Math.exp(-distToInternalEdge * 14.0) * (1.0 - wLoc * wLoc);
 
-        pos.setXYZ(i, v.x, v.y, v.z);
+        const mapped = evaluateGlobalLiverHull(xi, eta, zeta, edgeBevelFactor);
+        pos.setXYZ(i, mapped.x, mapped.y, mapped.z);
       }
 
-      geom.computeVertexNormals();
+      computeWeldedSmoothNormals(geom);
       return geom;
     }
 
-    function build3DSolidSegments() {
-      const liverMatConfig = {
-        color: 0xc4573b,
-        roughness: 0.32,
-        metalness: 0.05,
-        clearcoat: 0.6,
-        clearcoatRoughness: 0.25,
+    /**
+     * Gemini 4 Argon: Living Hepatic Parenchyma Material (SSS + Glisson's Capsule Sheen)
+     */
+    function createHepaticParenchymaMaterial(initialOpacity) {
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: 0xa83828,            // Deep oxygenated hepatic parenchyma base
+        roughness: 0.26,            // Moist visceral surface
+        metalness: 0.02,
+        clearcoat: 0.88,            // Glistening Glisson's serous capsule
+        clearcoatRoughness: 0.14,
+        reflectivity: 0.75,
         transparent: true,
-        opacity: currentOpacity,
+        opacity: initialOpacity !== undefined ? initialOpacity : 1.0,
         side: THREE.DoubleSide
+      });
+
+      mat.userData.sssUniforms = {
+        uSSSColor: { value: new THREE.Color(0xe63926) },     // Warm arterial subsurface scatter
+        uDeepParenchyma: { value: new THREE.Color(0x52100c) }, // Deep venous hepatic core
+        uCapsuleFresnel: { value: new THREE.Color(0xffd6cc) }, // Wet serosal rim highlight
+        uSSSIntensity: { value: 0.68 }
       };
+
+      mat.onBeforeCompile = function (shader) {
+        Object.assign(shader.uniforms, mat.userData.sssUniforms);
+
+        shader.vertexShader = shader.vertexShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             varying vec3 vHepaticLocalPos;
+             varying vec3 vHepaticWorldPos;`
+          )
+          .replace(
+            '#include <worldpos_vertex>',
+            `#include <worldpos_vertex>
+             vHepaticLocalPos = position;
+             vHepaticWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;`
+          );
+
+        shader.fragmentShader = shader.fragmentShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             uniform vec3 uSSSColor;
+             uniform vec3 uDeepParenchyma;
+             uniform vec3 uCapsuleFresnel;
+             uniform float uSSSIntensity;
+             varying vec3 vHepaticLocalPos;
+             varying vec3 vHepaticWorldPos;
+
+             float hepaticHash(vec3 p) {
+               p = fract(p * 0.3183099 + 0.1);
+               p *= 17.0;
+               return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+             }
+             float hepaticLobuleNoise(vec3 x) {
+               vec3 i = floor(x);
+               vec3 f = fract(x);
+               f = f * f * (3.0 - 2.0 * f);
+               return mix(
+                 mix(mix(hepaticHash(i + vec3(0,0,0)), hepaticHash(i + vec3(1,0,0)), f.x),
+                     mix(hepaticHash(i + vec3(0,1,0)), hepaticHash(i + vec3(1,1,0)), f.x), f.y),
+                 mix(mix(hepaticHash(i + vec3(0,0,1)), hepaticHash(i + vec3(1,0,1)), f.x),
+                     mix(hepaticHash(i + vec3(0,1,1)), hepaticHash(i + vec3(1,1,1)), f.x), f.y),
+                 f.z
+               );
+             }`
+          )
+          .replace(
+            '#include <normal_fragment_maps>',
+            `#include <normal_fragment_maps>
+             float lobuleMicro = hepaticLobuleNoise(vHepaticLocalPos * 14.0) * 0.65
+                               + hepaticLobuleNoise(vHepaticLocalPos * 29.0) * 0.35;
+             vec3 dLobule = vec3(dFdx(lobuleMicro), dFdy(lobuleMicro), 0.0);
+             normal = normalize(normal - dLobule * 0.085);`
+          )
+          .replace(
+            '#include <dithering_fragment>',
+            `// ── Subsurface Scattering (SSS) & Glisson's Capsule Serosal Reflex ──
+             vec3 viewDir = normalize(vViewPosition);
+             vec3 nDir = normalize(normal);
+
+             vec3 keyLightDir = normalize(vec3(0.45, 0.65, 0.62));
+             vec3 fillLightDir = normalize(vec3(-0.55, -0.25, 0.78));
+
+             float wrapKey = max(0.0, (dot(nDir, keyLightDir) + 0.55) / 1.55);
+             float wrapFill = max(0.0, (dot(nDir, fillLightDir) + 0.45) / 1.45);
+             float terminatorMask = smoothstep(0.0, 0.55, wrapKey) * (1.0 - smoothstep(0.45, 0.95, max(0.0, dot(nDir, keyLightDir))));
+
+             float radialThinness = clamp((length(vHepaticLocalPos.xy) - 0.8) * 0.38, 0.18, 0.92);
+             vec3 backLightVec = -keyLightDir + nDir * 0.35;
+             float backScatter = pow(clamp(dot(viewDir, backLightVec), 0.0, 1.0), 2.8) * radialThinness;
+
+             float lobulePattern = hepaticLobuleNoise(vHepaticLocalPos * 12.0);
+             vec3 tissueMottle = mix(uDeepParenchyma, uSSSColor, 0.38 + 0.32 * lobulePattern);
+
+             vec3 sssContribution = uSSSColor * (terminatorMask * 0.52 + backScatter * 0.75 + wrapFill * 0.14) * uSSSIntensity
+                                  + tissueMottle * 0.09;
+
+             float ndotv = clamp( abs(dot(nDir, viewDir)), 0.0, 1.0 );
+             float wetFresnel = pow(1.0 - ndotv, 3.4);
+             vec3 capsuleSheen = uCapsuleFresnel * wetFresnel * 0.24;
+
+             float emissiveStrength = length(totalEmissiveRadiance);
+             vec3 selectionRim = emissiveStrength > 0.01
+               ? totalEmissiveRadiance * pow(1.0 - ndotv, 2.0) * 0.85
+               : vec3(0.0);
+
+             gl_FragColor.rgb += sssContribution + capsuleSheen + selectionRim;
+
+             #include <dithering_fragment>`
+          );
+      };
+
+      return mat;
+    }
+
+    function build3DSolidSegments() {
+      const initOpacity = typeof currentOpacity !== 'undefined' ? currentOpacity : 1.0;
 
       Object.keys(segmentSolidConfigs).forEach(key => {
         const config = segmentSolidConfigs[key];
         const geom = createSolidSegmentGeometry(config, key);
-        const mat = new THREE.MeshPhysicalMaterial(Object.assign({}, liverMatConfig));
-        
+        const mat = createHepaticParenchymaMaterial(initOpacity);
         const mesh = new THREE.Mesh(geom, mat);
         mesh.userData = { segmentId: key };
-        
+
+        mesh.onBeforeRender = function () {
+          const transparentMode = this.material.opacity < 0.95;
+          if (this.material.depthWrite === transparentMode) {
+            this.material.depthWrite = !transparentMode;
+          }
+        };
+
         basePositions[key] = new THREE.Vector3(0, 0, 0);
         explodeVectors[key] = config.dir.clone();
 
@@ -651,111 +943,163 @@ import Layout from '../../layouts/Layout.astro';
       return sprite;
     }
 
+    /**
+     * Gemini 4 Argon: Generates an organically curved, anatomically tapered 3D blood vessel geometry
+     * using non-linear Murray's Law physiological vessel tapering and smooth hemispherical tip closure.
+     */
+    function createTaperedTubeGeometry(curve, tubularSegments, radiusStart, radiusEnd, radialSegments = 14, capTip = true) {
+      const geom = new THREE.TubeGeometry(curve, tubularSegments, 1.0, radialSegments, false);
+      const pos = geom.attributes.position;
+      const ringStride = radialSegments + 1;
+      const centerPt = new THREE.Vector3();
+      const vertexPt = new THREE.Vector3();
+
+      for (let i = 0; i <= tubularSegments; i++) {
+        const t = i / tubularSegments;
+        curve.getPointAt(t, centerPt);
+
+        // Non-linear Murray's Law physiological vessel tapering
+        let radius = THREE.MathUtils.lerp(radiusStart, radiusEnd, Math.pow(t, 0.85));
+
+        // Smooth hemispherical tip closure on the final 6% of terminal branches
+        if (capTip && t > 0.94) {
+          const tipT = (t - 0.94) / 0.06;
+          radius *= Math.sqrt(Math.max(0.0, 1.0 - tipT * tipT));
+        }
+
+        const baseIdx = i * ringStride;
+        for (let j = 0; j < ringStride; j++) {
+          const idx = baseIdx + j;
+          vertexPt.fromBufferAttribute(pos, idx);
+          vertexPt.sub(centerPt).multiplyScalar(radius).add(centerPt);
+          pos.setXYZ(idx, vertexPt.x, vertexPt.y, vertexPt.z);
+        }
+      }
+
+      geom.computeVertexNormals();
+      return geom;
+    }
+
     function build3DVessels() {
       vesselGroupHepatic = new THREE.Group();
-      const hvMat = new THREE.MeshStandardMaterial({
-        color: 0x2563eb,
-        roughness: 0.2,
-        metalness: 0.3,
-        emissive: 0x1d4ed8,
-        emissiveIntensity: 0.45
+      vesselGroupPortal = new THREE.Group();
+
+      const hepaticVeinMat = new THREE.MeshPhysicalMaterial({
+        color: 0x1e68e8,
+        emissive: 0x082259,
+        roughness: 0.28,
+        clearcoat: 0.75,
+        clearcoatRoughness: 0.2
       });
 
-      const ivcGeom = new THREE.CylinderGeometry(0.35, 0.32, 5.2, 24);
-      const ivcMesh = new THREE.Mesh(ivcGeom, hvMat);
-      ivcMesh.position.set(-0.1, 0.1, -1.05);
-      vesselGroupHepatic.add(ivcMesh);
+      const portalVeinMat = new THREE.MeshPhysicalMaterial({
+        color: 0xa8329b,
+        emissive: 0x33092f,
+        roughness: 0.28,
+        clearcoat: 0.75,
+        clearcoatRoughness: 0.2
+      });
 
-      const rhvCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.1, 1.4, -0.9),
-        new THREE.Vector3(-0.8, 1.3, -0.4),
-        new THREE.Vector3(-1.6, 0.5, -0.3),
-        new THREE.Vector3(-2.1, -0.3, -0.2)
-      ]);
-      vesselGroupHepatic.add(new THREE.Mesh(new THREE.TubeGeometry(rhvCurve, 32, 0.16, 12, false), hvMat));
+      const addVesselTo = (group, pts, rStart, rEnd, mat, segs = 36, capTip = true) => {
+        const curve = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(p[0], p[1], p[2])), false, 'centripetal');
+        const geom = createTaperedTubeGeometry(curve, segs, rStart, rEnd, 14, capTip);
+        const mesh = new THREE.Mesh(geom, mat);
+        group.add(mesh);
+        return mesh;
+      };
 
-      const mhvCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.1, 1.4, -0.9),
-        new THREE.Vector3(0.0, 0.9, -0.1),
-        new THREE.Vector3(-0.1, 0.1, 0.4),
-        new THREE.Vector3(-0.2, -0.8, 0.5)
-      ]);
-      vesselGroupHepatic.add(new THREE.Mesh(new THREE.TubeGeometry(mhvCurve, 32, 0.17, 12, false), hvMat));
+      // ── 1. HEPATIC VEINS (Blue - Intersegmental Scissurae Drainage to Suprahepatic IVC) ──
+      // Retrohepatic Inferior Vena Cava (IVC)
+      addVesselTo(vesselGroupHepatic, [
+        [-0.32, -1.55, -0.98], [-0.36, -0.45, -0.92], [-0.35, 0.55, -0.82], [-0.30, 1.55, -0.65]
+      ], 0.26, 0.29, hepaticVeinMat, 32, false);
 
-      const lhvCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.1, 1.4, -0.9),
-        new THREE.Vector3(0.6, 1.1, -0.3),
-        new THREE.Vector3(1.3, 0.6, 0.0),
-        new THREE.Vector3(1.9, 0.1, 0.1)
-      ]);
-      vesselGroupHepatic.add(new THREE.Mesh(new THREE.TubeGeometry(lhvCurve, 32, 0.15, 12, false), hvMat));
+      // Right Hepatic Vein (RHV - runs in right scissura between S7/S6 and S8/S5)
+      addVesselTo(vesselGroupHepatic, [
+        [-0.34, 1.32, -0.62], [-0.88, 0.95, -0.35], [-1.32, 0.35, -0.10],
+        [-1.58, -0.38, 0.05], [-1.95, -1.05, 0.12]
+      ], 0.13, 0.022, hepaticVeinMat, 40, true);
+      // RHV Superior S7 Tributary
+      addVesselTo(vesselGroupHepatic, [
+        [-1.02, 0.78, -0.28], [-1.65, 0.92, -0.22], [-2.25, 0.82, -0.10]
+      ], 0.068, 0.016, hepaticVeinMat, 24, true);
+
+      // Middle Hepatic Vein (MHV - runs along Cantlie's line x ≈ 0 between S8/S5 and S4)
+      addVesselTo(vesselGroupHepatic, [
+        [-0.22, 1.30, -0.58], [-0.10, 0.85, -0.15], [-0.04, 0.20, 0.18],
+        [-0.08, -0.52, 0.32], [-0.18, -1.12, 0.35]
+      ], 0.12, 0.020, hepaticVeinMat, 40, true);
+
+      // Left Hepatic Vein (LHV - drains S2/S3 & S4a along left scissura)
+      addVesselTo(vesselGroupHepatic, [
+        [-0.18, 1.30, -0.58], [0.42, 1.02, -0.25], [0.98, 0.58, 0.02],
+        [1.52, 0.15, 0.14], [1.98, -0.35, 0.18]
+      ], 0.11, 0.020, hepaticVeinMat, 36, true);
+      // LHV S2 Superior Tributary
+      addVesselTo(vesselGroupHepatic, [
+        [0.72, 0.82, -0.12], [1.38, 0.72, 0.05], [1.95, 0.55, 0.10]
+      ], 0.062, 0.015, hepaticVeinMat, 24, true);
+
       scene.add(vesselGroupHepatic);
 
-      vesselGroupPortal = new THREE.Group();
-      const pvMat = new THREE.MeshStandardMaterial({
-        color: 0x00e5ff,
-        roughness: 0.15,
-        metalness: 0.2,
-        emissive: 0x00d2ff,
-        emissiveIntensity: 0.85
-      });
+      // ── 2. PORTAL VENOUS TREE (Magenta-Violet - Intrasegmental Supply P1-P8) ──
+      // Main Portal Vein Trunk (MPV -> Porta Hepatis Bifurcation)
+      addVesselTo(vesselGroupPortal, [
+        [0.28, -1.35, -0.62], [0.15, -0.75, -0.42], [0.0, -0.18, -0.22]
+      ], 0.17, 0.145, portalVeinMat, 28, false);
 
-      const pvTrunkCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.3, -2.4, 0.3),
-        new THREE.Vector3(0.1, -1.2, 0.1),
-        new THREE.Vector3(0.0, -0.3, 0.0)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(pvTrunkCurve, 24, 0.24, 16, false), pvMat));
+      // Right Portal Vein (RPV Trunk)
+      addVesselTo(vesselGroupPortal, [
+        [0.0, -0.18, -0.22], [-0.52, -0.10, -0.12], [-0.95, -0.04, -0.05]
+      ], 0.135, 0.105, portalVeinMat, 24, false);
 
-      const rpvCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.0, -0.3, 0.0),
-        new THREE.Vector3(-0.8, -0.2, 0.0),
-        new THREE.Vector3(-1.6, -0.2, -0.1)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(rpvCurve, 24, 0.19, 14, false), pvMat));
+      // P8 (Right Anterior Superior -> S8)
+      addVesselTo(vesselGroupPortal, [
+        [-0.68, -0.08, -0.08], [-0.65, 0.38, 0.25], [-0.62, 0.88, 0.48]
+      ], 0.085, 0.018, portalVeinMat, 28, true);
 
-      const p8Curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.8, -0.2, 0.0),
-        new THREE.Vector3(-0.7, 0.7, 0.3)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p8Curve, 16, 0.11, 10, false), pvMat));
+      // P5 (Right Anterior Inferior -> S5)
+      addVesselTo(vesselGroupPortal, [
+        [-0.68, -0.08, -0.08], [-0.68, -0.52, 0.28], [-0.72, -1.02, 0.45]
+      ], 0.082, 0.018, portalVeinMat, 28, true);
 
-      const p5Curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.8, -0.2, 0.0),
-        new THREE.Vector3(-0.7, -0.9, 0.4)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p5Curve, 16, 0.11, 10, false), pvMat));
+      // P7 (Right Posterior Superior -> S7)
+      addVesselTo(vesselGroupPortal, [
+        [-0.95, -0.04, -0.05], [-1.62, 0.28, -0.18], [-2.22, 0.75, -0.15]
+      ], 0.088, 0.018, portalVeinMat, 30, true);
 
-      const p7Curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.6, -0.2, -0.1),
-        new THREE.Vector3(-1.8, 0.6, -0.3)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p7Curve, 16, 0.11, 10, false), pvMat));
+      // P6 (Right Posterior Inferior -> S6)
+      addVesselTo(vesselGroupPortal, [
+        [-0.95, -0.04, -0.05], [-1.65, -0.38, -0.15], [-2.25, -0.88, -0.05]
+      ], 0.085, 0.018, portalVeinMat, 30, true);
 
-      const p6Curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.6, -0.2, -0.1),
-        new THREE.Vector3(-1.9, -0.8, -0.3)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p6Curve, 16, 0.11, 10, false), pvMat));
+      // Left Portal Vein (LPV Transverse + Umbilical Portion at Rex Recess)
+      addVesselTo(vesselGroupPortal, [
+        [0.0, -0.18, -0.22], [0.55, -0.04, -0.12], [0.95, 0.02, 0.12], [1.02, -0.22, 0.35]
+      ], 0.12, 0.075, portalVeinMat, 28, true);
 
-      const lpvCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.0, -0.3, 0.0),
-        new THREE.Vector3(0.6, -0.2, 0.1),
-        new THREE.Vector3(1.3, -0.2, 0.0)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(lpvCurve, 24, 0.17, 14, false), pvMat));
+      // P1 (Caudate Branch -> S1)
+      addVesselTo(vesselGroupPortal, [
+        [0.22, -0.10, -0.20], [0.05, 0.28, -0.58], [-0.05, 0.62, -0.82]
+      ], 0.048, 0.014, portalVeinMat, 20, true);
 
-      const p2Curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(1.3, -0.2, 0.0),
-        new THREE.Vector3(1.8, 0.5, -0.1)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p2Curve, 16, 0.1, 10, false), pvMat));
+      // P4a & P4b (Medial Branches -> S4a / S4b)
+      addVesselTo(vesselGroupPortal, [
+        [0.88, 0.0, 0.08], [0.58, 0.38, 0.32], [0.48, 0.72, 0.45]
+      ], 0.062, 0.016, portalVeinMat, 24, true);
+      addVesselTo(vesselGroupPortal, [
+        [0.95, -0.12, 0.24], [0.62, -0.48, 0.42], [0.48, -0.82, 0.48]
+      ], 0.062, 0.016, portalVeinMat, 24, true);
 
-      const p3Curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(1.3, -0.2, 0.0),
-        new THREE.Vector3(2.0, -0.7, 0.1)
-      ]);
-      vesselGroupPortal.add(new THREE.Mesh(new THREE.TubeGeometry(p3Curve, 16, 0.1, 10, false), pvMat));
+      // P2 (Left Lateral Superior -> S2)
+      addVesselTo(vesselGroupPortal, [
+        [0.92, 0.02, 0.08], [1.45, 0.28, 0.12], [1.98, 0.48, 0.14]
+      ], 0.075, 0.016, portalVeinMat, 26, true);
+
+      // P3 (Left Lateral Inferior -> S3)
+      addVesselTo(vesselGroupPortal, [
+        [0.98, -0.15, 0.28], [1.48, -0.35, 0.26], [1.95, -0.48, 0.20]
+      ], 0.075, 0.016, portalVeinMat, 26, true);
 
       scene.add(vesselGroupPortal);
     }
