@@ -567,57 +567,165 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     // Build Textbook-Exact 3D Colon Cutaway Anatomy Model (Coronal Cutaway matching Stomach)
+    /**
+     * Gemini 4 Argon: Next-Gen Colonic 3D Anatomical Procedural System
+     * Features: Continuous Differential Geometry, SSS Intestinal Mucosa Shader,
+     * Tri-Lobed Haustra Sacculations, Taenia Coli Muscular Ribbons, Plicae Semilunares Crescent Folds,
+     * Triangular Transverse Lumen, Anatomical Ileocecal Valve (ICV) & Vermiform Appendix
+     */
+
+    // Living Intestinal Mucosa & Serosa Material with Subsurface Scattering
+    function createArgonColonMaterial(options = {}) {
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: options.color || 0xb84238,
+        roughness: options.roughness !== undefined ? options.roughness : 0.32,
+        metalness: options.metalness !== undefined ? options.metalness : 0.02,
+        clearcoat: options.clearcoat !== undefined ? options.clearcoat : 0.86,
+        clearcoatRoughness: options.clearcoatRoughness !== undefined ? options.clearcoatRoughness : 0.14,
+        reflectivity: options.reflectivity !== undefined ? options.reflectivity : 0.65,
+        transparent: options.transparent !== undefined ? options.transparent : true,
+        opacity: options.opacity !== undefined ? options.opacity : currentOpacity,
+        side: options.side || THREE.DoubleSide
+      });
+
+      mat.userData.sssUniforms = {
+        uSSSColor: { value: new THREE.Color(options.sssColor || 0xf83f2e) },
+        uDeepParenchyma: { value: new THREE.Color(options.deepColor || 0x4a0e08) },
+        uCapsuleFresnel: { value: new THREE.Color(options.fresnelColor || 0xffded6) },
+        uSSSIntensity: { value: options.sssIntensity !== undefined ? options.sssIntensity : 0.78 }
+      };
+
+      mat.onBeforeCompile = function (shader) {
+        Object.assign(shader.uniforms, mat.userData.sssUniforms);
+
+        shader.vertexShader = shader.vertexShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             varying vec3 vOrganLocalPos;
+             varying vec3 vOrganWorldPos;`
+          )
+          .replace(
+            '#include <worldpos_vertex>',
+            `#include <worldpos_vertex>
+             vOrganLocalPos = position;
+             vOrganWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;`
+          );
+
+        shader.fragmentShader = shader.fragmentShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             uniform vec3 uSSSColor;
+             uniform vec3 uDeepParenchyma;
+             uniform vec3 uCapsuleFresnel;
+             uniform float uSSSIntensity;
+             varying vec3 vOrganLocalPos;
+             varying vec3 vOrganWorldPos;
+
+             float hash3D(vec3 p) {
+               return fract(sin(dot(p, vec3(12.9898, 78.233, 45.164))) * 43758.5453);
+             }
+             float organNoise(vec3 p) {
+               vec3 i = floor(p);
+               vec3 f = fract(p);
+               f = f * f * (3.0 - 2.0 * f);
+               return mix(
+                 mix(mix(hash3D(i + vec3(0,0,0)), hash3D(i + vec3(1,0,0)), f.x),
+                     mix(hash3D(i + vec3(0,1,0)), hash3D(i + vec3(1,1,0)), f.x), f.y),
+                 mix(mix(hash3D(i + vec3(0,0,1)), hash3D(i + vec3(1,0,1)), f.x),
+                     mix(hash3D(i + vec3(0,1,1)), hash3D(i + vec3(1,1,1)), f.x), f.y), f.z
+               );
+             }`
+          )
+          .replace(
+            '#include <dithering_fragment>',
+            `#include <dithering_fragment>
+             vec3 viewDir = normalize(cameraPosition - vOrganWorldPos);
+             vec3 norm = normalize(vNormal);
+             vec3 lightDir = normalize(vec3(4.0, 6.0, 5.0));
+
+             float sssWrap = max(0.0, dot(norm, lightDir) * 0.5 + 0.5);
+             float backScatter = pow(max(0.0, dot(viewDir, -lightDir)), 2.5) * 0.45;
+             float fresnelRim = pow(1.0 - max(0.0, dot(viewDir, norm)), 3.0);
+
+             float microNoise = organNoise(vOrganLocalPos * 34.0) * 0.07;
+
+             vec3 sssEffect = mix(uDeepParenchyma, uSSSColor, sssWrap + backScatter);
+             gl_FragColor.rgb = mix(gl_FragColor.rgb, sssEffect, uSSSIntensity * 0.48);
+             gl_FragColor.rgb += uCapsuleFresnel * fresnelRim * 0.36 + vec3(microNoise);
+            `
+          );
+      };
+
+      return mat;
+    }
+
+    // Build Textbook-Exact 3D Colon Cutaway Anatomy Model (Argon 4.0 Standard)
     function buildSingleOrganicColon() {
       colonMasterGroup = new THREE.Group();
 
-      // Materials for realistic textbook anatomical illustration (Matching Stomach model)
-      // 1. External Serosa / Outer Shell (Natural Deep Warm Tone)
-      const serosaMat = new THREE.MeshPhysicalMaterial({
-        color: 0xb54e44,
-        roughness: 0.52,
-        metalness: 0.02,
-        clearcoat: 0.25,
-        clearcoatRoughness: 0.4,
-        side: THREE.DoubleSide
+      // Argon 4.0 Subsurface Scattering Materials
+      colonMaterial = createArgonColonMaterial({
+        color: 0xb84238,
+        roughness: 0.30,
+        clearcoat: 0.88,
+        clearcoatRoughness: 0.12,
+        sssColor: 0xf83f2e,
+        deepColor: 0x4a0e08,
+        sssIntensity: 0.78,
+        opacity: currentOpacity
       });
 
-      // 2. Internal Mucosal Cavity (Warm Salmon Red with rich natural depth)
-      colonMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xa63a32,
-        roughness: 0.48,
-        metalness: 0.02,
-        clearcoat: 0.25,
-        clearcoatRoughness: 0.4,
-        transparent: true,
-        opacity: currentOpacity,
-        side: THREE.DoubleSide
+      const serosaMat = createArgonColonMaterial({
+        color: 0xad463d,
+        roughness: 0.38,
+        clearcoat: 0.76,
+        clearcoatRoughness: 0.18,
+        sssColor: 0xdb4a39,
+        deepColor: 0x3d0b07,
+        sssIntensity: 0.65,
+        opacity: currentOpacity
       });
 
-      // 3. Thickened Muscular Wall Cut Edge (Cross-section rim showing wall thickness)
+      const foldMat = createArgonColonMaterial({
+        color: 0xc2463c,
+        roughness: 0.28,
+        clearcoat: 0.90,
+        clearcoatRoughness: 0.10,
+        sssColor: 0xff4d3b,
+        deepColor: 0x54120c,
+        sssIntensity: 0.82,
+        opacity: currentOpacity
+      });
+
       const wallCutMat = new THREE.MeshStandardMaterial({
-        color: 0x8a2b25,
-        roughness: 0.58,
+        color: 0x7a1c16,
+        roughness: 0.52,
         side: THREE.DoubleSide
       });
 
-      // 4. Semilunar Folds Material (Plicae semilunares, distinct warm coral mucosal folds)
-      const foldMat = new THREE.MeshPhysicalMaterial({
-        color: 0xb5463c,
-        roughness: 0.46,
-        clearcoat: 0.3,
-        clearcoatRoughness: 0.35,
+      const submucosaStripeMat = new THREE.MeshStandardMaterial({
+        color: 0xf2deda,
+        roughness: 0.35,
         side: THREE.DoubleSide
       });
 
-      // 5. Sphincter Muscular Ring Material
+      const taeniaMat = new THREE.MeshPhysicalMaterial({
+        color: 0x9e352b,
+        roughness: 0.42,
+        clearcoat: 0.55,
+        side: THREE.DoubleSide
+      });
+
       const sphincterMat = new THREE.MeshStandardMaterial({
-        color: 0x94322a,
-        roughness: 0.55
+        color: 0x8f2720,
+        roughness: 0.50
       });
 
       // --- A. Construct 3D Posterior Half-Pipe Lumen Trough ---
-      const numRings = 160;
-      const radialSegs = 24;
+      const numRings = 180;
+      const radialSegs = 28;
       const positions = [];
       const uvs = [];
       const indices = [];
@@ -626,12 +734,10 @@ import Layout from '../../layouts/Layout.astro';
       const rightLipPoints = [];
 
       // Angle range: Posterior half (back wall facing forward into lumen)
-      // Cut with slight wrap past 180 degrees so lateral edges embrace the lumen
-      const startTheta = Math.PI - 0.12;
-      const endTheta = 2 * Math.PI + 0.12;
+      const startTheta = Math.PI - 0.14;
+      const endTheta = 2 * Math.PI + 0.14;
 
       for (let i = 0; i <= numRings; i++) {
-        // u spans from 0.0 (anus) to 0.92 (cecum pole)
         const u = (i / numRings) * 0.92;
         const pt = colonSplineCurve.getPoint(u);
         const tangent = colonSplineCurve.getTangent(u).normalize();
@@ -640,27 +746,38 @@ import Layout from '../../layouts/Layout.astro';
         if (normalVec.lengthSq() < 0.01) normalVec = new THREE.Vector3(1, 0, 0).cross(tangent).normalize();
         const binormalVec = new THREE.Vector3().crossVectors(tangent, normalVec).normalize();
 
-        // Base radius along colon
-        let baseR = 0.34;
-        if (u < 0.12) baseR = 0.38; // Rectal ampulla
-        else if (u < 0.35) baseR = 0.30; // Sigmoid loop
-        else if (u < 0.74) baseR = 0.35; // Descending & Transverse
-        else baseR = 0.38 + (u - 0.74) * 0.12; // Ascending to wide Cecum
+        // Base caliber along colon
+        let baseR = 0.35;
+        if (u < 0.12) baseR = 0.40; // Dilated Rectal ampulla
+        else if (u < 0.35) baseR = 0.31; // Tortuous Sigmoid loop
+        else if (u < 0.74) baseR = 0.36; // Descending & Transverse
+        else baseR = 0.39 + (u - 0.74) * 0.14; // Ascending expanding into Cecum
 
-        // Haustra pouches modulation
-        const haustraMod = 1.0 + 0.18 * Math.sin(u * Math.PI * 2 * 28);
+        // Anatomical Haustra Modulation:
+        // Haustra sacculations are formed by the 3 Taenia Coli bands (120 deg apart)
+        // Rectum (u < 0.14) has NO haustra (smooth ampulla)
+        let haustraFactor = 0.0;
+        if (u >= 0.14) {
+          const haustraPeriod = 22.0; // Number of haustral pouches along the colon
+          const haustraWave = Math.sin(u * Math.PI * 2 * haustraPeriod);
+          haustraFactor = Math.pow(Math.max(0.0, haustraWave), 1.5) * 0.24;
+        }
 
         for (let j = 0; j <= radialSegs; j++) {
           const v = j / radialSegs;
           const theta = startTheta + v * (endTheta - startTheta);
 
-          // Triangular lumen nuance in transverse colon (0.55 ~ 0.78)
+          // 3 Taenia Coli indentations at 120 degree intervals
+          const taeniaIndent = Math.pow(Math.cos(1.5 * theta), 4.0);
+          const haustraPouch = haustraFactor * (1.0 - 0.65 * taeniaIndent);
+
+          // Classic Triangular Lumen in Transverse Colon (u: 0.55 ~ 0.78)
           let shapeMod = 1.0;
           if (u > 0.55 && u < 0.78) {
-            shapeMod = 1.0 + 0.06 * Math.cos(3 * theta);
+            shapeMod = 1.0 + 0.08 * Math.cos(3 * theta);
           }
 
-          const r = baseR * haustraMod * shapeMod;
+          const r = baseR * (1.0 + haustraPouch) * shapeMod;
           const cx = Math.cos(theta) * r;
           const cy = Math.sin(theta) * r;
 
@@ -671,7 +788,6 @@ import Layout from '../../layouts/Layout.astro';
           positions.push(vx, vy, vz);
           uvs.push(u, v);
 
-          // Track left and right cut lips for continuous wall cut rims
           if (j === 0) leftLipPoints.push(new THREE.Vector3(vx, vy, vz));
           if (j === radialSegs) rightLipPoints.push(new THREE.Vector3(vx, vy, vz));
         }
@@ -684,7 +800,6 @@ import Layout from '../../layouts/Layout.astro';
           const c = (i + 1) * (radialSegs + 1) + (j + 1);
           const d = i * (radialSegs + 1) + (j + 1);
 
-          // Front-facing into the inner mucosal cavity
           indices.push(a, b, d);
           indices.push(b, c, d);
         }
@@ -699,41 +814,66 @@ import Layout from '../../layouts/Layout.astro';
       singleColonMesh = new THREE.Mesh(geom, colonMaterial);
       colonMasterGroup.add(singleColonMesh);
 
-      // --- B. Construct Thickened Wall Cut Border Rims (Matching Image 2) ---
+      // Posterior Serosa Shell
+      const serosaPositions = [];
+      for (let k = 0; k < positions.length; k += 3) {
+        serosaPositions.push(positions[k], positions[k + 1], positions[k + 2] - 0.04);
+      }
+      const serosaGeom = new THREE.BufferGeometry();
+      serosaGeom.setAttribute('position', new THREE.Float32BufferAttribute(serosaPositions, 3));
+      serosaGeom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      serosaGeom.setIndex(indices);
+      serosaGeom.computeVertexNormals();
+      const serosaMesh = new THREE.Mesh(serosaGeom, serosaMat);
+      colonMasterGroup.add(serosaMesh);
+
+      // --- B. Multi-Layered Wall Cut Border Rims ---
       const leftCurve = new THREE.CatmullRomCurve3(leftLipPoints);
-      const leftRimGeom = new THREE.TubeGeometry(leftCurve, 120, 0.048, 8, false);
+      const leftRimGeom = new THREE.TubeGeometry(leftCurve, 140, 0.052, 10, false);
       const leftRimMesh = new THREE.Mesh(leftRimGeom, wallCutMat);
-      leftRimMesh.scale.set(1.0, 1.0, 0.45);
+      leftRimMesh.scale.set(1.0, 1.0, 0.42);
       colonMasterGroup.add(leftRimMesh);
 
       const rightCurve = new THREE.CatmullRomCurve3(rightLipPoints);
-      const rightRimGeom = new THREE.TubeGeometry(rightCurve, 120, 0.048, 8, false);
+      const rightRimGeom = new THREE.TubeGeometry(rightCurve, 140, 0.052, 10, false);
       const rightRimMesh = new THREE.Mesh(rightRimGeom, wallCutMat);
-      rightRimMesh.scale.set(1.0, 1.0, 0.45);
+      rightRimMesh.scale.set(1.0, 1.0, 0.42);
       colonMasterGroup.add(rightRimMesh);
 
-      // --- C. Construct Crescent Semilunar Folds (結腸半月襞, Plicae Semilunares) ---
+      // Submucosal Glistening Stripe on Cut Border
+      const leftSubGeom = new THREE.TubeGeometry(leftCurve, 140, 0.026, 8, false);
+      const leftSubMesh = new THREE.Mesh(leftSubGeom, submucosaStripeMat);
+      leftSubMesh.position.set(0, 0, -0.012);
+      colonMasterGroup.add(leftSubMesh);
+
+      const rightSubGeom = new THREE.TubeGeometry(rightCurve, 140, 0.026, 8, false);
+      const rightSubMesh = new THREE.Mesh(rightSubGeom, submucosaStripeMat);
+      rightSubMesh.position.set(0, 0, -0.012);
+      colonMasterGroup.add(rightSubMesh);
+
+      // --- C. Crescent Semilunar Folds (結腸半月襞, Plicae Semilunares) ---
+      // Sharp crescentic inward shelves between haustra chambers
       const foldGroup = new THREE.Group();
-      const numFolds = 24;
+      const numFolds = 26;
       for (let k = 1; k <= numFolds; k++) {
-        const uFold = 0.05 + (k / (numFolds + 1)) * 0.85;
+        const uFold = 0.16 + (k / (numFolds + 1)) * 0.74; // Absent in rectum
         const ptF = colonSplineCurve.getPoint(uFold);
         const tanF = colonSplineCurve.getTangent(uFold).normalize();
         let nF = new THREE.Vector3(0, 0, 1).cross(tanF).normalize();
         if (nF.lengthSq() < 0.01) nF = new THREE.Vector3(1, 0, 0).cross(tanF).normalize();
         const bnF = new THREE.Vector3().crossVectors(tanF, nF).normalize();
 
-        let baseRF = 0.34;
-        if (uFold < 0.12) baseRF = 0.38;
-        else if (uFold < 0.35) baseRF = 0.30;
-        else if (uFold < 0.74) baseRF = 0.35;
-        else baseRF = 0.38 + (uFold - 0.74) * 0.12;
+        let baseRF = 0.35;
+        if (uFold < 0.35) baseRF = 0.31;
+        else if (uFold < 0.74) baseRF = 0.36;
+        else baseRF = 0.39 + (uFold - 0.74) * 0.14;
 
-        const foldR = baseRF * 0.90;
+        // Inward crescent protrusion
+        const foldR = baseRF * 0.88;
         const arcPts = [];
-        const arcSteps = 14;
+        const arcSteps = 16;
         for (let s = 0; s <= arcSteps; s++) {
-          const vF = 0.06 + (s / arcSteps) * 0.88;
+          const vF = 0.08 + (s / arcSteps) * 0.84;
           const thetaF = startTheta + vF * (endTheta - startTheta);
           const fx = ptF.x + nF.x * Math.cos(thetaF) * foldR + bnF.x * Math.sin(thetaF) * foldR;
           const fy = ptF.y + nF.y * Math.cos(thetaF) * foldR + bnF.y * Math.sin(thetaF) * foldR;
@@ -741,89 +881,113 @@ import Layout from '../../layouts/Layout.astro';
           arcPts.push(new THREE.Vector3(fx, fy, fz));
         }
         const foldCurve = new THREE.CatmullRomCurve3(arcPts);
-        const foldGeom = new THREE.TubeGeometry(foldCurve, 16, 0.024, 6, false);
+        const foldGeom = new THREE.TubeGeometry(foldCurve, 20, 0.026, 8, false);
         const foldMesh = new THREE.Mesh(foldGeom, foldMat);
         foldGroup.add(foldMesh);
       }
       colonMasterGroup.add(foldGroup);
 
-      // --- D. Construct Anus & Rectum Details (Houston Valves & Anal Sphincter) ---
-      // Anal Sphincter Muscular Ring
-      const analRingGeom = new THREE.TorusGeometry(0.38, 0.065, 12, 24);
+      // --- D. Taenia Coli Muscular Band Ribbon (結腸帶) ---
+      // Longitudinal ribbon running continuously on posterior wall
+      const taeniaPoints = [];
+      for (let s = 25; s <= numRings; s += 2) {
+        const uT = (s / numRings) * 0.92;
+        const ptT = colonSplineCurve.getPoint(uT);
+        const tanT = colonSplineCurve.getTangent(uT).normalize();
+        let nT = new THREE.Vector3(0, 0, 1).cross(tanT).normalize();
+        if (nT.lengthSq() < 0.01) nT = new THREE.Vector3(1, 0, 0).cross(tanT).normalize();
+        const bnT = new THREE.Vector3().crossVectors(tanT, nT).normalize();
+        const thetaT = Math.PI * 1.5; // Central posterior line
+        const rT = 0.35;
+        taeniaPoints.push(new THREE.Vector3(
+          ptT.x + nT.x * Math.cos(thetaT) * rT + bnT.x * Math.sin(thetaT) * rT,
+          ptT.y + nT.y * Math.cos(thetaT) * rT + bnT.y * Math.sin(thetaT) * rT,
+          ptT.z + nT.z * Math.cos(thetaT) * rT + bnT.z * Math.sin(thetaT) * rT - 0.01
+        ));
+      }
+      if (taeniaPoints.length >= 4) {
+        const taeniaCurve = new THREE.CatmullRomCurve3(taeniaPoints);
+        const taeniaGeom = new THREE.TubeGeometry(taeniaCurve, 60, 0.038, 8, false);
+        const taeniaMesh = new THREE.Mesh(taeniaGeom, taeniaMat);
+        colonMasterGroup.add(taeniaMesh);
+      }
+
+      // --- E. Anus & Rectum Details (Houston Valves & Anal Sphincter) ---
+      const analRingGeom = new THREE.TorusGeometry(0.38, 0.075, 12, 24);
       const analRingMesh = new THREE.Mesh(analRingGeom, sphincterMat);
-      analRingMesh.position.set(0.0, -2.6, 0.0);
+      analRingMesh.position.set(0.1, -2.6, 0.0);
       analRingMesh.rotation.x = Math.PI / 2;
       colonMasterGroup.add(analRingMesh);
 
-      // Rectal Houston transverse valves (2 shelves inside rectal ampulla)
-      const h1Geom = new THREE.TorusGeometry(0.32, 0.035, 8, 16, Math.PI * 0.65);
+      // Rectal Houston transverse valves (Transverse mucosal shelves in ampulla)
+      const h1Geom = new THREE.TorusGeometry(0.32, 0.038, 8, 16, Math.PI * 0.65);
       const h1Mesh = new THREE.Mesh(h1Geom, foldMat);
-      h1Mesh.position.set(0.0, -2.3, 0.05);
+      h1Mesh.position.set(0.12, -2.25, 0.05);
       h1Mesh.rotation.x = Math.PI / 2;
       h1Mesh.rotation.z = Math.PI * 0.2;
       colonMasterGroup.add(h1Mesh);
 
       const h2Mesh = new THREE.Mesh(h1Geom, foldMat);
-      h2Mesh.position.set(0.0, -1.95, 0.08);
+      h2Mesh.position.set(0.14, -1.85, 0.08);
       h2Mesh.rotation.x = Math.PI / 2;
       h2Mesh.rotation.z = -Math.PI * 0.4;
       colonMasterGroup.add(h2Mesh);
 
-      // --- E. Construct Cecum & Vermiform Appendix (闌尾開口與迴盲瓣) ---
-      // Cecal Fundic Bowl (Rounded bottom cup)
-      const cecumBowlGeom = new THREE.SphereGeometry(0.44, 20, 16, 0, Math.PI * 1.1, 0, Math.PI * 0.55);
+      // --- F. Cecum, Ileocecal Valve (ICV), and Vermiform Appendix ---
+      // Cecal Fundic Bowl (Rounded blind pouch)
+      const cecumBowlGeom = new THREE.SphereGeometry(0.48, 24, 18, 0, Math.PI * 1.15, 0, Math.PI * 0.58);
       const cecumBowlMesh = new THREE.Mesh(cecumBowlGeom, colonMaterial);
-      cecumBowlMesh.position.set(-1.8, -1.8, 0.2);
+      cecumBowlMesh.position.set(-0.85, -0.85, 0.0);
       cecumBowlMesh.rotation.x = -Math.PI / 2;
       cecumBowlMesh.rotation.z = Math.PI / 3;
       colonMasterGroup.add(cecumBowlMesh);
 
-      // Vermiform Appendix (闌尾 - Narrow intact 3D tube branching from cecum base)
+      // Vermiform Appendix (闌尾 - Narrow tapering worm-like tube)
       const appendixPoints = [
-        new THREE.Vector3(-1.8, -1.8, 0.2),
-        new THREE.Vector3(-1.65, -2.05, 0.25),
-        new THREE.Vector3(-1.5, -2.2, 0.28),
-        new THREE.Vector3(-1.38, -2.32, 0.32)
+        new THREE.Vector3(-0.88, -0.95, 0.05),
+        new THREE.Vector3(-0.75, -1.22, 0.12),
+        new THREE.Vector3(-0.62, -1.45, 0.16),
+        new THREE.Vector3(-0.52, -1.62, 0.18)
       ];
       const appendixCurve = new THREE.CatmullRomCurve3(appendixPoints);
-      const appendixGeom = new THREE.TubeGeometry(appendixCurve, 20, 0.08, 12, false);
+      const appendixGeom = new THREE.TubeGeometry(appendixCurve, 24, 0.072, 12, false);
       const appendixMesh = new THREE.Mesh(appendixGeom, serosaMat);
       colonMasterGroup.add(appendixMesh);
 
-      const appTipGeom = new THREE.SphereGeometry(0.08, 12, 12);
+      const appTipGeom = new THREE.SphereGeometry(0.072, 12, 12);
       const appTipMesh = new THREE.Mesh(appTipGeom, serosaMat);
-      appTipMesh.position.set(-1.38, -2.32, 0.32);
+      appTipMesh.position.set(-0.52, -1.62, 0.18);
       colonMasterGroup.add(appTipMesh);
 
-      // Appendiceal Orifice (闌尾開口 - Mercedes-Benz 3-slit sign at base of cecum)
+      // Appendiceal Orifice (闌尾開口 - Radiating 3-spoke fold sign at cecal base)
       const appOrificeGroup = new THREE.Group();
-      const craterGeom = new THREE.TorusGeometry(0.075, 0.02, 8, 16);
+      const craterGeom = new THREE.TorusGeometry(0.082, 0.022, 8, 16);
       const craterMesh = new THREE.Mesh(craterGeom, sphincterMat);
       appOrificeGroup.add(craterMesh);
 
       for (let s = 0; s < 3; s++) {
-        const slitGeom = new THREE.BoxGeometry(0.015, 0.065, 0.01);
+        const slitGeom = new THREE.BoxGeometry(0.016, 0.072, 0.012);
         const slitMesh = new THREE.Mesh(slitGeom, wallCutMat);
         slitMesh.rotation.z = s * (Math.PI * 2 / 3);
         appOrificeGroup.add(slitMesh);
       }
-      appOrificeGroup.position.set(-1.75, -1.75, 0.15);
+      appOrificeGroup.position.set(-0.85, -0.88, 0.08);
       appOrificeGroup.rotation.x = -Math.PI / 4;
       colonMasterGroup.add(appOrificeGroup);
 
-      // Ileocecal Valve (迴盲瓣 - Upper & lower mucosal lips on medial wall)
+      // Ileocecal Valve (迴盲瓣 - Prominent upper & lower lips with central slit)
       const icValveGroup = new THREE.Group();
-      const lipUpperGeom = new THREE.CylinderGeometry(0.04, 0.04, 0.16, 8);
+      const lipUpperGeom = new THREE.CylinderGeometry(0.045, 0.045, 0.18, 10);
       lipUpperGeom.rotateZ(Math.PI / 2);
       const lipUpperMesh = new THREE.Mesh(lipUpperGeom, foldMat);
-      lipUpperMesh.position.set(0, 0.035, 0);
+      lipUpperMesh.position.set(0, 0.042, 0);
       icValveGroup.add(lipUpperMesh);
 
       const lipLowerMesh = new THREE.Mesh(lipUpperGeom, foldMat);
-      lipLowerMesh.position.set(0, -0.035, 0);
+      lipLowerMesh.position.set(0, -0.042, 0);
       icValveGroup.add(lipLowerMesh);
 
-      icValveGroup.position.set(-1.48, -1.52, 0.16);
+      icValveGroup.position.set(-0.68, -0.62, 0.08);
       icValveGroup.rotation.z = -Math.PI / 6;
       colonMasterGroup.add(icValveGroup);
 

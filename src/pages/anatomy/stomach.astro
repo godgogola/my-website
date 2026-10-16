@@ -552,84 +552,193 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
-    // Build Textbook-Exact 3D Stomach Anatomy Model matching Image 2
+    /**
+     * Gemini 4 Argon: Next-Gen Gastric 3D Anatomical Procedural System
+     * Features: Continuous Differential Geometry, SSS Gastric Mucosa Shader,
+     * Organic Volumetric Rugae Folds, Z-line Squamocolumnar Border, Multi-layered Beveled Wall Cut,
+     * Pyloric Muscular Sphincter & Duodenal Kerckring Folds
+     */
+
+    // Living Gastric Mucosa & Serosa Material with Subsurface Scattering
+    function createArgonGastricMaterial(options = {}) {
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: options.color || 0xb83e35,
+        roughness: options.roughness !== undefined ? options.roughness : 0.32,
+        metalness: options.metalness !== undefined ? options.metalness : 0.02,
+        clearcoat: options.clearcoat !== undefined ? options.clearcoat : 0.85,
+        clearcoatRoughness: options.clearcoatRoughness !== undefined ? options.clearcoatRoughness : 0.14,
+        reflectivity: options.reflectivity !== undefined ? options.reflectivity : 0.65,
+        transparent: options.transparent || false,
+        opacity: options.opacity !== undefined ? options.opacity : 1.0,
+        side: options.side || THREE.DoubleSide
+      });
+
+      mat.userData.sssUniforms = {
+        uSSSColor: { value: new THREE.Color(options.sssColor || 0xf83d2e) },
+        uDeepParenchyma: { value: new THREE.Color(options.deepColor || 0x480d09) },
+        uCapsuleFresnel: { value: new THREE.Color(options.fresnelColor || 0xffd5cb) },
+        uSSSIntensity: { value: options.sssIntensity !== undefined ? options.sssIntensity : 0.75 }
+      };
+
+      mat.onBeforeCompile = function (shader) {
+        Object.assign(shader.uniforms, mat.userData.sssUniforms);
+
+        shader.vertexShader = shader.vertexShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             varying vec3 vOrganLocalPos;
+             varying vec3 vOrganWorldPos;`
+          )
+          .replace(
+            '#include <worldpos_vertex>',
+            `#include <worldpos_vertex>
+             vOrganLocalPos = position;
+             vOrganWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;`
+          );
+
+        shader.fragmentShader = shader.fragmentShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             uniform vec3 uSSSColor;
+             uniform vec3 uDeepParenchyma;
+             uniform vec3 uCapsuleFresnel;
+             uniform float uSSSIntensity;
+             varying vec3 vOrganLocalPos;
+             varying vec3 vOrganWorldPos;
+
+             float hash3D(vec3 p) {
+               return fract(sin(dot(p, vec3(12.9898, 78.233, 45.164))) * 43758.5453);
+             }
+             float organNoise(vec3 p) {
+               vec3 i = floor(p);
+               vec3 f = fract(p);
+               f = f * f * (3.0 - 2.0 * f);
+               return mix(
+                 mix(mix(hash3D(i + vec3(0,0,0)), hash3D(i + vec3(1,0,0)), f.x),
+                     mix(hash3D(i + vec3(0,1,0)), hash3D(i + vec3(1,1,0)), f.x), f.y),
+                 mix(mix(hash3D(i + vec3(0,0,1)), hash3D(i + vec3(1,0,1)), f.x),
+                     mix(hash3D(i + vec3(0,1,1)), hash3D(i + vec3(1,1,1)), f.x), f.y), f.z
+               );
+             }`
+          )
+          .replace(
+            '#include <dithering_fragment>',
+            `#include <dithering_fragment>
+             vec3 viewDir = normalize(cameraPosition - vOrganWorldPos);
+             vec3 norm = normalize(vNormal);
+             vec3 lightDir = normalize(vec3(4.0, 6.0, 5.0));
+
+             float sssWrap = max(0.0, dot(norm, lightDir) * 0.5 + 0.5);
+             float backScatter = pow(max(0.0, dot(viewDir, -lightDir)), 2.5) * 0.45;
+             float fresnelRim = pow(1.0 - max(0.0, dot(viewDir, norm)), 3.0);
+
+             float microNoise = organNoise(vOrganLocalPos * 36.0) * 0.07;
+
+             vec3 sssEffect = mix(uDeepParenchyma, uSSSColor, sssWrap + backScatter);
+             gl_FragColor.rgb = mix(gl_FragColor.rgb, sssEffect, uSSSIntensity * 0.48);
+             gl_FragColor.rgb += uCapsuleFresnel * fresnelRim * 0.36 + vec3(microNoise);
+            `
+          );
+      };
+
+      return mat;
+    }
+
+    // Build Textbook-Exact 3D Stomach Anatomy Model (Argon 4.0 Standard)
     function buildTextbookStomachModel() {
       stomachMasterGroup = new THREE.Group();
 
-      // Materials for realistic textbook anatomical illustration (Balanced, warm, non-overexposed)
-      // 1. External Serosa / Outer Shell & Duodenum (Natural Deep Warm Pink)
-      const serosaMat = new THREE.MeshPhysicalMaterial({
-        color: 0xb84e44,
-        roughness: 0.52,
-        metalness: 0.02,
-        clearcoat: 0.25,
-        clearcoatRoughness: 0.4,
-        side: THREE.DoubleSide
+      // Argon 4.0 Subsurface Scattering Materials
+      const mucosaMat = createArgonGastricMaterial({
+        color: 0xba3f36,
+        roughness: 0.30,
+        clearcoat: 0.88,
+        clearcoatRoughness: 0.12,
+        sssColor: 0xf84332,
+        deepColor: 0x480e08,
+        sssIntensity: 0.78
       });
 
-      // 2. Internal Mucosal Cavity (Warm Salmon Red with rich natural depth)
-      const mucosaMat = new THREE.MeshPhysicalMaterial({
-        color: 0xa63a32,
-        roughness: 0.48,
-        metalness: 0.02,
-        clearcoat: 0.25,
-        clearcoatRoughness: 0.4,
-        side: THREE.DoubleSide
+      const serosaMat = createArgonGastricMaterial({
+        color: 0xad463d,
+        roughness: 0.38,
+        clearcoat: 0.75,
+        clearcoatRoughness: 0.18,
+        sssColor: 0xdb4a39,
+        deepColor: 0x3d0b07,
+        sssIntensity: 0.65
       });
 
-      // 3. Thickened Muscular Wall Cut Edge (Cross-section rim showing pink serosa, red muscularis & white submucosa)
+      const rugaeMat = createArgonGastricMaterial({
+        color: 0xc2463c,
+        roughness: 0.28,
+        clearcoat: 0.90,
+        clearcoatRoughness: 0.10,
+        sssColor: 0xff4d3b,
+        deepColor: 0x54120c,
+        sssIntensity: 0.82
+      });
+
+      const esophMat = createArgonGastricMaterial({
+        color: 0xd28680,
+        roughness: 0.42,
+        clearcoat: 0.68,
+        clearcoatRoughness: 0.22,
+        sssColor: 0xf3928c,
+        deepColor: 0x521814,
+        sssIntensity: 0.55
+      });
+
       const wallCutMat = new THREE.MeshStandardMaterial({
-        color: 0x8a2b25,
-        roughness: 0.58,
+        color: 0x7a1c16,
+        roughness: 0.52,
         side: THREE.DoubleSide
       });
 
-      // 4. Rugae Folds Material (Distinct warm coral folds with soft gentle sheen)
-      const rugaeMat = new THREE.MeshPhysicalMaterial({
-        color: 0xb5463c,
-        roughness: 0.46,
-        clearcoat: 0.3,
-        clearcoatRoughness: 0.35,
+      const submucosaStripeMat = new THREE.MeshStandardMaterial({
+        color: 0xf2deda,
+        roughness: 0.35,
         side: THREE.DoubleSide
       });
 
-      // 5. Sphincter Muscular Ring Material
       const sphincterMat = new THREE.MeshStandardMaterial({
-        color: 0x94322a,
-        roughness: 0.55
+        color: 0x8f2720,
+        roughness: 0.50
       });
 
-      // --- A. Define Anatomical Boundary Splines matching Image 2 ---
-      // Greater Curvature (Outer convex boundary from Cardia, over Fundus dome, along Body to Pylorus)
+      // --- A. Anatomical Boundary Splines ---
+      // Greater Curvature (Angle of His -> Vaulted Fundus Dome -> Broad Gastric Body -> Antrum -> Pylorus)
       const greaterPoints = [
-        new THREE.Vector3(-0.45, 1.45, 0.0), // Cardia notch / His angle
-        new THREE.Vector3(-0.1, 1.95, 0.0),  // Fundus rise
-        new THREE.Vector3(0.6, 2.3, 0.0),   // Fundus apex top
-        new THREE.Vector3(1.5, 2.15, 0.0),  // Fundus right curve
-        new THREE.Vector3(2.1, 1.4, 0.0),   // Upper body right
-        new THREE.Vector3(2.35, 0.4, 0.0),  // Mid body greater curvature
-        new THREE.Vector3(2.2, -0.6, 0.0),  // Lower body
-        new THREE.Vector3(1.6, -1.5, 0.0),  // Body-antrum transition
-        new THREE.Vector3(0.6, -1.95, 0.0), // Antrum bottom curve
-        new THREE.Vector3(-0.5, -1.8, 0.0), // Pre-pyloric bottom
-        new THREE.Vector3(-1.15, -1.6, 0.0) // Pylorus inferior lip
+        new THREE.Vector3(-0.48, 1.45, 0.0), // Angle of His (Cardiac notch)
+        new THREE.Vector3(-0.08, 2.05, -0.05), // Fundus rise
+        new THREE.Vector3(0.65, 2.42, -0.1),  // Fundus apex dome
+        new THREE.Vector3(1.65, 2.18, -0.15), // Fundus lateral crest
+        new THREE.Vector3(2.25, 1.45, -0.2),  // Upper body greater curvature
+        new THREE.Vector3(2.48, 0.35, -0.25), // Mid body greater curvature (Apex of bulge)
+        new THREE.Vector3(2.28, -0.7, -0.2),  // Lower body
+        new THREE.Vector3(1.65, -1.6, -0.1),  // Greater curvature antrum transition
+        new THREE.Vector3(0.6, -2.05, 0.0),   // Antrum dependent curve
+        new THREE.Vector3(-0.55, -1.88, 0.0), // Pre-pyloric antrum bottom
+        new THREE.Vector3(-1.18, -1.65, 0.0)  // Pylorus inferior margin
       ];
       const greaterCurve = new THREE.CatmullRomCurve3(greaterPoints);
 
-      // Lesser Curvature (Inner concave boundary from Cardia, along small curve to Pylorus)
+      // Lesser Curvature (Cardia -> Lesser Curve -> Incisura Angularis -> Pylorus)
       const lesserPoints = [
-        new THREE.Vector3(-0.65, 1.4, 0.0),  // Cardia medial lip
-        new THREE.Vector3(-0.45, 0.7, 0.0),  // Upper lesser curve
-        new THREE.Vector3(-0.3, 0.0, 0.0),   // Mid lesser curve
-        new THREE.Vector3(-0.25, -0.6, 0.0), // Angular notch (Incisura angularis)
-        new THREE.Vector3(-0.45, -1.1, 0.0), // Antrum superior curve
-        new THREE.Vector3(-1.15, -1.25, 0.0) // Pylorus superior lip
+        new THREE.Vector3(-0.68, 1.4, 0.0),   // Cardia medial margin
+        new THREE.Vector3(-0.46, 0.72, 0.0),  // Upper lesser curvature
+        new THREE.Vector3(-0.32, 0.02, 0.0),  // Mid lesser curvature
+        new THREE.Vector3(-0.28, -0.62, 0.0), // Incisura angularis (Distinct gastric angle notch)
+        new THREE.Vector3(-0.52, -1.15, 0.0), // Antrum superior curve
+        new THREE.Vector3(-1.18, -1.25, 0.0)  // Pylorus superior margin
       ];
       const lesserCurve = new THREE.CatmullRomCurve3(lesserPoints);
 
-      // --- B. Construct 3D Posterior Bowl & Serosa Shell (Deep 3D Gastric Cavity) ---
-      const uSteps = 45; // Along vertical axis
-      const vSteps = 30; // From lesser curve to greater curve
+      // --- B. Construct 3D Posterior Cavity Surface & Outer Serosa Shell ---
+      const uSteps = 55;
+      const vSteps = 35;
       const posArray = [];
       const uvsArray = [];
       const idxArray = [];
@@ -641,15 +750,21 @@ import Layout from '../../layouts/Layout.astro';
 
         for (let j = 0; j <= vSteps; j++) {
           const v = j / vSteps; // 0 = Lesser curve, 1 = Greater curve
-
-          // Interpolate between lesser and greater curves
           const basePt = new THREE.Vector3().lerpVectors(ptL, ptG, v);
 
-          // Calculate parabolic dome depth in Z axis (Back wall is deeply hollowed Z < 0)
+          // Deep anatomical 3D cavity profiling
           const spanDist = ptL.distanceTo(ptG);
           const arch = Math.sin(v * Math.PI);
           const uProfile = Math.sin(u * Math.PI);
-          const depthZ = -Math.pow(arch, 0.85) * (spanDist * 0.42 + 0.35) * (0.6 + 0.55 * uProfile);
+
+          // Fundus (u < 0.28) is deeply hollowed posteriorly and superiorly
+          // Mid body (u 0.28~0.70) has deep visceral depression
+          // Antrum (u > 0.70) becomes more cylindrical and tapers
+          let depthFactor = 0.58 + 0.52 * uProfile;
+          if (u < 0.25) depthFactor = 0.75 + (0.25 - u) * 0.8;
+          if (u > 0.75) depthFactor = 0.58 * (1.0 - (u - 0.75) * 1.5);
+
+          const depthZ = -Math.pow(arch, 0.82) * (spanDist * 0.44 + 0.38) * depthFactor;
 
           posArray.push(basePt.x, basePt.y, depthZ);
           uvsArray.push(u, v);
@@ -663,7 +778,6 @@ import Layout from '../../layouts/Layout.astro';
           const c = (i + 1) * (vSteps + 1) + (j + 1);
           const d = i * (vSteps + 1) + (j + 1);
 
-          // Front-facing (inner mucosal cavity)
           idxArray.push(a, b, d);
           idxArray.push(b, c, d);
         }
@@ -678,105 +792,169 @@ import Layout from '../../layouts/Layout.astro';
       const backWallMesh = new THREE.Mesh(backWallGeom, mucosaMat);
       stomachMasterGroup.add(backWallMesh);
 
-      // --- C. Construct Multi-Layered Thick Anatomical Wall Cut Border (Matching Image 2) ---
+      // Outer Serosal Shell (Posterior exterior coat)
+      const serosaPosArray = [];
+      for (let k = 0; k < posArray.length; k += 3) {
+        serosaPosArray.push(posArray[k], posArray[k + 1], posArray[k + 2] - 0.05);
+      }
+      const serosaGeom = new THREE.BufferGeometry();
+      serosaGeom.setAttribute('position', new THREE.Float32BufferAttribute(serosaPosArray, 3));
+      serosaGeom.setAttribute('uv', new THREE.Float32BufferAttribute(uvsArray, 2));
+      serosaGeom.setIndex(idxArray);
+      serosaGeom.computeVertexNormals();
+      const serosaMesh = new THREE.Mesh(serosaGeom, serosaMat);
+      stomachMasterGroup.add(serosaMesh);
+
+      // --- C. Multi-Layered Anatomical Wall Cut Border Rims ---
       const wallBorderGroup = new THREE.Group();
 
-      // Greater Curvature Cut Rim
-      const greaterWallGeom = new THREE.TubeGeometry(greaterCurve, 64, 0.08, 12, false);
-      const greaterWallMesh = new THREE.Mesh(greaterWallGeom, wallCutMat);
-      greaterWallMesh.scale.set(1.0, 1.0, 0.4);
-      wallBorderGroup.add(greaterWallMesh);
+      // Muscularis Layer (Thick deep red muscular core)
+      const greaterMuscGeom = new THREE.TubeGeometry(greaterCurve, 70, 0.082, 12, false);
+      const greaterMuscMesh = new THREE.Mesh(greaterMuscGeom, wallCutMat);
+      greaterMuscMesh.scale.set(1.0, 1.0, 0.42);
+      wallBorderGroup.add(greaterMuscMesh);
 
-      // Lesser Curvature Cut Rim
-      const lesserWallGeom = new THREE.TubeGeometry(lesserCurve, 40, 0.07, 12, false);
-      const lesserWallMesh = new THREE.Mesh(lesserWallGeom, wallCutMat);
-      lesserWallMesh.scale.set(1.0, 1.0, 0.4);
-      wallBorderGroup.add(lesserWallMesh);
+      const lesserMuscGeom = new THREE.TubeGeometry(lesserCurve, 45, 0.072, 12, false);
+      const lesserMuscMesh = new THREE.Mesh(lesserMuscGeom, wallCutMat);
+      lesserMuscMesh.scale.set(1.0, 1.0, 0.42);
+      wallBorderGroup.add(lesserMuscMesh);
+
+      // Submucosal Glistening Stripe (Delicate inner rim highlight)
+      const greaterSubGeom = new THREE.TubeGeometry(greaterCurve, 70, 0.038, 8, false);
+      const greaterSubMesh = new THREE.Mesh(greaterSubGeom, submucosaStripeMat);
+      greaterSubMesh.position.set(0, 0, -0.015);
+      wallBorderGroup.add(greaterSubMesh);
+
+      const lesserSubGeom = new THREE.TubeGeometry(lesserCurve, 45, 0.034, 8, false);
+      const lesserSubMesh = new THREE.Mesh(lesserSubGeom, submucosaStripeMat);
+      lesserSubMesh.position.set(0, 0, -0.015);
+      wallBorderGroup.add(lesserSubMesh);
 
       stomachMasterGroup.add(wallBorderGroup);
 
-      // --- D. Construct Longitudinal Wavy 3D Gastric Rugae (胃皺襞, Matching Image 2) ---
+      // --- D. Volumetric Organic Gastric Rugae (胃皺襞, Argon 4.0 Standard) ---
+      // Real gastric rugae run longitudinally along greater curvature and posterior wall,
+      // undulating organically, and flattening out completely in the prepyloric antrum!
       const rugaeGroup = new THREE.Group();
-      const numRugaeFolds = 9;
+      const numRugaeFolds = 12;
 
       for (let r = 1; r <= numRugaeFolds; r++) {
-        const vRatio = 0.2 + (r / (numRugaeFolds + 1)) * 0.72; // Spread across the body towards greater curvature
+        // Spread folds across mid-to-greater curvature
+        const vRatio = 0.22 + (r / (numRugaeFolds + 1)) * 0.72;
         const foldPoints = [];
-        const numPts = 35;
+        const numPts = 42;
 
-        for (let p = 3; p <= numPts - 3; p++) {
+        for (let p = 2; p <= numPts - 3; p++) {
           const uRatio = p / numPts;
           const ptG = greaterCurve.getPoint(uRatio);
           const ptL = lesserCurve.getPoint(uRatio);
-
           const basePt = new THREE.Vector3().lerpVectors(ptL, ptG, vRatio);
 
-          // Add characteristic sinusoidal serpentine wriggle to rugae folds
-          const wavePhase = uRatio * Math.PI * 10 + r * 1.3;
-          const waveAmp = 0.045 * Math.sin(uRatio * Math.PI);
-          const wriggleX = Math.cos(wavePhase) * waveAmp;
-          const wriggleY = Math.sin(wavePhase) * waveAmp;
+          // Real rugal folds are prominent in the body and flatten out in the antrum (uRatio > 0.70)
+          let foldAmp = 0.052 * Math.sin(uRatio * Math.PI * 0.95);
+          if (uRatio > 0.70) {
+            foldAmp *= Math.max(0.0, 1.0 - (uRatio - 0.70) / 0.18); // Tapers to 0 in antrum
+          }
+
+          // Sinusoidal serpentine undulation with organic harmonic variation
+          const wavePhase = uRatio * Math.PI * 14 + r * 1.45;
+          const wriggleX = Math.cos(wavePhase) * foldAmp * 0.75;
+          const wriggleY = Math.sin(wavePhase) * foldAmp * 0.75;
 
           const arch = Math.sin(vRatio * Math.PI);
           const spanDist = ptL.distanceTo(ptG);
-          const depthZ = -Math.pow(arch, 0.85) * (spanDist * 0.42 + 0.35) * (0.6 + 0.55 * Math.sin(uRatio * Math.PI)) + 0.035;
+          let depthFactor = 0.58 + 0.52 * Math.sin(uRatio * Math.PI);
+          if (uRatio < 0.25) depthFactor = 0.75 + (0.25 - uRatio) * 0.8;
+          if (uRatio > 0.75) depthFactor = 0.58 * (1.0 - (uRatio - 0.75) * 1.5);
+
+          const depthZ = -Math.pow(arch, 0.82) * (spanDist * 0.44 + 0.38) * depthFactor + 0.038 + foldAmp * 0.45;
 
           foldPoints.push(new THREE.Vector3(basePt.x + wriggleX, basePt.y + wriggleY, depthZ));
         }
 
         if (foldPoints.length >= 4) {
           const foldCurve = new THREE.CatmullRomCurve3(foldPoints);
-          const foldGeom = new THREE.TubeGeometry(foldCurve, 40, 0.042, 8, false);
+          const foldRadius = 0.032 + 0.016 * Math.sin((r / numRugaeFolds) * Math.PI);
+          const foldGeom = new THREE.TubeGeometry(foldCurve, 45, foldRadius, 8, false);
           const foldMesh = new THREE.Mesh(foldGeom, rugaeMat);
           rugaeGroup.add(foldMesh);
         }
       }
       stomachMasterGroup.add(rugaeGroup);
 
-      // --- E. Construct Esophagus & LES (食道與下食道括約肌, Matching Image 2 Top-Left) ---
+      // --- E. Esophagus, LES, and Z-Line (Squamocolumnar Junction at 40cm) ---
       const esophGroup = new THREE.Group();
       const esophPoints = [
         new THREE.Vector3(-0.95, 3.4, 0.0),
         new THREE.Vector3(-0.85, 2.5, 0.0),
-        new THREE.Vector3(-0.7, 1.8, 0.0),
-        new THREE.Vector3(-0.55, 1.4, 0.0)
+        new THREE.Vector3(-0.72, 1.85, 0.0),
+        new THREE.Vector3(-0.58, 1.4, 0.0)
       ];
       const esophCurve = new THREE.CatmullRomCurve3(esophPoints);
-      const esophGeom = new THREE.TubeGeometry(esophCurve, 24, 0.22, 16, false);
-      const esophMesh = new THREE.Mesh(esophGeom, serosaMat);
+      const esophGeom = new THREE.TubeGeometry(esophCurve, 28, 0.21, 16, false);
+      const esophMesh = new THREE.Mesh(esophGeom, esophMat);
       esophGroup.add(esophMesh);
 
-      // LES Sphincter Ring (Thickened muscular ring at 1.7)
-      const lesGeom = new THREE.TorusGeometry(0.24, 0.055, 12, 24);
+      // LES Sphincter Ring (Muscular pinch at 1.85)
+      const lesGeom = new THREE.TorusGeometry(0.23, 0.058, 12, 24);
       const lesMesh = new THREE.Mesh(lesGeom, sphincterMat);
       lesMesh.position.set(-0.72, 1.85, 0.0);
       lesMesh.rotation.x = Math.PI / 3;
       esophGroup.add(lesMesh);
 
+      // Z-Line (Squamocolumnar Junction at 40cm / EGJ)
+      const zLinePoints = [];
+      const zRadius = 0.22;
+      for (let s = 0; s <= 24; s++) {
+        const theta = (s / 24) * Math.PI * 2;
+        // Distinct zigzag crenulation
+        const crenulation = 0.022 * Math.sin(theta * 10);
+        const zx = Math.cos(theta) * (zRadius + crenulation);
+        const zy = Math.sin(theta) * (zRadius + crenulation) * 0.45;
+        zLinePoints.push(new THREE.Vector3(zx - 0.58, zy + 1.42, crenulation));
+      }
+      const zLineCurve = new THREE.CatmullRomCurve3(zLinePoints);
+      const zLineGeom = new THREE.TubeGeometry(zLineCurve, 32, 0.016, 6, true);
+      const zLineMat = new THREE.MeshStandardMaterial({ color: 0xff6655, roughness: 0.3 });
+      const zLineMesh = new THREE.Mesh(zLineGeom, zLineMat);
+      esophGroup.add(zLineMesh);
+
       stomachMasterGroup.add(esophGroup);
 
-      // --- F. Construct Pyloric Sphincter & Duodenum (幽門括約肌與十二指腸, Matching Image 2 Bottom-Left) ---
+      // --- F. Pyloric Sphincter & Duodenal Bulb with Kerckring Folds ---
       const duoGroup = new THREE.Group();
 
-      // Pyloric Sphincter Muscular Bulb
-      const pylorusRingGeom = new THREE.TorusGeometry(0.25, 0.085, 14, 24);
+      // Pyloric Sphincter Muscular Cuff
+      const pylorusRingGeom = new THREE.TorusGeometry(0.24, 0.088, 14, 24);
       const pylorusRingMesh = new THREE.Mesh(pylorusRingGeom, sphincterMat);
-      pylorusRingMesh.position.set(-1.18, -1.42, 0.0);
+      pylorusRingMesh.position.set(-1.18, -1.45, 0.0);
       pylorusRingMesh.rotation.y = Math.PI / 4;
       duoGroup.add(pylorusRingMesh);
 
-      // Duodenal C-Loop (Duodenal bulb curving down into descending D2)
+      // Duodenal C-Loop (D1 Bulb curving into D2 Descending Duodenum)
       const duoPoints = [
-        new THREE.Vector3(-1.18, -1.42, 0.0),
-        new THREE.Vector3(-1.5, -1.45, 0.0),
-        new THREE.Vector3(-1.75, -1.8, 0.0),
-        new THREE.Vector3(-1.85, -2.4, 0.0),
-        new THREE.Vector3(-1.75, -2.8, 0.0)
+        new THREE.Vector3(-1.18, -1.45, 0.0),
+        new THREE.Vector3(-1.52, -1.48, 0.0),
+        new THREE.Vector3(-1.78, -1.82, 0.0),
+        new THREE.Vector3(-1.88, -2.42, 0.0),
+        new THREE.Vector3(-1.76, -2.85, 0.0)
       ];
       const duoCurve = new THREE.CatmullRomCurve3(duoPoints);
-      const duoGeom = new THREE.TubeGeometry(duoCurve, 30, 0.24, 16, false);
+      const duoGeom = new THREE.TubeGeometry(duoCurve, 32, 0.23, 16, false);
       const duoMesh = new THREE.Mesh(duoGeom, serosaMat);
       duoGroup.add(duoMesh);
+
+      // Duodenal Circular Folds (Plicae circulares / Kerckring's folds in D2)
+      for (let k = 1; k <= 5; k++) {
+        const uD = 0.42 + (k / 6) * 0.52;
+        const ptD = duoCurve.getPoint(uD);
+        const tanD = duoCurve.getTangent(uD).normalize();
+        const foldRingGeom = new THREE.TorusGeometry(0.22, 0.024, 8, 16);
+        const foldRingMesh = new THREE.Mesh(foldRingGeom, rugaeMat);
+        foldRingMesh.position.copy(ptD);
+        foldRingMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tanD);
+        duoGroup.add(foldRingMesh);
+      }
 
       stomachMasterGroup.add(duoGroup);
 
