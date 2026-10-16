@@ -35,6 +35,19 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/16) ---
+  {
+    id: 'qXkyGWRIDE4',
+    title: '糖尿病腎病變 uACR 處置',
+    description: '在糖尿病照護中，許多糖友往往只緊盯著飯前血糖與糖化血色素（HbA1c），卻忽略了腎臟微血管正在悄悄承受壓力！根據 2026 美國糖尿病學會（ADA）與國際腎臟病指引，尿液白蛋白與肌酸酐比值（uACR）是評估早期腎臟微血管損傷與未來心血管事件的最核心敏感指標！掌握 30 與 300 mg/g 關鍵分級防線，及早啟動器官保護藥物。',
+    category: '糖尿病',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=qXkyGWRIDE4',
+    featured: true,
+    order: 1,
+    articleSlug: '糖尿病腎病變-uacr-處置',
+    articleTitle: '糖尿病腎病變 uACR 處置',
+  },
   // --- 2026 最新發布影音 (2026/10/14) ---
   {
     id: 'jyOxM3nfrso',
