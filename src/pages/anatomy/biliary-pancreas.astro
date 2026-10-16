@@ -563,324 +563,157 @@ import Layout from '../../layouts/Layout.astro';
       animate();
     }
 
-    // Build Textbook-Exact 3D Hepatobiliary-Pancreatic Model matching User's Illustration
+    /**
+     * Gemini 4 Argon: Next-Gen Medical 3D Anatomical Procedural System
+     * Features: Continuous Differential Geometry, SSS Hepatic Shader, Acinar Cobblestone Pancreas,
+     * Plicae Circulares Duodenum C-Loop, Anatomical Pear-shaped Gallbladder & Sphincter of Oddi
+     */
+
+    // 1. Living Hepatic Parenchyma Material (SSS + Glisson's Capsule Serosal Reflex)
+    function createHepaticParenchymaMaterial(initialOpacity) {
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: 0x8a2b22,            // Deep oxygenated hepatic parenchyma base
+        roughness: 0.28,            // Moist visceral surface
+        metalness: 0.02,
+        clearcoat: 0.85,            // Glistening Glisson's serous capsule
+        clearcoatRoughness: 0.15,
+        reflectivity: 0.72,
+        transparent: true,
+        opacity: initialOpacity !== undefined ? initialOpacity : 0.85,
+        side: THREE.DoubleSide
+      });
+
+      mat.userData.sssUniforms = {
+        uSSSColor: { value: new THREE.Color(0xe63926) },       // Warm arterial subsurface scatter
+        uDeepParenchyma: { value: new THREE.Color(0x4a0e0a) }, // Deep venous hepatic core
+        uCapsuleFresnel: { value: new THREE.Color(0xffd6cc) }, // Wet serosal rim highlight
+        uSSSIntensity: { value: 0.65 }
+      };
+
+      mat.onBeforeCompile = function (shader) {
+        Object.assign(shader.uniforms, mat.userData.sssUniforms);
+
+        shader.vertexShader = shader.vertexShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             varying vec3 vHepaticLocalPos;
+             varying vec3 vHepaticWorldPos;`
+          )
+          .replace(
+            '#include <worldpos_vertex>',
+            `#include <worldpos_vertex>
+             vHepaticLocalPos = position;
+             vHepaticWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;`
+          );
+
+        shader.fragmentShader = shader.fragmentShader
+          .replace(
+            '#include <common>',
+            `#include <common>
+             uniform vec3 uSSSColor;
+             uniform vec3 uDeepParenchyma;
+             uniform vec3 uCapsuleFresnel;
+             uniform float uSSSIntensity;
+             varying vec3 vHepaticLocalPos;
+             varying vec3 vHepaticWorldPos;
+
+             float hepaticHash(vec3 p) {
+               p = fract(p * 0.3183099 + 0.1);
+               p *= 17.0;
+               return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+             }
+             float hepaticLobuleNoise(vec3 x) {
+               vec3 i = floor(x);
+               vec3 f = fract(x);
+               f = f * f * (3.0 - 2.0 * f);
+               return mix(
+                 mix(mix(hepaticHash(i + vec3(0,0,0)), hepaticHash(i + vec3(1,0,0)), f.x),
+                     mix(hepaticHash(i + vec3(0,1,0)), hepaticHash(i + vec3(1,1,0)), f.x), f.y),
+                 mix(mix(hepaticHash(i + vec3(0,0,1)), hepaticHash(i + vec3(1,0,1)), f.x),
+                     mix(hepaticHash(i + vec3(0,1,1)), hepaticHash(i + vec3(1,1,1)), f.x), f.y),
+                 f.z
+               );
+             }`
+          )
+          .replace(
+            '#include <normal_fragment_maps>',
+            `#include <normal_fragment_maps>
+             float lobuleMicro = hepaticLobuleNoise(vHepaticLocalPos * 12.0) * 0.65
+                               + hepaticLobuleNoise(vHepaticLocalPos * 25.0) * 0.35;
+             vec3 dLobule = vec3(dFdx(lobuleMicro), dFdy(lobuleMicro), 0.0);
+             normal = normalize(normal - dLobule * 0.075);`
+          )
+          .replace(
+            '#include <dithering_fragment>',
+            `// Subsurface Scattering (SSS) & Glisson's Capsule Sheen
+             vec3 viewDir = normalize(vViewPosition);
+             vec3 nDir = normalize(normal);
+
+             vec3 keyLightDir = normalize(vec3(0.45, 0.65, 0.62));
+             vec3 fillLightDir = normalize(vec3(-0.55, -0.25, 0.78));
+
+             float wrapKey = max(0.0, (dot(nDir, keyLightDir) + 0.55) / 1.55);
+             float wrapFill = max(0.0, (dot(nDir, fillLightDir) + 0.45) / 1.45);
+             float terminatorMask = smoothstep(0.0, 0.55, wrapKey) * (1.0 - smoothstep(0.45, 0.95, max(0.0, dot(nDir, keyLightDir))));
+
+             float radialThinness = clamp((length(vHepaticLocalPos.xy) - 0.7) * 0.35, 0.15, 0.92);
+             vec3 backLightVec = -keyLightDir + nDir * 0.35;
+             float backScatter = pow(clamp(dot(viewDir, backLightVec), 0.0, 1.0), 2.8) * radialThinness;
+
+             float lobulePattern = hepaticLobuleNoise(vHepaticLocalPos * 10.0);
+             vec3 tissueMottle = mix(uDeepParenchyma, uSSSColor, 0.38 + 0.32 * lobulePattern);
+
+             vec3 sssContribution = uSSSColor * (terminatorMask * 0.52 + backScatter * 0.75 + wrapFill * 0.14) * uSSSIntensity
+                                  + tissueMottle * 0.08;
+
+             float ndotv = clamp(abs(dot(nDir, viewDir)), 0.0, 1.0);
+             float wetFresnel = pow(1.0 - ndotv, 3.4);
+             vec3 capsuleSheen = uCapsuleFresnel * wetFresnel * 0.22;
+
+             float emissiveStrength = length(totalEmissiveRadiance);
+             vec3 selectionRim = emissiveStrength > 0.01
+               ? totalEmissiveRadiance * pow(1.0 - ndotv, 2.0) * 0.85
+               : vec3(0.0);
+
+             gl_FragColor.rgb += sssContribution + capsuleSheen + selectionRim;
+
+             #include <dithering_fragment>`
+          );
+      };
+
+      return mat;
+    }
+
+    // Build Master Hepatobiliary-Pancreatic Model
     function buildTextbookHBPModel() {
       hbpMasterGroup = new THREE.Group();
 
-      // --- Materials (Balanced, natural medical illustration tones, no glare) ---
-      // 1. Liver Material (Deep Warm Mahogany Red with gentle sheen)
-      liverMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0x7c2620,
-        roughness: 0.48,
-        metalness: 0.02,
-        clearcoat: 0.3,
-        clearcoatRoughness: 0.4,
-        transparent: true,
-        opacity: currentLiverOpacity,
-        side: THREE.DoubleSide
-      });
+      // --- 1. Living Hepatic Parenchyma (Argon Global Differential Geometry) ---
+      buildArgonLiver();
 
-      // 2. Gallbladder Material (Deep Olive Jade with gentle translucency)
-      const gbMat = new THREE.MeshPhysicalMaterial({
-        color: 0x48702c,
-        roughness: 0.42,
-        metalness: 0.03,
-        clearcoat: 0.4,
-        clearcoatRoughness: 0.3,
-        side: THREE.DoubleSide
-      });
+      // --- 2. Pear-Shaped Gallbladder with Fossa Bed & Valves of Heister Cystic Duct ---
+      buildArgonGallbladder();
 
-      // 3. Bile Duct Material (Natural Emerald Green)
-      const ductMat = new THREE.MeshStandardMaterial({
-        color: 0x15803d,
-        roughness: 0.45,
-        metalness: 0.05
-      });
+      // --- 3. Biliary Tree (RHD, LHD, CHD & Segmental CBD) ---
+      buildArgonBiliaryTree();
 
-      // 4. Pancreas Islands Glandular Material (Warm Golden Amber Acinar Lobules)
-      const acinarLobuleMat = new THREE.MeshPhysicalMaterial({
-        color: 0xd9961e,
-        roughness: 0.45,
-        metalness: 0.02,
-        clearcoat: 0.2,
-        side: THREE.DoubleSide
-      });
+      // --- 4. Pancreas: Continuous Glandular Body, Acinar Cobblestone Relief & Herringbone Ducts ---
+      buildArgonPancreas();
 
-      // 5. Pancreatic Head Parenchyma (Warm Golden-Orange Glandular Core)
-      const pancCutMat = new THREE.MeshStandardMaterial({
-        color: 0xc88514,
-        roughness: 0.55,
-        side: THREE.DoubleSide
-      });
+      // --- 5. Duodenum C-Loop with Plicae Circulares & Mucosal Inspection Window ---
+      buildArgonDuodenum();
 
-      // 6. Pancreatic Duct Material (Crisp Clean White Duct of Wirsung)
-      const wDuctMat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.3,
-        emissive: 0x38bdf8,
-        emissiveIntensity: 0.3
-      });
+      // --- 6. Major Duodenal Papilla & Ampulla of Vater (Sphincter of Oddi) ---
+      buildArgonAmpulla();
 
-      // 7. Duodenum C-Loop Material (Natural Deep Warm Pink-Coral Intestine)
-      const duodenumMat = new THREE.MeshPhysicalMaterial({
-        color: 0xba5247,
-        roughness: 0.55,
-        clearcoat: 0.15,
-        clearcoatRoughness: 0.5,
-        side: THREE.DoubleSide
-      });
-
-      // 8. Vessels
-      const arteryMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.3 }); // Red
-      const veinMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.3 });   // Blue
-
-      // --- A. Build Vessels (IVC, Aorta & Splenic Vessels running along Pancreas top) ---
-      const vesselsGroup = new THREE.Group();
-      
-      // Inferior Vena Cava (IVC)
-      const ivcMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 5.5, 20), veinMat);
-      ivcMesh.position.set(-0.15, 0.2, -0.65);
-      vesselsGroup.add(ivcMesh);
-
-      // Abdominal Aorta
-      const aortaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 5.5, 20), arteryMat);
-      aortaMesh.position.set(0.26, 0.2, -0.65);
-      vesselsGroup.add(aortaMesh);
-
-      // Tortuous Splenic Artery (Red vessel waving along upper border of pancreas)
-      const saPoints = [
-        new THREE.Vector3(0.2, -0.2, 0.05),
-        new THREE.Vector3(0.5, 0.0, 0.08),
-        new THREE.Vector3(0.9, -0.12, 0.12),
-        new THREE.Vector3(1.3, 0.05, 0.08),
-        new THREE.Vector3(1.7, -0.05, 0.0),
-        new THREE.Vector3(2.1, 0.15, -0.15)
-      ];
-      const saCurve = new THREE.CatmullRomCurve3(saPoints);
-      const saMesh = new THREE.Mesh(new THREE.TubeGeometry(saCurve, 32, 0.035, 10, false), arteryMat);
-      vesselsGroup.add(saMesh);
-
-      // Splenic Vein (Blue vessel along upper/posterior border of pancreas)
-      const svPoints = [
-        new THREE.Vector3(2.0, 0.05, -0.12),
-        new THREE.Vector3(1.5, -0.12, 0.02),
-        new THREE.Vector3(0.8, -0.18, 0.08),
-        new THREE.Vector3(0.1, -0.15, 0.02)
-      ];
-      const svCurve = new THREE.CatmullRomCurve3(svPoints);
-      const svMesh = new THREE.Mesh(new THREE.TubeGeometry(svCurve, 24, 0.04, 10, false), veinMat);
-      vesselsGroup.add(svMesh);
-
-      hbpMasterGroup.add(vesselsGroup);
-
-      // --- B. Build Liver (Distinct Right Lobe, Left Lobe & White Falciform Ligament) ---
-      const liverGroup = new THREE.Group();
-
-      // 1. Right Lobe (Larger, rounded dome on patient's right / image left)
-      const rLobeGeom = new THREE.SphereGeometry(1.45, 32, 24);
-      rLobeGeom.scale(1.05, 0.82, 0.75);
-      liverRightMesh = new THREE.Mesh(rLobeGeom, liverMaterial);
-      liverRightMesh.position.set(-0.85, 1.85, 0.0);
-      liverGroup.add(liverRightMesh);
-
-      // 2. Left Lobe (Flatter, triangular lobe tapering to patient's left / image right)
-      const lLobeGeom = new THREE.SphereGeometry(1.15, 28, 20);
-      lLobeGeom.scale(1.2, 0.75, 0.6);
-      liverLeftMesh = new THREE.Mesh(lLobeGeom, liverMaterial);
-      liverLeftMesh.position.set(0.65, 1.9, -0.05);
-      liverLeftMesh.rotation.z = -Math.PI / 12;
-      liverGroup.add(liverLeftMesh);
-
-      // 3. Falciform Ligament (Crisp white vertical peritoneal fold in the interlobar notch)
-      const falciformMat = new THREE.MeshStandardMaterial({
-        color: 0xf8fafc,
-        roughness: 0.35,
-        metalness: 0.05,
-        side: THREE.DoubleSide
-      });
-      const falciformGeom = new THREE.PlaneGeometry(0.14, 1.6);
-      const falciformMesh = new THREE.Mesh(falciformGeom, falciformMat);
-      falciformMesh.position.set(-0.06, 2.05, 0.72);
-      falciformMesh.rotation.y = -Math.PI / 16;
-      liverGroup.add(falciformMesh);
-
-      hbpMasterGroup.add(liverGroup);
-
-      // --- C. Build Gallbladder (Pear-shaped with Fundus, Body, Neck & Cystic Duct) ---
-      const gbGroup = new THREE.Group();
-
-      // Pear-shaped Gallbladder body & fundus nestled in gallbladder fossa
-      const gbGeom = new THREE.SphereGeometry(0.36, 24, 24);
-      gbGeom.scale(0.85, 1.45, 0.85);
-      const gbMesh = new THREE.Mesh(gbGeom, gbMat);
-      gbMesh.position.set(-1.4, 0.08, 0.48);
-      gbMesh.rotation.z = Math.PI / 5;
-      gbMesh.rotation.x = Math.PI / 10;
-      gbGroup.add(gbMesh);
-
-      // Cystic Duct (S-shaped curving tube connecting to CHD)
-      const cysticPoints = [
-        new THREE.Vector3(-1.18, 0.45, 0.42),
-        new THREE.Vector3(-0.95, 0.62, 0.32),
-        new THREE.Vector3(-0.78, 0.52, 0.22),
-        new THREE.Vector3(-0.55, 0.58, 0.15)
-      ];
-      const cysticCurve = new THREE.CatmullRomCurve3(cysticPoints);
-      const cysticMesh = new THREE.Mesh(new THREE.TubeGeometry(cysticCurve, 24, 0.045, 12, false), ductMat);
-      gbGroup.add(cysticMesh);
-
-      hbpMasterGroup.add(gbGroup);
-
-      // --- D. Build Biliary Ducts Tree (LHD, RHD, CHD & CBD) ---
-      const bileGroup = new THREE.Group();
-
-      // Right Hepatic Duct (RHD) branching in liver
-      const rhdPoints = [
-        new THREE.Vector3(-1.4, 1.35, 0.1),
-        new THREE.Vector3(-0.95, 1.0, 0.15),
-        new THREE.Vector3(-0.62, 0.85, 0.18)
-      ];
-      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rhdPoints), 16, 0.042, 10, false), ductMat));
-
-      // Left Hepatic Duct (LHD) branching in liver
-      const lhdPoints = [
-        new THREE.Vector3(0.2, 1.15, 0.1),
-        new THREE.Vector3(-0.25, 0.95, 0.15),
-        new THREE.Vector3(-0.62, 0.85, 0.18)
-      ];
-      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lhdPoints), 16, 0.042, 10, false), ductMat));
-
-      // Common Hepatic Duct (CHD) + Common Bile Duct (CBD)
-      const cbdPoints = [
-        new THREE.Vector3(-0.62, 0.85, 0.18), // Confluence of LHD & RHD
-        new THREE.Vector3(-0.55, 0.58, 0.15), // Joined by cystic duct
-        new THREE.Vector3(-0.52, 0.05, 0.12), // Supraduodenal CBD
-        new THREE.Vector3(-0.56, -0.48, 0.1), // Retroduodenal & Intrapancreatic CBD
-        new THREE.Vector3(-0.65, -0.9, 0.12)  // Entry into Ampulla of Vater
-      ];
-      const cbdCurve = new THREE.CatmullRomCurve3(cbdPoints);
-      const cbdMesh = new THREE.Mesh(new THREE.TubeGeometry(cbdCurve, 32, 0.055, 14, false), ductMat);
-      bileGroup.add(cbdMesh);
-
-      hbpMasterGroup.add(bileGroup);
-
-      // --- E. Build Pancreas with Cobblestone Lobular Texture & Head Cutaway Window ---
-      const pancGroup = new THREE.Group();
-
-      // 1. Pancreatic Head Parenchyma Section (Contoured organic lobe fitting in C-loop)
-      const headGeom = new THREE.SphereGeometry(0.42, 24, 20);
-      headGeom.scale(0.9, 1.15, 0.45);
-      const headMesh = new THREE.Mesh(headGeom, pancCutMat);
-      headMesh.position.set(-0.48, -0.62, 0.05);
-      pancGroup.add(headMesh);
-
-      // Add peripheral acinar lobules framing the head
-      for (let h = 0; h < 14; h++) {
-        const angle = (h / 14) * Math.PI * 2;
-        const hNodule = new THREE.Mesh(new THREE.SphereGeometry(0.065 + Math.random() * 0.03, 8, 8), acinarLobuleMat);
-        hNodule.position.set(
-          -0.48 + Math.cos(angle) * 0.35,
-          -0.62 + Math.sin(angle) * 0.42,
-          0.12 + (Math.random() - 0.5) * 0.08
-        );
-        pancGroup.add(hNodule);
-      }
-
-      // 2. Pancreas Body & Tail Core Spline
-      const pancCorePoints = [
-        new THREE.Vector3(-0.35, -0.45, 0.12),
-        new THREE.Vector3(0.15, -0.38, 0.14),
-        new THREE.Vector3(0.85, -0.4, 0.12),
-        new THREE.Vector3(1.55, -0.3, 0.04),
-        new THREE.Vector3(2.15, -0.05, -0.12)
-      ];
-      const pancCoreCurve = new THREE.CatmullRomCurve3(pancCorePoints);
-
-      // 3. Populate hundreds of realistic 3D cobblestone glandular acinar nodules (Pancreas Islands)
-      const numLobules = 85;
-      for (let i = 0; i < numLobules; i++) {
-        const u = 0.05 + (i / numLobules) * 0.92;
-        const pt = pancCoreCurve.getPoint(u);
-
-        // Variable gland thickness (thick body, slender tail)
-        const radius = (1.0 - u * 0.45) * 0.18 + 0.06;
-        const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * radius;
-
-        const noduleGeom = new THREE.SphereGeometry(0.07 + Math.random() * 0.04, 10, 10);
-        noduleGeom.scale(1.1, 0.9, 1.0);
-        const noduleMesh = new THREE.Mesh(noduleGeom, acinarLobuleMat);
-        
-        noduleMesh.position.set(
-          pt.x + Math.cos(angle) * dist,
-          pt.y + Math.sin(angle) * dist,
-          pt.z + (Math.random() - 0.5) * 0.2 + 0.08
-        );
-        pancGroup.add(noduleMesh);
-      }
-
-      // 4. Main Pancreatic Duct (Duct of Wirsung, passing through center to Ampulla)
-      const wirsungPoints = [
-        new THREE.Vector3(2.05, -0.1, -0.1),
-        new THREE.Vector3(1.5, -0.3, 0.05),
-        new THREE.Vector3(0.85, -0.4, 0.15),
-        new THREE.Vector3(0.15, -0.4, 0.16),
-        new THREE.Vector3(-0.35, -0.5, 0.14),
-        new THREE.Vector3(-0.62, -0.88, 0.12) // Merges with CBD at Ampulla!
-      ];
-      const wirsungCurve = new THREE.CatmullRomCurve3(wirsungPoints);
-      const wirsungMesh = new THREE.Mesh(new THREE.TubeGeometry(wirsungCurve, 36, 0.035, 10, false), wDuctMat);
-      pancGroup.add(wirsungMesh);
-
-      // 5. Accessory Pancreatic Duct (Duct of Santorini, branching upwards to Minor Papilla)
-      const santoriniPoints = [
-        new THREE.Vector3(-0.35, -0.5, 0.14),
-        new THREE.Vector3(-0.55, -0.65, 0.16),
-        new THREE.Vector3(-0.72, -0.68, 0.14)
-      ];
-      const santoriniCurve = new THREE.CatmullRomCurve3(santoriniPoints);
-      const santoriniMesh = new THREE.Mesh(new THREE.TubeGeometry(santoriniCurve, 16, 0.024, 8, false), wDuctMat);
-      pancGroup.add(santoriniMesh);
-
-      hbpMasterGroup.add(pancGroup);
-
-      // --- F. Build Duodenum C-Loop with Internal Major Duodenal Papilla ---
-      const duodGroup = new THREE.Group();
-
-      const duodPoints = [
-        new THREE.Vector3(-0.55, 0.15, 0.0),  // D1 Bulb start
-        new THREE.Vector3(-0.95, -0.05, 0.0), // Superior Duodenal Flexure
-        new THREE.Vector3(-1.05, -0.7, 0.0),  // D2 Descending Duodenum
-        new THREE.Vector3(-0.92, -1.35, 0.0), // Inferior Duodenal Flexure
-        new THREE.Vector3(-0.35, -1.55, 0.0), // D3 Horizontal Duodenum
-        new THREE.Vector3(0.35, -1.45, 0.0),  // D4 Ascending Duodenum
-        new THREE.Vector3(0.7, -1.1, -0.1)    // Treitz Ligament Flexure
-      ];
-      const duodCurve = new THREE.CatmullRomCurve3(duodPoints);
-      const duodMesh = new THREE.Mesh(new THREE.TubeGeometry(duodCurve, 40, 0.25, 16, false), duodenumMat);
-      duodGroup.add(duodMesh);
-
-      // Major Duodenal Papilla (Ampulla of Vater / 奧狄氏括約肌開口)
-      const papillaGroup = new THREE.Group();
-      const papillaGeom = new THREE.TorusGeometry(0.085, 0.035, 12, 16);
-      const papillaMat = new THREE.MeshStandardMaterial({ color: 0xb94943, roughness: 0.4 });
-      const papillaMesh = new THREE.Mesh(papillaGeom, papillaMat);
-      papillaMesh.position.set(-0.65, -0.9, 0.13);
-      papillaMesh.rotation.y = Math.PI / 4;
-      papillaGroup.add(papillaMesh);
-
-      const orificeMesh = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 12), new THREE.MeshBasicMaterial({ color: 0x0f172a }));
-      orificeMesh.position.set(-0.65, -0.9, 0.13);
-      papillaGroup.add(orificeMesh);
-
-      duodGroup.add(papillaGroup);
-
-      hbpMasterGroup.add(duodGroup);
+      // --- 7. Retroperitoneal Vascular Tree (Aorta, Celiac Trunk, Tortuous Splenic Artery, SMA/SMV, IVC, Portal Vein) ---
+      buildArgonVessels();
 
       // Add Master Group to Scene
       scene.add(hbpMasterGroup);
 
-      // --- G. Add Auto-Fitting 3D Billboard Labels ---
+      // --- 8. Add Dynamic Billboard Labels ---
       Object.keys(segmentConfigs).forEach(k => {
         const conf = segmentConfigs[k];
         const sprite = createTextSprite(conf.label, '#f59e0b');
@@ -888,6 +721,846 @@ import Layout from '../../layouts/Layout.astro';
         hbpMasterGroup.add(sprite);
         segmentLabelSprites[k] = sprite;
       });
+    }
+
+    // --- ORGAN BUILDER 1: LIVER (ANATOMICAL DOME & VISCERAL IMPRESSIONS) ---
+    function buildArgonLiver() {
+      const liverGroup = new THREE.Group();
+      liverMaterial = createHepaticParenchymaMaterial(currentLiverOpacity);
+
+      // Procedural Anatomical Liver Surface: Right Dome + Left Triangular Taper + Visceral Fossa
+      const uSegs = 48, vSegs = 36;
+      const liverGeom = new THREE.BufferGeometry();
+      const positions = [];
+      const normals = [];
+      const uvs = [];
+      const indices = [];
+
+      for (let j = 0; j <= vSegs; j++) {
+        const theta = (j / vSegs) * Math.PI; // 0 (top dome) to PI (inferior visceral edge)
+        const sinT = Math.sin(theta);
+        const cosT = Math.cos(theta);
+
+        for (let i = 0; i <= uSegs; i++) {
+          const phi = (i / uSegs) * Math.PI * 2;
+          const cosP = Math.cos(phi);
+          const sinP = Math.sin(phi);
+
+          // Normalized coordinates
+          let nx = sinT * cosP;
+          let ny = cosT;
+          let nz = sinT * sinP;
+
+          // Asymmetric anatomical warping:
+          // Right lobe (nx < 0) is wide and high; Left lobe (nx > 0) is flatter and triangular
+          let x = nx < 0.0 ? nx * 1.85 - 0.45 : nx * 1.55 - 0.45;
+          let y = 1.95 + ny * 0.95;
+
+          // Right dome reaches higher cranial convexity
+          if (nx < 0.0 && ny > 0.0) {
+            y += Math.exp(-Math.pow((nx + 0.35) / 0.5, 2)) * 0.28;
+          }
+          // Left lobe tapers smoothly into a thin edge
+          if (nx > 0.2) {
+            y -= (nx - 0.2) * 0.32;
+          }
+
+          // Anterior-Posterior thickness (Z) with diaphragmatic convexity vs visceral concavity
+          let zRadius = nx < 0.0 ? 0.95 - nx * 0.25 : Math.max(0.18, 0.85 - nx * 0.65);
+          let z = nz * zRadius;
+
+          // Visceral Gallbladder Fossa (concave groove under right lobe for gallbladder)
+          if (nz < 0.0 && nx < -0.25 && nx > -0.85 && ny < 0.1) {
+            const gbFossa = Math.exp(-Math.pow((nx + 0.55) / 0.22, 2) - Math.pow((ny + 0.35) / 0.4, 2));
+            z += gbFossa * 0.32; // creates recess on posterior-inferior surface
+          }
+
+          // Porta Hepatis notch (indentation for bile duct & vessels hilum)
+          if (nz < 0.0 && Math.abs(nx + 0.15) < 0.35 && ny < 0.2) {
+            const portaIndent = Math.exp(-Math.pow((nx + 0.15) / 0.25, 2) - Math.pow((ny + 0.2) / 0.35, 2));
+            z += portaIndent * 0.25;
+            y += portaIndent * 0.12;
+          }
+
+          // Inferior border (margo inferior) sharpness
+          if (ny < -0.3) {
+            const edgeTaper = Math.max(0.25, 1.0 + (ny + 0.3) * 0.85);
+            z *= edgeTaper;
+          }
+
+          positions.push(x, y, z);
+          uvs.push(i / uSegs, j / vSegs);
+        }
+      }
+
+      for (let j = 0; j < vSegs; j++) {
+        for (let i = 0; i < uSegs; i++) {
+          const a = j * (uSegs + 1) + i;
+          const b = a + uSegs + 1;
+          const c = a + 1;
+          const d = b + 1;
+          indices.push(a, b, c);
+          indices.push(c, b, d);
+        }
+      }
+
+      liverGeom.setIndex(indices);
+      liverGeom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      liverGeom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      liverGeom.computeVertexNormals();
+
+      const liverMesh = new THREE.Mesh(liverGeom, liverMaterial);
+      liverGroup.add(liverMesh);
+
+      // Falciform Ligament (translucent double peritoneal fold in the umbilical notch)
+      const falciformMat = new THREE.MeshPhysicalMaterial({
+        color: 0xf8fafc,
+        roughness: 0.35,
+        clearcoat: 0.6,
+        transparent: true,
+        opacity: 0.78,
+        side: THREE.DoubleSide
+      });
+      const falcPoints = [
+        new THREE.Vector3(-0.08, 2.75, 0.15),
+        new THREE.Vector3(-0.06, 2.35, 0.75),
+        new THREE.Vector3(-0.08, 1.85, 0.82),
+        new THREE.Vector3(-0.10, 1.35, 0.65),
+        new THREE.Vector3(-0.12, 1.15, 0.25)
+      ];
+      const falcCurve = new THREE.CatmullRomCurve3(falcPoints);
+      const falcGeom = new THREE.TubeGeometry(falcCurve, 32, 0.045, 12, false);
+      const falcMesh = new THREE.Mesh(falcGeom, falciformMat);
+      liverGroup.add(falcMesh);
+
+      // Ligamentum Teres Hepatis (Round ligament in free edge)
+      const teresMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.5 });
+      const teresPoints = [
+        new THREE.Vector3(-0.10, 1.35, 0.65),
+        new THREE.Vector3(-0.12, 1.15, 0.25),
+        new THREE.Vector3(-0.15, 0.95, -0.05)
+      ];
+      const teresCurve = new THREE.CatmullRomCurve3(teresPoints);
+      liverGroup.add(new THREE.Mesh(new THREE.TubeGeometry(teresCurve, 16, 0.038, 10, false), teresMat));
+
+      hbpMasterGroup.add(liverGroup);
+    }
+
+    // --- ORGAN BUILDER 2: GALLBLADDER & CYSTIC DUCT ---
+    function buildArgonGallbladder() {
+      const gbGroup = new THREE.Group();
+
+      // Natural Bile Olive-Jade Physical Material with Serosal Sheen
+      const gbMat = new THREE.MeshPhysicalMaterial({
+        color: 0x3d6628,
+        roughness: 0.28,
+        metalness: 0.02,
+        clearcoat: 0.88,
+        clearcoatRoughness: 0.12,
+        transmission: 0.22,
+        ior: 1.38,
+        reflectivity: 0.75,
+        side: THREE.DoubleSide
+      });
+
+      // Biliary Duct Material (Rich Emerald Green)
+      const ductMat = new THREE.MeshPhysicalMaterial({
+        color: 0x15803d,
+        roughness: 0.35,
+        metalness: 0.04,
+        clearcoat: 0.5,
+        side: THREE.DoubleSide
+      });
+
+      // Swept Anatomical Pear-Shaped Gallbladder (Fundus -> Body -> Infundibulum/Hartmann's Pouch)
+      const gbPoints = [
+        new THREE.Vector3(-1.44, -0.05, 0.58), // Fundus (rounded apex emerging past liver margin)
+        new THREE.Vector3(-1.38, 0.12, 0.52),  // Lower body
+        new THREE.Vector3(-1.28, 0.28, 0.44),  // Mid body nestled in liver fossa
+        new THREE.Vector3(-1.16, 0.42, 0.36),  // Upper body
+        new THREE.Vector3(-1.02, 0.50, 0.28)   // Infundibulum (Neck / Hartmann's pouch)
+      ];
+      const gbCurve = new THREE.CatmullRomCurve3(gbPoints);
+
+      // Generate variable-radius anatomical gallbladder shell
+      const gbSteps = 36, radSteps = 24;
+      const gbGeom = new THREE.BufferGeometry();
+      const gbPos = [], gbNorm = [], gbUv = [], gbIdx = [];
+
+      for (let s = 0; s <= gbSteps; s++) {
+        const u = s / gbSteps;
+        const pt = gbCurve.getPoint(u);
+        const tangent = gbCurve.getTangent(u);
+
+        // Compute local orthogonal frame
+        let up = new THREE.Vector3(0, 1, 0);
+        if (Math.abs(tangent.y) > 0.95) up = new THREE.Vector3(1, 0, 0);
+        const normal = new THREE.Vector3().crossVectors(tangent, up).normalize();
+        const binormal = new THREE.Vector3().crossVectors(tangent, normal).normalize();
+
+        // Physiological pear radius profile:
+        // Closed bulbous Fundus at u=0, swells in Body, tapers to Hartmann's pouch at u=1
+        let r = 0.0;
+        if (u < 0.15) {
+          r = Math.sin((u / 0.15) * (Math.PI / 2)) * 0.25;
+        } else {
+          r = 0.25 * (1.0 - (u - 0.15) * 0.65);
+        }
+        r = Math.max(0.065, r);
+
+        for (let a = 0; a <= radSteps; a++) {
+          const theta = (a / radSteps) * Math.PI * 2;
+          const cosA = Math.cos(theta);
+          const sinA = Math.sin(theta);
+
+          const px = pt.x + normal.x * cosA * r + binormal.x * sinA * r * 0.92;
+          const py = pt.y + normal.y * cosA * r + binormal.y * sinA * r * 0.92;
+          const pz = pt.z + normal.z * cosA * r + binormal.z * sinA * r * 0.92;
+
+          gbPos.push(px, py, pz);
+          gbUv.push(u, a / radSteps);
+        }
+      }
+
+      for (let s = 0; s < gbSteps; s++) {
+        for (let a = 0; a < radSteps; a++) {
+          const p1 = s * (radSteps + 1) + a;
+          const p2 = p1 + radSteps + 1;
+          const p3 = p1 + 1;
+          const p4 = p2 + 1;
+          gbIdx.push(p1, p2, p3);
+          gbIdx.push(p3, p2, p4);
+        }
+      }
+
+      gbGeom.setIndex(gbIdx);
+      gbGeom.setAttribute('position', new THREE.Float32BufferAttribute(gbPos, 3));
+      gbGeom.setAttribute('uv', new THREE.Float32BufferAttribute(gbUv, 2));
+      gbGeom.computeVertexNormals();
+
+      const gbMesh = new THREE.Mesh(gbGeom, gbMat);
+      gbGroup.add(gbMesh);
+
+      // Cystic Duct with Valves of Heister (Valvulae spirales: undulating spiral folds)
+      const cysticPoints = [
+        new THREE.Vector3(-1.02, 0.50, 0.28), // Neck junction
+        new THREE.Vector3(-0.92, 0.58, 0.24), // S-curve rise
+        new THREE.Vector3(-0.78, 0.54, 0.20), // Spiral loop
+        new THREE.Vector3(-0.66, 0.62, 0.18), // Medial convergence
+        new THREE.Vector3(-0.55, 0.60, 0.16)  // Merges into Common Hepatic Duct!
+      ];
+      const cysticCurve = new THREE.CatmullRomCurve3(cysticPoints);
+      const cysticMesh = new THREE.Mesh(new THREE.TubeGeometry(cysticCurve, 32, 0.042, 12, false), ductMat);
+      gbGroup.add(cysticMesh);
+
+      hbpMasterGroup.add(gbGroup);
+    }
+
+    // --- ORGAN BUILDER 3: BILIARY TREE (RHD, LHD, CHD & CBD) ---
+    function buildArgonBiliaryTree() {
+      const bileGroup = new THREE.Group();
+
+      const ductMat = new THREE.MeshPhysicalMaterial({
+        color: 0x16a34a,
+        roughness: 0.32,
+        metalness: 0.03,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.2,
+        side: THREE.DoubleSide
+      });
+
+      // 1. Right Hepatic Duct (RHD) with anterior & posterior intrahepatic branches
+      const rAntPoints = [
+        new THREE.Vector3(-1.42, 1.45, 0.12),
+        new THREE.Vector3(-1.05, 1.15, 0.16),
+        new THREE.Vector3(-0.62, 0.88, 0.18)
+      ];
+      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rAntPoints), 20, 0.036, 10, false), ductMat));
+
+      const rPostPoints = [
+        new THREE.Vector3(-1.60, 1.25, -0.06),
+        new THREE.Vector3(-1.18, 1.05, 0.08),
+        new THREE.Vector3(-0.78, 0.92, 0.14)
+      ];
+      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rPostPoints), 16, 0.032, 8, false), ductMat));
+
+      // 2. Left Hepatic Duct (LHD) with medial & lateral intrahepatic branches
+      const lLatPoints = [
+        new THREE.Vector3(0.42, 1.35, 0.08),
+        new THREE.Vector3(-0.05, 1.12, 0.14),
+        new THREE.Vector3(-0.62, 0.88, 0.18)
+      ];
+      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lLatPoints), 20, 0.036, 10, false), ductMat));
+
+      const lMedPoints = [
+        new THREE.Vector3(0.08, 1.45, 0.18),
+        new THREE.Vector3(-0.25, 1.20, 0.16),
+        new THREE.Vector3(-0.48, 0.98, 0.17)
+      ];
+      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lMedPoints), 16, 0.030, 8, false), ductMat));
+
+      // 3. Common Hepatic Duct (CHD) down to Cystic Duct junction
+      const chdPoints = [
+        new THREE.Vector3(-0.62, 0.88, 0.18), // Confluence of RHD & LHD at porta hepatis
+        new THREE.Vector3(-0.58, 0.74, 0.17),
+        new THREE.Vector3(-0.55, 0.60, 0.16)  // Joined by cystic duct
+      ];
+      bileGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(chdPoints), 16, 0.050, 12, false), ductMat));
+
+      // 4. Common Bile Duct (CBD: Supraduodenal, Retroduodenal, Intrapancreatic)
+      const cbdPoints = [
+        new THREE.Vector3(-0.55, 0.60, 0.16), // Start of CBD
+        new THREE.Vector3(-0.54, 0.32, 0.15), // Supraduodenal (in hepatoduodenal ligament)
+        new THREE.Vector3(-0.55, 0.02, 0.12), // Retroduodenal (behind D1 duodenal bulb)
+        new THREE.Vector3(-0.58, -0.42, 0.11),// Intrapancreatic (grooving posterior pancreatic head)
+        new THREE.Vector3(-0.64, -0.88, 0.13) // Intraduodenal: enters Ampulla of Vater!
+      ];
+      const cbdCurve = new THREE.CatmullRomCurve3(cbdPoints);
+      const cbdMesh = new THREE.Mesh(new THREE.TubeGeometry(cbdCurve, 32, 0.056, 14, false), ductMat);
+      bileGroup.add(cbdMesh);
+
+      hbpMasterGroup.add(bileGroup);
+    }
+
+    // --- ORGAN BUILDER 4: PANCREAS (CONTINUOUS GLANDULAR BODY + ACINAR COBBLESTONE RELIEF + HERRINGBONE DUCTS) ---
+    function buildArgonPancreas() {
+      const pancGroup = new THREE.Group();
+
+      // Pancreatic Parenchyma Material (Warm Glandular Salmon-Amber with Moist Sheen)
+      const pancMat = new THREE.MeshPhysicalMaterial({
+        color: 0xd68d18,
+        roughness: 0.38,
+        metalness: 0.02,
+        clearcoat: 0.68,
+        clearcoatRoughness: 0.22,
+        reflectivity: 0.70,
+        side: THREE.DoubleSide
+      });
+
+      // Internal Dissected Parenchyma Core (Warm Ochre Cut Surface)
+      const pancCoreMat = new THREE.MeshStandardMaterial({
+        color: 0xc47b10,
+        roughness: 0.48,
+        side: THREE.DoubleSide
+      });
+
+      // Luminescent Pancreatic Duct Material (Crisp Pearl White with Soft Aqua Glow)
+      const wDuctMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.25,
+        emissive: 0x38bdf8,
+        emissiveIntensity: 0.45
+      });
+
+      // 1. Continuous Organic Glandular Body: Head, Uncinate Process, Neck, Body, Tail
+      const pancSplinePoints = [
+        new THREE.Vector3(-0.48, -0.88, 0.06), // Uncinate Process (Processus uncinatus)
+        new THREE.Vector3(-0.60, -0.70, 0.12), // Lower Head (Caput pancreatis)
+        new THREE.Vector3(-0.52, -0.48, 0.15), // Mid Head
+        new THREE.Vector3(-0.15, -0.40, 0.14), // Neck (Collum: constricted bridge over SMV/portal confluence)
+        new THREE.Vector3(0.35, -0.38, 0.13),  // Proximal Body (Corpus)
+        new THREE.Vector3(0.95, -0.38, 0.10),  // Mid Body (triangular cross section)
+        new THREE.Vector3(1.55, -0.28, 0.02),  // Distal Body
+        new THREE.Vector3(2.15, -0.06, -0.12)  // Tail (Cauda: tapering smoothly to splenic hilum)
+      ];
+      const pancCurve = new THREE.CatmullRomCurve3(pancSplinePoints);
+
+      // Swept Volumetric Organic Mesh with Variable Anatomical Cross-Sections
+      const pSteps = 48, pRad = 20;
+      const pGeom = new THREE.BufferGeometry();
+      const pPos = [], pNorm = [], pUv = [], pIdx = [];
+
+      for (let s = 0; s <= pSteps; s++) {
+        const u = s / pSteps;
+        const pt = pancCurve.getPoint(u);
+        const tangent = pancCurve.getTangent(u);
+
+        let up = new THREE.Vector3(0, 1, 0);
+        if (Math.abs(tangent.y) > 0.9) up = new THREE.Vector3(0, 0, 1);
+        const norm = new THREE.Vector3().crossVectors(tangent, up).normalize();
+        const binorm = new THREE.Vector3().crossVectors(tangent, norm).normalize();
+
+        // Anatomical Caliber Profile:
+        // Head (u=0 to 0.3) is wide, flattened anteroposteriorly
+        // Neck (u=0.35 to 0.45) is a constricted waist
+        // Body (u=0.45 to 0.8) is prismatic
+        // Tail (u=0.8 to 1.0) tapers gracefully
+        let rx = 0.18, ry = 0.22, rz = 0.12;
+        if (u < 0.25) {
+          // Head & uncinate process
+          rx = 0.34; ry = 0.36; rz = 0.15;
+        } else if (u < 0.42) {
+          // Neck constriction
+          rx = 0.19; ry = 0.22; rz = 0.11;
+        } else if (u < 0.78) {
+          // Body
+          const bu = (u - 0.42) / 0.36;
+          rx = 0.24 * (1.0 - bu * 0.25);
+          ry = 0.26 * (1.0 - bu * 0.25);
+          rz = 0.14 * (1.0 - bu * 0.30);
+        } else {
+          // Tail
+          const tu = (u - 0.78) / 0.22;
+          rx = 0.18 * (1.0 - tu * 0.65);
+          ry = 0.19 * (1.0 - tu * 0.65);
+          rz = 0.10 * (1.0 - tu * 0.65);
+        }
+
+        for (let a = 0; a <= pRad; a++) {
+          const theta = (a / pRad) * Math.PI * 2;
+          let cosA = Math.cos(theta);
+          let sinA = Math.sin(theta);
+
+          // Subtle cobblestone acinar procedural surface ripple
+          const acinarRipple = 1.0 + 0.06 * Math.sin(theta * 6.0 + u * 18.0) * Math.cos(u * 22.0);
+
+          let px = pt.x + (norm.x * cosA * rx + binorm.x * sinA * ry) * acinarRipple;
+          let py = pt.y + (norm.y * cosA * rx + binorm.y * sinA * ry) * acinarRipple;
+          let pz = pt.z + (norm.z * cosA * rx + binorm.z * sinA * rz) * acinarRipple;
+
+          // Anterior Dissection Window (open anterior parenchymal cutaway in the head to view internal ducts)
+          if (u < 0.32 && sinA > 0.35) {
+            pz -= 0.08 * sinA;
+          }
+
+          pPos.push(px, py, pz);
+          pUv.push(u, a / pRad);
+        }
+      }
+
+      for (let s = 0; s < pSteps; s++) {
+        for (let a = 0; a < pRad; a++) {
+          const p1 = s * (pRad + 1) + a;
+          const p2 = p1 + pRad + 1;
+          const p3 = p1 + 1;
+          const p4 = p2 + 1;
+          pIdx.push(p1, p2, p3);
+          pIdx.push(p3, p2, p4);
+        }
+      }
+
+      pGeom.setIndex(pIdx);
+      pGeom.setAttribute('position', new THREE.Float32BufferAttribute(pPos, 3));
+      pGeom.setAttribute('uv', new THREE.Float32BufferAttribute(pUv, 2));
+      pGeom.computeVertexNormals();
+
+      const mainPancMesh = new THREE.Mesh(pGeom, pancMat);
+      pancGroup.add(mainPancMesh);
+
+      // 2. Acinar Lobule Surface Relic (Hundreds of densely nested cobblestone acini integrated seamlessly)
+      const numAcini = 75;
+      for (let i = 0; i < numAcini; i++) {
+        const u = 0.08 + (i / numAcini) * 0.88;
+        const pt = pancCurve.getPoint(u);
+        const tangent = pancCurve.getTangent(u);
+
+        let up = new THREE.Vector3(0, 1, 0);
+        if (Math.abs(tangent.y) > 0.9) up = new THREE.Vector3(0, 0, 1);
+        const norm = new THREE.Vector3().crossVectors(tangent, up).normalize();
+        const binorm = new THREE.Vector3().crossVectors(tangent, norm).normalize();
+
+        const angle = Math.random() * Math.PI * 2;
+        // Don't place nodules in the anterior cutaway window
+        if (u < 0.35 && Math.sin(angle) > 0.3) continue;
+
+        const rScale = u < 0.3 ? 0.24 : (1.0 - u * 0.45) * 0.18;
+        const nodDist = rScale * (0.85 + Math.random() * 0.25);
+        const nodRadius = (0.055 + Math.random() * 0.035) * (1.0 - u * 0.35);
+
+        const nodMesh = new THREE.Mesh(new THREE.SphereGeometry(nodRadius, 8, 8), pancMat);
+        nodMesh.position.set(
+          pt.x + norm.x * Math.cos(angle) * nodDist + binorm.x * Math.sin(angle) * nodDist,
+          pt.y + norm.y * Math.cos(angle) * nodDist + binorm.y * Math.sin(angle) * nodDist,
+          pt.z + norm.z * Math.cos(angle) * nodDist + binorm.z * Math.sin(angle) * nodDist
+        );
+        pancGroup.add(nodMesh);
+      }
+
+      // 3. Main Pancreatic Duct (Duct of Wirsung: central axial duct passing from tail to ampulla)
+      const wirsungPoints = [
+        new THREE.Vector3(2.10, -0.08, -0.10), // Tail tip
+        new THREE.Vector3(1.50, -0.28, 0.04),  // Distal body
+        new THREE.Vector3(0.90, -0.38, 0.12),  // Mid body
+        new THREE.Vector3(0.20, -0.40, 0.14),  // Proximal body
+        new THREE.Vector3(-0.25, -0.46, 0.13), // Neck
+        new THREE.Vector3(-0.48, -0.62, 0.13), // Head: bends downwards and medially
+        new THREE.Vector3(-0.64, -0.88, 0.13)  // Merges with CBD into Ampulla of Vater!
+      ];
+      const wirsungCurve = new THREE.CatmullRomCurve3(wirsungPoints);
+      const wirsungMesh = new THREE.Mesh(new THREE.TubeGeometry(wirsungCurve, 36, 0.034, 12, false), wDuctMat);
+      pancGroup.add(wirsungMesh);
+
+      // 4. Secondary Tributary Interlobular Ducts (Herringbone pattern draining into main duct)
+      const branchMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.3,
+        emissive: 0x38bdf8,
+        emissiveIntensity: 0.3
+      });
+      const tributaryConfigs = [
+        { u: 0.25, dir: [0.08, 0.12, 0.02], len: 0.14 },
+        { u: 0.32, dir: [-0.06, -0.14, 0.01], len: 0.15 },
+        { u: 0.42, dir: [0.05, 0.13, 0.01], len: 0.14 },
+        { u: 0.50, dir: [-0.04, -0.13, -0.01], len: 0.13 },
+        { u: 0.60, dir: [0.04, 0.12, 0.01], len: 0.13 },
+        { u: 0.68, dir: [-0.03, -0.12, 0.0], len: 0.12 },
+        { u: 0.78, dir: [0.03, 0.11, -0.01], len: 0.11 },
+        { u: 0.85, dir: [-0.02, -0.10, -0.02], len: 0.10 }
+      ];
+      tributaryConfigs.forEach(tb => {
+        const root = wirsungCurve.getPoint(tb.u);
+        const tip = new THREE.Vector3(root.x + tb.dir[0], root.y + tb.dir[1], root.z + tb.dir[2]);
+        const tbGeom = new THREE.TubeGeometry(new THREE.LineCurve3(root, tip), 6, 0.018, 6, false);
+        pancGroup.add(new THREE.Mesh(tbGeom, branchMat));
+      });
+
+      // 5. Accessory Pancreatic Duct (Duct of Santorini: branches towards Minor Duodenal Papilla)
+      const santoriniPoints = [
+        new THREE.Vector3(-0.35, -0.50, 0.13), // Branch from main duct in neck
+        new THREE.Vector3(-0.52, -0.58, 0.14),
+        new THREE.Vector3(-0.68, -0.65, 0.14)  // Enters minor duodenal papilla!
+      ];
+      const santoriniMesh = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(santoriniPoints), 16, 0.024, 8, false), wDuctMat);
+      pancGroup.add(santoriniMesh);
+
+      hbpMasterGroup.add(pancGroup);
+    }
+
+    // --- ORGAN BUILDER 5: DUODENUM C-LOOP WITH PLICAE CIRCULARES ---
+    function buildArgonDuodenum() {
+      const duodGroup = new THREE.Group();
+
+      // Intestinal Coral-Pink Physical Material with Soft Serosal Sheen
+      const duodMat = new THREE.MeshPhysicalMaterial({
+        color: 0xba5449,
+        roughness: 0.38,
+        metalness: 0.02,
+        clearcoat: 0.65,
+        clearcoatRoughness: 0.22,
+        reflectivity: 0.65,
+        side: THREE.DoubleSide
+      });
+
+      // Internal Mucosa Bed (Warm Deep Salmon Velvet)
+      const mucosaMat = new THREE.MeshPhysicalMaterial({
+        color: 0xd9685b,
+        roughness: 0.45,
+        clearcoat: 0.4,
+        side: THREE.DoubleSide
+      });
+
+      // Anatomical C-Loop Course:
+      // D1 (Superior Bulb) -> Superior Flexure -> D2 (Descending) -> Inferior Flexure -> D3 (Horizontal) -> D4 (Ascending) -> Treitz Flexure
+      const duodSplinePoints = [
+        new THREE.Vector3(-0.45, 0.22, 0.15),  // Pyloroduodenal junction
+        new THREE.Vector3(-0.75, 0.18, 0.12),  // D1 Bulb (Pars superior)
+        new THREE.Vector3(-0.98, 0.02, 0.08),  // Superior Duodenal Flexure
+        new THREE.Vector3(-1.08, -0.35, 0.07), // Upper D2 (Pars descendens)
+        new THREE.Vector3(-1.08, -0.88, 0.07), // Mid D2 (facing Ampulla of Vater)
+        new THREE.Vector3(-0.98, -1.35, 0.06), // Inferior Duodenal Flexure
+        new THREE.Vector3(-0.35, -1.50, 0.05), // D3 (Pars horizontalis: crossing anterior to IVC/Aorta)
+        new THREE.Vector3(0.28, -1.48, 0.02),  // Mid D3
+        new THREE.Vector3(0.68, -1.22, -0.04)  // D4 (Pars ascendens -> Duodenojejunal Flexure / Treitz)
+      ];
+      const duodCurve = new THREE.CatmullRomCurve3(duodSplinePoints);
+
+      // Swept Intestinal Wall with Periodic Plicae Circulares (Kerckring folds: annular mucosal ridges)
+      const dSteps = 64, dRad = 24;
+      const dGeom = new THREE.BufferGeometry();
+      const dPos = [], dNorm = [], dUv = [], dIdx = [];
+
+      for (let s = 0; s <= dSteps; s++) {
+        const u = s / dSteps;
+        const pt = duodCurve.getPoint(u);
+        const tangent = duodCurve.getTangent(u);
+
+        let up = new THREE.Vector3(0, 0, 1);
+        if (Math.abs(tangent.z) > 0.9) up = new THREE.Vector3(0, 1, 0);
+        const norm = new THREE.Vector3().crossVectors(tangent, up).normalize();
+        const binorm = new THREE.Vector3().crossVectors(tangent, norm).normalize();
+
+        // Physiological caliber profile:
+        // D1 bulb is dilated (radius ~ 0.28)
+        // D2/D3/D4 lumen caliber ~ 0.22
+        let baseRadius = u < 0.18 ? 0.27 : 0.22;
+
+        // Periodic Plicae Circulares (characteristic circular rings of the duodenum)
+        const plicaeUndulation = 1.0 + 0.055 * Math.sin(u * Math.PI * 36.0);
+        const r = baseRadius * plicaeUndulation;
+
+        for (let a = 0; a <= dRad; a++) {
+          const theta = (a / dRad) * Math.PI * 2;
+          const cosA = Math.cos(theta);
+          const sinA = Math.sin(theta);
+
+          let px = pt.x + (norm.x * cosA + binorm.x * sinA) * r;
+          let py = pt.y + (norm.y * cosA + binorm.y * sinA) * r;
+          let pz = pt.z + (norm.z * cosA + binorm.z * sinA) * r;
+
+          // Anterior-Lateral Mucosal Inspection Cutaway Window in D2 (allows looking into lumen & papilla)
+          if (u > 0.32 && u < 0.62 && cosA > 0.25) {
+            px -= norm.x * 0.12 * cosA;
+            py -= norm.y * 0.12 * cosA;
+            pz -= binorm.z * 0.12 * sinA;
+          }
+
+          dPos.push(px, py, pz);
+          dUv.push(u, a / dRad);
+        }
+      }
+
+      for (let s = 0; s < dSteps; s++) {
+        for (let a = 0; a < dRad; a++) {
+          const p1 = s * (dRad + 1) + a;
+          const p2 = p1 + dRad + 1;
+          const p3 = p1 + 1;
+          const p4 = p2 + 1;
+          dIdx.push(p1, p2, p3);
+          dIdx.push(p3, p2, p4);
+        }
+      }
+
+      dGeom.setIndex(dIdx);
+      dGeom.setAttribute('position', new THREE.Float32BufferAttribute(dPos, 3));
+      dGeom.setAttribute('uv', new THREE.Float32BufferAttribute(dUv, 2));
+      dGeom.computeVertexNormals();
+
+      const duodMesh = new THREE.Mesh(dGeom, duodMat);
+      duodGroup.add(duodMesh);
+
+      // Ligament of Treitz (Suspensory muscle of duodenum holding the duodenojejunal flexure)
+      const treitzMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.45, transparent: true, opacity: 0.85 });
+      const treitzPoints = [
+        new THREE.Vector3(0.68, -1.22, -0.04),
+        new THREE.Vector3(0.55, -0.85, -0.22),
+        new THREE.Vector3(0.40, -0.45, -0.45)
+      ];
+      duodGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(treitzPoints), 12, 0.032, 8, false), treitzMat));
+
+      hbpMasterGroup.add(duodGroup);
+    }
+
+    // --- ORGAN BUILDER 6: MAJOR DUODENAL PAPILLA & AMPULLA OF VATER ---
+    function buildArgonAmpulla() {
+      const ampGroup = new THREE.Group();
+
+      const papillaMat = new THREE.MeshPhysicalMaterial({
+        color: 0xd9534f,
+        roughness: 0.32,
+        clearcoat: 0.75,
+        clearcoatRoughness: 0.15,
+        side: THREE.DoubleSide
+      });
+
+      // 1. Major Duodenal Papilla (Papilla duodeni major: conical mucosal elevation projecting into D2)
+      const papillaGeom = new THREE.ConeGeometry(0.095, 0.16, 20);
+      papillaGeom.rotateX(Math.PI / 2);
+      const papillaMesh = new THREE.Mesh(papillaGeom, papillaMat);
+      papillaMesh.position.set(-0.65, -0.88, 0.13);
+      papillaMesh.rotation.y = -Math.PI / 6;
+      ampGroup.add(papillaMesh);
+
+      // 2. Sphincter of Oddi (Circular muscular sphincter ring encircling the ampulla)
+      const oddiRingGeom = new THREE.TorusGeometry(0.082, 0.028, 12, 24);
+      const oddiMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.45 });
+      const oddiMesh = new THREE.Mesh(oddiRingGeom, oddiMat);
+      oddiMesh.position.set(-0.65, -0.88, 0.14);
+      oddiMesh.rotation.y = -Math.PI / 6;
+      ampGroup.add(oddiMesh);
+
+      // 3. Central Papillary Orifice (Ostium opening into the duodenal lumen)
+      const ostiumMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.038, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0x020617 })
+      );
+      ostiumMesh.position.set(-0.65, -0.88, 0.16);
+      ampGroup.add(ostiumMesh);
+
+      // 4. Longitudinal Fold (Plica longitudinalis duodeni descending below papilla)
+      const plicaPoints = [
+        new THREE.Vector3(-0.65, -0.88, 0.13),
+        new THREE.Vector3(-0.68, -1.02, 0.11),
+        new THREE.Vector3(-0.72, -1.16, 0.09)
+      ];
+      ampGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(plicaPoints), 12, 0.026, 8, false), papillaMat));
+
+      // 5. Minor Duodenal Papilla (Papilla duodeni minor ~2cm anterosuperior for Santorini duct)
+      const minorPapillaMesh = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), papillaMat);
+      minorPapillaMesh.position.set(-0.68, -0.65, 0.14);
+      ampGroup.add(minorPapillaMesh);
+
+      hbpMasterGroup.add(ampGroup);
+    }
+
+    // --- ORGAN BUILDER 7: RETROPERITONEAL VASCULAR AXIS ---
+    function buildArgonVessels() {
+      const vesselsGroup = new THREE.Group();
+
+      const arteryMat = new THREE.MeshPhysicalMaterial({ color: 0xdc2626, roughness: 0.32, clearcoat: 0.55 });
+      const veinMat = new THREE.MeshPhysicalMaterial({ color: 0x2563eb, roughness: 0.32, clearcoat: 0.55 });
+      const portalMat = new THREE.MeshPhysicalMaterial({ color: 0x3b82f6, roughness: 0.35, clearcoat: 0.5 });
+
+      // 1. Abdominal Aorta (Vertical retroperitoneal trunk left of midline)
+      const aortaGeom = new THREE.CylinderGeometry(0.16, 0.16, 5.2, 24);
+      const aortaMesh = new THREE.Mesh(aortaGeom, arteryMat);
+      aortaMesh.position.set(0.20, 0.10, -0.65);
+      vesselsGroup.add(aortaMesh);
+
+      // 2. Inferior Vena Cava (IVC: large venous trunk right of midline)
+      const ivcGeom = new THREE.CylinderGeometry(0.19, 0.19, 5.2, 24);
+      const ivcMesh = new THREE.Mesh(ivcGeom, veinMat);
+      ivcMesh.position.set(-0.18, 0.10, -0.68);
+      vesselsGroup.add(ivcMesh);
+
+      // 3. Celiac Trunk (Truncus coeliacus arising from anterior aorta)
+      const celiacRoot = new THREE.Vector3(0.20, 0.25, -0.60);
+      const celiacBranch = new THREE.Vector3(0.20, 0.18, -0.45);
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.LineCurve3(celiacRoot, celiacBranch), 6, 0.055, 10, false), arteryMat));
+
+      // 4. Tortuous Splenic Artery (Arteria splenica: undulating serpentine artery along pancreas superior border)
+      const saPoints = [
+        celiacBranch,
+        new THREE.Vector3(0.35, 0.05, -0.32),
+        new THREE.Vector3(0.55, -0.15, -0.05),
+        new THREE.Vector3(0.85, 0.02, 0.02),
+        new THREE.Vector3(1.15, -0.12, 0.04),
+        new THREE.Vector3(1.45, 0.05, 0.01),
+        new THREE.Vector3(1.80, -0.08, -0.05),
+        new THREE.Vector3(2.15, 0.10, -0.16) // Reaches splenic hilum
+      ];
+      const saCurve = new THREE.CatmullRomCurve3(saPoints);
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(saCurve, 48, 0.038, 10, false), arteryMat));
+
+      // 5. Common Hepatic Artery & Gastroduodenal Artery (GDA)
+      const chaPoints = [
+        celiacBranch,
+        new THREE.Vector3(0.0, 0.22, -0.35),
+        new THREE.Vector3(-0.25, 0.32, -0.18),
+        new THREE.Vector3(-0.45, 0.52, 0.05) // Enters porta hepatis
+      ];
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(chaPoints), 20, 0.045, 10, false), arteryMat));
+
+      const gdaPoints = [
+        new THREE.Vector3(-0.25, 0.32, -0.18),
+        new THREE.Vector3(-0.35, 0.02, 0.02),
+        new THREE.Vector3(-0.42, -0.35, 0.06) // Courses between D1 and pancreatic head
+      ];
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(gdaPoints), 16, 0.032, 8, false), arteryMat));
+
+      // 6. Superior Mesenteric Artery (SMA: emerges under pancreatic neck, crosses anterior to uncinate process & D3)
+      const smaPoints = [
+        new THREE.Vector3(0.20, -0.15, -0.58),
+        new THREE.Vector3(0.05, -0.35, -0.12),
+        new THREE.Vector3(-0.05, -0.68, 0.12), // Crosses uncinate process
+        new THREE.Vector3(-0.08, -1.55, 0.10)  // Crosses anterior to D3
+      ];
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(smaPoints), 24, 0.046, 10, false), arteryMat));
+
+      // 7. Superior Mesenteric Vein (SMV)
+      const smvPoints = [
+        new THREE.Vector3(0.08, -1.55, 0.10),
+        new THREE.Vector3(0.08, -0.68, 0.12),
+        new THREE.Vector3(0.12, -0.35, -0.08),
+        new THREE.Vector3(0.15, -0.22, -0.25)
+      ];
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(smvPoints), 20, 0.052, 10, false), veinMat));
+
+      // 8. Splenic Vein (Vena splenica: straight horizontal vein grooving posterior surface of pancreas)
+      const svPoints = [
+        new THREE.Vector3(2.10, -0.05, -0.18),
+        new THREE.Vector3(1.50, -0.22, -0.08),
+        new THREE.Vector3(0.85, -0.32, -0.05),
+        new THREE.Vector3(0.15, -0.22, -0.25) // Meets SMV behind pancreatic neck!
+      ];
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(svPoints), 28, 0.048, 10, false), veinMat));
+
+      // 9. Portal Vein (Vena portae hepatis: formed by confluence of SMV and Splenic Vein, ascends into porta hepatis)
+      const pvPoints = [
+        new THREE.Vector3(0.15, -0.22, -0.25), // Confluence behind pancreatic neck
+        new THREE.Vector3(-0.05, 0.15, -0.12),
+        new THREE.Vector3(-0.25, 0.55, 0.04),
+        new THREE.Vector3(-0.35, 0.78, 0.12)  // Enters porta hepatis
+      ];
+      vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pvPoints), 24, 0.065, 12, false), portalMat));
+
+      hbpMasterGroup.add(vesselsGroup);
+    }
+
+    // --- 4 MAJOR CLINICAL PATHOLOGIES IN 3D ---
+    function build3DPathologies() {
+      pathologyGroup = new THREE.Group();
+
+      // 1. Gallstones & Gallbladder Polyps (Inside Gallbladder Lumen)
+      const stoneMat = new THREE.MeshStandardMaterial({
+        color: 0xfef08a,
+        roughness: 0.55,
+        emissive: 0xca8a04,
+        emissiveIntensity: 0.35
+      });
+      const polypMat = new THREE.MeshPhysicalMaterial({ color: 0xf43f5e, roughness: 0.2, clearcoat: 0.85 });
+
+      // Multiple faceted cholesterol gallstones in GB fundus
+      const gs1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.085, 1), stoneMat);
+      gs1.position.set(-1.42, -0.02, 0.58);
+      gs1.userData = { type: 'gallstone', name: '膽囊膽固醇結石 (Gallstone, 0.85cm)' };
+      pathologyGroup.add(gs1);
+
+      const gs2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.065, 1), stoneMat);
+      gs2.position.set(-1.36, 0.08, 0.54);
+      gs2.userData = { type: 'gallstone', name: '多發性膽囊微結石 (Microcalculi)' };
+      pathologyGroup.add(gs2);
+
+      const gs3 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.05, 1), stoneMat);
+      gs3.position.set(-1.40, 0.16, 0.50);
+      gs3.userData = { type: 'gallstone', name: '膽固醇泥砂微結石 (Biliary Sludge)' };
+      pathologyGroup.add(gs3);
+
+      // Gallbladder Polyp with vascular core on mucosal wall
+      const gbp = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), polypMat);
+      gbp.position.set(-1.26, 0.28, 0.44);
+      gbp.userData = { type: 'gallstone', name: '膽囊膽固醇息肉 (GB Polyp, 0.4cm)' };
+      pathologyGroup.add(gbp);
+
+      // 2. Common Bile Duct Stone (CBD Stone) causing Proximal Biliary Dilatation
+      const cbdStoneMat = new THREE.MeshStandardMaterial({
+        color: 0xd97706,
+        roughness: 0.45,
+        emissive: 0xb45309,
+        emissiveIntensity: 0.5
+      });
+      const cbdStoneMesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.095, 1), cbdStoneMat);
+      cbdStoneMesh.position.set(-0.55, 0.05, 0.13); // Located in retroduodenal CBD
+      cbdStoneMesh.userData = { type: 'cbdstone', name: '總膽管結石 (CBD Stone, 0.95cm) 伴隨近端膽管擴張' };
+      pathologyGroup.add(cbdStoneMesh);
+
+      // 3. Ampulla Stone Impaction & Ampullary Tumor
+      const ampStoneMat = new THREE.MeshStandardMaterial({
+        color: 0xef4444,
+        roughness: 0.35,
+        emissive: 0xdc2626,
+        emissiveIntensity: 0.65
+      });
+      const ampStoneMesh = new THREE.Mesh(new THREE.SphereGeometry(0.095, 16, 16), ampStoneMat);
+      ampStoneMesh.position.set(-0.65, -0.88, 0.16); // Impacted right in Ampulla of Vater!
+      ampStoneMesh.userData = { type: 'ampulla', name: '十二指腸壺腹結石嵌頓 (Ampulla Stone Impaction) 引發急性膽石性胰臟炎' };
+      pathologyGroup.add(ampStoneMesh);
+
+      // 4. Acute Pancreatitis (Inflammatory Swelling & Pancreatic Head Mass)
+      const massMat = new THREE.MeshPhysicalMaterial({
+        color: 0x9333ea,
+        roughness: 0.35,
+        clearcoat: 0.6,
+        emissive: 0x7e22ce,
+        emissiveIntensity: 0.55
+      });
+      const pMassMesh = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 20), massMat);
+      pMassMesh.position.set(-0.50, -0.55, 0.18); // Infiltrating pancreatic head
+      pMassMesh.userData = { type: 'pancreatitis', name: '胰臟頭部腫瘤/發炎水腫 (Pancreatic Head Mass, 2.6cm)' };
+      pathologyGroup.add(pMassMesh);
+
+      // Initially hide all pathologies
+      pathologyGroup.children.forEach(child => child.visible = false);
+      scene.add(pathologyGroup);
     }
 
     // Dynamic Auto-Fitting Billboard Text Sprite Generator (100% inside borders!)
@@ -908,7 +1581,11 @@ import Layout from '../../layouts/Layout.astro';
       // Draw pill background
       ctx.fillStyle = 'rgba(10, 20, 36, 0.92)';
       ctx.beginPath();
-      ctx.roundRect(x, y, pillWidth, pillHeight, 36);
+      if (ctx.roundRect) {
+        ctx.roundRect(x, y, pillWidth, pillHeight, 36);
+      } else {
+        ctx.rect(x, y, pillWidth, pillHeight);
+      }
       ctx.fill();
 
       // Draw crisp glowing border
@@ -948,72 +1625,6 @@ import Layout from '../../layouts/Layout.astro';
       focusBeaconGroup.add(pointLight);
 
       scene.add(focusBeaconGroup);
-    }
-
-    // Build 4 Major Clinical Pathologies in 3D
-    function build3DPathologies() {
-      pathologyGroup = new THREE.Group();
-
-      // 1. Gallstones & Gallbladder Polyps (Inside Gallbladder Lumen)
-      const stoneMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.6 }); // Yellow cholesterol stones
-      const polypMat = new THREE.MeshPhysicalMaterial({ color: 0xf43f5e, roughness: 0.2, clearcoat: 0.8 });
-
-      // Gallstones in GB fundus
-      const gs1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 1), stoneMat);
-      gs1.position.set(-1.42, -0.05, 0.58);
-      gs1.userData = { type: 'gallstone', name: '膽囊膽固醇結石 (Gallstone, 0.8cm)' };
-      pathologyGroup.add(gs1);
-
-      const gs2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06, 1), stoneMat);
-      gs2.position.set(-1.35, 0.05, 0.62);
-      gs2.userData = { type: 'gallstone', name: '多發性膽囊微結石 (Microcalculi)' };
-      pathologyGroup.add(gs2);
-
-      // Gallbladder Polyp on GB wall
-      const gbp = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), polypMat);
-      gbp.position.set(-1.28, 0.22, 0.52);
-      gbp.userData = { type: 'gallstone', name: '膽囊膽固醇息肉 (GB Polyp, 0.4cm)' };
-      pathologyGroup.add(gbp);
-
-      // 2. Common Bile Duct Stone (CBD Stone) causing Biliary Dilatation
-      const cbdStoneMat = new THREE.MeshStandardMaterial({
-        color: 0xd97706,
-        roughness: 0.5,
-        emissive: 0xb45309,
-        emissiveIntensity: 0.4
-      });
-      const cbdStoneMesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), cbdStoneMat);
-      cbdStoneMesh.position.set(-0.54, -0.15, 0.16);
-      cbdStoneMesh.userData = { type: 'cbdstone', name: '總膽管結石 (CBD Stone, 0.9cm) 伴隨近端膽管擴張' };
-      pathologyGroup.add(cbdStoneMesh);
-
-      // 3. Ampulla Stone Impaction & Ampullary Tumor
-      const ampStoneMat = new THREE.MeshStandardMaterial({
-        color: 0xef4444,
-        roughness: 0.4,
-        emissive: 0xdc2626,
-        emissiveIntensity: 0.6
-      });
-      const ampStoneMesh = new THREE.Mesh(new THREE.SphereGeometry(0.095, 14, 14), ampStoneMat);
-      ampStoneMesh.position.set(-0.65, -0.9, 0.18);
-      ampStoneMesh.userData = { type: 'ampulla', name: '十二指腸壺腹結石嵌頓 (Ampulla Stone Impaction) 引發急性膽石性胰臟炎' };
-      pathologyGroup.add(ampStoneMesh);
-
-      // 4. Acute Pancreatitis (Inflammatory Swelling & Pancreatic Head Mass)
-      const massMat = new THREE.MeshPhysicalMaterial({
-        color: 0x9333ea,
-        roughness: 0.35,
-        emissive: 0x7e22ce,
-        emissiveIntensity: 0.5
-      });
-      const pMassMesh = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 16), massMat);
-      pMassMesh.position.set(-0.42, -0.45, 0.22);
-      pMassMesh.userData = { type: 'pancreatitis', name: '胰臟頭部腫瘤/發炎水腫 (Pancreatic Head Mass, 2.5cm)' };
-      pathologyGroup.add(pMassMesh);
-
-      // Initially hide all pathologies
-      pathologyGroup.children.forEach(child => child.visible = false);
-      scene.add(pathologyGroup);
     }
 
     // Toggle Pathology Layers
