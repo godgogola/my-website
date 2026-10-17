@@ -16,14 +16,32 @@ const ASSETS_IMAGES_DIR = path.join(__dirname, '../src/assets/images');
 const SITE_URL          = 'https://drhuanggi.vercel.app';
 const GAS_URL           = 'https://script.google.com/macros/s/AKfycbwrDmeXp0g6DaKrbY6xbRknwFmZlwHrMnJNJFpPm9bKJ_HbESQNMrLDJYL6M2N0v0f3Sg/exec';
 
-// 從 GAS 取得目前 Sheet 所有標題
+function normalizeTitle(t) {
+  return t
+    .replace(/【.*?】/g, '')
+    .replace(/[\s\-_—–()（）「」『』,，.。:：]/g, '')
+    .toLowerCase();
+}
+
+// 從 GAS 取得目前 Sheet 所有標題與各分類目前最大排序序號
 const res = await fetch(`${GAS_URL}?output=json`);
 const categories = await res.json();
 const sheetTitles = new Set();
+const sheetNormalizedTitles = new Set();
+const categoryMaxSort = new Map();
+
 for (const cat of categories) {
-  for (const item of cat.items) {
-    sheetTitles.add(item.title.trim());
+  let maxSort = 0;
+  for (const item of (cat.items || [])) {
+    const rawTitle = item.title.trim();
+    sheetTitles.add(rawTitle);
+    sheetNormalizedTitles.add(normalizeTitle(rawTitle));
+    const s = Number(item.sort);
+    if (!isNaN(s) && s < 900 && s > maxSort) {
+      maxSort = s;
+    }
   }
+  categoryMaxSort.set(cat.title.trim(), maxSort);
 }
 
 // 讀取所有 md 文章
@@ -42,7 +60,9 @@ for (const f of mdFiles) {
   if (d && d[1].trim() === 'true') continue;
 
   const title = t[1].trim();
-  if (sheetTitles.has(title)) continue; // 已存在，略過
+  if (sheetTitles.has(title) || sheetNormalizedTitles.has(normalizeTitle(title))) {
+    continue; // 已存在，略過
+  }
 
   const category   = c ? c[1].trim() : '';
   const slug       = slugM ? slugM[1].trim() : path.basename(f, '.md');
@@ -92,14 +112,19 @@ let added = 0, failed = 0;
 
 // 逐一新增（避免並行衝突）
 for (const article of missing) {
+  const cat = article.category.trim();
+  const currentMax = categoryMaxSort.get(cat) || 0;
+  const nextSort = currentMax + 1;
+  categoryMaxSort.set(cat, nextSort); // 讓同分類的後續文章順序遞增 (例如 23, 24, 25...)
+
   const result = await postToGAS({
     action:     'appendRow',
     title:      article.title,
     category:   article.category,
     articleUrl: article.articleUrl,
     imgUrl:     article.imgUrl,
-    sort:       999,
-    type:       'article',
+    sort:       nextSort,
+    type:       '圖片卡片',
   });
 
   if (result.action === '新增成功') {

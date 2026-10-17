@@ -208,6 +208,16 @@ function doPost(e) {
           sheet.getRange(rowIndex, 6).setValue(data.articleUrl);
           updated = true;
         }
+        // 排序序號 (B欄)：若有傳入且非 999 則更新
+        if (data.sort !== undefined && data.sort !== null && data.sort !== '' && Number(data.sort) !== 999) {
+          sheet.getRange(rowIndex, 2).setValue(Number(data.sort));
+          updated = true;
+        }
+        // 類型 (D欄)：若有傳入則更新為指定類型（如「圖片卡片」）
+        if (data.type) {
+          sheet.getRange(rowIndex, 4).setValue(data.type);
+          updated = true;
+        }
 
         if (updated) {
           clearAllCache();

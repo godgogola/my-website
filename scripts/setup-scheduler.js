@@ -10,12 +10,8 @@ $ErrorActionPreference = 'Stop'
 # 移除舊工作
 Unregister-ScheduledTask -TaskName 'DrHuang-Obsidian-AutoSync' -Confirm:$false -ErrorAction SilentlyContinue
 
-$nodeExe = 'C:\\Program Files\\nodejs\\node.exe'
-if (-not (Test-Path $nodeExe)) {
-    $nodeExe = (Get-Command node).Source
-}
-
-$action = New-ScheduledTaskAction -Execute $nodeExe -Argument '"${scriptPath}" --check' -WorkingDirectory '${junctionDir}'
+$vbsPath = "${junctionDir}\\scripts\\run-silent-check.vbs"
+$action = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument ('\"' + $vbsPath + '\"') -WorkingDirectory '${junctionDir}'
 
 # 觸發條件：開機登入時觸發，並且每 5 分鐘執行一次
 $triggerLogon = New-ScheduledTaskTrigger -AtLogOn
