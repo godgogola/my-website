@@ -17,9 +17,10 @@ const books = [...unDraftBooks].sort((a, b) => {
   return orderA - orderB;
 });
 
-// 2. 取得所有書籍清單（作為分類標籤）
+// 2. 取得所有書籍清單（作為分類標籤，純依書籍分類，不混合全部書籍）
 const bookTitles = [...new Set(books.map(b => b.data.book))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
-const sortedCategories = ['全部', ...bookTitles];
+const sortedCategories = bookTitles;
+const defaultCategory = sortedCategories[0] || '';
 ---
 
 <Layout
@@ -64,7 +65,7 @@ const sortedCategories = ['全部', ...bookTitles];
         </svg>
         <span>書庫目錄</span>
       </button>
-      <p class="result-count" id="resultCount" aria-live="polite">共 {books.length} 篇</p>
+      <p class="result-count" id="resultCount" aria-live="polite">共 {books.filter(b => b.data.book === defaultCategory).length} 篇</p>
     </div>
   </div>
 
@@ -83,9 +84,9 @@ const sortedCategories = ['全部', ...bookTitles];
           id={`tab-${cat}`}
           type="button"
         >
-          <span class="tab-label">{cat === '全部' ? '全部書籍' : `《${cat}》`}</span>
+          <span class="tab-label">《{cat}》</span>
           <span class="tab-count">
-            {cat === '全部' ? books.length : books.filter(b => b.data.book === cat).length}
+            {books.filter(b => b.data.book === cat).length}
           </span>
         </button>
       ))}
@@ -94,30 +95,34 @@ const sortedCategories = ['全部', ...bookTitles];
 
   <!-- ── 文章卡片網格 ── -->
   <div class="posts-grid" id="postsGrid">
-    {books.map((book) => (
-      <article
-        class="grid-item"
-        data-category={book.data.book}
-        data-title={book.data.title.toLowerCase()}
-        data-publish-date={book.data.publishDate}
-        data-order={book.data.order ?? 999}
-      >
-        <PostCard
-          title={book.data.title}
-          href={`/books/${encodeURIComponent(book.data.book)}/${book.data.slug}`}
-          category={book.data.book}
-          publishDate={book.data.publishDate}
-          coverImage={book.data.coverImage}
-        />
-      </article>
-    ))}
+    {books.map((book) => {
+      const isDefault = book.data.book === defaultCategory;
+      return (
+        <article
+          class="grid-item"
+          data-category={book.data.book}
+          data-title={book.data.title.toLowerCase()}
+          data-publish-date={book.data.publishDate}
+          data-order={book.data.order ?? 999}
+          style={isDefault ? '' : 'display: none;'}
+        >
+          <PostCard
+            title={book.data.title}
+            href={`/books/${encodeURIComponent(book.data.book)}/${book.data.slug}`}
+            category={book.data.book}
+            publishDate={book.data.publishDate}
+            coverImage={book.data.coverImage}
+          />
+        </article>
+      );
+    })}
   </div>
 
   <!-- ── 無結果提示 ── -->
   <div class="no-results" id="noResults" hidden aria-live="polite">
     <div class="no-results-icon">📚</div>
     <h3>找不到相符的讀書筆記</h3>
-    <p>請嘗試其他關鍵字，或點擊「全部書籍」瀏覽所有筆記。</p>
+    <p>請嘗試其他關鍵字，或切換上方書籍標籤瀏覽筆記。</p>
     <button class="reset-btn" id="resetFilter">清除篩選條件</button>
   </div>
 
@@ -181,7 +186,7 @@ const sortedCategories = ['全部', ...bookTitles];
     if (!postsGrid || !resultCount) return;
     const items = Array.from(postsGrid.querySelectorAll<HTMLElement>('.grid-item'));
 
-    let currentCategory = '全部';
+    let currentCategory = (tabBtns[0]?.dataset.filter) || '';
     let currentSearchTerm = '';
 
     const moveSpringIndicator = (targetBtn: HTMLElement, immediate = false) => {
@@ -225,7 +230,7 @@ const sortedCategories = ['全部', ...bookTitles];
         const cat = item.dataset.category || '';
         const title = item.dataset.title || '';
 
-        const matchesCat = (currentCategory === '全部') || (cat === currentCategory);
+        const matchesCat = (cat === currentCategory);
         const matchesSearch = !currentSearchTerm || title.includes(currentSearchTerm);
 
         if (matchesCat && matchesSearch) {
@@ -257,7 +262,7 @@ const sortedCategories = ['全部', ...bookTitles];
 
         moveSpringIndicator(btn);
 
-        currentCategory = btn.dataset.filter || '全部';
+        currentCategory = btn.dataset.filter || (tabBtns[0]?.dataset.filter || '');
         filterArticles();
 
         const track = filterTrack;
@@ -282,8 +287,7 @@ const sortedCategories = ['全部', ...bookTitles];
       resetBtn.addEventListener('click', () => {
         if (searchInput) searchInput.value = '';
         currentSearchTerm = '';
-        const allTab = document.querySelector<HTMLButtonElement>('.filter-tab-btn[data-filter="全部"]');
-        if (allTab) allTab.click();
+        if (tabBtns[0]) tabBtns[0].click();
       });
     }
 

@@ -1,2 +1,3 @@
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "node ""C:\Users\X1 Yoga Gen7\Desktop\Antigravity_Projects\個人網站\scripts\auto-sync-service.js"" --watch", 0, False
+WshShell.CurrentDirectory = "C:\Users\X1 Yoga Gen7\drhuang-website"
+WshShell.Run """C:\Program Files\nodejs\node.exe"" ""C:\Users\X1 Yoga Gen7\drhuang-website\scripts\auto-sync-service.js"" --watch", 0, False
