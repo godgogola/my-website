@@ -36,12 +36,11 @@ for (const p of posts) {
   categorizedPosts[cat].push(p);
 }
 
-const otherCategoryKeys = Object.keys(categorizedPosts).filter(c => c !== '診間隨筆' && c !== '診間說書房');
+const otherCategoryKeys = Object.keys(categorizedPosts).filter(c => c !== '診間隨筆');
 const sortedCategories = [
-  ...CATEGORY_ORDER.filter(c => categorizedPosts[c] && c !== '診間隨筆' && c !== '診間說書房'),
+  ...CATEGORY_ORDER.filter(c => categorizedPosts[c] && c !== '診間隨筆'),
   ...otherCategoryKeys.filter(c => !CATEGORY_ORDER.includes(c)),
-  ...(categorizedPosts['診間隨筆'] ? ['診間隨筆'] : []),
-  ...(categorizedPosts['診間說書房'] ? ['診間說書房'] : [])
+  ...(categorizedPosts['診間隨筆'] ? ['診間隨筆'] : [])
 ];
 
 const currentSlug = post.data.slug || post.id;

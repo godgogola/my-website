@@ -6,7 +6,7 @@ export async function getStaticPaths() {
   const allBooks = await getCollection('books');
   return allBooks.map(post => ({
     params: {
-      book: post.data.book,
+      book: post.data.bookSlug || post.data.book,
       slug: post.data.slug
     },
     props: { post },
@@ -78,7 +78,7 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
             <div class="folder-contents" id={`folder-${bName}`}>
               {bookGroups[bName].map(item => (
                 <a
-                  href={`/books/${encodeURIComponent(item.data.book)}/${item.data.slug}`}
+                  href={`/books/${item.data.bookSlug || item.data.book}/${item.data.slug}`}
                   class:list={['file-item', { active: item.data.book === post.data.book && item.data.slug === post.data.slug }]}
                   data-slug={item.data.slug}
                   data-title={item.data.title.toLowerCase()}
@@ -129,7 +129,7 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
         <!-- 循序閱讀章節導覽 (上一章 / 下一章) -->
         <nav class="chapter-nav" aria-label="章節導覽">
           {prevChapter ? (
-            <a href={`/books/${encodeURIComponent(prevChapter.data.book)}/${prevChapter.data.slug}`} class="chapter-nav-btn prev-btn">
+            <a href={`/books/${prevChapter.data.bookSlug || prevChapter.data.book}/${prevChapter.data.slug}`} class="chapter-nav-btn prev-btn">
               <span class="nav-sub">← 上一章</span>
               <span class="nav-title">{prevChapter.data.title}</span>
             </a>
@@ -141,7 +141,7 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
           )}
 
           {nextChapter ? (
-            <a href={`/books/${encodeURIComponent(nextChapter.data.book)}/${nextChapter.data.slug}`} class="chapter-nav-btn next-btn">
+            <a href={`/books/${nextChapter.data.bookSlug || nextChapter.data.book}/${nextChapter.data.slug}`} class="chapter-nav-btn next-btn">
               <span class="nav-sub">下一章 →</span>
               <span class="nav-title">{nextChapter.data.title}</span>
             </a>

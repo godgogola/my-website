@@ -33,8 +33,8 @@ const CATEGORY_ORDER = [
   '藥物介紹', '肝病特區', '超音波檢查', '要活就要動', '疑難雜症'
 ];
 
-// ── 取得所有出現的分類，並確保「診間隨筆」、「診間說書房」、「指數投資」排在最末端 ──
-const SPECIAL_END_CATEGORIES = ['診間隨筆', '診間說書房', '指數投資', '投資理財'];
+// ── 取得所有出現的分類，並確保「診間隨筆」、「指數投資」排在最末端 ──
+const SPECIAL_END_CATEGORIES = ['診間隨筆', '指數投資', '投資理財'];
 const allCategories = [...new Set(posts.map(p => p.data.category || '其他'))];
 const otherCategories = allCategories.filter(c => !SPECIAL_END_CATEGORIES.includes(c) && c !== '全部');
 const sortedCategories = [

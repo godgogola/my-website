@@ -934,30 +934,41 @@ import Layout from '../../layouts/Layout.astro';
       colonMasterGroup.add(h2Mesh);
 
       // --- F. Cecum, Ileocecal Valve (ICV), and Vermiform Appendix ---
-      // Cecal Fundic Bowl (Rounded blind pouch)
+      const cecumSubGroup = new THREE.Group();
+      // Anchor cecumSubGroup seamlessly at the bottom terminus of the ascending colon (-1.82, -1.70, 0.08)
+      cecumSubGroup.position.set(-1.82, -1.70, 0.08);
+
+      // Cecal Fundic Bowl (Rounded blind pouch capping the ascending colon)
       const cecumBowlGeom = new THREE.SphereGeometry(0.48, 24, 18, 0, Math.PI * 1.15, 0, Math.PI * 0.58);
       const cecumBowlMesh = new THREE.Mesh(cecumBowlGeom, colonMaterial);
-      cecumBowlMesh.position.set(-0.85, -0.85, 0.0);
+      cecumBowlMesh.position.set(0, 0, 0);
       cecumBowlMesh.rotation.x = -Math.PI / 2;
       cecumBowlMesh.rotation.z = Math.PI / 3;
-      colonMasterGroup.add(cecumBowlMesh);
+      cecumSubGroup.add(cecumBowlMesh);
 
-      // Vermiform Appendix (闌尾 - Narrow tapering worm-like tube)
+      // Outer Serosa Shell for Cecum
+      const cecumSerosaGeom = new THREE.SphereGeometry(0.495, 24, 18, 0, Math.PI * 1.15, 0, Math.PI * 0.58);
+      const cecumSerosaMesh = new THREE.Mesh(cecumSerosaGeom, serosaMat);
+      cecumSerosaMesh.position.set(0, 0, -0.015);
+      cecumSerosaMesh.rotation.copy(cecumBowlMesh.rotation);
+      cecumSubGroup.add(cecumSerosaMesh);
+
+      // Vermiform Appendix (闌尾 - Narrow tapering worm-like tube dangling from cecal inferior pole)
       const appendixPoints = [
-        new THREE.Vector3(-0.88, -0.95, 0.05),
-        new THREE.Vector3(-0.75, -1.22, 0.12),
-        new THREE.Vector3(-0.62, -1.45, 0.16),
-        new THREE.Vector3(-0.52, -1.62, 0.18)
+        new THREE.Vector3(-0.04, -0.10, 0.05),
+        new THREE.Vector3(0.08, -0.36, 0.10),
+        new THREE.Vector3(0.20, -0.58, 0.14),
+        new THREE.Vector3(0.30, -0.75, 0.16)
       ];
       const appendixCurve = new THREE.CatmullRomCurve3(appendixPoints);
       const appendixGeom = new THREE.TubeGeometry(appendixCurve, 24, 0.072, 12, false);
       const appendixMesh = new THREE.Mesh(appendixGeom, serosaMat);
-      colonMasterGroup.add(appendixMesh);
+      cecumSubGroup.add(appendixMesh);
 
       const appTipGeom = new THREE.SphereGeometry(0.072, 12, 12);
       const appTipMesh = new THREE.Mesh(appTipGeom, serosaMat);
-      appTipMesh.position.set(-0.52, -1.62, 0.18);
-      colonMasterGroup.add(appTipMesh);
+      appTipMesh.position.set(0.30, -0.75, 0.16);
+      cecumSubGroup.add(appTipMesh);
 
       // Appendiceal Orifice (闌尾開口 - Radiating 3-spoke fold sign at cecal base)
       const appOrificeGroup = new THREE.Group();
@@ -971,11 +982,11 @@ import Layout from '../../layouts/Layout.astro';
         slitMesh.rotation.z = s * (Math.PI * 2 / 3);
         appOrificeGroup.add(slitMesh);
       }
-      appOrificeGroup.position.set(-0.85, -0.88, 0.08);
+      appOrificeGroup.position.set(-0.02, -0.04, 0.08);
       appOrificeGroup.rotation.x = -Math.PI / 4;
-      colonMasterGroup.add(appOrificeGroup);
+      cecumSubGroup.add(appOrificeGroup);
 
-      // Ileocecal Valve (迴盲瓣 - Prominent upper & lower lips with central slit)
+      // Ileocecal Valve (迴盲瓣 - Prominent upper & lower lips with central slit at medial border)
       const icValveGroup = new THREE.Group();
       const lipUpperGeom = new THREE.CylinderGeometry(0.045, 0.045, 0.18, 10);
       lipUpperGeom.rotateZ(Math.PI / 2);
@@ -987,9 +998,11 @@ import Layout from '../../layouts/Layout.astro';
       lipLowerMesh.position.set(0, -0.042, 0);
       icValveGroup.add(lipLowerMesh);
 
-      icValveGroup.position.set(-0.68, -0.62, 0.08);
+      icValveGroup.position.set(0.18, 0.24, 0.08);
       icValveGroup.rotation.z = -Math.PI / 6;
-      colonMasterGroup.add(icValveGroup);
+      cecumSubGroup.add(icValveGroup);
+
+      colonMasterGroup.add(cecumSubGroup);
 
       // Add Master Group to Scene
       scene.add(colonMasterGroup);

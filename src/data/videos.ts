@@ -31,10 +31,23 @@ export const videoCategories = [
   '健康飲食',
   '要活就要動',
   '健檢項目介紹',
-  '診間說書房',
+  '你的人生，他們六個說了!',
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/18) ---
+  {
+    id: 'Cnrj35A6l0w',
+    title: '大腦的天使特調四大生活基底',
+    description: '大腦是一座高度精密的神經化工廠！若忽視了底層的物理支持協議，一切情緒調節都將大打折扣。掌握打造強大生化花園的四大物理基底：睡眠修復、酪胺酸與色胺酸營養前驅物、Zone 2 與重訓激發腦內啡，以及生理性嘆息刺激迷走神經，維持內在安定。',
+    category: '你的人生，他們六個說了!',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=Cnrj35A6l0w',
+    featured: true,
+    order: 1,
+    articleSlug: '/books/你的人生-他們六個說了/08-大腦的天使特調四大生活基底',
+    articleTitle: '08、大腦的天使特調四大生活基底',
+  },
   // --- 2026 最新發布影音 (2026/10/16) ---
   {
     id: 'qXkyGWRIDE4',
@@ -53,89 +66,89 @@ export const videos: VideoItem[] = [
     id: 'jyOxM3nfrso',
     title: '【大腦的天使特調】睪固酮 自信心與行為傾向的增幅器',
     description: '談到「睪固酮（Testosterone）」，許多人腦中浮現的往往是肌肉猛男、侵略性或路怒症的代名詞。但在神經科學與行為學中，這其實是極大的誤解！睪固酮絕非男性的專屬激素，女性同樣維持著關鍵基線；它是兩性體內最重要的「增幅與勝利荷爾蒙」，能強化認知注意力與抗壓適應力。',
-    category: '診間說書房',
+    category: '你的人生，他們六個說了!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=jyOxM3nfrso',
     featured: true,
     order: 1,
-    articleSlug: '大腦的天使特調睪固酮_自信心與行為傾向的增幅器',
-    articleTitle: '【大腦的天使特調】睪固酮_自信心與行為傾向的增幅器',
+    articleSlug: '/books/你的人生-他們六個說了/07-睪固酮_自信心與行為傾向的增幅器',
+    articleTitle: '07、睪固酮_自信心與行為傾向的增幅器',
   },
   // --- 2026 最新發布影音 (2026/10/13) ---
   {
     id: 'qy6YD2DZots',
     title: '【大腦的天使特調】皮質醇 應變挑戰與警覺的雙面刃',
     description: '皮質醇不是純毒素，而是體內的生存危機管理者！適量能提供警覺與專注，但長期慢性暴雨會摧毀身心花園、燒毀血清素原料。學會壓力地圖劃分控制圈，運用生理性嘆息秒速重啟副交感神經。',
-    category: '診間說書房',
+    category: '你的人生，他們六個說了!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=qy6YD2DZots',
     featured: true,
     order: 1,
-    articleSlug: '大腦的天使特調皮質醇_應變挑戰與警覺的雙面刃',
-    articleTitle: '【大腦的天使特調】皮質醇_應變挑戰與警覺的雙面刃',
+    articleSlug: '/books/你的人生-他們六個說了/06-皮質醇_應變挑戰與警覺的雙面刃',
+    articleTitle: '06、皮質醇_應變挑戰與警覺的雙面刃',
   },
   {
     id: 'TJ5mJQRNY3Y',
     title: '【大腦的天使特調】腦內啡 天然止痛劑與極致愉悅感',
     description: '大腦自帶的嗎啡！痛苦之後才是至福，演化機制用以阻斷疼痛並帶來宛如登頂的極致愉悅。解析對痛苦成癮的化學陷阱，掌握刻意微笑、大笑、吃辣痛覺代償、規律運動與冷水浴等 9 大安全爆發協議。',
-    category: '診間說書房',
+    category: '你的人生，他們六個說了!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=TJ5mJQRNY3Y',
     featured: true,
     order: 1,
-    articleSlug: '大腦的天使特調腦內啡_天然止痛劑與極致愉悅感',
-    articleTitle: '【大腦的天使特調】腦內啡_天然止痛劑與極致愉悅感',
+    articleSlug: '/books/你的人生-他們六個說了/03-腦內啡_天然止痛劑與極致愉悅感',
+    articleTitle: '03、腦內啡_天然止痛劑與極致愉悅感',
   },
   {
     id: 'HF5rHh3Df4I',
     title: '【大腦的天使特調】催產素 信任與歸屬感的愛的荷爾蒙',
     description: '不只是愛情荷爾蒙，更是大腦感知安全與歸屬感的核心！直接抑制杏仁核警報，切換至放鬆修復模式，是皮質醇最強效的拮抗劑。解鎖 20 秒擁抱、重力毯、親人照片與敬畏感等 10 大催產素噴發協議。',
-    category: '診間說書房',
+    category: '你的人生，他們六個說了!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=HF5rHh3Df4I',
     featured: true,
     order: 1,
-    articleSlug: '大腦的天使特調催產素_信任與歸屬感的愛的荷爾蒙',
-    articleTitle: '【大腦的天使特調】催產素_信任與歸屬感的愛的荷爾蒙',
+    articleSlug: '/books/你的人生-他們六個說了/04-催產素_信任與歸屬感的愛的荷爾蒙',
+    articleTitle: '04、催產素_信任與歸屬感的愛的荷爾蒙',
   },
   // --- 2026 最新發布影音 (2026/10/12) ---
   {
     id: 'Mq6Ndlq3G7E',
     title: '【大腦的天使特調】血清素：滿足感與穩定情緒的基石',
     description: '血清素不只是快樂分子，更是穩定情緒與自尊的煞車！高達九成血清素由腸道製造，解析腦腸軸、色胺酸原料與日照快走機制，遠離虛擬地位焦慮，建立內在踏實的幸福感。',
-    category: '診間說書房',
+    category: '你的人生，他們六個說了!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Mq6Ndlq3G7E',
     featured: true,
     order: 1,
-    articleSlug: '大腦的天使特調血清素_滿足感與穩定情緒的基石',
-    articleTitle: '【大腦的天使特調】血清素_滿足感與穩定情緒的基石',
+    articleSlug: '/books/你的人生-他們六個說了/05-血清素_滿足感與穩定情緒的基石',
+    articleTitle: '05、血清素_滿足感與穩定情緒的基石',
   },
   // --- 2026 最新發布影音 (2026/10/11) ---
   {
     id: 'IwFh90jcMvg',
     title: '【大腦的天使特調】多巴胺：動機與渴望的動力引擎',
     description: '多巴胺不是「快樂分子」，而是負責在大腦中喊著「我想要」的動力引擎！解析期待與落差的生理機制，破除速效多巴胺帶來的耐受與宿醉，建立健康持久的緩效微習慣。',
-    category: '診間說書房',
+    category: '你的人生，他們六個說了!',
     duration: '0:40',
     url: 'https://www.youtube.com/watch?v=IwFh90jcMvg',
     featured: true,
     order: 1,
-    articleSlug: '大腦的天使特調多巴胺_動機與渴望的動力引擎',
-    articleTitle: '【大腦的天使特調】多巴胺_動機與渴望的動力引擎',
+    articleSlug: '/books/你的人生-他們六個說了/02-多巴胺_動機與渴望的動力引擎',
+    articleTitle: '02、多巴胺_動機與渴望的動力引擎',
   },
   // --- 2026 最新發布影音 (2026/10/10) ---
   {
     id: 'G0PAfeJwS4w',
     title: '大腦的天使特調：六大神經傳導物質',
     description: '在大腦的調酒櫃中，有六款最核心的神經傳導物質與激素！瑞典勵志演說家大衛·JP·菲利浦斯將它們比喻為調製人生雞尾酒的素材，只要微調多巴胺、催產素、血清素、皮質醇、腦內啡與睪固酮的生化比例，就能有效化解焦慮與疲憊，激發行動力與幸福感。',
-    category: '診間說書房',
+    category: '你的人生，他們六個說了!',
     duration: '1:01',
     url: 'https://www.youtube.com/watch?v=G0PAfeJwS4w',
     featured: true,
     order: 1,
-    articleSlug: '大腦的天使特調六大神經傳導物質簡介',
-    articleTitle: '大腦的天使特調：六大神經傳導物質簡介',
+    articleSlug: '/books/你的人生-他們六個說了/01-六大神經傳導物質簡介',
+    articleTitle: '01、六大神經傳導物質簡介',
   },
   // --- 2026 最新發布影音 (2026/10/08) ---
   {
@@ -1032,6 +1045,6 @@ export function getYouTubeEmbedUrl(videoId: string, autoplay = true): string {
  */
 export function getArticleUrl(slug?: string, isEmbed = false): string {
   if (!slug) return '';
-  const path = `/posts/${slug}`;
+  const path = slug.startsWith('/') ? slug : `/posts/${slug}`;
   return isEmbed ? `https://drhuanggi.vercel.app${path}` : path;
 }

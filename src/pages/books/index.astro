@@ -108,7 +108,7 @@ const defaultCategory = sortedCategories[0] || '';
         >
           <PostCard
             title={book.data.title}
-            href={`/books/${encodeURIComponent(book.data.book)}/${book.data.slug}`}
+            href={`/books/${book.data.bookSlug || book.data.book}/${book.data.slug}`}
             category={book.data.book}
             publishDate={book.data.publishDate}
             coverImage={book.data.coverImage}
@@ -157,7 +157,7 @@ const defaultCategory = sortedCategories[0] || '';
               </button>
               <div class="drawer-file-list" id={`drawer-list-${title}`}>
                 {bookChapters.map(p => (
-                  <a href={`/books/${encodeURIComponent(p.data.book)}/${p.data.slug}`} class="drawer-file-item" data-title={p.data.title.toLowerCase()}>
+                  <a href={`/books/${p.data.bookSlug || p.data.book}/${p.data.slug}`} class="drawer-file-item" data-title={p.data.title.toLowerCase()}>
                     <svg class="file-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     <span>{p.data.title}</span>
                   </a>

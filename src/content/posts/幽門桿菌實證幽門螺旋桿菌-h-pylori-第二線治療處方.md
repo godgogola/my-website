@@ -4,7 +4,9 @@ category: "胃部疾病"
 publishDate: "2026-10-17"
 draft: false
 slug: "幽門桿菌實證幽門螺旋桿菌-h-pylori-第二線治療處方"
+coverImage: "【幽門桿菌】【實證】幽門螺旋桿菌 (H. pylori) 第二線治療處方.webp"
 ---
+
 # 幽門螺旋桿菌 (H. pylori) 第二線治療處方：頂尖腸胃科期刊實證精煉筆記
 
 > [!abstract] 核心實證導航 本文獻筆記嚴選 2024–2026 近三年發表於消化学界頂級期刊（_Gastroenterology_、_Gut_、_AJG_、_CGH_、_APT_、_UEG Journal_、_Helicobacter_ 等）之 20 篇代表性隨機對照試驗 (RCT)、大型跨國登記庫 (Hp-EuReg / Hp-BrazilReg) 與最新學會指引 (2024 ACG / 2026 韓國第4次修訂指引 / 2026 曼谷第二共識)。聚焦於一線治療失敗後的臨床分流決策、抑酸機制突破、抗生素耐藥因應與具體處方 SOP（文中藥物名稱全面採用國際通用英文藥名標示）。

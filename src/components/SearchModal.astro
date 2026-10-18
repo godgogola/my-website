@@ -25,7 +25,7 @@ const searchData = [
     type: 'book',
     title: b.data.title,
     category: b.data.book,
-    url: `/books/${encodeURIComponent(b.data.book)}/${b.data.slug}`,
+    url: `/books/${b.data.bookSlug || b.data.book}/${b.data.slug}`,
     desc: `《${b.data.book}》精讀筆記 · 第 ${b.data.order ?? 1} 節`,
   })),
   ...videos.map(v => ({

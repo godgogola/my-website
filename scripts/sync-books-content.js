@@ -33,9 +33,10 @@ if (!fs.existsSync(publicImagesDir)) fs.mkdirSync(publicImagesDir, { recursive: 
 
 function slugify(text) {
   return text.toString().toLowerCase().trim()
-    .replace(/[、\s]+/g, '-')
+    .replace(/[、，,%\s]+/g, '-')
     .replace(/[^\w\u4e00-\u9fff\-]+/g, '')
-    .replace(/\-\-+/g, '-');
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 // 中文數字轉阿拉伯數字排序
@@ -189,15 +190,17 @@ export function syncBooks() {
           return `[圖片: ${imageName}]`;
         });
 
+        const bookSlug = slugify(bookTitle);
+
         // 處理雙向筆記內部連結 [[...]]
         processedBody = processedBody.replace(/(?<!\!)\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, noteTarget, display) => {
           const targetSlug = slugify(noteTarget.trim());
           const displayText = display ? display.trim() : noteTarget.trim();
-          return `[${displayText}](/books/${encodeURIComponent(bookTitle)}/${targetSlug})`;
+          return `[${displayText}](/books/${bookSlug}/${targetSlug})`;
         });
 
         const coverLine = coverImage ? `\ncoverImage: "${coverImage}"` : '';
-        const finalFrontmatter = `---\ntitle: "${title}"\nbook: "${bookTitle}"\ncategory: "${bookTitle}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slug}"\norder: ${order}${coverLine}\n---\n`;
+        const finalFrontmatter = `---\ntitle: "${title}"\nbook: "${bookTitle}"\nbookSlug: "${bookSlug}"\ncategory: "${bookTitle}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slug}"\norder: ${order}${coverLine}\n---\n`;
 
         fs.writeFileSync(outputPath, finalFrontmatter + processedBody, 'utf8');
         totalSynced++;

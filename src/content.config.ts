@@ -24,6 +24,7 @@ const booksCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     book: z.string(),
+    bookSlug: z.string().optional(),
     category: z.string().default('讀書筆記'),
     publishDate: z.string().or(z.date()).transform((val) => new Date(val)),
     draft: z.boolean().default(false),
