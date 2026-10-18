@@ -839,20 +839,27 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
     .mobile-menu-btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
+      width: 100%;
       gap: 8px;
-      padding: 8px 14px;
-      border-radius: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
       background: #EEE8D5;
       border: 1px solid #D6D0BF;
       color: #268BD2;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .obs-main {
-      padding: 20px 16px 48px;
+      padding: 12px 6px 48px;
+    }
+
+    .article-detail {
+      max-width: 100%;
+      padding: 0 4px;
     }
 
     .article-title {
@@ -939,6 +946,12 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
   }
 
   @media (max-width: 420px) {
+    .obs-main {
+      padding: 10px 2px 40px;
+    }
+    .article-detail {
+      padding: 0 2px;
+    }
     .article-title {
       font-size: 1.75rem;
     }

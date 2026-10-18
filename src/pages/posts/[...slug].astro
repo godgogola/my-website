@@ -47,7 +47,11 @@ const currentSlug = post.data.slug || post.id;
 const currentCategory = post.data.category || '其他';
 ---
 
-<Layout title={post.data.title} description={`${post.data.title} - 黃冠智醫師胃腸肝膽衛教筆記。`}>
+<Layout
+  title={post.data.title}
+  description={`${post.data.title} - 黃冠智醫師胃腸肝膽衛教筆記。`}
+  fullWidth={true}
+>
   <div class="obsidian-workspace">
     <!-- 左側：Obsidian 風格側邊欄 -->
     <aside class="obs-sidebar" id="obsSidebar">
@@ -819,15 +823,22 @@ const currentCategory = post.data.category || '其他';
 
     .obs-main {
       width: 100%;
+      padding: 12px 6px 48px;
     }
 
     .mobile-menu-btn {
       display: flex;
+      width: 100%;
+      justify-content: center;
+      margin: 0 0 16px 0;
+      border-radius: 12px;
+      padding: 10px 14px;
       font-size: 0.95rem;
     }
 
     .article-detail {
-      padding: 16px 18px 48px;
+      max-width: 100%;
+      padding: 0 4px;
     }
 
     .article-title {
@@ -914,6 +925,12 @@ const currentCategory = post.data.category || '其他';
   }
 
   @media (max-width: 420px) {
+    .obs-main {
+      padding: 10px 2px 40px;
+    }
+    .article-detail {
+      padding: 0 2px;
+    }
     .article-title {
       font-size: 1.75rem;
     }
