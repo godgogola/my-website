@@ -4,6 +4,7 @@ category: "高血脂"
 publishDate: "2026-07-22"
 draft: false
 slug: "2026-accaha-高三酸甘油脂治療_台美實務差異"
+order: 10
 coverImage: "【2026 ACCAHA 】高三酸甘油脂治療_台美實務差異.webp"
 ---
 高三酸甘油脂（TG）治療，從「美國 2026 最新指南」、「台灣健保給付規範」以及「台美臨床實務差異」三方面進行整理：

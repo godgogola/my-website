@@ -4,6 +4,7 @@ category: "藥物介紹"
 publishDate: "2026-10-14"
 draft: false
 slug: "實證p-cab-vs-ppi"
+order: 23
 coverImage: "【實證】P-CAB vs PPI.webp"
 ---
 # P-CAB vs PPI 近一年頂尖腸胃科期刊臨床實證深度綜述

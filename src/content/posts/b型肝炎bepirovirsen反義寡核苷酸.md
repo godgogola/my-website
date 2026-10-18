@@ -4,6 +4,7 @@ category: "肝病特區"
 publishDate: "2026-10-07"
 draft: false
 slug: "b型肝炎bepirovirsen反義寡核苷酸"
+order: 16
 coverImage: "【B型肝炎】Bepirovirsen反義寡核苷酸.webp"
 ---
 

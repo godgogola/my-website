@@ -124,14 +124,51 @@ export function syncBooks() {
     const mdFiles = fs.readdirSync(bookDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
     console.log(`[Sync-Books] 📖 書名: 《${bookTitle}》 (共 ${mdFiles.length} 篇章節)`);
 
+    // 預先統計該書已有章節序號的最大值 (< 900)
+    let maxBookOrder = 0;
+    for (const f of mdFiles) {
+      const parsed = parseChapterOrder(path.basename(f, '.md'));
+      if (parsed < 900 && parsed > maxBookOrder) maxBookOrder = parsed;
+    }
+    if (fs.existsSync(bookDestDir)) {
+      for (const f of fs.readdirSync(bookDestDir).filter(f => f.endsWith('.md'))) {
+        try {
+          const c = fs.readFileSync(path.join(bookDestDir, f), 'utf8');
+          const m = c.match(/^order:\s*(\d+)/m);
+          if (m) {
+            const ord = parseInt(m[1], 10);
+            if (ord < 900 && ord > maxBookOrder) maxBookOrder = ord;
+          }
+        } catch (e) {}
+      }
+    }
+
     for (const file of mdFiles) {
       const filePath = path.join(bookDir, file);
       const chapterTitle = path.basename(file, '.md');
-      const order = parseChapterOrder(chapterTitle);
+      let order = parseChapterOrder(chapterTitle);
       const slug = slugify(chapterTitle);
       const outputFileName = `${slug}.md`;
       const outputPath = path.join(bookDestDir, outputFileName);
       validFiles.add(path.join(bookTitle, outputFileName).replace(/\\/g, '/'));
+
+      // 若未包含數字（或為 999 暫存值），先檢查已產生檔案是否已有排序，若無則從最後序號遞增
+      if (order >= 900) {
+        if (fs.existsSync(outputPath)) {
+          try {
+            const existC = fs.readFileSync(outputPath, 'utf8');
+            const existM = existC.match(/^order:\s*(\d+)/m);
+            if (existM) {
+              const curO = parseInt(existM[1], 10);
+              if (curO < 900) order = curO;
+            }
+          } catch (e) {}
+        }
+        if (order >= 900) {
+          order = ++maxBookOrder;
+          console.log(`[Sync-Books] 🔢 為章節自動接續序號: "${chapterTitle}" [${bookTitle}] → order: ${order}`);
+        }
+      }
 
       try {
         let content = fs.readFileSync(filePath, 'utf8');

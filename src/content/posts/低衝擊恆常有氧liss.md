@@ -4,6 +4,7 @@ category: "要活就要動"
 publishDate: "2026-09-17"
 draft: false
 slug: "低衝擊恆常有氧liss"
+order: 8
 coverImage: "低衝擊恆常有氧（LISS）.webp"
 ---
 低衝擊恆常有氧（LISS），全名為 Low-Intensity Steady-State Cardio，是運動科學與體能訓練中非常核心且安全的一種有氧運動模式。相較於讓人氣喘吁吁、心跳飆高的「高強度間歇訓練（HIIT）」，LISS 強調的是在低強度下，維持恆定且規律的節奏進行長時間的運動。

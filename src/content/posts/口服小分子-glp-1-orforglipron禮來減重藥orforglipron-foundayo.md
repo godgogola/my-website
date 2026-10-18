@@ -4,6 +4,7 @@ category: "藥物介紹"
 publishDate: "2026-10-12"
 draft: false
 slug: "口服小分子-glp-1-orforglipron禮來減重藥orforglipron-foundayo"
+order: 20
 coverImage: "【口服小分子 GLP-1 】【Orforglipron】禮來減重藥：Orforglipron (Foundayo).webp"
 ---
 

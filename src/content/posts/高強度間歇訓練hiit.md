@@ -4,6 +4,7 @@ category: "要活就要動"
 publishDate: "2026-09-17"
 draft: false
 slug: "高強度間歇訓練hiit"
+order: 7
 coverImage: "高強度間歇訓練（HIIT）.webp"
 ---
 高強度間歇訓練（High-Intensity Interval Training, HIIT）是一種將短時間的高強度運動與低強度恢復或靜止休息交替進行的訓練模式。因其具備極高的「時間效率」，能在短時間內帶來顯著的心肺耐力與代謝適應，成為現代運動科學重點推薦的訓練手段之一。

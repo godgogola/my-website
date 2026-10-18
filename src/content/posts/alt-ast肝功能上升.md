@@ -4,6 +4,7 @@ category: "健檢紅字怎麼辦"
 publishDate: "2026-08-07"
 draft: false
 slug: "alt-ast肝功能上升"
+order: 13
 coverImage: "【ALT AST】肝功能上升.webp"
 ---
 在醫學上，大家常說的「肝功能高」或「肝指數紅字」，通常是指抽血檢查中的**轉胺酶（ALT / AST，舊稱 GPT / GOT）數值上升**。

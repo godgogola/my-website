@@ -67,13 +67,16 @@ for (const targetTitle of TARGET_TITLES) {
     console.log(`   分類：${category}`);
     console.log(`   網址：${articleUrl}`);
 
+    const orderM   = content.match(/^order:\s*(\d+)/m);
+    const sort     = orderM ? parseInt(orderM[1].trim(), 10) : undefined;
+
     const result = await postToGAS({
       action:     'appendRow',
       title:      targetTitle,
       category,
       articleUrl,
       imgUrl,
-      sort:       999,
+      sort,
       type:       'article',
     });
 

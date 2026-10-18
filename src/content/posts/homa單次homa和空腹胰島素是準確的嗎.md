@@ -4,6 +4,7 @@ category: "健檢紅字怎麼辦"
 publishDate: "2026-08-10"
 draft: false
 slug: "homa單次homa和空腹胰島素是準確的嗎"
+order: 18
 coverImage: "【HOMA】單次HOMA和空腹胰島素是準確的嗎.webp"
 ---
 **「空腹胰島素（Fasting Insulin）」與「HOMA 指數」在臨床上是非常實用且被廣泛驗證的評估工具****，但它們的數值確實存在容易波動的特性，單次檢測容易受到生理與外在因素的干擾****。**

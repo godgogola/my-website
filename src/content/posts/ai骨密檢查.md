@@ -4,6 +4,7 @@ category: "健檢項目介紹"
 publishDate: "2026-06-02"
 draft: false
 slug: "ai骨密檢查"
+order: 11
 coverImage: "AI骨密檢查.webp"
 ---
 # AI 骨密篩檢：二張 X 光，預見您的骨骼健康

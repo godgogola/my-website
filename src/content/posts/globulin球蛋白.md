@@ -4,6 +4,7 @@ category: "健檢紅字怎麼辦"
 publishDate: "2026-08-07"
 draft: false
 slug: "globulin球蛋白"
+order: 15
 coverImage: "【Globulin】球蛋白.webp"
 ---
 在常規血液檢查中，**球蛋白（Globulin）****涵蓋血液中數百種不同蛋白質的統稱類別**——在檢驗定義上，它們的共同點僅僅是「它們都不是白蛋白」。

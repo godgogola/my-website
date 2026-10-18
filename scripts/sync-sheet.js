@@ -49,6 +49,7 @@ for (const mdFile of mdFiles) {
   const coverMatch    = fm.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
   const categoryMatch = fm.match(/^category:\s*["']?(.+?)["']?\s*$/m);
   const draftMatch    = fm.match(/^draft:\s*(.+?)$/m);
+  const orderMatch    = fm.match(/^order:\s*(\d+)/m);
 
   if (!titleMatch) { skipCount++; continue; }
   if (draftMatch && draftMatch[1].trim() === 'true') { skipCount++; continue; }
@@ -65,6 +66,7 @@ for (const mdFile of mdFiles) {
   const title    = titleMatch[1].trim();
   const slug     = slugMatch ? slugMatch[1].trim() : path.basename(mdFile, '.md');
   const cover    = coverMatch ? coverMatch[1].trim() : '';
+  const sort     = orderMatch ? parseInt(orderMatch[1].trim(), 10) : undefined;
 
   const articleUrl = `${SITE_URL}/posts/${slug}`;
 
@@ -83,7 +85,7 @@ for (const mdFile of mdFiles) {
     }
   }
 
-  articlesToSync.push({ title, category, articleUrl, imgUrl });
+  articlesToSync.push({ title, category, articleUrl, imgUrl, sort });
 
   // 標題別名備援（確保相容 Google Sheet 中可能有的空格差異）
   const variants = new Set();
@@ -104,7 +106,7 @@ for (const mdFile of mdFiles) {
 
   for (const v of variants) {
     if (v && v !== title) {
-      articlesToSync.push({ title: v, category, articleUrl, imgUrl });
+      articlesToSync.push({ title: v, category, articleUrl, imgUrl, sort });
     }
   }
 }

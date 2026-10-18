@@ -4,6 +4,7 @@ category: "健檢紅字怎麼辦"
 publishDate: "2026-08-07"
 draft: false
 slug: "albumin白蛋白的合成與低下原因"
+order: 14
 coverImage: "【Albumin】白蛋白的合成與低下原因.webp"
 ---
 **白蛋白（Albumin）完全是由肝臟（特別是肝實質細胞）所製造的**，肝臟是人體合成白蛋白的唯一器官。

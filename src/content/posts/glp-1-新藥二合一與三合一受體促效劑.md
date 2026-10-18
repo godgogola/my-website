@@ -4,6 +4,7 @@ category: "藥物介紹"
 publishDate: "2026-10-07"
 draft: false
 slug: "glp-1-新藥二合一與三合一受體促效劑"
+order: 21
 coverImage: "【GLP-1】 新藥、二合一與三合一受體促效劑.webp"
 ---
 

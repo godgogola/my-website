@@ -31,7 +31,7 @@ export const videoCategories = [
   '健康飲食',
   '要活就要動',
   '健檢項目介紹',
-  '你的人生，他們六個說了!',
+  '你的人生，他們六個說了算!',
 ] as const;
 
 export const videos: VideoItem[] = [
@@ -40,12 +40,12 @@ export const videos: VideoItem[] = [
     id: 'Cnrj35A6l0w',
     title: '大腦的天使特調四大生活基底',
     description: '大腦是一座高度精密的神經化工廠！若忽視了底層的物理支持協議，一切情緒調節都將大打折扣。掌握打造強大生化花園的四大物理基底：睡眠修復、酪胺酸與色胺酸營養前驅物、Zone 2 與重訓激發腦內啡，以及生理性嘆息刺激迷走神經，維持內在安定。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Cnrj35A6l0w',
     featured: true,
     order: 1,
-    articleSlug: '/books/你的人生-他們六個說了/08-大腦的天使特調四大生活基底',
+    articleSlug: '/books/你的人生-他們六個說了算/08-大腦的天使特調四大生活基底',
     articleTitle: '08、大腦的天使特調四大生活基底',
   },
   // --- 2026 最新發布影音 (2026/10/16) ---

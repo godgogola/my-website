@@ -171,9 +171,26 @@ function doPost(e) {
           return jsonResponse({ success: true, action: '已存在略過', title: data.title });
         }
       }
+
+      // 自動從該分類/書名目前最大序號接續往下遞增（防止產生 999 暫存值）
+      var assignedSort = Number(data.sort);
+      if (!assignedSort || isNaN(assignedSort) || assignedSort >= 900) {
+        var groupKey = String(data.category || data.bookTitle || '').trim();
+        var maxS = 0;
+        for (var r = 1; r < sheetRows.length; r++) {
+          if (String(sheetRows[r][0]).trim() === groupKey) {
+            var sVal = Number(sheetRows[r][1]);
+            if (!isNaN(sVal) && sVal < 900 && sVal > maxS) {
+              maxS = sVal;
+            }
+          }
+        }
+        assignedSort = maxS + 1;
+      }
+
       sheet.appendRow([
         data.category || data.bookTitle || '', // A欄：分類或書名
-        data.sort || 999,                      // B欄：排序
+        assignedSort,                          // B欄：排序（自動接續遞增）
         data.title || '',                      // C欄：標題或章節名
         data.type || '圖片卡片',                // D欄：類型
         data.imgUrl || '',                     // E欄：圖片網址
@@ -181,7 +198,7 @@ function doPost(e) {
         data.visible !== undefined ? (data.visible ? 'TRUE' : 'FALSE') : 'TRUE' // G欄：是否公開
       ]);
       clearAllCache();
-      return jsonResponse({ success: true, action: '新增成功', title: data.title, sheet: targetSheetName });
+      return jsonResponse({ success: true, action: '新增成功', title: data.title, sort: assignedSort, sheet: targetSheetName });
     }
 
     // ── 4. updateArticleUrl：更新圖片/文章網址 ──
@@ -226,6 +243,23 @@ function doPost(e) {
         return jsonResponse({ success: true, action: '已有資料略過', title: data.title });
       }
       return jsonResponse({ success: true, action: '未匹配略過', title: data.title });
+    }
+
+    // ── 5. updateSort：單獨更新指定標題的排序序號 ──
+    if (data.action === 'updateSort') {
+      var targetTitle = String(data.title || '').trim();
+      var targetSort = Number(data.sort);
+      if (isNaN(targetSort)) {
+        return jsonResponse({ success: false, error: '無效的排序數值' });
+      }
+      for (var sIdx = 1; sIdx < sheetRows.length; sIdx++) {
+        if (String(sheetRows[sIdx][2]).trim() === targetTitle) {
+          sheet.getRange(sIdx + 1, 2).setValue(targetSort);
+          clearAllCache();
+          return jsonResponse({ success: true, action: '排序更新成功', title: targetTitle, sort: targetSort, sheet: targetSheetName });
+        }
+      }
+      return jsonResponse({ success: false, error: '找不到該標題', title: targetTitle });
     }
 
     return jsonResponse({ success: false, error: '不支援的 action' });

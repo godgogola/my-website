@@ -4,6 +4,7 @@ category: "健檢紅字怎麼辦"
 publishDate: "2026-07-24"
 draft: false
 slug: "糞便潛血傳統gfobt與免疫法-ifobt-_fit-的比較"
+order: 10
 coverImage: "【糞便潛血】傳統（gFOBT）與免疫法（ iFOBT _FIT ）的比較.webp"
 ---
 **傳統糞便潛血檢查（gFOBT）與免疫法（FIT）的差別**

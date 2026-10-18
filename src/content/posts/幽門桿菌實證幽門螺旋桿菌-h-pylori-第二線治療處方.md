@@ -4,6 +4,7 @@ category: "胃部疾病"
 publishDate: "2026-10-17"
 draft: false
 slug: "幽門桿菌實證幽門螺旋桿菌-h-pylori-第二線治療處方"
+order: 20
 coverImage: "【幽門桿菌】【實證】幽門螺旋桿菌 (H. pylori) 第二線治療處方.webp"
 ---
 

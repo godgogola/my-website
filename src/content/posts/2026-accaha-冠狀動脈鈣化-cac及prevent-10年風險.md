@@ -4,6 +4,7 @@ category: "高血脂"
 publishDate: "2026-07-16"
 draft: false
 slug: "2026-accaha-冠狀動脈鈣化-cac及prevent-10年風險"
+order: 8
 coverImage: "【2026 ACCAHA 】冠狀動脈鈣化 (CAC)及PREVENT 10年風險.webp"
 ---
 # 冠狀動脈鈣化 (CAC) 評分

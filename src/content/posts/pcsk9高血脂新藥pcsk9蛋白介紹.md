@@ -4,6 +4,7 @@ category: "高血脂"
 publishDate: "2026-10-07"
 draft: false
 slug: "pcsk9高血脂新藥pcsk9蛋白介紹"
+order: 14
 coverImage: "【PCSK9】高血脂新藥PCSK9蛋白介紹.webp"
 ---
 

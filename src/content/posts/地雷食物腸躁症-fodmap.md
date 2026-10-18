@@ -4,6 +4,7 @@ category: "健康飲食"
 publishDate: "2026-06-02"
 draft: false
 slug: "地雷食物腸躁症-fodmap"
+order: 5
 coverImage: "【地雷食物】腸躁症 FODMAP.webp"
 ---
 # 低 FODMAP 飲食指南：改善腸躁症與脹氣的第一步

@@ -4,6 +4,7 @@ category: "高血脂"
 publishDate: "2026-10-07"
 draft: false
 slug: "pcsk9-高血脂新藥pcsk9抑制劑藥物"
+order: 17
 coverImage: "【PCSK9】 高血脂新藥PCSK9抑制劑藥物.webp"
 ---
 

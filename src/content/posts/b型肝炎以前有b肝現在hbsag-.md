@@ -4,6 +4,7 @@ category: "肝病特區"
 publishDate: "2026-09-19"
 draft: false
 slug: "b型肝炎以前有b肝現在hbsag-"
+order: 14
 coverImage: "【B型肝炎】以前有B肝，現在HBsAg (-).webp"
 ---
 

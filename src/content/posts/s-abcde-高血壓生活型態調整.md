@@ -4,6 +4,7 @@ category: "高血壓"
 publishDate: "2026-08-06"
 draft: false
 slug: "s-abcde-高血壓生活型態調整"
+order: 6
 coverImage: "S-ABCDE 高血壓生活型態調整.webp"
 ---
 **S-ABCDE 降壓口訣**是由台灣心臟學會與台灣高血壓學會（TSOC/THS）在高血壓治療指引中，為民眾與高血壓患者提出的一套**「生活型態調整」**的記憶口訣。透過落實這六大面向，不僅能有效降低血壓，甚至其降壓效果可媲美服用第一線降壓藥物。

@@ -4,6 +4,7 @@ category: "健康飲食"
 publishDate: "2026-10-01"
 draft: false
 slug: "gi-值大解密"
+order: 22
 coverImage: "GI 值大解密.webp"
 ---
 

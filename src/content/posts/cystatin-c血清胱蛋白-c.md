@@ -4,6 +4,7 @@ category: "健檢項目介紹"
 publishDate: "2026-08-07"
 draft: false
 slug: "cystatin-c血清胱蛋白-c"
+order: 10
 coverImage: "【Cystatin C】血清胱蛋白 C.webp"
 ---
 檢測**血清胱蛋白 C（Cystatin C）**在臨床上是透過抽血來評估，特別適用於需要精確掌握腎功能，或是傳統肌酐酸數值容易失真的患者（如高齡衰弱、肌少症者）。

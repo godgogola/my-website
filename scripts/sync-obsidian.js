@@ -130,6 +130,27 @@ function sync() {
   const mdFiles = getFilesRecursively(obsidianVaultPath, [], obsidianVaultPath);
   console.log(`[Sync] 找到 ${mdFiles.length} 篇 Obsidian 文章。`);
 
+  // 預先掃描現有文章，統計各分類目前的最大排序序號 (< 900)
+  const categoryMaxOrder = new Map();
+  if (fs.existsSync(destDir)) {
+    const existingFiles = fs.readdirSync(destDir).filter(f => f.endsWith('.md'));
+    for (const f of existingFiles) {
+      try {
+        const c = fs.readFileSync(path.join(destDir, f), 'utf8');
+        const catM = c.match(/^category:\s*["']?(.+?)["']?\s*$/m);
+        const orderM = c.match(/^order:\s*(\d+)/m);
+        if (catM && orderM) {
+          const cat = catM[1].trim();
+          const ord = parseInt(orderM[1], 10);
+          if (!isNaN(ord) && ord < 900) {
+            const current = categoryMaxOrder.get(cat) || 0;
+            if (ord > current) categoryMaxOrder.set(cat, ord);
+          }
+        }
+      } catch (e) {}
+    }
+  }
+
   let syncedCount = 0;
   const validOutputFiles = new Set();
 
@@ -238,8 +259,19 @@ function sync() {
         }
       }
 
+      // 🔢 若無排序序號（或為 999 暫存值），自動從該分類目前最大序號接續往下指派
+      if (order !== null && !isNaN(order) && order < 900) {
+        const curMax = categoryMaxOrder.get(category) || 0;
+        if (order > curMax) categoryMaxOrder.set(category, order);
+      } else {
+        const curMax = categoryMaxOrder.get(category) || 0;
+        order = curMax + 1;
+        categoryMaxOrder.set(category, order);
+        console.log(`[Sync] 🔢 為文章自動接續序號: "${title}" [${category}] → order: ${order}`);
+      }
+
       const coverLine = coverImage ? `\ncoverImage: "${coverImage}"` : '';
-      const orderLine = (order !== null && !isNaN(order)) ? `\norder: ${order}` : '';
+      const orderLine = `\norder: ${order}`;
       const finalFrontmatter = `---\ntitle: "${title}"\ncategory: "${category}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slugify(fileName)}"${orderLine}${coverLine}\n---\n`;
 
       // 1. 先處理圖片嵌入 ![[...]]

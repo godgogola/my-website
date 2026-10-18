@@ -32,6 +32,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbwrDmeXp0g6DaKrbY6xbRkn
 const SITE_URL = 'https://drhuanggi.vercel.app';
 const PUBLIC_IMAGES_DIR = path.join(__dirname, '../public/images');
 const GDRIVE_IMAGES_DIR = 'G:/我的雲端硬碟/衛教文章圖片';
+const CONTENT_BOOKS_DIR = path.join(__dirname, '../src/content/books');
 
 // 中文數字轉阿拉伯數字排序
 const CN_NUMS = {
@@ -127,10 +128,47 @@ async function main() {
 
     console.log(`📖 書名: 《${bookTitle}》 (共 ${mdFiles.length} 個章節檔案)`);
 
-    // 依章節序號排序
+    // 預先統計該書已有章節序號的最大值 (< 900)
+    const bookContentDir = path.join(CONTENT_BOOKS_DIR, bookTitle);
+    let maxSort = 0;
+    for (const file of mdFiles) {
+      const s = parseChapterOrder(path.basename(file, '.md'));
+      if (s < 900 && s > maxSort) maxSort = s;
+    }
+    if (fs.existsSync(bookContentDir)) {
+      for (const f of fs.readdirSync(bookContentDir).filter(f => f.endsWith('.md'))) {
+        try {
+          const c = fs.readFileSync(path.join(bookContentDir, f), 'utf8');
+          const m = c.match(/^order:\s*(\d+)/m);
+          if (m) {
+            const ord = parseInt(m[1], 10);
+            if (ord < 900 && ord > maxSort) maxSort = ord;
+          }
+        } catch (e) {}
+      }
+    }
+
+    // 依章節序號排序（未編號篇章自動從最後序號接續往下遞增）
     const chapters = mdFiles.map(file => {
       const chapterTitle = path.basename(file, '.md');
-      const sort = parseChapterOrder(chapterTitle);
+      let sort = parseChapterOrder(chapterTitle);
+      if (sort >= 900) {
+        if (fs.existsSync(bookContentDir)) {
+          const slugBase = chapterTitle.replace(/[、\s]+/g, '-');
+          const matchedFile = fs.readdirSync(bookContentDir).find(f => f.includes(slugBase));
+          if (matchedFile) {
+            try {
+              const c = fs.readFileSync(path.join(bookContentDir, matchedFile), 'utf8');
+              const m = c.match(/^order:\s*(\d+)/m);
+              if (m && parseInt(m[1], 10) < 900) sort = parseInt(m[1], 10);
+            } catch (e) {}
+          }
+        }
+        if (sort >= 900) {
+          sort = ++maxSort;
+          console.log(`  🔢 為章節自動接續序號: "${chapterTitle}" [${bookTitle}] → sort: ${sort}`);
+        }
+      }
       const imgUrl = findCoverImage(chapterTitle, bookTitle);
       const slug = chapterTitle.replace(/[、\s]+/g, '-');
       const articleUrl = `${SITE_URL}/books/${encodeURIComponent(bookTitle)}/${encodeURIComponent(slug)}`;
@@ -164,23 +202,23 @@ async function main() {
         }
         addedCount++;
       } else {
-        // 已存在於 Sheet：只有在「有圖片」時才更新 E 欄與 F 欄
-        if (hasImage) {
-          const updatePayload = {
-            action: 'updateArticleUrl',
-            sheet: '讀書筆記',
-            title: chapter.chapterTitle,
-            imgUrl: chapter.imgUrl,
-            articleUrl: chapter.articleUrl
-          };
-          const updateRes = await postToGAS(updatePayload);
-          if (updateRes.success) {
-            console.log(`  🔗 [一鍵同步完成] ${chapter.chapterTitle} (已填入 E/F 欄圖片與網址)`);
+        // 已存在於 Sheet：同步更新排序、圖片與網址
+        const updatePayload = {
+          action: 'updateArticleUrl',
+          sheet: '讀書筆記',
+          title: chapter.chapterTitle,
+          sort: chapter.sort,
+          imgUrl: chapter.imgUrl,
+          articleUrl: chapter.articleUrl
+        };
+        const updateRes = await postToGAS(updatePayload);
+        if (updateRes.success) {
+          if (hasImage) {
+            console.log(`  🔗 [一鍵同步完成] ${chapter.chapterTitle} (排序: ${chapter.sort}, 已填入 E/F 欄圖片與網址)`);
             updatedCount++;
+          } else {
+            console.log(`  ⏳ [已更新排序] ${chapter.chapterTitle} (排序: ${chapter.sort}, 待生圖)`);
           }
-        } else {
-          console.log(`  ⏳ [等待生圖] ${chapter.chapterTitle} (E/F 欄維持空白)`);
-          waitingImageCount++;
         }
       }
 

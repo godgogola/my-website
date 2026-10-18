@@ -4,6 +4,7 @@ category: "健檢紅字怎麼辦"
 publishDate: "2026-08-07"
 draft: false
 slug: "ag-ratio"
+order: 16
 coverImage: "【AG ratio】.webp"
 ---
 **白蛋白（Albumin, A）****球蛋白（Globulin, G）****大於 1**。一般的正常參考範圍大約落在 **1.2 至 2.2** 之間（部分檢驗所標準為 1.5 至 2.5）。

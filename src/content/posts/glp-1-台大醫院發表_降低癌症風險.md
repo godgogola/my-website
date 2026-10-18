@@ -4,6 +4,7 @@ category: "藥物介紹"
 publishDate: "2026-10-12"
 draft: false
 slug: "glp-1-台大醫院發表_降低癌症風險"
+order: 22
 coverImage: "【GLP-1 】台大醫院發表_降低癌症風險.webp"
 ---
 
