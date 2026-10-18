@@ -581,10 +581,12 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
 
   /* ── Markdown 內文樣式 (Antigravity 經典溫潤閱讀排版) ── */
   .article-content {
-    color: #475B62;
-    font-size: 1.06rem;
-    line-height: 1.85;
+    color: #073642;
+    font-size: 1.12rem;
+    line-height: 1.8;
     margin-bottom: 48px;
+    letter-spacing: 0.01em;
+    word-break: break-word;
   }
 
   .article-content :global(h1),
@@ -598,19 +600,20 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
   }
 
   .article-content :global(h2) {
-    font-size: 1.5rem;
+    font-size: 1.55rem;
     border-bottom: 2px solid #D6D0BF;
     padding-bottom: 8px;
   }
 
   .article-content :global(h3) {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     color: #268BD2;
   }
 
   .article-content :global(p) {
-    margin-bottom: 20px;
-    text-align: justify;
+    margin-bottom: 22px;
+    text-align: left;
+    line-height: inherit;
   }
 
   .article-content :global(ul),
@@ -621,11 +624,12 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
 
   .article-content :global(li) {
     margin-bottom: 8px;
+    line-height: inherit;
   }
 
   .article-content :global(strong) {
     color: #073642;
-    font-weight: 750;
+    font-weight: 800;
   }
 
   .article-content :global(blockquote) {
@@ -634,7 +638,7 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
     background: #EEE8D5;
     border-left: 4px solid #268BD2;
     border-radius: 0 12px 12px 0;
-    color: #586E75;
+    color: #073642;
     font-style: normal;
   }
 
@@ -848,11 +852,80 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
     }
 
     .obs-main {
-      padding: 24px 16px;
+      padding: 20px 16px 48px;
     }
 
     .article-title {
+      font-size: 1.85rem;
+      line-height: 1.32;
+    }
+
+    /* ── 手機版 FB 舒適大字標準 (對標 FB 閱讀體驗：字級放大、清晰高對比、行距緊湊舒適) ── */
+    .article-content {
+      color: #073642;
+      font-size: 1.22rem;
+      line-height: 1.68;
+      letter-spacing: 0.01em;
+      margin-bottom: 40px;
+    }
+
+    .article-content :global(p) {
+      margin-bottom: 24px;
+      text-align: left;
+      line-height: 1.68;
+    }
+
+    .article-content :global(h1) {
       font-size: 1.65rem;
+      margin-top: 36px;
+      margin-bottom: 16px;
+      line-height: 1.35;
+    }
+
+    .article-content :global(h2) {
+      font-size: 1.48rem;
+      margin-top: 34px;
+      margin-bottom: 14px;
+      line-height: 1.35;
+      padding-bottom: 6px;
+    }
+
+    .article-content :global(h3) {
+      font-size: 1.3rem;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      color: #268BD2;
+    }
+
+    .article-content :global(h4) {
+      font-size: 1.22rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .article-content :global(ul),
+    .article-content :global(ol) {
+      padding-left: 24px;
+      margin-bottom: 24px;
+    }
+
+    .article-content :global(li) {
+      font-size: 1.22rem;
+      line-height: 1.68;
+      margin-bottom: 10px;
+    }
+
+    .article-content :global(blockquote) {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      padding: 16px 18px;
+      margin: 22px 0;
+      color: #073642;
+    }
+
+    .article-content :global(code) {
+      font-size: 1.05rem;
     }
 
     .chapter-nav {
@@ -862,6 +935,30 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
     .doctor-mini-bio {
       flex-direction: column;
       text-align: center;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .article-title {
+      font-size: 1.75rem;
+    }
+    .article-content {
+      font-size: 1.18rem;
+      line-height: 1.65;
+    }
+    .article-content :global(p) {
+      margin-bottom: 22px;
+      line-height: 1.65;
+    }
+    .article-content :global(li) {
+      font-size: 1.18rem;
+      line-height: 1.65;
+    }
+    .article-content :global(h2) {
+      font-size: 1.4rem;
+    }
+    .article-content :global(h3) {
+      font-size: 1.24rem;
     }
   }
 </style>
