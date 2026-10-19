@@ -5,7 +5,7 @@ publishDate: "2026-07-06"
 draft: false
 slug: "b型肝炎口服抗病毒藥物"
 order: 2
-coverImage: "【B型肝炎】口服抗病毒藥物.webp"
+coverImage: "B型肝炎.webp"
 ---
 口服核苷/核苷酸類似物（NAs）是目前國際治療指引推薦的B型肝炎一線首選藥物，主要包含Entecavir（ETV）、Tenofovir disoproxil fumarate（TDF）與Tenofovir alafenamide（TAF）。
 

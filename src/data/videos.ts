@@ -31,10 +31,24 @@ export const videoCategories = [
   '健康飲食',
   '要活就要動',
   '健檢項目介紹',
+  '消化道癌症專區',
   '你的人生，他們六個說了算!',
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/19) ---
+  {
+    id: 'rIjNaG6bC-4',
+    title: '十大癌症中屬於消化系癌症的個別分析',
+    description: '在最新 112 年國人癌症登記報告中，腸胃消化系統（GI／肝膽胰）癌症占比極高！大腸癌更蟬聯男性榜首長達 14 年。掌握 2 年 1 次公費糞便潛血篩檢（FIT），早期抓出存活率破 9 成；結合 B/C 肝定期篩檢追蹤與幽門螺旋桿菌除菌，全面守住腸胃肝膽健康。',
+    category: '消化道癌症專區',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=rIjNaG6bC-4',
+    featured: true,
+    order: 1,
+    articleSlug: '十大癌症中屬於消化系癌症的個別分析',
+    articleTitle: '十大癌症中屬於消化系癌症的個別分析',
+  },
   // --- 2026 最新發布影音 (2026/10/18) ---
   {
     id: 'Cnrj35A6l0w',
