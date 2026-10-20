@@ -193,18 +193,25 @@ const defaultCategory = sortedCategories[0] || '';
       if (!springIndicator || !filterTrack) return;
       const trackRect = filterTrack.getBoundingClientRect();
       const btnRect = targetBtn.getBoundingClientRect();
-      const targetLeft = btnRect.left - trackRect.left + filterTrack.scrollLeft;
+      const targetLeft = btnRect.left - trackRect.left;
+      const targetTop = btnRect.top - trackRect.top;
       const targetWidth = btnRect.width;
+      const targetHeight = btnRect.height;
 
       if (immediate) {
         springIndicator.style.transition = 'none';
-        springIndicator.style.transform = `translateX(${targetLeft}px)`;
+        springIndicator.style.transform = `translate3d(${targetLeft}px, ${targetTop}px, 0)`;
         springIndicator.style.width = `${targetWidth}px`;
+        springIndicator.style.height = `${targetHeight}px`;
+        springIndicator.style.opacity = '1';
         springIndicator.offsetHeight;
         springIndicator.style.transition = '';
       } else {
-        springIndicator.style.transform = `translateX(${targetLeft}px)`;
+        springIndicator.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        springIndicator.style.transform = `translate3d(${targetLeft}px, ${targetTop}px, 0)`;
         springIndicator.style.width = `${targetWidth}px`;
+        springIndicator.style.height = `${targetHeight}px`;
+        springIndicator.style.opacity = '1';
       }
     };
 
@@ -212,6 +219,16 @@ const defaultCategory = sortedCategories[0] || '';
     if (activeBtn) {
       setTimeout(() => moveSpringIndicator(activeBtn, true), 50);
     }
+
+    window.addEventListener('resize', () => {
+      const currentActive = document.querySelector<HTMLButtonElement>('.filter-tab-btn.active');
+      if (currentActive) moveSpringIndicator(currentActive, true);
+    });
+
+    window.addEventListener('load', () => {
+      const currentActive = document.querySelector<HTMLButtonElement>('.filter-tab-btn.active');
+      if (currentActive) moveSpringIndicator(currentActive, true);
+    });
 
     const sortCards = (visibleItems: HTMLElement[], category: string) => {
       visibleItems.sort((a, b) => {
@@ -264,15 +281,6 @@ const defaultCategory = sortedCategories[0] || '';
 
         currentCategory = btn.dataset.filter || (tabBtns[0]?.dataset.filter || '');
         filterArticles();
-
-        const track = filterTrack;
-        if (track) {
-          const btnRect = btn.getBoundingClientRect();
-          const trackRect = track.getBoundingClientRect();
-          if (btnRect.left < trackRect.left || btnRect.right > trackRect.right) {
-            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          }
-        }
       });
     });
 
@@ -545,33 +553,38 @@ const defaultCategory = sortedCategories[0] || '';
   /* ── AnimatedTabs 彈簧滑塊分類 ── */
   .filter-bar-wrapper {
     position: relative;
-    margin-bottom: 32px;
-    overflow-x: auto;
-    padding-bottom: 6px;
-    scrollbar-width: thin;
+    max-width: 1200px;
+    margin: 0 auto 32px;
+    overflow: visible;
   }
 
   .filter-bar-track {
     position: relative;
-    display: inline-flex;
-    gap: 6px;
-    padding: 6px;
-    border-radius: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 18px;
     background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    overflow: visible;
   }
 
   .filter-spring-indicator {
     position: absolute;
-    top: 6px;
+    top: 0;
     left: 0;
-    height: calc(100% - 12px);
     border-radius: 12px;
     background: linear-gradient(135deg, #0284c7, #2563eb);
     box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
     pointer-events: none;
     z-index: 1;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .filter-tab-btn {
@@ -585,7 +598,7 @@ const defaultCategory = sortedCategories[0] || '';
     border: none;
     background: transparent;
     color: #94a3b8;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
