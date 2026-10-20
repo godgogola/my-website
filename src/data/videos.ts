@@ -38,12 +38,12 @@ export const videoCategories = [
 export const videos: VideoItem[] = [
   // --- 2026 最新發布影音 (2026/10/20) ---
   {
-    id: '112年臺灣癌症登記報告',
+    id: 'Dh9Jw6_vjeE',
     title: '112年臺灣癌症登記報告',
     description: '衛生福利部最新公布「112年國人癌症登記報告」！肺癌連續 3 年位居榜首，男性大腸癌蟬聯 14 年第一，女性乳癌連霸 21 年。男性食道癌與口腔癌發生率高出女性 10 倍以上，菸酒檳榔為致命主因。癌症發生高度集中於 50 歲以上族群（占 84%），年齡中位數 65 歲。落實定期公費篩檢，早期發現早期治療！',
     category: '消化道癌症專區',
-    duration: '1:00',
-    url: 'https://drhuanggi.vercel.app/posts/112年臺灣癌症登記報告',
+    duration: '1:01',
+    url: 'https://www.youtube.com/watch?v=Dh9Jw6_vjeE',
     featured: true,
     order: 1,
     thumbnail: '/images/112年臺灣癌症登記報告.webp',
