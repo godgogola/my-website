@@ -233,13 +233,13 @@ const currentCategory = post.data.category || '其他';
   .obsidian-workspace {
     display: flex;
     gap: 0;
-    height: calc(100vh - 180px);
-    min-height: 650px;
+    min-height: calc(100vh - 120px);
     border-radius: 18px;
-    overflow: hidden;
     box-shadow: 0 4px 20px rgba(7, 54, 66, 0.05), 0 1px 3px rgba(7, 54, 66, 0.03);
     border: 1px solid #D6D0BF;
     background: #FDF6E3;
+    margin: 16px 16px 48px;
+    position: relative;
   }
 
   /* ── 左側 Obsidian 側邊欄 (溫潤沙米色 #EEE8D5) ── */
@@ -253,7 +253,13 @@ const currentCategory = post.data.category || '其他';
     flex-direction: column;
     overflow: hidden;
     flex-shrink: 0;
-    position: relative;
+    position: sticky;
+    top: 85px;
+    height: calc(100vh - 105px);
+    align-self: flex-start;
+    border-top-left-radius: 17px;
+    border-bottom-left-radius: 17px;
+    z-index: 20;
   }
 
   .sidebar-header {
@@ -475,9 +481,10 @@ const currentCategory = post.data.category || '其他';
   /* ── 右側正文區 (Antigravity 經典米色畫布 #FDF6E3) ── */
   .obs-main {
     flex: 1;
-    overflow-y: auto;
     background-color: #FDF6E3;
     min-width: 0;
+    border-top-right-radius: 17px;
+    border-bottom-right-radius: 17px;
   }
 
   .mobile-menu-btn {
@@ -797,6 +804,7 @@ const currentCategory = post.data.category || '其他';
       min-height: auto;
       flex-direction: column;
       border-radius: 20px;
+      margin: 8px 6px 36px;
     }
 
     .obs-sidebar {

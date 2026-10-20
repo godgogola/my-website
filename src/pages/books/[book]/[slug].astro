@@ -259,10 +259,9 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
     background: #FDF6E3;
     border-radius: 18px;
     border: 1px solid #D6D0BF;
-    overflow: hidden;
     position: relative;
     box-shadow: 0 4px 20px rgba(7, 54, 66, 0.05), 0 1px 3px rgba(7, 54, 66, 0.03);
-    margin: 16px 0 40px;
+    margin: 16px 16px 48px;
   }
 
   /* ── 左側 Obsidian 側邊欄 (溫潤沙米色 #EEE8D5) ── */
@@ -274,7 +273,12 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: relative;
+    position: sticky;
+    top: 85px;
+    height: calc(100vh - 105px);
+    align-self: flex-start;
+    border-top-left-radius: 17px;
+    border-bottom-left-radius: 17px;
     z-index: 20;
   }
 
@@ -493,7 +497,8 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
     min-width: 0;
     padding: 36px 48px;
     background: #FDF6E3;
-    overflow-y: auto;
+    border-top-right-radius: 17px;
+    border-bottom-right-radius: 17px;
   }
 
   .mobile-menu-btn {
