@@ -36,6 +36,20 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/23) ---
+  {
+    id: 'PENDING_ID',
+    title: '高血壓藥物在一般族群及共病族群的選擇',
+    description: '高血壓降壓藥別再一顆一顆慢慢加！最新指引強調「早期單錠複方 (SPC)」與「依共病量身訂做」。無共病首選 A+C 或 A+D；心衰竭與心梗必備乙型阻斷劑；腎病蛋白尿首選 ACEI/ARB 但嚴禁兩者混搭；高齡長輩採單藥慢調預防低血壓跌倒！',
+    category: '高血壓',
+    duration: '1:01',
+    url: 'https://drhuanggi.vercel.app/posts/高血壓藥物在一般族群及共病族群的選擇',
+    featured: true,
+    order: 1,
+    thumbnail: '/images/高血壓藥物在一般族群及共病族群的選擇.webp',
+    articleSlug: '高血壓藥物在一般族群及共病族群的選擇',
+    articleTitle: '高血壓藥物在一般族群及共病族群的選擇',
+  },
   // --- 2026 最新發布影音 (2026/10/20) ---
   {
     id: 'Dh9Jw6_vjeE',

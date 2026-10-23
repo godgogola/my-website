@@ -1,0 +1,2463 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+// ── 1. 取得所有已發布文章與書籍章節 (100% 原始標題與連結) ──
+const allPosts = await getCollection('posts');
+const validPosts = allPosts.filter(p => !p.data.draft);
+
+const allBooks = await getCollection('books');
+const validBooks = allBooks.filter(b => !b.data.draft);
+
+// 輔助函式：提取文章資訊（保留 100% 原始標題）
+function extractPosts(categories: string[]) {
+  return validPosts
+    .filter(p => categories.includes(p.data.category || ''))
+    .sort((a, b) => {
+      const orderA = a.data.order ?? 9999;
+      const orderB = b.data.order ?? 9999;
+      if (orderA !== orderB) return orderA - orderB;
+      return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+    })
+    .map(p => ({
+      title: p.data.title, // 100% 原始文章標題
+      category: p.data.category || '衛教專文',
+      slug: p.data.slug || p.id,
+      url: `/posts/${p.data.slug || p.id}`
+    }));
+}
+
+// 輔助函式：提取書籍章節（保留 100% 原始章節標題）
+function extractBookChapters(bookNames: string[]) {
+  return validBooks
+    .filter(b => bookNames.includes(b.data.book))
+    .sort((a, b) => {
+      if (a.data.book !== b.data.book) {
+        return a.data.book.localeCompare(b.data.book, 'zh-Hant');
+      }
+      return (a.data.order ?? 999) - (b.data.order ?? 999);
+    })
+    .map(b => ({
+      title: b.data.title, // 100% 原始章節標題
+      category: `《${b.data.book}》`,
+      slug: b.data.slug,
+      bookSlug: b.data.bookSlug || b.data.book,
+      url: `/books/${b.data.bookSlug || b.data.book}/${b.data.slug}`
+    }));
+}
+
+// ── 2. 為 12 座群島打包完整文章與章節庫 ──
+const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
+  // 【人體健康微縮群島】
+  'cardio': extractPosts(['高血壓', '高血脂', '慢性病']),
+  'stomach': extractPosts(['胃部疾病']),
+  'liver': extractPosts(['肝膽胰疾病', '肝病特區']),
+  'endoscopy': extractPosts(['內視鏡檢查']),
+  'colon': extractPosts(['腸道疾病']),
+  'metabolism': extractPosts(['減重', '糖尿病', '健康飲食']),
+
+  // 【知識宇宙探索群島】
+  'wealth-ladder': extractBookChapters(['財富階梯']),
+  'six-neuro': extractBookChapters(['你的人生，他們六個說了算!']),
+  'glucose-goddess': extractBookChapters(['90%的病，控糖就會好']),
+  'die-with-zero': extractBookChapters(['別把你的錢留到死']),
+  'random-walk': extractBookChapters(['漫步華爾街']),
+  'four-pillars': extractBookChapters(['投資金律', '投資前最重要的事']),
+};
+---
+
+<Layout
+  title="3D 微縮星球群島｜人體健康 × 知識宇宙探索世界 - 黃冠智醫師"
+  meta_title="3D 微縮星球群島｜人體健康微縮群島 × 知識宇宙 - 黃冠智醫師"
+  description="走進黃冠智醫師的 3D 微縮星球群島：帶有地球地平線弧度的微型世界，完整收錄人體醫學六大領域與經典思想名著全文章與章節。"
+  fullWidth={true}
+  hideFooter={true}
+>
+  <!-- Three.js ES Modules CDN Importmap -->
+  <script is:inline type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <!-- 將全文章與全章節資料注入至客戶端 JSON 標籤 -->
+  <script id="islandArticlesData" type="application/json" is:inline set:html={JSON.stringify(ISLAND_ARTICLES_MAP)}></script>
+
+  <div id="islandApp" class="island-app-root">
+    <!-- 3D 畫布與 CSS2D 標籤圖層容器 -->
+    <div id="viewportContainer" class="viewport-container">
+      <div id="loadingOverlay" class="loading-overlay">
+        <div class="clay-spinner-box">
+          <div class="clay-spinner"></div>
+          <div class="loading-title">正在建造 3D 微縮星球群島...</div>
+          <div class="loading-sub">計算地球地平線弧度 × 裝載 272 篇原創衛教與讀書筆記</div>
+        </div>
+      </div>
+      <div id="canvasMount" class="canvas-mount"></div>
+    </div>
+
+    <!-- 頂部浮動 HUD 控制列 -->
+    <header class="island-hud" id="islandHud">
+      <div class="hud-brand">
+        <div class="hud-icon">🌍</div>
+        <div class="hud-titles">
+          <h1 class="hud-main-title">3D 微縮星球群島</h1>
+          <span class="hud-badge">地球地平線弧度 · 雙星 12 島 · 272 篇全收錄</span>
+        </div>
+      </div>
+
+      <!-- 星系切換鈕 -->
+      <div class="hud-realm-tabs">
+        <button class="realm-pill active" data-realm="all">
+          <span class="dot all"></span>全部星系 (12)
+        </button>
+        <button class="realm-pill" data-realm="health">
+          <span class="dot health"></span>🏥 人體健康 (6)
+        </button>
+        <button class="realm-pill" data-realm="wisdom">
+          <span class="dot wisdom"></span>📚 知識宇宙 (6)
+        </button>
+      </div>
+
+      <!-- 時序光影與輔助開關 -->
+      <div class="hud-controls">
+        <div class="time-presets" title="調整星球時序光照">
+          <button class="time-btn" data-time="dawn" title="晨曦 (06:00)">🌅</button>
+          <button class="time-btn active" data-time="noon" title="正午 (12:00)">☀️</button>
+          <button class="time-btn" data-time="dusk" title="暮霞 (18:00)">🌇</button>
+          <button class="time-btn" data-time="night" title="星夜 (21:00)">🌌</button>
+        </div>
+
+        <div class="hud-divider"></div>
+
+        <button class="hud-action-btn active" id="toggleLabelsBtn" title="切換島嶼懸浮標籤">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          <span class="btn-text">標籤</span>
+        </button>
+
+        <button class="hud-action-btn active" id="toggleWalkersBtn" title="切換漫遊微型小人">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="5" r="3"></circle><path d="m9 20 3-6 3 6"></path><path d="m6 8 6 2 6-2"></path><path d="M12 10v4"></path></svg>
+          <span class="btn-text">漫步</span>
+        </button>
+
+        <button class="hud-action-btn active" id="toggleFlowsBtn" title="切換跨領域能量流動光索">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          <span class="btn-text">光流</span>
+        </button>
+
+        <button class="hud-action-btn" id="resetCamBtn" title="恢復全景俯瞰視角">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><path d="m10 15 5-3-5-3v6z"></path></svg>
+          <span class="btn-text">全景</span>
+        </button>
+
+        <button class="hud-action-btn btn-nav-toggle" id="toggleSidebarBtn" title="展開/收合群島清單">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+          <span class="btn-text">清單</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 左側：島嶼全文章探索抽屜 (點擊島嶼時滑入) -->
+    <aside class="island-detail-drawer" id="islandDetailCard" aria-hidden="true">
+      <div class="card-close-bar">
+        <span class="card-realm-tag" id="cardRealmTag">🏥 人體健康微縮群島</span>
+        <button class="card-close-btn" id="closeDetailBtn" aria-label="關閉卡片">✕</button>
+      </div>
+
+      <div class="card-header-hero" id="cardHero">
+        <div class="card-icon" id="cardIcon">🫀</div>
+        <div class="card-title-group">
+          <h2 class="card-title" id="cardTitle">心血管與三高島</h2>
+          <div class="card-subtitle" id="cardSubtitle">全身血管中樞與代謝交會點</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <p class="card-desc" id="cardDesc">
+          心臟與動脈是人體維持生命搏動的源泉，掌握高血壓 722 量測、冠狀動脈鈣化與心腎代謝綜合風險管理。
+        </p>
+
+        <!-- 島內全文章搜尋過濾框 -->
+        <div class="card-search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="drawerArticleSearch" placeholder="在此島嶼搜尋文章或標題..." autocomplete="off" />
+          <span class="card-articles-count" id="drawerArticlesCount">0 篇</span>
+        </div>
+
+        <!-- 全文章與章節清單列表 (100% 原始標題) -->
+        <div class="card-pins-section">
+          <div class="pin-links-list" id="cardPinList">
+            <!-- 動態填入該島所有真實文章 -->
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a href="/health-column" class="card-cta-btn" id="cardCtaBtn" target="_blank" rel="noopener">
+            <span>前往專題專區深度研讀</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 右側：群島導覽與快速導航目錄 -->
+    <aside class="island-nav-sidebar" id="islandNavSidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+          <span>星球航海圖</span>
+        </div>
+        <span class="sidebar-count" id="sidebarCount">12 座群島</span>
+      </div>
+
+      <!-- 即時關鍵字過濾 -->
+      <div class="sidebar-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="islandSearchInput" placeholder="搜尋島嶼、疾病或書籍..." autocomplete="off" />
+      </div>
+
+      <!-- 島嶼分類列表 -->
+      <div class="sidebar-scroll" id="islandListScroll">
+        <!-- 區塊 1: 人體健康微縮群島 -->
+        <div class="realm-group" data-realm-group="health">
+          <div class="realm-group-title">
+            <span class="realm-badge health">🏥 人體健康微縮群島</span>
+            <span class="realm-stat" id="healthTotalStat">6 座島嶼</span>
+          </div>
+          <div class="realm-items" id="healthItems"></div>
+        </div>
+
+        <!-- 區塊 2: 知識宇宙探索群島 -->
+        <div class="realm-group" data-realm-group="wisdom">
+          <div class="realm-group-title">
+            <span class="realm-badge wisdom">📚 知識宇宙探索群島</span>
+            <span class="realm-stat" id="wisdomTotalStat">6 部經典</span>
+          </div>
+          <div class="realm-items" id="wisdomItems"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 底部操作提示 -->
+    <div class="island-floating-tips">
+      <div class="tip-pill">
+        <span class="tip-mouse">🌍 地球地平線弧度世界 · 拖曳旋轉 · 滾輪縮放 · 點擊島嶼登陸</span>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  /* ══════════════════════════════════════════════════════════════════════
+     3D 微縮星球群島專屬樣式 (溫暖手作黏土 × 地球地平線弧度世界)
+     ══════════════════════════════════════════════════════════════════════ */
+  .island-app-root {
+    position: relative;
+    width: 100vw;
+    height: calc(100vh - 78px);
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 20%, #e2f2f8 0%, #cce5ef 60%, #b8d9e6 100%);
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+  }
+
+  @media (max-width: 768px) {
+    .island-app-root {
+      height: calc(100vh - 60px);
+    }
+  }
+
+  .viewport-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .canvas-mount {
+    width: 100%;
+    height: 100%;
+    outline: none;
+  }
+
+  /* 載入動畫層 */
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(220, 237, 245, 0.95);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+
+  .loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .clay-spinner-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 32px 42px;
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: 0 16px 36px rgba(74, 144, 164, 0.18), inset 0 2px 4px #ffffff;
+    border: 3px solid #e1eff5;
+  }
+
+  .clay-spinner {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 5px solid #d4eaf2;
+    border-top-color: #4a90a4;
+    border-right-color: #f4a261;
+    animation: spin 0.9s cubic-bezier(0.6, 0.2, 0.4, 0.9) infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loading-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1e3a4c;
+    letter-spacing: 0.5px;
+  }
+
+  .loading-sub {
+    font-size: 0.88rem;
+    color: #63889b;
+    font-weight: 600;
+  }
+
+  /* ════════════ 頂部浮動 HUD ════════════ */
+  .island-hud {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    right: 16px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 18px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 9999px;
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 26px rgba(44, 83, 100, 0.12), inset 0 1px 2px #ffffff;
+    pointer-events: auto;
+  }
+
+  .hud-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .hud-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+
+  .hud-titles {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hud-main-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1a3648;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .hud-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #4a90a4;
+    white-space: nowrap;
+  }
+
+  /* 星系切換按鈕組 */
+  .hud-realm-tabs {
+    display: flex;
+    background: rgba(235, 245, 249, 0.85);
+    padding: 3px;
+    border-radius: 9999px;
+    gap: 3px;
+    border: 1px solid rgba(195, 222, 233, 0.6);
+    flex-shrink: 0;
+  }
+
+  .realm-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    background: transparent;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #4a6b7c;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .realm-pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .realm-pill .dot.all { background: #4a90a4; }
+  .realm-pill .dot.health { background: #e05d52; }
+  .realm-pill .dot.wisdom { background: #6366f1; }
+
+  .realm-pill:hover {
+    color: #1e3a4c;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .realm-pill.active {
+    background: #ffffff;
+    color: #1e3a4c;
+    box-shadow: 0 3px 10px rgba(74, 144, 164, 0.2);
+  }
+
+  /* 控制按鈕組 */
+  .hud-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .time-presets {
+    display: flex;
+    background: rgba(235, 245, 249, 0.85);
+    padding: 3px;
+    border-radius: 9999px;
+    gap: 2px;
+  }
+
+  .time-btn {
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .time-btn:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+  }
+
+  .time-btn.active {
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+
+  .hud-divider {
+    width: 1px;
+    height: 20px;
+    background: #d4e5ec;
+    margin: 0 2px;
+  }
+
+  .hud-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid #d4e5ec;
+    background: #ffffff;
+    padding: 5px 10px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #4a6b7c;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .hud-action-btn:hover {
+    border-color: #4a90a4;
+    color: #1e3a4c;
+    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.15);
+  }
+
+  .hud-action-btn.active {
+    background: #eef7fa;
+    border-color: #4a90a4;
+    color: #2b6d80;
+  }
+
+  /* ════════════ 左側：島嶼全文章探索抽屜 ════════════ */
+  .island-detail-drawer {
+    position: absolute;
+    top: 76px;
+    left: 18px;
+    bottom: 24px;
+    width: 420px;
+    max-width: calc(100vw - 36px);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 26px;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 20px 45px rgba(28, 59, 74, 0.16), 0 4px 12px rgba(0, 0, 0, 0.04);
+    z-index: 35;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateX(-460px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+  }
+
+  .island-detail-drawer.open {
+    transform: translateX(0);
+  }
+
+  .card-close-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px 8px;
+  }
+
+  .card-realm-tag {
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: #eaf4f7;
+    color: #386f80;
+    letter-spacing: 0.5px;
+  }
+
+  .card-realm-tag.wisdom-style {
+    background: #eef2ff;
+    color: #4f46e5;
+  }
+
+  .card-close-btn {
+    border: none;
+    background: #edf4f7;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #557788;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .card-close-btn:hover {
+    background: #e0ecf1;
+    color: #1e3a4c;
+    transform: scale(1.1);
+  }
+
+  .card-header-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 20px 12px;
+    border-bottom: 1px solid #eaf2f5;
+  }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fbfd 0%, #e6f3f8 100%);
+    border: 2px solid #ffffff;
+    box-shadow: 0 6px 16px rgba(74, 144, 164, 0.15), inset 0 2px 4px #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.85rem;
+    flex-shrink: 0;
+  }
+
+  .card-title-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #183344;
+    line-height: 1.25;
+  }
+
+  .card-subtitle {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #688c9e;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-body {
+    flex: 1;
+    overflow: hidden;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card-desc {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #3b5768;
+    background: #f7fafc;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #eaf0f4;
+  }
+
+  /* 抽屜內部搜尋欄 */
+  .card-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    background: #ffffff;
+    border: 1.5px solid #dbe9ef;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  }
+
+  .card-search-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.84rem;
+    color: #1c384a;
+    width: 100%;
+    font-weight: 600;
+  }
+
+  .card-articles-count {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    background: #eef6f9;
+    color: #3b7688;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+
+  .card-pins-section {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 自訂質感滾動條 */
+  .card-pins-section::-webkit-scrollbar {
+    width: 5px;
+  }
+  .card-pins-section::-webkit-scrollbar-track {
+    background: #f1f5f7;
+    border-radius: 4px;
+  }
+  .card-pins-section::-webkit-scrollbar-thumb {
+    background: #c3d9e2;
+    border-radius: 4px;
+  }
+
+  .pin-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  /* 全文章卡片 (100% 原始標題呈現) */
+  .pin-item-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: #ffffff;
+    border: 1.5px solid #e5eff3;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.18s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .pin-item-card:hover {
+    border-color: #4a90a4;
+    background: #f5fafd;
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.15);
+  }
+
+  .pin-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #4a90a4;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .pin-text-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pin-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #1b384a;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .pin-sub {
+    font-size: 0.7rem;
+    color: #6d8e9f;
+    margin-top: 1px;
+    font-weight: 600;
+  }
+
+  .pin-arrow-ic {
+    color: #9cb5c2;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+
+  .pin-item-card:hover .pin-arrow-ic {
+    color: #4a90a4;
+    transform: translateX(2px);
+  }
+
+  .card-actions {
+    margin-top: auto;
+    padding-top: 4px;
+  }
+
+  .card-cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #4a90a4 0%, #347688 100%);
+    color: #ffffff;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(74, 144, 164, 0.28);
+    transition: all 0.2s ease;
+  }
+
+  .card-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(74, 144, 164, 0.38);
+  }
+
+  /* ════════════ 右側：群島導覽與快速導航目錄 ════════════ */
+  .island-nav-sidebar {
+    position: absolute;
+    top: 76px;
+    right: 18px;
+    bottom: 24px;
+    width: 320px;
+    max-width: calc(100vw - 36px);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 26px;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 20px 45px rgba(28, 59, 74, 0.16);
+    z-index: 32;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateX(0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+  }
+
+  .island-nav-sidebar.collapsed {
+    transform: translateX(360px);
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 10px;
+    border-bottom: 1px solid #edf4f7;
+  }
+
+  .sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: #1a3648;
+  }
+
+  .sidebar-count {
+    font-size: 0.74rem;
+    font-weight: 700;
+    background: #eef6f9;
+    color: #4a90a4;
+    padding: 3px 8px;
+    border-radius: 9999px;
+  }
+
+  .sidebar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 14px 6px;
+    padding: 7px 12px;
+    background: #f3f8fa;
+    border: 1.5px solid #dcebf0;
+    border-radius: 12px;
+    color: #638596;
+  }
+
+  .sidebar-search input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 0.84rem;
+    color: #1c384a;
+    font-weight: 600;
+  }
+
+  .sidebar-search input::placeholder {
+    color: #8faab8;
+  }
+
+  .sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .realm-group-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 6px 6px;
+  }
+
+  .realm-badge {
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .realm-badge.health {
+    background: #fdeee9;
+    color: #c94b32;
+  }
+
+  .realm-badge.wisdom {
+    background: #eef2ff;
+    color: #4f46e5;
+  }
+
+  .realm-stat {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #8da6b4;
+  }
+
+  .realm-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sidebar-island-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #ffffff;
+    border: 1.5px solid #e7f0f4;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .sidebar-island-row:hover {
+    border-color: #4a90a4;
+    background: #f5fafd;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(74, 144, 164, 0.12);
+  }
+
+  .sidebar-island-row.active {
+    border-color: #4a90a4;
+    background: #edf7fa;
+    box-shadow: 0 4px 14px rgba(74, 144, 164, 0.2);
+  }
+
+  .sidebar-island-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .sidebar-island-icon {
+    font-size: 1.2rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: #f5fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sidebar-island-name {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #1a3648;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-island-tag {
+    font-size: 0.7rem;
+    color: #597d91;
+    font-weight: 800;
+    padding: 2px 7px;
+    background: #edf5f8;
+    border-radius: 9999px;
+    flex-shrink: 0;
+  }
+
+  /* ════════════ 懸浮操作提示 ════════════ */
+  .island-floating-tips {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    pointer-events: none;
+  }
+
+  .tip-pill {
+    background: rgba(26, 54, 72, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  /* ════════════ CSS2D 3D 懸浮標籤 ════════════ */
+  .island-3d-badge {
+    position: absolute;
+    pointer-events: auto;
+    cursor: pointer;
+    transform: translate(-50%, -100%);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  }
+
+  .island-3d-badge:hover {
+    transform: translate(-50%, -115%) scale(1.08);
+  }
+
+  .island-3d-badge-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid #ffffff;
+    box-shadow: 0 6px 18px rgba(28, 59, 74, 0.22), 0 2px 4px rgba(0,0,0,0.06);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .island-3d-badge.health .island-3d-badge-inner {
+    border-color: #ffd8d3;
+    color: #b93822;
+  }
+
+  .island-3d-badge.wisdom .island-3d-badge-inner {
+    border-color: #ddd6fe;
+    color: #4338ca;
+  }
+
+  .badge-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .badge-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
+
+  .badge-pins-count {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: #edf6f9;
+    color: #3b7486;
+  }
+
+  .badge-arrow {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(255, 255, 255, 0.95);
+    margin: 0 auto;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+  }
+
+  /* 隱藏標籤狀態 */
+  .island-3d-badge.labels-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* 響應式調整 */
+  @media (max-width: 900px) {
+    .hud-realm-tabs {
+      display: none;
+    }
+    .hud-badge {
+      display: none;
+    }
+    .hud-main-title {
+      font-size: 0.95rem;
+    }
+    .island-hud {
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      padding: 6px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .island-hud::-webkit-scrollbar {
+      display: none;
+    }
+    .hud-action-btn .btn-text {
+      display: none;
+    }
+    .island-detail-drawer {
+      width: calc(100vw - 24px);
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      top: auto;
+      max-height: 52vh;
+      border-radius: 22px;
+      transform: translateY(120%);
+    }
+    .island-detail-drawer.open {
+      transform: translateY(0);
+    }
+    .island-nav-sidebar {
+      width: calc(100vw - 24px);
+      right: 12px;
+      top: 68px;
+      bottom: 12px;
+      border-radius: 22px;
+      transform: translateX(calc(100% + 40px));
+    }
+    .island-nav-sidebar.open-mobile {
+      transform: translateX(0);
+    }
+    .island-floating-tips {
+      display: none;
+    }
+  }
+</style>
+
+<!-- ── 3D 核心互動引擎 (Three.js 0.160.0 ESM · 地球地平線弧度世界) ── -->
+<script is:inline type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 1. 取得全站 272 篇原創文章與書籍章節資料
+  // ══════════════════════════════════════════════════════════════════════
+  const ALL_ARTICLES_MAP = JSON.parse(document.getElementById('islandArticlesData').textContent);
+
+  // 12 座群島基礎元資料 (位置、主題色系、簡介與專題連結)
+  const ISLAND_META = [
+    // ────────────── 【人體健康微縮群島】 (Realm: health) ──────────────
+    {
+      id: 'cardio',
+      realm: 'health',
+      q: 0, r: 0, // Central Organ Hub
+      name: '心血管與三高島',
+      shortName: '心血管島',
+      icon: '🫀',
+      color: 0xe05d52,
+      roofColor: 0xb33927,
+      accentColor: 0xf59e0b,
+      subtitle: '血壓 722 法則 · 動脈鈣化 · CKM心腎代謝管理',
+      desc: '心臟與全身動脈網絡是維持生命搏動的動力源泉。掌握最新高血壓 722 居家量測、高血脂控制策略、冠狀動脈鈣化 (CAC) 與心血管-腎臟-代謝綜合照護實證。',
+      ctaUrl: '/health-column?cat=高血壓',
+      ctaText: '進入心血管與三高專題專欄'
+    },
+    {
+      id: 'stomach',
+      realm: 'health',
+      q: -1, r: 0,
+      name: '胃部島',
+      shortName: '胃部島',
+      icon: '🫄',
+      color: 0xf39c12,
+      roofColor: 0xd35400,
+      accentColor: 0xfcd34d,
+      subtitle: '胃食道逆流 · 幽門桿菌 · 巴瑞氏食道炎',
+      desc: '守護上消化道的第一道防線！完整涵蓋胃食道逆流火燒心、胃潰瘍保護機制、功能性消化不良及巴瑞氏食道癌前病變防範。',
+      ctaUrl: '/anatomy/stomach',
+      ctaText: '探索胃部互動解剖圖鑑'
+    },
+    {
+      id: 'liver',
+      realm: 'health',
+      q: -1, r: -1,
+      name: '肝膽胰島',
+      shortName: '肝膽胰島',
+      icon: '🫁',
+      color: 0x2e8555,
+      roofColor: 0x194d32,
+      accentColor: 0x6ee7b7,
+      subtitle: '代謝脂肪肝 · B/C肝炎 · 膽結石胰臟炎',
+      desc: '人體最大的化學解毒與代謝重鎮。掌握代謝異常脂肪肝 (MASLD)、B型肝炎表面抗原追蹤抗體消長，以及腹部超音波膽囊胰臟判讀。',
+      ctaUrl: '/anatomy/liver',
+      ctaText: '探索肝膽胰互動解剖圖鑑'
+    },
+    {
+      id: 'endoscopy',
+      realm: 'health',
+      q: 0, r: -1,
+      name: '內視鏡島',
+      shortName: '內視鏡島',
+      icon: '🔬',
+      color: 0x258b88,
+      roofColor: 0x164e4c,
+      accentColor: 0x5eead4,
+      subtitle: '無痛腸胃鏡 · 黏膜下腫瘤 · 早期癌症偵測',
+      desc: '消化道預防醫學的守護燈塔！結合先進 NBI 窄頻光技術、息肉電刀微創切除，為您建構最安心舒適的無痛腸胃鏡篩檢防線。',
+      ctaUrl: '/endoscopy',
+      ctaText: '進入無痛腸胃鏡專區'
+    },
+    {
+      id: 'colon',
+      realm: 'health',
+      q: -1, r: 1,
+      name: '腸道島',
+      shortName: '腸道島',
+      icon: '🧬',
+      color: 0xc85a17,
+      roofColor: 0x87360b,
+      accentColor: 0xfba94b,
+      subtitle: '腸道微生態 · 憩室炎 · 排便血便警訊',
+      desc: '駐紮人體七成免疫細胞的長壽根基。解析腸道菌群微生態、大腸憩室飲食調養、腸躁症以及各種排便血便警訊。',
+      ctaUrl: '/anatomy/colon',
+      ctaText: '探索腸道微生態與解剖'
+    },
+    {
+      id: 'metabolism',
+      realm: 'health',
+      q: 0, r: 1,
+      name: '代謝與享瘦島',
+      shortName: '代謝享瘦島',
+      icon: '⚖️',
+      color: 0xca8a04,
+      roofColor: 0x78350f,
+      accentColor: 0xfef08a,
+      subtitle: '實證健康減重 · GLP-1 腸泌素 · 胰島素阻抗',
+      desc: '打破減重復胖迷思的實證醫學基地！剖析台灣合法減重藥物、GLP-1 腸泌素機轉、血糖平穩控糖與打造易瘦體質策略。',
+      ctaUrl: '/weight-loss',
+      ctaText: '進入健康享瘦與減重專區'
+    },
+
+    // ────────────── 【知識宇宙探索群島】 (Realm: wisdom) ──────────────
+    {
+      id: 'wealth-ladder',
+      realm: 'wisdom',
+      q: 1, r: 0, // Cross-realm Grand Bridge Anchor
+      name: '《財富階梯》島',
+      shortName: '財富階梯',
+      icon: '🪜',
+      color: 0x4f46e5,
+      roofColor: 0x312e81,
+      accentColor: 0x818cf8,
+      subtitle: 'Nick Maggiulli 經典解析 · 全章節導讀',
+      desc: '探索順著財富階梯向上而增加收入、投資與消費的實踐架構。跨越生活型態膨脹陷阱，實現財務自由與時間掌控權。',
+      ctaUrl: '/books',
+      ctaText: '閱讀《財富階梯》全系列筆記'
+    },
+    {
+      id: 'six-neuro',
+      realm: 'wisdom',
+      q: 1, r: -1,
+      name: '《他們六個說了算!》島',
+      shortName: '神經傳導島',
+      icon: '🧠',
+      color: 0x7c3aed,
+      roofColor: 0x4c1d95,
+      accentColor: 0xa78bfa,
+      subtitle: '六大神經傳導物質與大腦決策行為學',
+      desc: '多巴胺、血清素、腦內啡...揭開大腦六大神經傳導物質如何主宰我們的動機渴望、專注力、幸福感與日常決策行為。',
+      ctaUrl: '/books',
+      ctaText: '閱讀《他們六個說了算》讀書筆記'
+    },
+    {
+      id: 'glucose-goddess',
+      realm: 'wisdom',
+      q: 2, r: -1,
+      name: '《90%的病，控糖就會好》島',
+      shortName: '控糖就會好',
+      icon: '🩸',
+      color: 0xdb2777,
+      roofColor: 0x831843,
+      accentColor: 0xf472b6,
+      subtitle: 'Jessie Inchauspé 控糖女神實證指南',
+      desc: '進入人體駕駛艙！透過飲食順序（纖維→蛋白質→碳水）、飯後散步微運動，撫平葡萄糖尖峰，擺脫疲倦、發炎與慢性病。',
+      ctaUrl: '/books',
+      ctaText: '閱讀《控糖就會好》讀書筆記'
+    },
+    {
+      id: 'die-with-zero',
+      realm: 'wisdom',
+      q: 2, r: 0,
+      name: '《別把你的錢留到死》島',
+      shortName: '別把錢留到死',
+      icon: '⏳',
+      color: 0xea580c,
+      roofColor: 0x7c2d12,
+      accentColor: 0xfb923c,
+      subtitle: 'Bill Perkins 人生體驗最佳化哲學',
+      desc: '金錢只是用來購買難忘人生體驗的燃料！在健康、時間與金錢三者交會的黃金時期投資體驗，及早累積終身受用的記憶股息。',
+      ctaUrl: '/books',
+      ctaText: '閱讀《別把你的錢留到死》筆記'
+    },
+    {
+      id: 'random-walk',
+      realm: 'wisdom',
+      q: 1, r: 1,
+      name: '《漫步華爾街》島',
+      shortName: '漫步華爾街',
+      icon: '📈',
+      color: 0x0284c7,
+      roofColor: 0x075985,
+      accentColor: 0x38bdf8,
+      subtitle: 'Burton Malkiel 跨世紀投資聖經',
+      desc: '從鬱金香狂熱、南海泡沫到現代科技熱潮。剖析效率市場假說、磐石理論與隨機漫步，堅守低成本指數化被動投資之道。',
+      ctaUrl: '/books',
+      ctaText: '閱讀《漫步華爾街》讀書筆記'
+    },
+    {
+      id: 'four-pillars',
+      realm: 'wisdom',
+      q: 2, r: 1,
+      name: '《投資金律與最重要的事》島',
+      shortName: '投資金律島',
+      icon: '🏛️',
+      color: 0x0d9488,
+      roofColor: 0x134e4a,
+      accentColor: 0x2dd4bf,
+      subtitle: 'William Bernstein & Howard Marks 經典合璧',
+      desc: '理論、歷史、心理學與產業四大投資支柱！結合霍華·馬克思「第二層思考」與週期智慧，建立無懼市場風暴的資產配置壁壘。',
+      ctaUrl: '/books',
+      ctaText: '閱讀《投資金律》全系列筆記'
+    }
+  ];
+
+  // 將全文章注入 ISLAND_DATA
+  const ISLAND_DATA = ISLAND_META.map(meta => ({
+    ...meta,
+    articles: ALL_ARTICLES_MAP[meta.id] || []
+  }));
+
+  // 跨領域能量流動連線
+  const FLOW_CONNECTIONS = [
+    { from: 'cardio', to: 'metabolism', color: 0xf59e0b, label: 'CKM心血管-代謝綜合軸' },
+    { from: 'metabolism', to: 'glucose-goddess', color: 0xec4899, label: '血糖與胰島素跨界共振' },
+    { from: 'colon', to: 'six-neuro', color: 0x8b5cf6, label: '腸腦軸菌群-神經傳導物質' },
+    { from: 'cardio', to: 'wealth-ladder', color: 0x6366f1, label: '身心健康與人生財富大跨橋' },
+    { from: 'stomach', to: 'endoscopy', color: 0x14b8a6, label: '早期病變即時監測' },
+    { from: 'wealth-ladder', to: 'die-with-zero', color: 0xf97316, label: '資產複利與記憶股息轉化' },
+    { from: 'random-walk', to: 'four-pillars', color: 0x0ea5e9, label: '指數化投資哲學連線' }
+  ];
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 2. 地球地平線弧度數學模型 (Spherical Earth Curvature Horizon)
+  // ══════════════════════════════════════════════════════════════════════
+  const SPACING = 2.45;       // 六角中心間距
+  const HEX_RADIUS = 2.06;    // 六角島嶼半徑
+  const HEX_HEIGHT = 0.72;    // 島嶼土壤高度
+  const PLANET_RADIUS = 34.0; // 地球星球半徑 (決定地平線弧度的黃金比例)
+  const PLANET_CENTER = new THREE.Vector3(2.1, -PLANET_RADIUS, 0); // 球心座標
+
+  // 將 2D 六角座標投影至帶有地球地平線弧度的 3D 微縮星球表面
+  function hexToPlanet(q, r) {
+    // 1. 平面網格座標
+    const flatX = Math.sqrt(3) * SPACING * (q + r / 2);
+    const flatZ = 1.5 * SPACING * r;
+
+    // 2. 計算與星球頂點的平面距離
+    const dx = flatX - PLANET_CENTER.x;
+    const dz = flatZ - PLANET_CENTER.z;
+    const dist2D = Math.sqrt(dx * dx + dz * dz);
+
+    // 3. 球面角 (弧度) 與地平線下陷高度
+    const angle = dist2D / PLANET_RADIUS;
+    const heightDrop = PLANET_RADIUS * (1 - Math.cos(angle));
+
+    // 4. 沿著球面外擴與下陷
+    const ratio = angle > 0.0001 ? Math.sin(angle) / (dist2D / PLANET_RADIUS) : 1;
+    const worldX = PLANET_CENTER.x + dx * ratio;
+    const worldZ = PLANET_CENTER.z + dz * ratio;
+    const worldY = -heightDrop;
+
+    // 5. 球面法向量與旋轉姿態 (沿地平線傾角)
+    const normal = new THREE.Vector3(dx, PLANET_RADIUS - heightDrop, dz).normalize();
+    const orientation = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+
+    return {
+      position: new THREE.Vector3(worldX, worldY, worldZ),
+      normal,
+      orientation
+    };
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 3. Three.js 場景初始化
+  // ══════════════════════════════════════════════════════════════════════
+  const container = document.getElementById('canvasMount');
+  const viewportBox = document.getElementById('viewportContainer');
+
+  let scene, camera, renderer, cssRenderer, controls;
+  let islandsGroup = new THREE.Group();
+  let bridgesGroup = new THREE.Group();
+  let walkersGroup = new THREE.Group();
+  let flowsGroup = new THREE.Group();
+  let lightsGroup = new THREE.Group();
+  let waterSphere;
+
+  let dirLight, hemiLight, ambientLight;
+  let activeIsland = null;
+  let showLabels = true;
+  let showWalkers = true;
+  let showFlows = true;
+
+  const islandObjectsMap = new Map();
+  const badgeObjects = [];
+  const walkers = [];
+  const flowCurves = [];
+
+  // 動態相機飛行參數
+  let cameraTarget = new THREE.Vector3(2.1, 0, 0);
+  let cameraLookAt = new THREE.Vector3(2.1, 0, 0);
+  let cameraDestPos = new THREE.Vector3(2.1, 17, 21);
+  let flightStartTime = 0;
+  let flightDuration = 0;
+  let flightStartPos = new THREE.Vector3();
+  let flightStartLookAt = new THREE.Vector3();
+  let isFlightActive = false;
+
+  function init() {
+    // Scene
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xd7edf6);
+    scene.fog = new THREE.FogExp2(0xd7edf6, 0.016);
+
+    // Camera
+    const aspect = container.clientWidth / container.clientHeight;
+    camera = new THREE.PerspectiveCamera(38, aspect, 0.5, 200);
+    camera.position.set(2.1, 18, 22);
+
+    // WebGL Renderer
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    container.appendChild(renderer.domElement);
+
+    // CSS2D Renderer (Sharp HTML Floating Badges)
+    cssRenderer = new CSS2DRenderer();
+    cssRenderer.setSize(container.clientWidth, container.clientHeight);
+    cssRenderer.domElement.style.position = 'absolute';
+    cssRenderer.domElement.style.top = '0px';
+    cssRenderer.domElement.style.left = '0px';
+    cssRenderer.domElement.style.pointerEvents = 'none';
+    viewportBox.appendChild(cssRenderer.domElement);
+
+    // Orbit Controls
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxPolarAngle = Math.PI / 2.15; // 不穿入星球水底
+    controls.minDistance = 5;
+    controls.maxDistance = 45;
+    controls.target.copy(cameraLookAt);
+
+    // 添加核心群組
+    scene.add(lightsGroup);
+    scene.add(islandsGroup);
+    scene.add(bridgesGroup);
+    scene.add(walkersGroup);
+    scene.add(flowsGroup);
+
+    setupLights();
+    createCurvedOcean();
+    buildIslands();
+    buildBridges();
+    buildFlowLines();
+    spawnWalkers();
+    setupRaycaster();
+    setupUI();
+
+    window.addEventListener('resize', onWindowResize);
+
+    // 關閉載入視窗
+    setTimeout(() => {
+      const loader = document.getElementById('loadingOverlay');
+      if (loader) loader.classList.add('hidden');
+    }, 450);
+
+    animate();
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 4. 光照與時序光影
+  // ══════════════════════════════════════════════════════════════════════
+  function setupLights() {
+    ambientLight = new THREE.AmbientLight(0xfff7ed, 0.72);
+    lightsGroup.add(ambientLight);
+
+    hemiLight = new THREE.HemisphereLight(0xd9f0fc, 0x826d5e, 0.62);
+    lightsGroup.add(hemiLight);
+
+    dirLight = new THREE.DirectionalLight(0xfff4e6, 1.45);
+    dirLight.position.set(16, 26, 18);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.camera.near = 1;
+    dirLight.shadow.camera.far = 70;
+    const d = 24;
+    dirLight.shadow.camera.left = -d;
+    dirLight.shadow.camera.right = d;
+    dirLight.shadow.camera.top = d;
+    dirLight.shadow.camera.bottom = -d;
+    dirLight.shadow.bias = -0.0004;
+    lightsGroup.add(dirLight);
+  }
+
+  function applyTimePreset(time) {
+    switch (time) {
+      case 'dawn':
+        scene.background.set(0xfbeee6);
+        scene.fog.color.set(0xfbeee6);
+        ambientLight.color.set(0xffeedb);
+        ambientLight.intensity = 0.62;
+        hemiLight.color.set(0xfed7aa);
+        hemiLight.groundColor.set(0x78350f);
+        dirLight.color.set(0xffedd5);
+        dirLight.intensity = 1.15;
+        dirLight.position.set(24, 15, 12);
+        if (waterSphere) waterSphere.material.color.set(0x74b4c7);
+        break;
+      case 'noon':
+        scene.background.set(0xd7edf6);
+        scene.fog.color.set(0xd7edf6);
+        ambientLight.color.set(0xfff7ed);
+        ambientLight.intensity = 0.72;
+        hemiLight.color.set(0xd9f0fc);
+        hemiLight.groundColor.set(0x826d5e);
+        dirLight.color.set(0xfff4e6);
+        dirLight.intensity = 1.45;
+        dirLight.position.set(16, 26, 18);
+        if (waterSphere) waterSphere.material.color.set(0x48a8c4);
+        break;
+      case 'dusk':
+        scene.background.set(0xfed7aa);
+        scene.fog.color.set(0xfed7aa);
+        ambientLight.color.set(0xffedd5);
+        ambientLight.intensity = 0.58;
+        hemiLight.color.set(0xfb923c);
+        hemiLight.groundColor.set(0x431407);
+        dirLight.color.set(0xf97316);
+        dirLight.intensity = 1.25;
+        dirLight.position.set(-22, 11, 16);
+        if (waterSphere) waterSphere.material.color.set(0x5c7c8c);
+        break;
+      case 'night':
+        scene.background.set(0x0f172a);
+        scene.fog.color.set(0x0f172a);
+        ambientLight.color.set(0x38bdf8);
+        ambientLight.intensity = 0.38;
+        hemiLight.color.set(0x1e293b);
+        hemiLight.groundColor.set(0x090d16);
+        dirLight.color.set(0x93c5fd);
+        dirLight.intensity = 0.65;
+        dirLight.position.set(-10, 22, -10);
+        if (waterSphere) waterSphere.material.color.set(0x0e2f44);
+        break;
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 5. 弧形蔚藍地球地平線水面 (Spherical Planet Ocean)
+  // ══════════════════════════════════════════════════════════════════════
+  function createCurvedOcean() {
+    // 依據星球半徑製作球面水冠 (Sphere Cap)
+    const oceanRadius = PLANET_RADIUS - 0.22;
+    const oceanGeo = new THREE.SphereGeometry(oceanRadius, 96, 48, 0, Math.PI * 2, 0, Math.PI * 0.45);
+    const oceanMat = new THREE.MeshStandardMaterial({
+      color: 0x48a8c4,
+      roughness: 0.16,
+      metalness: 0.1,
+      transparent: true,
+      opacity: 0.88,
+      flatShading: true
+    });
+    waterSphere = new THREE.Mesh(oceanGeo, oceanMat);
+    waterSphere.position.copy(PLANET_CENTER);
+    waterSphere.receiveShadow = true;
+    scene.add(waterSphere);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 6. 沿地球弧度建造六角島嶼 (Curved Hexagonal Islands)
+  // ══════════════════════════════════════════════════════════════════════
+  function buildIslands() {
+    ISLAND_DATA.forEach((island) => {
+      const proj = hexToPlanet(island.q, island.r);
+      const group = new THREE.Group();
+      group.position.copy(proj.position);
+      group.quaternion.copy(proj.orientation);
+      group.userData = {
+        islandId: island.id,
+        islandData: island,
+        normal: proj.normal,
+        worldCenter: proj.position.clone()
+      };
+
+      // 1. 六角島嶼頂層土壤/草皮 (Beveled Hexagon Cylinder)
+      const hexGeo = new THREE.CylinderGeometry(HEX_RADIUS, HEX_RADIUS * 1.03, HEX_HEIGHT, 6, 1);
+      const topMat = new THREE.MeshStandardMaterial({
+        color: island.color,
+        roughness: 0.72,
+        metalness: 0.05,
+        flatShading: true
+      });
+      const topMesh = new THREE.Mesh(hexGeo, topMat);
+      topMesh.position.y = HEX_HEIGHT / 2;
+      topMesh.castShadow = true;
+      topMesh.receiveShadow = true;
+      group.add(topMesh);
+
+      // 2. 六角地底岩層 (Dirt Base / Cliff)
+      const baseGeo = new THREE.CylinderGeometry(HEX_RADIUS * 1.03, HEX_RADIUS * 0.88, 1.25, 6, 1);
+      const baseMat = new THREE.MeshStandardMaterial({
+        color: 0x6e584a,
+        roughness: 0.9,
+        flatShading: true
+      });
+      const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+      baseMesh.position.y = -0.62;
+      baseMesh.castShadow = true;
+      baseMesh.receiveShadow = true;
+      group.add(baseMesh);
+
+      // 3. 島嶼地表微縮村落與樹木模型
+      populateMiniatureCity(group, island);
+
+      // 4. 島嶼光圈／選取反白環 (Selection Beacon Ring)
+      const ringGeo = new THREE.RingGeometry(HEX_RADIUS * 1.05, HEX_RADIUS * 1.15, 32);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false
+      });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.x = -Math.PI / 2;
+      ringMesh.position.y = HEX_HEIGHT + 0.04;
+      group.add(ringMesh);
+      group.userData.selectionRing = ringMesh;
+
+      // 5. CSS2D 懸浮標籤 (顯示真實全文章數)
+      const badgeDiv = document.createElement('div');
+      badgeDiv.className = `island-3d-badge ${island.realm}`;
+      badgeDiv.innerHTML = `
+        <div class="island-3d-badge-inner">
+          <span class="badge-icon">${island.icon}</span>
+          <span class="badge-title">${island.shortName}</span>
+          <span class="badge-pins-count">${island.articles.length}篇</span>
+        </div>
+        <div class="badge-arrow"></div>
+      `;
+      badgeDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        focusIsland(island.id);
+      });
+
+      const badgeObj = new CSS2DObject(badgeDiv);
+      badgeObj.position.set(0, HEX_HEIGHT + 2.25, 0);
+      group.add(badgeObj);
+      badgeObjects.push(badgeDiv);
+
+      islandsGroup.add(group);
+      islandObjectsMap.set(island.id, group);
+    });
+  }
+
+  // 微縮城市建築生成
+  function populateMiniatureCity(group, island) {
+    const isWisdom = island.realm === 'wisdom';
+    const mainRoofColor = island.roofColor;
+
+    // 1. 中央主題大建築 (Central Archetype Building)
+    if (island.id === 'cardio' || island.id === 'wealth-ladder') {
+      const towerBaseGeo = new THREE.BoxGeometry(0.7, 1.4, 0.7);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xfaf5ef, roughness: 0.6 });
+      const towerBase = new THREE.Mesh(towerBaseGeo, wallMat);
+      towerBase.position.set(0, HEX_HEIGHT + 0.7, 0);
+      towerBase.castShadow = true;
+      group.add(towerBase);
+
+      const roofGeo = new THREE.ConeGeometry(0.58, 0.85, 4);
+      const roofMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.5 });
+      const roof = new THREE.Mesh(roofGeo, roofMat);
+      roof.rotation.y = Math.PI / 4;
+      roof.position.set(0, HEX_HEIGHT + 1.4 + 0.42, 0);
+      roof.castShadow = true;
+      group.add(roof);
+
+      const stairGeo = new THREE.BoxGeometry(0.9, 0.15, 0.9);
+      const stair = new THREE.Mesh(stairGeo, wallMat);
+      stair.position.set(0, HEX_HEIGHT + 0.08, 0);
+      group.add(stair);
+    } else if (island.id === 'endoscopy') {
+      const lightGeo = new THREE.CylinderGeometry(0.28, 0.45, 1.6, 8);
+      const lightMat = new THREE.MeshStandardMaterial({ color: 0xf0fdfa, roughness: 0.5 });
+      const lighthouse = new THREE.Mesh(lightGeo, lightMat);
+      lighthouse.position.set(0, HEX_HEIGHT + 0.8, 0);
+      lighthouse.castShadow = true;
+      group.add(lighthouse);
+
+      const domeGeo = new THREE.SphereGeometry(0.32, 8, 8);
+      const domeMat = new THREE.MeshStandardMaterial({ color: 0x2dd4bf, roughness: 0.2, emissive: 0x14b8a6, emissiveIntensity: 0.3 });
+      const dome = new THREE.Mesh(domeGeo, domeMat);
+      dome.position.set(0, HEX_HEIGHT + 1.7, 0);
+      group.add(dome);
+    } else if (isWisdom) {
+      const bookGeo = new THREE.BoxGeometry(0.65, 0.8, 0.5);
+      const bookMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.4 });
+      const bookMesh = new THREE.Mesh(bookGeo, bookMat);
+      bookMesh.position.set(0, HEX_HEIGHT + 0.45, 0);
+      bookMesh.rotation.y = 0.3;
+      bookMesh.castShadow = true;
+      group.add(bookMesh);
+
+      const gemGeo = new THREE.OctahedronGeometry(0.25);
+      const gemMat = new THREE.MeshStandardMaterial({
+        color: island.accentColor,
+        roughness: 0.1,
+        emissive: island.accentColor,
+        emissiveIntensity: 0.4
+      });
+      const gem = new THREE.Mesh(gemGeo, gemMat);
+      gem.position.set(0, HEX_HEIGHT + 1.25, 0);
+      gem.userData = { isFloatingGem: true, baseSpeed: 1.5 + Math.random() * 0.5 };
+      group.add(gem);
+    } else {
+      const houseGeo = new THREE.BoxGeometry(0.75, 0.65, 0.65);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xfffbeb, roughness: 0.7 });
+      const house = new THREE.Mesh(houseGeo, wallMat);
+      house.position.set(0, HEX_HEIGHT + 0.33, 0);
+      house.castShadow = true;
+      group.add(house);
+
+      const roofGeo = new THREE.ConeGeometry(0.62, 0.55, 4);
+      const roofMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.6 });
+      const roof = new THREE.Mesh(roofGeo, roofMat);
+      roof.rotation.y = Math.PI / 4;
+      roof.position.set(0, HEX_HEIGHT + 0.65 + 0.27, 0);
+      roof.castShadow = true;
+      group.add(roof);
+    }
+
+    // 2. 周圍小木屋與毛線絨球質感小樹
+    const offsets = [
+      { x: 0.85, z: 0.5, type: 'house' },
+      { x: -0.75, z: 0.65, type: 'tree' },
+      { x: 0.6, z: -0.8, type: 'tree' },
+      { x: -0.85, z: -0.55, type: 'house' }
+    ];
+
+    offsets.forEach((pos, idx) => {
+      if (pos.type === 'house') {
+        const miniGeo = new THREE.BoxGeometry(0.48, 0.45, 0.48);
+        const miniWall = new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.7 });
+        const miniHouse = new THREE.Mesh(miniGeo, miniWall);
+        miniHouse.position.set(pos.x, HEX_HEIGHT + 0.22, pos.z);
+        miniHouse.rotation.y = (idx * Math.PI) / 3;
+        miniHouse.castShadow = true;
+        group.add(miniHouse);
+
+        const miniRoofGeo = new THREE.ConeGeometry(0.38, 0.38, 4);
+        const miniRoofMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.6 });
+        const miniRoof = new THREE.Mesh(miniRoofGeo, miniRoofMat);
+        miniRoof.rotation.y = miniHouse.rotation.y + Math.PI / 4;
+        miniRoof.position.set(pos.x, HEX_HEIGHT + 0.45 + 0.18, pos.z);
+        miniRoof.castShadow = true;
+        group.add(miniRoof);
+      } else {
+        const trunkGeo = new THREE.CylinderGeometry(0.08, 0.11, 0.4, 6);
+        const trunkMat = new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.9 });
+        const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+        trunk.position.set(pos.x, HEX_HEIGHT + 0.2, pos.z);
+        trunk.castShadow = true;
+        group.add(trunk);
+
+        const foliageGeo = new THREE.DodecahedronGeometry(0.36, 1);
+        const treeColor = isWisdom ? 0x6366f1 : (idx % 2 === 0 ? 0x15803d : 0x16a34a);
+        const foliageMat = new THREE.MeshStandardMaterial({ color: treeColor, roughness: 0.85, flatShading: true });
+        const foliage = new THREE.Mesh(foliageGeo, foliageMat);
+        foliage.position.set(pos.x, HEX_HEIGHT + 0.52, pos.z);
+        foliage.castShadow = true;
+        group.add(foliage);
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 7. 拱橋系統 (沿地平線弧度架設)
+  // ══════════════════════════════════════════════════════════════════════
+  function buildBridges() {
+    const BRIDGE_PAIRS = [
+      ['cardio', 'stomach'],
+      ['cardio', 'endoscopy'],
+      ['cardio', 'metabolism'],
+      ['stomach', 'liver'],
+      ['stomach', 'colon'],
+      ['stomach', 'endoscopy'],
+      ['liver', 'endoscopy'],
+      ['colon', 'metabolism'],
+      // 跨界大天橋 (Grand Cross-Realm Bridge)
+      ['cardio', 'wealth-ladder'],
+      // 知識宇宙群島互連
+      ['wealth-ladder', 'six-neuro'],
+      ['wealth-ladder', 'random-walk'],
+      ['wealth-ladder', 'die-with-zero'],
+      ['six-neuro', 'glucose-goddess'],
+      ['six-neuro', 'die-with-zero'],
+      ['glucose-goddess', 'die-with-zero'],
+      ['random-walk', 'four-pillars'],
+      ['die-with-zero', 'four-pillars']
+    ];
+
+    BRIDGE_PAIRS.forEach(([idA, idB]) => {
+      const objA = islandObjectsMap.get(idA);
+      const objB = islandObjectsMap.get(idB);
+      if (!objA || !objB) return;
+
+      const pA = objA.position;
+      const pB = objB.position;
+      const isCrossRealm = (idA === 'cardio' && idB === 'wealth-ladder');
+
+      // 拱橋中點往球面法線方向抬升，吻合地球地平線弧度
+      const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
+      const radialDir = new THREE.Vector3().subVectors(mid, PLANET_CENTER).normalize();
+      const dist = pA.distanceTo(pB);
+
+      // 將中點拉回球面外緣並加上拱高
+      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + (isCrossRealm ? 0.15 : 0.08));
+
+      const bridgeGroup = new THREE.Group();
+      bridgeGroup.position.copy(mid);
+
+      // 橋體朝向
+      const forward = new THREE.Vector3().subVectors(pB, pA).normalize();
+      const up = radialDir;
+      const right = new THREE.Vector3().crossVectors(up, forward).normalize();
+      const realUp = new THREE.Vector3().crossVectors(forward, right).normalize();
+      const mat4 = new THREE.Matrix4().makeBasis(forward, realUp, right);
+      bridgeGroup.quaternion.setFromRotationMatrix(mat4);
+
+      const bridgeLen = dist * 0.48;
+      const bridgeWidth = isCrossRealm ? 0.72 : 0.52;
+
+      const archGeo = new THREE.BoxGeometry(bridgeLen, 0.16, bridgeWidth);
+      const archMat = new THREE.MeshStandardMaterial({
+        color: isCrossRealm ? 0xfcd34d : 0xf1ebe5,
+        roughness: 0.6,
+        metalness: isCrossRealm ? 0.3 : 0.05
+      });
+      const arch = new THREE.Mesh(archGeo, archMat);
+      arch.castShadow = true;
+      arch.receiveShadow = true;
+      bridgeGroup.add(arch);
+
+      // 欄杆
+      const railGeo = new THREE.BoxGeometry(bridgeLen, 0.12, 0.06);
+      const railMat = new THREE.MeshStandardMaterial({ color: isCrossRealm ? 0xd97706 : 0xa8a29e, roughness: 0.7 });
+      const rail1 = new THREE.Mesh(railGeo, railMat);
+      rail1.position.set(0, 0.14, bridgeWidth / 2 - 0.03);
+      bridgeGroup.add(rail1);
+
+      const rail2 = new THREE.Mesh(railGeo, railMat);
+      rail2.position.set(0, 0.14, -bridgeWidth / 2 + 0.03);
+      bridgeGroup.add(rail2);
+
+      bridgesGroup.add(bridgeGroup);
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 8. 沿大氣層升起之跨領域能量光索 (Atmospheric Flow Arcs)
+  // ══════════════════════════════════════════════════════════════════════
+  function buildFlowLines() {
+    FLOW_CONNECTIONS.forEach((flow) => {
+      const objA = islandObjectsMap.get(flow.from);
+      const objB = islandObjectsMap.get(flow.to);
+      if (!objA || !objB) return;
+
+      const normA = objA.userData.normal;
+      const normB = objB.userData.normal;
+
+      const pA = objA.position.clone().addScaledVector(normA, HEX_HEIGHT + 0.4);
+      const pB = objB.position.clone().addScaledVector(normB, HEX_HEIGHT + 0.4);
+      const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
+      const radialDir = new THREE.Vector3().subVectors(mid, PLANET_CENTER).normalize();
+
+      // 能量弧線拋向大氣層高空
+      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + 2.8 + pA.distanceTo(pB) * 0.2);
+
+      const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
+      const points = curve.getPoints(50);
+      const geo = new THREE.BufferGeometry().setFromPoints(points);
+
+      const mat = new THREE.LineDashedMaterial({
+        color: flow.color,
+        dashSize: 0.5,
+        gapSize: 0.35,
+        linewidth: 2,
+        transparent: true,
+        opacity: 0.85
+      });
+
+      const line = new THREE.Line(geo, mat);
+      line.computeLineDistances();
+      flowsGroup.add(line);
+
+      // 光子球
+      const photonGeo = new THREE.SphereGeometry(0.12, 8, 8);
+      const photonMat = new THREE.MeshBasicMaterial({ color: flow.color });
+      const photon = new THREE.Mesh(photonGeo, photonMat);
+      flowsGroup.add(photon);
+
+      flowCurves.push({ curve, photon, progress: Math.random(), speed: 0.0035 + Math.random() * 0.002 });
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 9. 黏土小人微型漫步者 (Chibi Walkers on Curved Planet)
+  // ══════════════════════════════════════════════════════════════════════
+  function spawnWalkers() {
+    const walkerColors = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899];
+    const totalWalkers = 10;
+
+    for (let i = 0; i < totalWalkers; i++) {
+      const walkerGroup = new THREE.Group();
+
+      const bodyGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.22, 8);
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: walkerColors[i % walkerColors.length],
+        roughness: 0.7
+      });
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.position.y = 0.15;
+      walkerGroup.add(body);
+
+      const headGeo = new THREE.SphereGeometry(0.1, 10, 10);
+      const headMat = new THREE.MeshStandardMaterial({ color: 0xffedd5, roughness: 0.8 });
+      const head = new THREE.Mesh(headGeo, headMat);
+      head.position.y = 0.32;
+      walkerGroup.add(head);
+
+      const island = ISLAND_DATA[i % ISLAND_DATA.length];
+      const islandObj = islandObjectsMap.get(island.id);
+      if (islandObj) {
+        walkerGroup.position.copy(islandObj.position).addScaledVector(islandObj.userData.normal, HEX_HEIGHT);
+        walkerGroup.quaternion.copy(islandObj.quaternion);
+      }
+      walkersGroup.add(walkerGroup);
+
+      walkers.push({
+        group: walkerGroup,
+        currentIsland: island.id,
+        targetPos: walkerGroup.position.clone(),
+        speed: 0.015 + Math.random() * 0.015,
+        pauseTicks: 0
+      });
+    }
+  }
+
+  function updateWalkers() {
+    if (!showWalkers) return;
+
+    walkers.forEach((w) => {
+      if (w.pauseTicks > 0) {
+        w.pauseTicks--;
+        return;
+      }
+
+      const curPos = w.group.position;
+      const dist = curPos.distanceTo(w.targetPos);
+
+      if (dist < 0.1) {
+        w.pauseTicks = Math.floor(60 + Math.random() * 120);
+
+        const island = islandObjectsMap.get(w.currentIsland);
+        if (island) {
+          const origin = island.position;
+          const normal = island.userData.normal;
+          const tangent = new THREE.Vector3(1, 0, 0).cross(normal).normalize();
+          const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+
+          const angle = Math.random() * Math.PI * 2;
+          const r = Math.random() * 1.3;
+          w.targetPos.copy(origin)
+            .addScaledVector(tangent, Math.cos(angle) * r)
+            .addScaledVector(bitangent, Math.sin(angle) * r)
+            .addScaledVector(normal, HEX_HEIGHT);
+        }
+      } else {
+        const dir = new THREE.Vector3().subVectors(w.targetPos, curPos).normalize();
+        curPos.addScaledVector(dir, w.speed);
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 10. 點擊互動與射線選取
+  // ══════════════════════════════════════════════════════════════════════
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  function setupRaycaster() {
+    container.addEventListener('pointerdown', (e) => {
+      container._startX = e.clientX;
+      container._startY = e.clientY;
+    });
+
+    container.addEventListener('pointerup', (e) => {
+      const dx = Math.abs(e.clientX - container._startX);
+      const dy = Math.abs(e.clientY - container._startY);
+      if (dx > 6 || dy > 6) return;
+
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(islandsGroup.children, true);
+
+      if (intersects.length > 0) {
+        let current = intersects[0].object;
+        let foundIslandId = null;
+
+        while (current && current !== scene) {
+          if (current.userData && current.userData.islandId) {
+            foundIslandId = current.userData.islandId;
+            break;
+          }
+          current = current.parent;
+        }
+
+        if (foundIslandId) {
+          focusIsland(foundIslandId);
+        }
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 11. 平滑相機飛行與島嶼登陸
+  // ══════════════════════════════════════════════════════════════════════
+  function focusIsland(islandId) {
+    const island = ISLAND_DATA.find((i) => i.id === islandId);
+    if (!island) return;
+
+    activeIsland = islandId;
+
+    // 1. 更新反白光圈
+    islandObjectsMap.forEach((obj, id) => {
+      if (obj.userData.selectionRing) {
+        obj.userData.selectionRing.material.opacity = id === islandId ? 0.95 : 0;
+      }
+    });
+
+    // 2. 開啟左側全文章抽屜
+    openDetailCard(island);
+
+    // 3. 高亮右側導覽列並在手機版收合目錄
+    highlightSidebarRow(islandId);
+    if (window.innerWidth <= 900) {
+      const sidebar = document.getElementById('islandNavSidebar');
+      const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+      if (sidebar) sidebar.classList.remove('open-mobile');
+      if (toggleSidebarBtn) toggleSidebarBtn.classList.remove('active');
+    }
+
+    // 4. 計算沿著地球地平線傾角飛行之相機目標點
+    const obj = islandObjectsMap.get(islandId);
+    const center = obj.position;
+    const normal = obj.userData.normal;
+
+    // 相機停在島嶼正上方偏後方
+    cameraDestPos = center.clone().addScaledVector(normal, 4.8).add(new THREE.Vector3(0.2, 0.4, 5.2));
+    cameraTarget = center.clone().addScaledVector(normal, HEX_HEIGHT + 0.3);
+
+    startCameraFlight(cameraDestPos, cameraTarget, 1200);
+  }
+
+  function resetView() {
+    activeIsland = null;
+    closeDetailCard();
+
+    islandObjectsMap.forEach((obj) => {
+      if (obj.userData.selectionRing) obj.userData.selectionRing.material.opacity = 0;
+    });
+
+    document.querySelectorAll('.sidebar-island-row').forEach(r => r.classList.remove('active'));
+
+    const overviewLookAt = new THREE.Vector3(2.1, 0, 0);
+    const overviewPos = new THREE.Vector3(2.1, 18, 22);
+    startCameraFlight(overviewPos, overviewLookAt, 1400);
+  }
+
+  function startCameraFlight(destPos, destLookAt, durationMs) {
+    flightStartPos.copy(camera.position);
+    flightStartLookAt.copy(controls.target);
+    cameraDestPos.copy(destPos);
+    cameraTarget.copy(destLookAt);
+
+    flightStartTime = performance.now();
+    flightDuration = durationMs;
+    isFlightActive = true;
+    controls.enabled = false;
+  }
+
+  function updateCameraFlight() {
+    if (!isFlightActive) return;
+
+    const elapsed = performance.now() - flightStartTime;
+    const progress = Math.min(elapsed / flightDuration, 1);
+    const ease = progress < 0.5
+      ? 4 * progress * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+    camera.position.lerpVectors(flightStartPos, cameraDestPos, ease);
+    controls.target.lerpVectors(flightStartLookAt, cameraTarget, ease);
+
+    if (progress >= 1) {
+      isFlightActive = false;
+      controls.enabled = true;
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 12. UI 面板與互動事件 (支援全文章展示與島內搜尋)
+  // ══════════════════════════════════════════════════════════════════════
+  let currentDrawerArticles = [];
+
+  function setupUI() {
+    // 星系切換鈕
+    const realmPills = document.querySelectorAll('.realm-pill');
+    realmPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        realmPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        filterRealm(pill.dataset.realm);
+      });
+    });
+
+    // 光照時序鈕
+    const timeBtns = document.querySelectorAll('.time-btn');
+    timeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        timeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyTimePreset(btn.dataset.time);
+      });
+    });
+
+    // 標籤開關
+    const toggleLabelsBtn = document.getElementById('toggleLabelsBtn');
+    toggleLabelsBtn.addEventListener('click', () => {
+      showLabels = !showLabels;
+      toggleLabelsBtn.classList.toggle('active', showLabels);
+      badgeObjects.forEach(b => b.classList.toggle('labels-hidden', !showLabels));
+    });
+
+    // 漫步小人開關
+    const toggleWalkersBtn = document.getElementById('toggleWalkersBtn');
+    toggleWalkersBtn.addEventListener('click', () => {
+      showWalkers = !showWalkers;
+      toggleWalkersBtn.classList.toggle('active', showWalkers);
+      walkersGroup.visible = showWalkers;
+    });
+
+    // 能量光流開關
+    const toggleFlowsBtn = document.getElementById('toggleFlowsBtn');
+    toggleFlowsBtn.addEventListener('click', () => {
+      showFlows = !showFlows;
+      toggleFlowsBtn.classList.toggle('active', showFlows);
+      flowsGroup.visible = showFlows;
+    });
+
+    // 全景重置按鈕
+    document.getElementById('resetCamBtn').addEventListener('click', resetView);
+
+    // 側邊欄切換
+    const sidebar = document.getElementById('islandNavSidebar');
+    const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+    toggleSidebarBtn.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.toggle('open-mobile');
+        toggleSidebarBtn.classList.toggle('active', sidebar.classList.contains('open-mobile'));
+        if (sidebar.classList.contains('open-mobile')) {
+          closeDetailCard();
+        }
+      } else {
+        sidebar.classList.toggle('collapsed');
+        toggleSidebarBtn.classList.toggle('active', !sidebar.classList.contains('collapsed'));
+      }
+    });
+
+    // 關閉左側卡片
+    document.getElementById('closeDetailBtn').addEventListener('click', closeDetailCard);
+
+    // 填入右側導覽列清單
+    populateSidebar();
+
+    // 右側側邊欄搜尋
+    const searchInput = document.getElementById('islandSearchInput');
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      filterSidebarBySearch(query);
+    });
+
+    // 抽屜內全文章搜尋過濾框
+    const drawerSearch = document.getElementById('drawerArticleSearch');
+    drawerSearch.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      renderDrawerArticles(query);
+    });
+
+    // 鍵盤 Esc 關閉抽屜
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDetailCard();
+      }
+    });
+  }
+
+  // 填入右側島嶼清單
+  function populateSidebar() {
+    const healthContainer = document.getElementById('healthItems');
+    const wisdomContainer = document.getElementById('wisdomItems');
+
+    healthContainer.innerHTML = '';
+    wisdomContainer.innerHTML = '';
+
+    let totalHealthArticles = 0;
+    let totalWisdomArticles = 0;
+
+    ISLAND_DATA.forEach((island) => {
+      const count = island.articles.length;
+      if (island.realm === 'health') totalHealthArticles += count;
+      else totalWisdomArticles += count;
+
+      const row = document.createElement('div');
+      row.className = 'sidebar-island-row';
+      row.dataset.islandId = island.id;
+      row.dataset.islandName = island.name.toLowerCase();
+      row.dataset.islandSubtitle = island.subtitle.toLowerCase();
+      row.innerHTML = `
+        <div class="sidebar-island-main">
+          <div class="sidebar-island-icon">${island.icon}</div>
+          <span class="sidebar-island-name">${island.name}</span>
+        </div>
+        <span class="sidebar-island-tag">${count}篇</span>
+      `;
+      row.addEventListener('click', () => {
+        focusIsland(island.id);
+      });
+
+      if (island.realm === 'health') {
+        healthContainer.appendChild(row);
+      } else {
+        wisdomContainer.appendChild(row);
+      }
+    });
+
+    document.getElementById('healthTotalStat').textContent = `6 座群島 · ${totalHealthArticles} 篇專文`;
+    document.getElementById('wisdomTotalStat').textContent = `6 部名著 · ${totalWisdomArticles} 篇章節`;
+  }
+
+  function highlightSidebarRow(islandId) {
+    document.querySelectorAll('.sidebar-island-row').forEach((row) => {
+      row.classList.toggle('active', row.dataset.islandId === islandId);
+    });
+  }
+
+  function filterSidebarBySearch(query) {
+    document.querySelectorAll('.sidebar-island-row').forEach((row) => {
+      const name = row.dataset.islandName;
+      const sub = row.dataset.islandSubtitle;
+      const match = !query || name.includes(query) || sub.includes(query);
+      row.style.display = match ? 'flex' : 'none';
+    });
+  }
+
+  function filterRealm(realm) {
+    islandsGroup.children.forEach((group) => {
+      const data = group.userData.islandData;
+      if (!data) return;
+      const visible = realm === 'all' || data.realm === realm;
+      group.visible = visible;
+    });
+
+    document.querySelectorAll('.realm-group').forEach((group) => {
+      const groupRealm = group.dataset.realmGroup;
+      const visible = realm === 'all' || groupRealm === realm;
+      group.style.display = visible ? 'block' : 'none';
+    });
+
+    if (activeIsland) {
+      const activeData = ISLAND_DATA.find(i => i.id === activeIsland);
+      if (activeData && realm !== 'all' && activeData.realm !== realm) {
+        resetView();
+      }
+    }
+  }
+
+  // 開啟左側抽屜並載入「全文章與章節」
+  function openDetailCard(island) {
+    const drawer = document.getElementById('islandDetailCard');
+    const realmTag = document.getElementById('cardRealmTag');
+    const icon = document.getElementById('cardIcon');
+    const title = document.getElementById('cardTitle');
+    const subtitle = document.getElementById('cardSubtitle');
+    const desc = document.getElementById('cardDesc');
+    const ctaBtn = document.getElementById('cardCtaBtn');
+    const drawerSearch = document.getElementById('drawerArticleSearch');
+
+    realmTag.textContent = island.realm === 'health' ? '🏥 人體健康微縮群島' : '📚 知識宇宙探索群島';
+    realmTag.classList.toggle('wisdom-style', island.realm === 'wisdom');
+
+    icon.textContent = island.icon;
+    title.textContent = island.name;
+    subtitle.textContent = island.subtitle;
+    desc.textContent = island.desc;
+
+    ctaBtn.href = island.ctaUrl;
+    ctaBtn.querySelector('span').textContent = island.ctaText;
+
+    // 清空抽屜搜尋欄並重置當前文章清單
+    drawerSearch.value = '';
+    currentDrawerArticles = island.articles;
+    renderDrawerArticles('');
+
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+  }
+
+  // 渲染抽屜內全文章列表 (保留 100% 原始標題)
+  function renderDrawerArticles(filterText) {
+    const pinList = document.getElementById('cardPinList');
+    const countBadge = document.getElementById('drawerArticlesCount');
+
+    const filtered = currentDrawerArticles.filter(art => {
+      if (!filterText) return true;
+      return art.title.toLowerCase().includes(filterText) ||
+             (art.category && art.category.toLowerCase().includes(filterText));
+    });
+
+    countBadge.textContent = `${filtered.length} 篇`;
+
+    if (filtered.length === 0) {
+      pinList.innerHTML = `
+        <div style="text-align: center; padding: 24px 10px; color: #8aa4b2; font-size: 0.86rem; font-weight: 600;">
+          無相符文章或章節
+        </div>
+      `;
+      return;
+    }
+
+    pinList.innerHTML = filtered.map((art, idx) => `
+      <a href="${art.url}" class="pin-item-card" target="_blank" rel="noopener">
+        <div class="pin-num">${idx + 1}</div>
+        <div class="pin-text-col">
+          <div class="pin-title">${art.title}</div>
+          <div class="pin-sub">${art.category}</div>
+        </div>
+        <svg class="pin-arrow-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    `).join('');
+  }
+
+  function closeDetailCard() {
+    const drawer = document.getElementById('islandDetailCard');
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    if (activeIsland) {
+      const islandObj = islandObjectsMap.get(activeIsland);
+      if (islandObj && islandObj.userData.selectionRing) {
+        islandObj.userData.selectionRing.material.opacity = 0;
+      }
+      activeIsland = null;
+    }
+    document.querySelectorAll('.sidebar-island-row').forEach(r => r.classList.remove('active'));
+  }
+
+  function onWindowResize() {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+    cssRenderer.setSize(width, height);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 13. 主渲染迴圈
+  // ══════════════════════════════════════════════════════════════════════
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const now = Date.now();
+
+    // 1. 球面水波慢速自轉
+    if (waterSphere) {
+      waterSphere.rotation.y = Math.sin(now * 0.0003) * 0.015;
+    }
+
+    // 2. 能量光流粒子在大氣層高空飛掠
+    if (showFlows) {
+      flowCurves.forEach((item) => {
+        item.progress = (item.progress + item.speed) % 1;
+        const pos = item.curve.getPointAt(item.progress);
+        item.photon.position.copy(pos);
+      });
+    }
+
+    // 3. 漫步微型小人移動更新
+    updateWalkers();
+
+    // 4. 書卷水晶微幅漂浮旋轉
+    islandsGroup.traverse((child) => {
+      if (child.userData && child.userData.isFloatingGem) {
+        child.rotation.y += 0.02;
+        child.position.y = HEX_HEIGHT + 1.25 + Math.sin(now * 0.003 * child.userData.baseSpeed) * 0.08;
+      }
+    });
+
+    // 5. 相機飛行補間更新
+    updateCameraFlight();
+
+    controls.update();
+    renderer.render(scene, camera);
+    cssRenderer.render(scene, camera);
+  }
+
+  // 啟動 3D 微縮星球世界
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
