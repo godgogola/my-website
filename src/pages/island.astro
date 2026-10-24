@@ -46,23 +46,32 @@ function extractBookChapters(bookNames: string[]) {
     }));
 }
 
-// ── 2. 為 12 座群島打包完整文章與章節庫 ──
+// ── 2. 為 24 座群島打包完整文章與章節庫 ──
 const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
-  // 【人體健康微縮群島】
-  'cardio': extractPosts(['高血壓', '高血脂', '慢性病']),
-  'stomach': extractPosts(['胃部疾病']),
-  'liver': extractPosts(['肝膽胰疾病', '肝病特區']),
-  'endoscopy': extractPosts(['內視鏡檢查']),
-  'colon': extractPosts(['腸道疾病']),
-  'metabolism': extractPosts(['減重', '糖尿病', '健康飲食']),
-
-  // 【知識宇宙探索群島】
+  'endoscopy': extractPosts(["內視鏡檢查", "診間隨筆"]),
+  'stomach': extractPosts(["胃部疾病", "消化道癌症專區"]),
+  'intestine': extractPosts(["腸道疾病"]),
+  'hepatitis': extractPosts(["肝病特區"]),
+  'liver-biliary': extractPosts(["肝膽胰疾病"]),
+  'lipids': extractPosts(["高血脂"]),
+  'hypertension': extractPosts(["高血壓"]),
+  'diabetes': extractPosts(["糖尿病"]),
+  'weight-loss': extractPosts(["減重"]),
+  'diet': extractPosts(["健康飲食"]),
+  'medication': extractPosts(["藥物介紹"]),
+  'health-red': extractPosts(["健檢紅字怎麼辦"]),
+  'health-check': extractPosts(["健檢項目介紹"]),
+  'ultrasound': extractPosts(["超音波檢查"]),
+  'exercise': extractPosts(["要活就要動"]),
+  'chronic': extractPosts(["慢性病", "疑難雜症"]),
   'wealth-ladder': extractBookChapters(['財富階梯']),
-  'six-neuro': extractBookChapters(['你的人生，他們六個說了算!']),
-  'glucose-goddess': extractBookChapters(['90%的病，控糖就會好']),
-  'die-with-zero': extractBookChapters(['別把你的錢留到死']),
   'random-walk': extractBookChapters(['漫步華爾街']),
-  'four-pillars': extractBookChapters(['投資金律', '投資前最重要的事']),
+  'golden-rules': extractBookChapters(['投資金律']),
+  'most-important': extractBookChapters(['投資前最重要的事']),
+  'die-with-zero': extractBookChapters(['別把你的錢留到死']),
+  'glucose': extractBookChapters(['90%的病，控糖就會好']),
+  'brain-neuro': extractBookChapters(['你的人生，他們六個說了算!']),
+  'sapiens': extractBookChapters(['人類大歷史']),
 };
 ---
 
@@ -112,13 +121,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       <!-- 星系切換鈕 -->
       <div class="hud-realm-tabs">
         <button class="realm-pill active" data-realm="all">
-          <span class="dot all"></span>全部星系 (12)
+          <span class="dot all"></span>全部星系 (24)
         </button>
         <button class="realm-pill" data-realm="health">
-          <span class="dot health"></span>🏥 人體健康 (6)
+          <span class="dot health"></span>🏥 人體健康 (16)
         </button>
         <button class="realm-pill" data-realm="wisdom">
-          <span class="dot wisdom"></span>📚 知識宇宙 (6)
+          <span class="dot wisdom"></span>📚 知識宇宙 (8)
         </button>
       </div>
 
@@ -210,7 +219,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
           <span>星球航海圖</span>
         </div>
-        <span class="sidebar-count" id="sidebarCount">12 座群島</span>
+        <span class="sidebar-count" id="sidebarCount">24 座群島</span>
       </div>
 
       <!-- 即時關鍵字過濾 -->
@@ -1018,13 +1027,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     white-space: nowrap;
   }
 
-  /* ════════════ CSS2D 3D 懸浮標籤 ════════════ */
+  /* ════════════ CSS2D 3D 懸浮標籤 (還原示意圖深古銅金邊膠囊) ════════════ */
   .island-3d-badge {
     position: absolute;
     pointer-events: auto;
     cursor: pointer;
     transform: translate(-50%, -100%);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
   }
 
   .island-3d-badge:hover {
@@ -1034,56 +1043,64 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   .island-3d-badge-inner {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
+    gap: 7px;
+    padding: 6px 14px;
     border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 2px solid #ffffff;
-    box-shadow: 0 6px 18px rgba(28, 59, 74, 0.22), 0 2px 4px rgba(0,0,0,0.06);
+    background: linear-gradient(135deg, rgba(34, 24, 18, 0.92) 0%, rgba(20, 14, 10, 0.96) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(224, 168, 115, 0.75);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(255, 215, 175, 0.35);
     white-space: nowrap;
     user-select: none;
+    color: #fdfaf6;
   }
 
   .island-3d-badge.health .island-3d-badge-inner {
-    border-color: #ffd8d3;
-    color: #b93822;
+    border-color: rgba(248, 165, 120, 0.85);
   }
 
   .island-3d-badge.wisdom .island-3d-badge-inner {
-    border-color: #ddd6fe;
-    color: #4338ca;
+    border-color: rgba(186, 175, 255, 0.85);
   }
 
   .badge-icon {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
   }
 
   .badge-title {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 800;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.7);
   }
 
   .badge-pins-count {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 800;
-    padding: 1px 6px;
+    padding: 2px 8px;
     border-radius: 9999px;
-    background: #edf6f9;
-    color: #3b7486;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.5);
+  }
+
+  .island-3d-badge.wisdom .badge-pins-count {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    box-shadow: 0 2px 6px rgba(109, 40, 217, 0.5);
   }
 
   .badge-arrow {
     width: 0;
     height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid rgba(255, 255, 255, 0.95);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(224, 168, 115, 0.85);
     margin: 0 auto;
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.45));
   }
 
   /* 隱藏標籤狀態 */
@@ -1158,190 +1175,391 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   const ALL_ARTICLES_MAP = JSON.parse(document.getElementById('islandArticlesData').textContent);
 
-  // 12 座群島基礎元資料 (位置、主題色系、簡介與專題連結)
+  // 24 座群島基礎元資料 (位置、主題色系、簡介與專題連結)
   const ISLAND_META = [
-    // ────────────── 【人體健康微縮群島】 (Realm: health) ──────────────
     {
-      id: 'cardio',
+      id: 'endoscopy',
       realm: 'health',
-      q: 0, r: 0, // Central Organ Hub
-      name: '心血管與三高島',
-      shortName: '心血管島',
-      icon: '🫀',
-      color: 0xe05d52,
-      roofColor: 0xb33927,
-      accentColor: 0xf59e0b,
-      subtitle: '血壓 722 法則 · 動脈鈣化 · CKM心腎代謝管理',
-      desc: '心臟與全身動脈網絡是維持生命搏動的動力源泉。掌握最新高血壓 722 居家量測、高血脂控制策略、冠狀動脈鈣化 (CAC) 與心血管-腎臟-代謝綜合照護實證。',
-      ctaUrl: '/health-column?cat=高血壓',
-      ctaText: '進入心血管與三高專題專欄'
+      q: -1, r: 0,
+      name: '內視鏡檢查島',
+      shortName: '內視鏡島',
+      icon: '🔬',
+      color: 0x0ea5e9,
+      roofColor: 0x0369a1,
+      accentColor: 0x38bdf8,
+      subtitle: '無痛舒眠胃鏡、大腸鏡與早期癌篩檢',
+      desc: '以高解析放大內視鏡、NBI 窄頻影像技術，精準洞察食道、胃部與大腸黏膜微血管，讓息肉與早期病變無所遁形。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「內視鏡島」專題文章',
+      landmark: 'lighthouse'
     },
     {
       id: 'stomach',
       realm: 'health',
-      q: -1, r: 0,
-      name: '胃部島',
+      q: -2, r: 0,
+      name: '胃部疾病島',
       shortName: '胃部島',
       icon: '🫄',
-      color: 0xf39c12,
-      roofColor: 0xd35400,
-      accentColor: 0xfcd34d,
-      subtitle: '胃食道逆流 · 幽門桿菌 · 巴瑞氏食道炎',
-      desc: '守護上消化道的第一道防線！完整涵蓋胃食道逆流火燒心、胃潰瘍保護機制、功能性消化不良及巴瑞氏食道癌前病變防範。',
-      ctaUrl: '/anatomy/stomach',
-      ctaText: '探索胃部互動解剖圖鑑'
+      color: 0xf59e0b,
+      roofColor: 0xb45309,
+      accentColor: 0xfbbf24,
+      subtitle: '胃食道逆流、幽門桿菌與胃潰瘍前瞻處置',
+      desc: '深入探討胃酸抑制劑機轉、胃黏膜保護、功能性消化不良及萎縮性胃炎的完整臨床治療方針。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「胃部島」專題文章',
+      landmark: 'cottage'
     },
     {
-      id: 'liver',
+      id: 'intestine',
       realm: 'health',
-      q: -1, r: -1,
-      name: '肝膽胰島',
-      shortName: '肝膽胰島',
-      icon: '🫁',
-      color: 0x2e8555,
-      roofColor: 0x194d32,
-      accentColor: 0x6ee7b7,
-      subtitle: '代謝脂肪肝 · B/C肝炎 · 膽結石胰臟炎',
-      desc: '人體最大的化學解毒與代謝重鎮。掌握代謝異常脂肪肝 (MASLD)、B型肝炎表面抗原追蹤抗體消長，以及腹部超音波膽囊胰臟判讀。',
-      ctaUrl: '/anatomy/liver',
-      ctaText: '探索肝膽胰互動解剖圖鑑'
-    },
-    {
-      id: 'endoscopy',
-      realm: 'health',
-      q: 0, r: -1,
-      name: '內視鏡島',
-      shortName: '內視鏡島',
-      icon: '🔬',
-      color: 0x258b88,
-      roofColor: 0x164e4c,
-      accentColor: 0x5eead4,
-      subtitle: '無痛腸胃鏡 · 黏膜下腫瘤 · 早期癌症偵測',
-      desc: '消化道預防醫學的守護燈塔！結合先進 NBI 窄頻光技術、息肉電刀微創切除，為您建構最安心舒適的無痛腸胃鏡篩檢防線。',
-      ctaUrl: '/endoscopy',
-      ctaText: '進入無痛腸胃鏡專區'
-    },
-    {
-      id: 'colon',
-      realm: 'health',
-      q: -1, r: 1,
-      name: '腸道島',
+      q: -2, r: 1,
+      name: '腸道疾病島',
       shortName: '腸道島',
       icon: '🧬',
-      color: 0xc85a17,
-      roofColor: 0x87360b,
-      accentColor: 0xfba94b,
-      subtitle: '腸道微生態 · 憩室炎 · 排便血便警訊',
-      desc: '駐紮人體七成免疫細胞的長壽根基。解析腸道菌群微生態、大腸憩室飲食調養、腸躁症以及各種排便血便警訊。',
-      ctaUrl: '/anatomy/colon',
-      ctaText: '探索腸道微生態與解剖'
+      color: 0x10b981,
+      roofColor: 0x047857,
+      accentColor: 0x34d399,
+      subtitle: '腸躁症、腸漏症、便秘與腸道菌群平衡',
+      desc: '探索人體第二大腦——腸道菌相與免疫系統的互動，提供膳食纖維、益生菌與腸道黏膜修復的最佳解方。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「腸道島」專題文章',
+      landmark: 'gazebo'
     },
     {
-      id: 'metabolism',
+      id: 'hepatitis',
+      realm: 'health',
+      q: -3, r: 0,
+      name: '肝病特區島',
+      shortName: '肝病島',
+      icon: '🫁',
+      color: 0xef4444,
+      roofColor: 0xb91c1c,
+      accentColor: 0xf87171,
+      subtitle: 'B型肝炎、C型肝炎根治與最新抗病毒藥物',
+      desc: '追蹤 B 肝臨床治癒路徑、口服 DAA 抗病毒藥物、肝硬化逆轉與肝細胞癌早期監測。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「肝病島」專題文章',
+      landmark: 'church'
+    },
+    {
+      id: 'liver-biliary',
+      realm: 'health',
+      q: -3, r: 1,
+      name: '肝膽胰疾病島',
+      shortName: '肝膽胰島',
+      icon: '🧪',
+      color: 0xd97706,
+      roofColor: 0x92400e,
+      accentColor: 0xfbbf24,
+      subtitle: '脂肪肝、膽囊息肉、膽結石與胰臟病變',
+      desc: '代謝性脂肪肝全方位逆轉策略、膽結石追蹤時機與胰臟囊腫的精準影像鑑別。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「肝膽胰島」專題文章',
+      landmark: 'cottage'
+    },
+    {
+      id: 'lipids',
+      realm: 'health',
+      q: 0, r: -1,
+      name: '高血脂島',
+      shortName: '高血脂島',
+      icon: '🩸',
+      color: 0xe11d48,
+      roofColor: 0x9f1239,
+      accentColor: 0xfb7185,
+      subtitle: 'LDL-C、ApoB、Lp(a) 與心血管硬化斑塊防治',
+      desc: '超壞膽固醇 sdLDL、PCSK9 抑制劑與進階脂蛋白指標解讀，守護動脈彈性與心血管健康。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「高血脂島」專題文章',
+      landmark: 'church'
+    },
+    {
+      id: 'hypertension',
+      realm: 'health',
+      q: 0, r: -2,
+      name: '高血壓島',
+      shortName: '高血壓島',
+      icon: '💓',
+      color: 0xf43f5e,
+      roofColor: 0xbe123c,
+      accentColor: 0xfb7185,
+      subtitle: '722 血壓量測法、S-ABCDE 生活調整與靶器官保護',
+      desc: '由心臟、大腦到腎臟，建構多重血管保護網，破除隱形殺手帶來的長期動脈硬化風險。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「高血壓島」專題文章',
+      landmark: 'cottage'
+    },
+    {
+      id: 'diabetes',
+      realm: 'health',
+      q: 0, r: 0,
+      name: '糖尿病島',
+      shortName: '糖尿病島',
+      icon: '🧁',
+      color: 0x8b5cf6,
+      roofColor: 0x6d28d9,
+      accentColor: 0xa78bfa,
+      subtitle: '糖化血色素、胰島素阻抗與連續血糖監測',
+      desc: '新世代 SGLT2 抑制劑與 GLP-1 腸泌素，結合個人化飲食策略，達成糖尿病緩解與心腎器官保護。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「糖尿病島」專題文章',
+      landmark: 'church'
+    },
+    {
+      id: 'weight-loss',
+      realm: 'health',
+      q: -1, r: 1,
+      name: '減重島',
+      shortName: '減重島',
+      icon: '⚖️',
+      color: 0x14b8a6,
+      roofColor: 0x0f766e,
+      accentColor: 0x2dd4bf,
+      subtitle: '瘦瘦針 GLP-1/GIP 雙受體促效劑與體組成優化',
+      desc: '突破體重設定點！科學化劑量遞增、肌少症預防與停藥不復胖管理，找回健康自信體態。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「減重島」專題文章',
+      landmark: 'gazebo'
+    },
+    {
+      id: 'diet',
+      realm: 'health',
+      q: -2, r: 2,
+      name: '健康飲食島',
+      shortName: '飲食島',
+      icon: '🥗',
+      color: 0x84cc16,
+      roofColor: 0x4d7c0f,
+      accentColor: 0xa3e635,
+      subtitle: '地中海飲食、抗發炎食物與微量營養素指南',
+      desc: '以科學飲食抵禦慢性發炎，從維生素 B 群、鋅、鎂到優質脂肪，用日常餐盤打造長壽體質。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「飲食島」專題文章',
+      landmark: 'cottage'
+    },
+    {
+      id: 'medication',
+      realm: 'health',
+      q: -1, r: -1,
+      name: '藥物介紹島',
+      shortName: '藥物島',
+      icon: '💊',
+      color: 0x06b6d4,
+      roofColor: 0x0e7490,
+      accentColor: 0x67e8f9,
+      subtitle: '藥物機轉、交互作用與安全用藥常識',
+      desc: '拆解 P-CAB、PPI、解痙劑與各類常用處方藥的藥理機制，讓服藥更安心、效果更卓越。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「藥物島」專題文章',
+      landmark: 'church'
+    },
+    {
+      id: 'health-red',
+      realm: 'health',
+      q: 1, r: -2,
+      name: '健檢紅字島',
+      shortName: '健檢紅字島',
+      icon: '⚠️',
+      color: 0xf97316,
+      roofColor: 0xc2410c,
+      accentColor: 0xfb923c,
+      subtitle: '肝指數 GOT/GPT、腎功能、尿酸與膽紅素判讀',
+      desc: '健檢紅字不用慌！逐項深入剖析異常指標的真正臨床意義與後續追蹤方針。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「健檢紅字島」專題文章',
+      landmark: 'cottage'
+    },
+    {
+      id: 'health-check',
+      realm: 'health',
+      q: 1, r: -1,
+      name: '健檢項目島',
+      shortName: '健檢項目島',
+      icon: '📋',
+      color: 0x3b82f6,
+      roofColor: 0x1d4ed8,
+      accentColor: 0x60a5fa,
+      subtitle: '腫瘤標記、糞便潛血與預防醫學黃金組合',
+      desc: '精選各年齡層必備健檢組合，釐清高階影像與抽血指標的最佳篩檢效益。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「健檢項目島」專題文章',
+      landmark: 'gazebo'
+    },
+    {
+      id: 'ultrasound',
+      realm: 'health',
+      q: -1, r: -2,
+      name: '超音波檢查島',
+      shortName: '超音波島',
+      icon: '📡',
+      color: 0x6366f1,
+      roofColor: 0x4338ca,
+      accentColor: 0x818cf8,
+      subtitle: '腹部超音波、甲狀腺篩檢與即時臨床掃描',
+      desc: '醫師的第三隻眼睛！無輻射、高穿透力，即時偵測肝囊腫、血管瘤、腎結石與甲狀腺結節。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「超音波島」專題文章',
+      landmark: 'lighthouse'
+    },
+    {
+      id: 'exercise',
+      realm: 'health',
+      q: -2, r: -1,
+      name: '要活就要動島',
+      shortName: '運動活力島',
+      icon: '🏃',
+      color: 0x10b981,
+      roofColor: 0x047857,
+      accentColor: 0x34d399,
+      subtitle: '阻力訓練、有氧耐力與肌少症防禦',
+      desc: '運動是最好的天然藥物！增肌減脂、改善胰島素敏感度、活化粒線體能量工廠。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「運動活力島」專題文章',
+      landmark: 'gazebo'
+    },
+    {
+      id: 'chronic',
       realm: 'health',
       q: 0, r: 1,
-      name: '代謝與享瘦島',
-      shortName: '代謝享瘦島',
-      icon: '⚖️',
-      color: 0xca8a04,
-      roofColor: 0x78350f,
-      accentColor: 0xfef08a,
-      subtitle: '實證健康減重 · GLP-1 腸泌素 · 胰島素阻抗',
-      desc: '打破減重復胖迷思的實證醫學基地！剖析台灣合法減重藥物、GLP-1 腸泌素機轉、血糖平穩控糖與打造易瘦體質策略。',
-      ctaUrl: '/weight-loss',
-      ctaText: '進入健康享瘦與減重專區'
+      name: '慢性病島',
+      shortName: '慢性病島',
+      icon: '🩺',
+      color: 0xa855f7,
+      roofColor: 0x7e22ce,
+      accentColor: 0xc084fc,
+      subtitle: '慢性腎臟病 CKD、代謝症候群與全人照護',
+      desc: '跨專科整合管理，建立保腎護心長遠防線，享有高品質的樂活晚年。',
+      ctaUrl: '/health-column',
+      ctaText: '探索更多「慢性病島」專題文章',
+      landmark: 'church'
     },
-
-    // ────────────── 【知識宇宙探索群島】 (Realm: wisdom) ──────────────
     {
       id: 'wealth-ladder',
       realm: 'wisdom',
-      q: 1, r: 0, // Cross-realm Grand Bridge Anchor
+      q: 1, r: 0,
       name: '《財富階梯》島',
-      shortName: '財富階梯',
+      shortName: '財富階梯島',
       icon: '🪜',
-      color: 0x4f46e5,
-      roofColor: 0x312e81,
-      accentColor: 0x818cf8,
-      subtitle: 'Nick Maggiulli 經典解析 · 全章節導讀',
-      desc: '探索順著財富階梯向上而增加收入、投資與消費的實踐架構。跨越生活型態膨脹陷阱，實現財務自由與時間掌控權。',
+      color: 0x8b5cf6,
+      roofColor: 0x581c87,
+      accentColor: 0xc084fc,
+      subtitle: 'Nick Maggiulli 著｜看清你的財務位階與資產躍遷',
+      desc: '從儲蓄率到資產收益率，解析人生各財富階段的最優決策路徑，擺脫無效努力，穩步晉級。',
       ctaUrl: '/books',
-      ctaText: '閱讀《財富階梯》全系列筆記'
-    },
-    {
-      id: 'six-neuro',
-      realm: 'wisdom',
-      q: 1, r: -1,
-      name: '《他們六個說了算!》島',
-      shortName: '神經傳導島',
-      icon: '🧠',
-      color: 0x7c3aed,
-      roofColor: 0x4c1d95,
-      accentColor: 0xa78bfa,
-      subtitle: '六大神經傳導物質與大腦決策行為學',
-      desc: '多巴胺、血清素、腦內啡...揭開大腦六大神經傳導物質如何主宰我們的動機渴望、專注力、幸福感與日常決策行為。',
-      ctaUrl: '/books',
-      ctaText: '閱讀《他們六個說了算》讀書筆記'
-    },
-    {
-      id: 'glucose-goddess',
-      realm: 'wisdom',
-      q: 2, r: -1,
-      name: '《90%的病，控糖就會好》島',
-      shortName: '控糖就會好',
-      icon: '🩸',
-      color: 0xdb2777,
-      roofColor: 0x831843,
-      accentColor: 0xf472b6,
-      subtitle: 'Jessie Inchauspé 控糖女神實證指南',
-      desc: '進入人體駕駛艙！透過飲食順序（纖維→蛋白質→碳水）、飯後散步微運動，撫平葡萄糖尖峰，擺脫疲倦、發炎與慢性病。',
-      ctaUrl: '/books',
-      ctaText: '閱讀《控糖就會好》讀書筆記'
-    },
-    {
-      id: 'die-with-zero',
-      realm: 'wisdom',
-      q: 2, r: 0,
-      name: '《別把你的錢留到死》島',
-      shortName: '別把錢留到死',
-      icon: '⏳',
-      color: 0xea580c,
-      roofColor: 0x7c2d12,
-      accentColor: 0xfb923c,
-      subtitle: 'Bill Perkins 人生體驗最佳化哲學',
-      desc: '金錢只是用來購買難忘人生體驗的燃料！在健康、時間與金錢三者交會的黃金時期投資體驗，及早累積終身受用的記憶股息。',
-      ctaUrl: '/books',
-      ctaText: '閱讀《別把你的錢留到死》筆記'
+      ctaText: '探索更多「財富階梯島」專題文章',
+      landmark: 'church'
     },
     {
       id: 'random-walk',
       realm: 'wisdom',
       q: 1, r: 1,
       name: '《漫步華爾街》島',
-      shortName: '漫步華爾街',
+      shortName: '漫步華爾街島',
       icon: '📈',
-      color: 0x0284c7,
-      roofColor: 0x075985,
-      accentColor: 0x38bdf8,
-      subtitle: 'Burton Malkiel 跨世紀投資聖經',
-      desc: '從鬱金香狂熱、南海泡沫到現代科技熱潮。剖析效率市場假說、磐石理論與隨機漫步，堅守低成本指數化被動投資之道。',
+      color: 0x3b82f6,
+      roofColor: 0x1e3a8a,
+      accentColor: 0x60a5fa,
+      subtitle: 'Burton Malkiel 著｜半世紀不敗的指數化投資聖經',
+      desc: '隨機漫步假說與效率市場理論，破除技術分析迷思，用低成本廣泛指數基金擁抱全球經濟成長。',
       ctaUrl: '/books',
-      ctaText: '閱讀《漫步華爾街》讀書筆記'
+      ctaText: '探索更多「漫步華爾街島」專題文章',
+      landmark: 'gazebo'
     },
     {
-      id: 'four-pillars',
+      id: 'golden-rules',
       realm: 'wisdom',
-      q: 2, r: 1,
-      name: '《投資金律與最重要的事》島',
+      q: 2, r: 0,
+      name: '《投資金律》島',
       shortName: '投資金律島',
       icon: '🏛️',
       color: 0x0d9488,
       roofColor: 0x134e4a,
       accentColor: 0x2dd4bf,
-      subtitle: 'William Bernstein & Howard Marks 經典合璧',
-      desc: '理論、歷史、心理學與產業四大投資支柱！結合霍華·馬克思「第二層思考」與週期智慧，建立無懼市場風暴的資產配置壁壘。',
+      subtitle: 'William Bernstein 著｜理論、歷史、心理學與產業四大投資支柱',
+      desc: '神經外科醫師跨界投資大師！以嚴謹醫學實證精神，建立跨越百年市場風暴的資產配置長城。',
       ctaUrl: '/books',
-      ctaText: '閱讀《投資金律》全系列筆記'
+      ctaText: '探索更多「投資金律島」專題文章',
+      landmark: 'church'
+    },
+    {
+      id: 'most-important',
+      realm: 'wisdom',
+      q: 2, r: -1,
+      name: '《投資前最重要的事》島',
+      shortName: '最重要事島',
+      icon: '💡',
+      color: 0xf59e0b,
+      roofColor: 0xb45309,
+      accentColor: 0xfbbf24,
+      subtitle: 'Ben Carlson 著｜簡單至上、心理防禦與避免代價高昂的錯誤',
+      desc: '專注你能掌控的事！克服群眾狂熱、接納市場常態，用優雅簡約的紀律勝過複雜演算法。',
+      ctaUrl: '/books',
+      ctaText: '探索更多「最重要事島」專題文章',
+      landmark: 'cottage'
+    },
+    {
+      id: 'die-with-zero',
+      realm: 'wisdom',
+      q: 2, r: 1,
+      name: '《別把你的錢留到死》島',
+      shortName: '留錢到死島',
+      icon: '⌛',
+      color: 0xec4899,
+      roofColor: 0x9d174d,
+      accentColor: 0xf472b6,
+      subtitle: 'Bill Perkins 著｜人生是體驗的總和，極大化你的生命記憶股息',
+      desc: '在健康、時間與財富的黃金交叉點投資體驗！不要在躺在病床上時才帶著滿手遺憾離開。',
+      ctaUrl: '/books',
+      ctaText: '探索更多「留錢到死島」專題文章',
+      landmark: 'gazebo'
+    },
+    {
+      id: 'glucose',
+      realm: 'wisdom',
+      q: 3, r: 0,
+      name: '《90%的病，控糖就會好》島',
+      shortName: '控糖生活島',
+      icon: '🥑',
+      color: 0x10b981,
+      roofColor: 0x047857,
+      accentColor: 0x34d399,
+      subtitle: 'Jessie Inchauspé 著｜餐序原則、醋水與平穩葡萄糖曲線',
+      desc: '風靡全球的葡萄糖革命！不用嚴格節食，透過調整進食順序與餐後散步，告別疲勞、嗜甜與體重困擾。',
+      ctaUrl: '/books',
+      ctaText: '探索更多「控糖生活島」專題文章',
+      landmark: 'cottage'
+    },
+    {
+      id: 'brain-neuro',
+      realm: 'wisdom',
+      q: 2, r: -2,
+      name: '《你的人生他們六個說了算》島',
+      shortName: '神經傳導島',
+      icon: '🧠',
+      color: 0x6366f1,
+      roofColor: 0x3730a3,
+      accentColor: 0xa5b4fc,
+      subtitle: '多巴胺、血清素、催產素、皮質醇等六大情緒荷爾蒙大腦掌控術',
+      desc: '掌握大腦神經化學物質的規律，調節專注、焦慮、動機與滿足感，做自己心智的真正主人。',
+      ctaUrl: '/books',
+      ctaText: '探索更多「神經傳導島」專題文章',
+      landmark: 'lighthouse'
+    },
+    {
+      id: 'sapiens',
+      realm: 'wisdom',
+      q: 3, r: -1,
+      name: '《人類大歷史》島',
+      shortName: '人類歷史島',
+      icon: '🌍',
+      color: 0xd97706,
+      roofColor: 0x78350f,
+      accentColor: 0xfcd34d,
+      subtitle: 'Yuval Noah Harari 著｜從認知革命、農業革命到智人的未來',
+      desc: '虛構故事的力量如何凝聚數十億智人，站在宏觀歷史視野反思科技、金錢與人生的終極意義。',
+      ctaUrl: '/books',
+      ctaText: '探索更多「人類歷史島」專題文章',
+      landmark: 'gazebo'
     }
   ];
 
@@ -1427,6 +1645,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   const badgeObjects = [];
   const walkers = [];
   const flowCurves = [];
+  let birdFlockData = null;
 
   // 動態相機飛行參數
   let cameraTarget = new THREE.Vector3(2.1, 0, 0);
@@ -1490,6 +1709,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     buildBridges();
     buildFlowLines();
     spawnWalkers();
+    birdFlockData = createBirdFlock();
     setupRaycaster();
     setupUI();
 
@@ -1507,6 +1727,40 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   // 4. 光照與時序光影
   // ══════════════════════════════════════════════════════════════════════
+  function createBirdFlock() {
+    const flockGroup = new THREE.Group();
+    const birdGeo = new THREE.BufferGeometry();
+    const birdVerts = new Float32Array([
+      -0.35, 0.12, 0,
+      0, 0, 0.08,
+      0.35, 0.12, 0
+    ]);
+    birdGeo.setAttribute('position', new THREE.BufferAttribute(birdVerts, 3));
+    const birdMat = new THREE.LineBasicMaterial({ color: 0x27272a, linewidth: 2.2 });
+    
+    const birdMeshes = [];
+    for (let i = 0; i < 20; i++) {
+      const bird = new THREE.Line(birdGeo, birdMat);
+      const baseX = -24 - (i % 5) * 3.6 + Math.random() * 2;
+      const baseY = 8.8 + (i * 0.42) + Math.random() * 1.5;
+      const baseZ = -16 - (i * 1.2);
+      bird.position.set(baseX, baseY, baseZ);
+      bird.rotation.y = -0.42;
+      bird.scale.setScalar(0.72 + (i % 4) * 0.18);
+      bird.userData = {
+        baseX, baseY, baseZ,
+        phase: i * 0.4,
+        speed: 0.8 + (i % 3) * 0.3
+      };
+      flockGroup.add(bird);
+      birdMeshes.push(bird);
+    }
+    scene.add(flockGroup);
+    return { group: flockGroup, birds: birdMeshes };
+  }
+
+  // 全景天空穹頂 Shader (左側夕陽霞光 ➔ 右側午夜星空)
+
   function setupLights() {
     ambientLight = new THREE.AmbientLight(0xfff7ed, 0.72);
     lightsGroup.add(ambientLight);
@@ -1634,20 +1888,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       topMesh.receiveShadow = true;
       group.add(topMesh);
 
-      // 2. 六角地底岩層 (Dirt Base / Cliff)
-      const baseGeo = new THREE.CylinderGeometry(HEX_RADIUS * 1.03, HEX_RADIUS * 0.88, 1.25, 6, 1);
-      const baseMat = new THREE.MeshStandardMaterial({
-        color: 0x6e584a,
-        roughness: 0.9,
-        flatShading: true
-      });
-      const baseMesh = new THREE.Mesh(baseGeo, baseMat);
-      baseMesh.position.y = -0.62;
-      baseMesh.castShadow = true;
-      baseMesh.receiveShadow = true;
-      group.add(baseMesh);
+      // 2. 六角天然海蝕巨石岩壁 (Rocky Cliff Base) - 徹底取代平滑幾何感
+      addRockyCliffBase(group, island);
 
-      // 3. 島嶼地表微縮村落與樹木模型
+      // 3. 雙層拍岸白浪花光環
+      createShoreFoamRings(group);
+
+      // 4. 島嶼地表微縮村落與專屬地標模型
       populateMiniatureCity(group, island);
 
       // 4. 島嶼光圈／選取反白環 (Selection Beacon Ring)
@@ -1681,8 +1928,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         focusIsland(island.id);
       });
 
+      const staggerY = HEX_HEIGHT + 2.15 + (Math.abs(island.q * 3 + island.r) % 3) * 0.45;
       const badgeObj = new CSS2DObject(badgeDiv);
-      badgeObj.position.set(0, HEX_HEIGHT + 2.25, 0);
+      badgeObj.position.set(0, staggerY, 0);
       group.add(badgeObj);
       badgeObjects.push(badgeDiv);
 
@@ -1692,6 +1940,98 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   // 微縮城市建築生成
+  
+  // ── 天然海蝕巨石岩壁 (還原示意圖真實海島多面切削岩體) ──
+  function addRockyCliffBase(group, island) {
+    const rockMat1 = new THREE.MeshStandardMaterial({ color: 0x54463a, roughness: 0.95, flatShading: true });
+    const rockMat2 = new THREE.MeshStandardMaterial({ color: 0x6e5a4c, roughness: 0.9, flatShading: true });
+    const rockMat3 = new THREE.MeshStandardMaterial({ color: 0x3d322a, roughness: 0.95, flatShading: true });
+    const mats = [rockMat1, rockMat2, rockMat3];
+
+    // 環繞 14 顆隨機刀削巨石
+    for (let i = 0; i < 14; i++) {
+      const angle = (i / 14) * Math.PI * 2 + (Math.random() * 0.15 - 0.075);
+      const dist = HEX_RADIUS * (0.86 + Math.random() * 0.22);
+      const rx = Math.cos(angle) * dist;
+      const rz = Math.sin(angle) * dist;
+      const ry = -0.42 - Math.random() * 0.38;
+
+      const rockRadius = 0.52 + Math.random() * 0.42;
+      const rockGeo = new THREE.DodecahedronGeometry(rockRadius, 0);
+      
+      // 隨機擾動頂點形成天然海蝕裂紋
+      const posAttr = rockGeo.attributes.position;
+      for (let p = 0; p < posAttr.count; p++) {
+        const vx = posAttr.getX(p) + (Math.random() - 0.5) * 0.12;
+        const vy = posAttr.getY(p) * (0.85 + Math.random() * 0.3);
+        const vz = posAttr.getZ(p) + (Math.random() - 0.5) * 0.12;
+        posAttr.setXYZ(p, vx, vy, vz);
+      }
+      rockGeo.computeVertexNormals();
+
+      const rockMesh = new THREE.Mesh(rockGeo, mats[i % 3]);
+      rockMesh.position.set(rx, ry, rz);
+      rockMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      rockMesh.castShadow = true;
+      rockMesh.receiveShadow = true;
+      group.add(rockMesh);
+    }
+  }
+
+  // ── 雙層拍岸白浪花光環 ──
+  function createShoreFoamRings(group) {
+    const foamMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.42,
+      side: THREE.DoubleSide
+    });
+    const ringGeo = new THREE.RingGeometry(HEX_RADIUS * 1.02, HEX_RADIUS * 1.14, 24);
+    const foam = new THREE.Mesh(ringGeo, foamMat);
+    foam.rotation.x = -Math.PI / 2;
+    foam.position.y = -0.08;
+    group.add(foam);
+  }
+
+  // ── 可愛毛線小羊 (示意圖專屬生物) ──
+  function createAmigurumiSheep(group, x, z, scale = 0.35) {
+    const sheepGroup = new THREE.Group();
+    sheepGroup.position.set(x, HEX_HEIGHT + 0.12, z);
+    sheepGroup.scale.setScalar(scale);
+
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xfaf8f5, roughness: 0.95, flatShading: true });
+    const faceMat = new THREE.MeshStandardMaterial({ color: 0x221f1d, roughness: 0.8 });
+
+    // 蓬鬆毛線身體
+    const body = new THREE.Mesh(new THREE.DodecahedronGeometry(0.38, 1), bodyMat);
+    body.position.y = 0.32;
+    body.scale.set(1.15, 0.9, 0.9);
+    body.castShadow = true;
+    sheepGroup.add(body);
+
+    // 黑小臉
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 8), faceMat);
+    head.position.set(0.35, 0.42, 0);
+    sheepGroup.add(head);
+
+    // 四隻細黑腿
+    const legGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.22, 5);
+    const legPositions = [
+      [0.18, 0.11, 0.16],
+      [0.18, 0.11, -0.16],
+      [-0.18, 0.11, 0.16],
+      [-0.18, 0.11, -0.16]
+    ];
+    legPositions.forEach(([lx, ly, lz]) => {
+      const leg = new THREE.Mesh(legGeo, faceMat);
+      leg.position.set(lx, ly, lz);
+      sheepGroup.add(leg);
+    });
+
+    group.add(sheepGroup);
+  }
+
+
   function populateMiniatureCity(group, island) {
     const isWisdom = island.realm === 'wisdom';
     const mainRoofColor = island.roofColor;
@@ -2284,8 +2624,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       }
     });
 
-    document.getElementById('healthTotalStat').textContent = `6 座群島 · ${totalHealthArticles} 篇專文`;
-    document.getElementById('wisdomTotalStat').textContent = `6 部名著 · ${totalWisdomArticles} 篇章節`;
+    const healthIslandsCount = ISLAND_DATA.filter(i => i.realm === 'health').length;
+    const wisdomIslandsCount = ISLAND_DATA.filter(i => i.realm === 'wisdom').length;
+    document.getElementById('healthTotalStat').textContent = `${healthIslandsCount} 座群島 · ${totalHealthArticles} 篇專文`;
+    document.getElementById('wisdomTotalStat').textContent = `${wisdomIslandsCount} 部名著 · ${totalWisdomArticles} 篇章節`;
   }
 
   function highlightSidebarRow(islandId) {
@@ -2420,6 +2762,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     requestAnimationFrame(animate);
 
     const now = Date.now();
+    const elapsedTime = now * 0.001;
 
     // 1. 球面水波慢速自轉
     if (waterSphere) {
@@ -2436,6 +2779,19 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     }
 
     // 3. 漫步微型小人移動更新
+        // 飛鳥群 8 字型立體盤旋飛行與扇動翅膀
+    if (birdFlockData && birdFlockData.birds) {
+      birdFlockData.birds.forEach((bird) => {
+        const u = bird.userData;
+        if (u) {
+          const t = elapsedTime * (u.speed || 1.0) + (u.phase || 0);
+          bird.position.y = u.baseY + Math.sin(t * 2.5) * 0.45;
+          bird.position.x = u.baseX + Math.sin(t * 0.8) * 1.5;
+          bird.rotation.z = Math.sin(t * 3.0) * 0.12;
+        }
+      });
+    }
+
     updateWalkers();
 
     // 4. 書卷水晶微幅漂浮旋轉

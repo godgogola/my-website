@@ -369,13 +369,12 @@ def process_item(item, img_path):
         if content.startswith('---'):
             parts = content.split('---', 2)
             if len(parts) >= 3:
-                fm = parts[1]
-                body = parts[2]
-                if 'coverImage:' in fm:
-                    fm = re.sub(r'^coverImage:\s*["\']?.+?["\']?\s*$', f'coverImage: "{cover_webp}"', fm, flags=re.MULTILINE)
+                fm_clean = parts[1].strip()
+                if 'coverImage:' in fm_clean:
+                    fm_clean = re.sub(r'^coverImage:\s*["\']?.+?["\']?\s*$', f'coverImage: "{cover_webp}"', fm_clean, flags=re.MULTILINE)
                 else:
-                    fm = fm.strip() + f'\ncoverImage: "{cover_webp}"\n'
-                new_content = f"---{fm}---{body}"
+                    fm_clean = fm_clean + f'\ncoverImage: "{cover_webp}"'
+                new_content = f"---\n{fm_clean}\n---{parts[2]}"
         else:
             new_content = f'---\ntitle: "{primary}"\ncoverImage: "{cover_webp}"\n---\n{content}'
         with open(book_md_path, 'w', encoding='utf-8') as f:
@@ -392,13 +391,12 @@ def process_item(item, img_path):
         if obs_content.startswith('---'):
             parts = obs_content.split('---', 2)
             if len(parts) >= 3:
-                fm = parts[1]
-                body = parts[2]
-                if 'coverImage:' in fm:
-                    fm = re.sub(r'^coverImage:\s*["\']?.+?["\']?\s*$', f'coverImage: "{cover_webp}"', fm, flags=re.MULTILINE)
+                obs_fm_clean = parts[1].strip()
+                if 'coverImage:' in obs_fm_clean:
+                    obs_fm_clean = re.sub(r'^coverImage:\s*["\']?.+?["\']?\s*$', f'coverImage: "{cover_webp}"', obs_fm_clean, flags=re.MULTILINE)
                 else:
-                    fm = fm.strip() + f'\ncoverImage: "{cover_webp}"\n'
-                new_obs_content = f"---{fm}---{body}"
+                    obs_fm_clean = obs_fm_clean + f'\ncoverImage: "{cover_webp}"'
+                new_obs_content = f"---\n{obs_fm_clean}\n---{parts[2]}"
         else:
             new_obs_content = f'---\ntitle: "{primary}"\ncoverImage: "{cover_webp}"\n---\n{obs_content}'
         with open(obs_path, 'w', encoding='utf-8') as f:
