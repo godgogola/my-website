@@ -1679,7 +1679,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     // Scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xd7edf6);
-    scene.fog = new THREE.FogExp2(0xd7edf6, 0.012);
+    scene.fog = null; // 徹底移除全域霧氣，呈現通透、高對比且色彩鮮豔的清晰視覺
 
     // Camera
     const aspect = container.clientWidth / container.clientHeight;
@@ -1723,7 +1723,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
     createDayNightSystem();   // 1. 太陽月亮 180s 日夜循環
     createStarfieldAndMilkyWay(); // 2. 穹頂星空與銀河微粒
-    createLowPolyClouds();    // 3. 漂浮低空慢速白雲
+    // createLowPolyClouds(); // 停用低空漂浮雲塊，徹底消除遮擋島嶼的霧氣與灰白厚雲
     createCurvedOcean();      // 4. 動態波浪海洋
     setupNightLights();       // 5. 初始化夜間發光材質 (在建島與造橋前就緒)
     buildIslands();           // 6. 24 座微縮島嶼
@@ -2080,9 +2080,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         singleCloud.add(puff);
       }
 
-      const orbitRadius = 18 + (c % 3) * 4.0;
+      const orbitRadius = 38 + (c % 3) * 6.0;
       const angle = (c / 6) * Math.PI * 2;
-      const y = 8.5 + (c % 2) * 1.5;
+      const y = 25.0 + (c % 2) * 3.5;
       singleCloud.position.set(Math.cos(angle) * orbitRadius + 2.1, y, Math.sin(angle) * orbitRadius);
       singleCloud.userData = {
         orbitRadius,
