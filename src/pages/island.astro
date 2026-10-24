@@ -1635,6 +1635,24 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let lightsGroup = new THREE.Group();
   let waterSphere;
 
+  
+  // ══════════════════════════════════════════════════════════════════════
+  // 6 大自然與光影特效系統變數 (Day/Night, Stars, Clouds, Waves, Night Lights)
+  // ══════════════════════════════════════════════════════════════════════
+  const clock = new THREE.Clock();
+  let celestialPivot;          // 日月旋轉軸
+  let sunMesh, sunLight, sunGlowSprite;
+  let moonMesh, moonLight, moonGlowSprite;
+  let starfieldPoints, milkyWayPoints;
+  let cloudsGroup;             // 低空慢速雲朵
+  let oceanMesh, oceanGeo, oceanInitialPositions;
+  let nightGlowMaterial;       // 路燈與窗戶夜間發光材質
+  let nightPointLights = [];   // 島嶼夜間暖光
+  let isAutoDayNight = true;   // 是否開啟 180s 自動循環
+  let targetCycle = 0.25;      // 當前目標時間 (預設正午 0.25)
+  let currentCycle = 0.25;     // 插值平滑 cycle
+  let manualTimeLock = false;  // 手動選擇時段鎖定
+
   let dirLight, hemiLight, ambientLight;
   let activeIsland = null;
   let showLabels = true;
@@ -1703,15 +1721,33 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     scene.add(walkersGroup);
     scene.add(flowsGroup);
 
-    setupLights();
-    createCurvedOcean();
-    buildIslands();
-    buildBridges();
-    buildFlowLines();
-    spawnWalkers();
-    birdFlockData = createBirdFlock();
+    createDayNightSystem();   // 1. 太陽月亮 180s 日夜循環
+    createStarfieldAndMilkyWay(); // 2. 穹頂星空與銀河微粒
+    createLowPolyClouds();    // 3. 漂浮低空慢速白雲
+    createCurvedOcean();      // 4. 動態波浪海洋
+    buildIslands();           // 5. 24 座微縮島嶼
+    buildBridges();           // 6. 連接木橋
+    buildFlowLines();         // 7. 跨界光流索
+    spawnWalkers();           // 8. 漫步小人
+    birdFlockData = createBirdFlock(); // 9. 飛鳥振翅盤旋
+    setupNightLights();       // 10. 島嶼路燈與夜間發光窗戶
     setupRaycaster();
     setupUI();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const timeParam = urlParams.get('time');
+    if (timeParam) {
+      manualTimeLock = true;
+      isAutoDayNight = false;
+      document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.querySelector(`[data-time="${timeParam}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (timeParam === 'dawn') targetCycle = currentCycle = 0.02;
+      else if (timeParam === 'noon') targetCycle = currentCycle = 0.25;
+      else if (timeParam === 'dusk') targetCycle = currentCycle = 0.48;
+      else if (timeParam === 'night') targetCycle = currentCycle = 0.75;
+    }
 
     window.addEventListener('resize', onWindowResize);
 
@@ -1837,30 +1873,475 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════════
-  // 5. 弧形蔚藍地球地平線水面 (Spherical Planet Ocean)
-  // ══════════════════════════════════════════════════════════════════════
-  function createCurvedOcean() {
-    // 依據星球半徑製作球面水冠 (Sphere Cap)
-    const oceanRadius = PLANET_RADIUS - 0.22;
-    const oceanGeo = new THREE.SphereGeometry(oceanRadius, 96, 48, 0, Math.PI * 2, 0, Math.PI * 0.45);
-    const oceanMat = new THREE.MeshStandardMaterial({
-      color: 0x48a8c4,
-      roughness: 0.16,
-      metalness: 0.1,
-      transparent: true,
-      opacity: 0.88,
-      flatShading: true
-    });
-    waterSphere = new THREE.Mesh(oceanGeo, oceanMat);
-    waterSphere.position.copy(PLANET_CENTER);
-    waterSphere.receiveShadow = true;
-    scene.add(waterSphere);
-  }
 
   // ══════════════════════════════════════════════════════════════════════
   // 6. 沿地球弧度建造六角島嶼 (Curved Hexagonal Islands)
   // ══════════════════════════════════════════════════════════════════════
+  
+  // ══════════════════════════════════════════════════════════════════════
+  // 系統 1: 180 秒日夜循環系統 (太陽 + 月亮 + 天空色彩插值)
+  // ══════════════════════════════════════════════════════════════════════
+  function createDayNightSystem() {
+    celestialPivot = new THREE.Group();
+    celestialPivot.position.set(2.1, 0, 0);
+    celestialPivot.rotation.x = -0.35; // 傾斜軸，讓太陽從左前天際升起，月亮從右後天際升起
+    scene.add(celestialPivot);
+
+    // ── 太陽端 (Radius 28) ──
+    const sunGroup = new THREE.Group();
+    sunGroup.position.set(-28, 0, 0);
+
+    const sunGeo = new THREE.SphereGeometry(2.0, 24, 24);
+    const sunMat = new THREE.MeshBasicMaterial({ color: 0xfff9db });
+    sunMesh = new THREE.Mesh(sunGeo, sunMat);
+    sunGroup.add(sunMesh);
+
+    // 太陽金色放射日冕 Sprite
+    const sunCanvas = document.createElement('canvas');
+    sunCanvas.width = 256;
+    sunCanvas.height = 256;
+    const sctx = sunCanvas.getContext('2d');
+    const sgrad = sctx.createRadialGradient(128, 128, 14, 128, 128, 128);
+    sgrad.addColorStop(0.0, 'rgba(255, 255, 235, 1.0)');
+    sgrad.addColorStop(0.25, 'rgba(254, 215, 170, 0.85)');
+    sgrad.addColorStop(0.6, 'rgba(251, 146, 60, 0.35)');
+    sgrad.addColorStop(1.0, 'rgba(251, 146, 60, 0.0)');
+    sctx.fillStyle = sgrad;
+    sctx.fillRect(0, 0, 256, 256);
+    const sunTexture = new THREE.CanvasTexture(sunCanvas);
+    const sunGlowMat = new THREE.SpriteMaterial({
+      map: sunTexture,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      depthWrite: false
+    });
+    sunGlowSprite = new THREE.Sprite(sunGlowMat);
+    sunGlowSprite.scale.set(18, 18, 1);
+    sunGroup.add(sunGlowSprite);
+
+    sunLight = new THREE.DirectionalLight(0xfff7ed, 1.6);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 1;
+    sunLight.shadow.camera.far = 75;
+    const sd = 25;
+    sunLight.shadow.camera.left = -sd;
+    sunLight.shadow.camera.right = sd;
+    sunLight.shadow.camera.top = sd;
+    sunLight.shadow.camera.bottom = -sd;
+    sunLight.shadow.bias = -0.0003;
+    sunGroup.add(sunLight);
+    celestialPivot.add(sunGroup);
+
+    // ── 月亮端 (對立面 180 度，Radius 28) ──
+    const moonGroup = new THREE.Group();
+    moonGroup.position.set(28, 0, 0);
+
+    const moonGeo = new THREE.SphereGeometry(1.5, 24, 24);
+    const moonMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc,
+      roughness: 0.75,
+      metalness: 0.1
+    });
+    moonMesh = new THREE.Mesh(moonGeo, moonMat);
+    moonGroup.add(moonMesh);
+
+    // 月亮幽藍月暈 Sprite
+    const moonCanvas = document.createElement('canvas');
+    moonCanvas.width = 256;
+    moonCanvas.height = 256;
+    const mctx = moonCanvas.getContext('2d');
+    const mgrad = mctx.createRadialGradient(128, 128, 14, 128, 128, 128);
+    mgrad.addColorStop(0.0, 'rgba(240, 248, 255, 0.95)');
+    mgrad.addColorStop(0.3, 'rgba(165, 180, 252, 0.6)');
+    mgrad.addColorStop(0.7, 'rgba(99, 102, 241, 0.2)');
+    mgrad.addColorStop(1.0, 'rgba(99, 102, 241, 0.0)');
+    mctx.fillStyle = mgrad;
+    mctx.fillRect(0, 0, 256, 256);
+    const moonTexture = new THREE.CanvasTexture(moonCanvas);
+    const moonGlowMat = new THREE.SpriteMaterial({
+      map: moonTexture,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      depthWrite: false
+    });
+    moonGlowSprite = new THREE.Sprite(moonGlowMat);
+    moonGlowSprite.scale.set(14, 14, 1);
+    moonGroup.add(moonGlowSprite);
+
+    moonLight = new THREE.DirectionalLight(0xa5b4fc, 0.5);
+    moonGroup.add(moonLight);
+    celestialPivot.add(moonGroup);
+
+    // 環境基礎光
+    ambientLight = new THREE.AmbientLight(0xfff7ed, 0.65);
+    scene.add(ambientLight);
+    hemiLight = new THREE.HemisphereLight(0xd9f0fc, 0x826d5e, 0.55);
+    scene.add(hemiLight);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 系統 2: 璀璨星空與銀河粒子系統 (遠景深度 + 圓形星芒)
+  // ══════════════════════════════════════════════════════════════════════
+  function createStarfieldAndMilkyWay() {
+    const starCanvas = document.createElement('canvas');
+    starCanvas.width = 64;
+    starCanvas.height = 64;
+    const sctx = starCanvas.getContext('2d');
+    const sgrad = sctx.createRadialGradient(32, 32, 2, 32, 32, 32);
+    sgrad.addColorStop(0.0, 'rgba(255, 255, 255, 1.0)');
+    sgrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.75)');
+    sgrad.addColorStop(0.7, 'rgba(199, 210, 254, 0.25)');
+    sgrad.addColorStop(1.0, 'rgba(199, 210, 254, 0.0)');
+    sctx.fillStyle = sgrad;
+    sctx.fillRect(0, 0, 64, 64);
+    const starTexture = new THREE.CanvasTexture(starCanvas);
+
+    // 1. 穹頂星空 (2,500 顆，半徑 75~105，高空遠景)
+    const starCount = 2500;
+    const starGeo = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount; i++) {
+      const radius = 75 + Math.random() * 30;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(0.15 + Math.random() * 0.75); // 只在高空穹頂
+      starPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta) + 2.1;
+      starPositions[i * 3 + 1] = radius * Math.cos(phi) + 12; // 確保高於島嶼
+      starPositions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+
+    const starMat = new THREE.PointsMaterial({
+      map: starTexture,
+      color: 0xffffff,
+      size: 1.4,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthTest: true,
+      depthWrite: false
+    });
+    starfieldPoints = new THREE.Points(starGeo, starMat);
+    starfieldPoints.visible = false;
+    scene.add(starfieldPoints);
+
+    // 2. 銀河拱門微粒帶 (3,500 顆彩色微粒，高空大圓弧)
+    const mwCount = 3500;
+    const mwGeo = new THREE.BufferGeometry();
+    const mwPositions = new Float32Array(mwCount * 3);
+    const mwColors = new Float32Array(mwCount * 3);
+
+    const c1 = new THREE.Color(0xc084fc);
+    const c2 = new THREE.Color(0xf472b6);
+    const c3 = new THREE.Color(0x93c5fd);
+    const c4 = new THREE.Color(0xffffff);
+    const palette = [c1, c2, c3, c4];
+
+    for (let i = 0; i < mwCount; i++) {
+      const t = (Math.random() - 0.5) * Math.PI * 1.5;
+      const spread = (Math.random() + Math.random() - 1) * 6.0;
+      const radius = 80 + (Math.random() - 0.5) * 8;
+
+      const rawX = Math.cos(t) * radius;
+      const rawY = Math.sin(t) * radius * 0.55 + 32; // 高聳銀河拱橋
+      const rawZ = spread * 4.0;
+
+      const rot = 0.65;
+      mwPositions[i * 3] = (rawX * Math.cos(rot) - rawZ * Math.sin(rot)) + 2.1;
+      mwPositions[i * 3 + 1] = Math.max(rawY, 14.0);
+      mwPositions[i * 3 + 2] = rawX * Math.sin(rot) + rawZ * Math.cos(rot);
+
+      const col = palette[Math.floor(Math.random() * palette.length)];
+      mwColors[i * 3] = col.r;
+      mwColors[i * 3 + 1] = col.g;
+      mwColors[i * 3 + 2] = col.b;
+    }
+    mwGeo.setAttribute('position', new THREE.BufferAttribute(mwPositions, 3));
+    mwGeo.setAttribute('color', new THREE.BufferAttribute(mwColors, 3));
+
+    const mwMat = new THREE.PointsMaterial({
+      map: starTexture,
+      vertexColors: true,
+      size: 1.8,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthTest: true,
+      depthWrite: false
+    });
+    milkyWayPoints = new THREE.Points(mwGeo, mwMat);
+    milkyWayPoints.visible = false;
+    scene.add(milkyWayPoints);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 系統 3: 低空慢速漂浮白雲 (純白立體蓬鬆雲朵)
+  // ══════════════════════════════════════════════════════════════════════
+  function createLowPolyClouds() {
+    cloudsGroup = new THREE.Group();
+    const cloudMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.8,
+      flatShading: true,
+      transparent: true,
+      opacity: 0.94
+    });
+
+    // 生成 6 朵分佈在群島視野兩側的白雲
+    for (let c = 0; c < 6; c++) {
+      const singleCloud = new THREE.Group();
+      const puffCount = 5 + Math.floor(Math.random() * 3);
+      for (let p = 0; p < puffCount; p++) {
+        const radius = 0.85 + Math.random() * 0.65;
+        const puff = new THREE.Mesh(new THREE.DodecahedronGeometry(radius, 1), cloudMat);
+        puff.position.set(
+          (p - puffCount / 2) * 0.95 + (Math.random() - 0.5) * 0.35,
+          (Math.random() - 0.5) * 0.4,
+          (Math.random() - 0.5) * 0.5
+        );
+        puff.scale.set(1.2, 0.8, 1.0);
+        puff.castShadow = true;
+        singleCloud.add(puff);
+      }
+
+      const orbitRadius = 18 + (c % 3) * 4.0;
+      const angle = (c / 6) * Math.PI * 2;
+      const y = 8.5 + (c % 2) * 1.5;
+      singleCloud.position.set(Math.cos(angle) * orbitRadius + 2.1, y, Math.sin(angle) * orbitRadius);
+      singleCloud.userData = {
+        orbitRadius,
+        angle,
+        speed: 0.08 + (c % 3) * 0.03,
+        y
+      };
+      cloudsGroup.add(singleCloud);
+    }
+    scene.add(cloudsGroup);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 系統 4: 動態波浪海洋 (高反射率 + 頂點海浪動畫)
+  // ══════════════════════════════════════════════════════════════════════
+  function createCurvedOcean() {
+    const oceanRadius = PLANET_RADIUS - 0.18;
+    // 96x64 細分度，提供細緻海浪起伏
+    oceanGeo = new THREE.SphereGeometry(oceanRadius, 96, 64, 0, Math.PI * 2, 0, Math.PI * 0.48);
+    
+    // 保存初始頂點位置
+    const pos = oceanGeo.attributes.position;
+    oceanInitialPositions = new Float32Array(pos.count * 3);
+    for (let i = 0; i < pos.count * 3; i++) {
+      oceanInitialPositions[i] = pos.array[i];
+    }
+
+    const oceanMat = new THREE.MeshStandardMaterial({
+      color: 0x184e77,
+      roughness: 0.16,
+      metalness: 0.52,
+      transparent: true,
+      opacity: 0.92,
+      flatShading: true
+    });
+    oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
+    oceanMesh.position.copy(PLANET_CENTER);
+    oceanMesh.receiveShadow = true;
+    scene.add(oceanMesh);
+    waterSphere = oceanMesh;
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 系統 5: 夜間點燈 (路燈與窗戶發光)
+  // ══════════════════════════════════════════════════════════════════════
+  function setupNightLights() {
+    // 共享發光材質
+    nightGlowMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffedd5,
+      emissive: 0xff9900,
+      emissiveIntensity: 0.0,
+      roughness: 0.3
+    });
+
+    // 在 4 座主要島嶼上方配置夜間微弱暖色點光源
+    const majorIslands = ['endoscopy', 'stomach', 'wealth-ladder', 'golden-rules'];
+    majorIslands.forEach((id) => {
+      const islObj = islandObjectsMap.get(id);
+      if (islObj) {
+        const pLight = new THREE.PointLight(0xffaa44, 0, 12, 1.8);
+        pLight.position.set(0, HEX_HEIGHT + 2.5, 0);
+        islObj.add(pLight);
+        nightPointLights.push(pLight);
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 系統 6: 日夜時序光影插值更新 (在 animate 每幀調用)
+  // ══════════════════════════════════════════════════════════════════════
+  function updateDayNightCycle(elapsedTime) {
+    if (isAutoDayNight && !manualTimeLock) {
+      targetCycle = (elapsedTime % 180) / 180;
+    }
+    // 平滑跟隨 targetCycle (解決點擊按鈕時的突兀跳變)
+    let diff = targetCycle - currentCycle;
+    if (diff > 0.5) diff -= 1.0;
+    if (diff < -0.5) diff += 1.0;
+    currentCycle = (currentCycle + diff * 0.05 + 1.0) % 1.0;
+
+    const cycle = currentCycle;
+
+    // 1. 旋轉日月軸 (繞島嶼群斜向旋轉升起與落下)
+    if (celestialPivot) {
+      celestialPivot.rotation.z = cycle * Math.PI * 2;
+      celestialPivot.rotation.x = Math.sin(cycle * Math.PI * 2) * 0.28;
+    }
+
+    // 2. 太陽與月亮光照強度切換
+    // 白天：0.0~0.5 (正午 ~0.25)；夜晚：0.5~1.0 (午夜 ~0.75)
+    const isDay = cycle < 0.5;
+    const sunAltitude = Math.sin(cycle * Math.PI * 2); // > 0 為在天空
+    const sunIntensity = Math.max(0, sunAltitude) * 1.55;
+    const moonIntensity = Math.max(0, -sunAltitude) * 0.45;
+
+    if (sunLight) sunLight.intensity = sunIntensity;
+    if (moonLight) moonLight.intensity = moonIntensity;
+
+    // 3. 天空背景色與霧氣平滑插值 (Lerp)
+    // 4 個關鍵時段色彩：
+    // Noon(0.25): #7dc4e8; Dusk(0.48): #fd5e53; Midnight(0.75): #060919; Dawn(0.02): #fbcfe8
+    const noonCol = new THREE.Color(0x7dc4e8);
+    const duskCol = new THREE.Color(0xfd5e53);
+    const nightCol = new THREE.Color(0x060919);
+    const dawnCol = new THREE.Color(0xfbcfe8);
+
+    const curSky = new THREE.Color();
+    const curFog = new THREE.Color();
+
+    if (cycle < 0.25) {
+      // 晨曦 (0.02) ➔ 正午 (0.25)
+      const t = (cycle) / 0.25;
+      curSky.lerpColors(dawnCol, noonCol, t);
+    } else if (cycle < 0.5) {
+      // 正午 (0.25) ➔ 暮霞黃昏 (0.5)
+      const t = (cycle - 0.25) / 0.25;
+      curSky.lerpColors(noonCol, duskCol, t);
+    } else if (cycle < 0.75) {
+      // 暮霞黃昏 (0.5) ➔ 深夜 (0.75)
+      const t = (cycle - 0.5) / 0.25;
+      curSky.lerpColors(duskCol, nightCol, t);
+    } else {
+      // 深夜 (0.75) ➔ 晨曦 (1.0)
+      const t = (cycle - 0.75) / 0.25;
+      curSky.lerpColors(nightCol, dawnCol, t);
+    }
+
+    scene.background.copy(curSky);
+    if (scene.fog) {
+      curFog.copy(curSky).multiplyScalar(0.92);
+      scene.fog.color.copy(curFog);
+    }
+
+    // 4. 星空與銀河透明度 (夜晚淡入，白天隱藏)
+    let starAlpha = 0;
+    const isNightVisible = cycle > 0.46 && cycle < 0.98;
+    if (isNightVisible) {
+      if (cycle >= 0.54 && cycle <= 0.92) {
+        starAlpha = 1.0;
+      } else if (cycle < 0.54) {
+        starAlpha = (cycle - 0.46) / 0.08;
+      } else {
+        starAlpha = (0.98 - cycle) / 0.06;
+      }
+    }
+    if (starfieldPoints) {
+      starfieldPoints.visible = starAlpha > 0.02;
+      starfieldPoints.material.opacity = starAlpha;
+    }
+    if (milkyWayPoints) {
+      milkyWayPoints.visible = starAlpha > 0.02;
+      milkyWayPoints.material.opacity = starAlpha * 0.95;
+    }
+
+    // 星空緩慢自轉
+    if (starfieldPoints) starfieldPoints.rotation.y += 0.0003;
+    if (milkyWayPoints) milkyWayPoints.rotation.y += 0.00025;
+
+    // 5. 夜間點燈邏輯 (路燈與發光窗戶)
+    const isNightTime = cycle > 0.46 && cycle < 0.96;
+    const glowTarget = isNightTime ? 2.0 : 0.0;
+    if (nightGlowMaterial) {
+      nightGlowMaterial.emissiveIntensity += (glowTarget - nightGlowMaterial.emissiveIntensity) * 0.05;
+    }
+    nightPointLights.forEach((pl) => {
+      pl.intensity += ((isNightTime ? 1.5 : 0.0) - pl.intensity) * 0.05;
+    });
+
+    // 6. 海水色彩隨時間過渡
+    if (oceanMesh) {
+      const dayOcean = new THREE.Color(0x184e77);
+      const sunsetOcean = new THREE.Color(0x7c3a2e);
+      const nightOcean = new THREE.Color(0x0a192f);
+      const curOcean = new THREE.Color();
+
+      if (cycle < 0.4) {
+        curOcean.copy(dayOcean);
+      } else if (cycle < 0.52) {
+        curOcean.lerpColors(dayOcean, sunsetOcean, (cycle - 0.4) / 0.12);
+      } else if (cycle < 0.65) {
+        curOcean.lerpColors(sunsetOcean, nightOcean, (cycle - 0.52) / 0.13);
+      } else {
+        curOcean.lerpColors(nightOcean, dayOcean, (cycle - 0.88) / 0.12);
+      }
+      oceanMesh.material.color.copy(curOcean);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 海浪波動與雲朵位移動畫 (在 animate 每幀調用)
+  // ══════════════════════════════════════════════════════════════════════
+  function updateWavesAndClouds(elapsedTime) {
+    // 1. 動態海浪頂點起伏
+    if (oceanGeo && oceanInitialPositions) {
+      const pos = oceanGeo.attributes.position;
+      const count = pos.count;
+      for (let i = 0; i < count; i++) {
+        const ox = oceanInitialPositions[i * 3];
+        const oy = oceanInitialPositions[i * 3 + 1];
+        const oz = oceanInitialPositions[i * 3 + 2];
+
+        // 疊加正弦波
+        const wave = Math.sin(ox * 0.35 + elapsedTime * 1.8) * 0.16 +
+                     Math.cos(oz * 0.28 + elapsedTime * 1.4) * 0.12 +
+                     Math.sin((ox + oz) * 0.2 + elapsedTime * 2.1) * 0.08;
+
+        // 沿法向量方向微幅浮動
+        const len = Math.sqrt(ox * ox + oy * oy + oz * oz);
+        const nx = ox / len;
+        const ny = oy / len;
+        const nz = oz / len;
+
+        pos.setXYZ(i, ox + nx * wave, oy + ny * wave, oz + nz * wave);
+      }
+      pos.needsUpdate = true;
+      oceanGeo.computeVertexNormals();
+    }
+
+    // 2. 雲朵慢速飄移
+    if (cloudsGroup) {
+      cloudsGroup.children.forEach((cloud) => {
+        const u = cloud.userData;
+        if (u) {
+          u.angle += u.speed * 0.0018;
+          cloud.position.x = Math.cos(u.angle) * u.orbitRadius;
+          cloud.position.z = Math.sin(u.angle) * u.orbitRadius;
+          cloud.position.y = u.y + Math.sin(elapsedTime * 0.6 + u.orbitRadius) * 0.35;
+        }
+      });
+    }
+  }
+
+
   function buildIslands() {
     ISLAND_DATA.forEach((island) => {
       const proj = hexToPlanet(island.q, island.r);
@@ -2764,10 +3245,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const now = Date.now();
     const elapsedTime = now * 0.001;
 
-    // 1. 球面水波慢速自轉
-    if (waterSphere) {
-      waterSphere.rotation.y = Math.sin(now * 0.0003) * 0.015;
-    }
+    // 1. 180s 日夜循環光影與天空星空更新
+    updateDayNightCycle(elapsedTime);
+
+    // 2. 動態海浪與慢速漂浮白雲更新
+    updateWavesAndClouds(elapsedTime);
 
     // 2. 能量光流粒子在大氣層高空飛掠
     if (showFlows) {
