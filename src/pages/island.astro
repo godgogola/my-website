@@ -1583,10 +1583,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   // 2. 地球地平線弧度數學模型 (Spherical Earth Curvature Horizon)
   // ══════════════════════════════════════════════════════════════════════
-  const SPACING = 2.45;       // 六角中心間距
-  const HEX_RADIUS = 2.06;    // 六角島嶼半徑
-  const HEX_HEIGHT = 0.72;    // 島嶼土壤高度
-  const PLANET_RADIUS = 34.0; // 地球星球半徑 (決定地平線弧度的黃金比例)
+  const SPACING = 4.85;       // 六角中心間距 (間隔大幅放大，留出開闊舒展的蔚藍海峽)
+  const HEX_RADIUS = 3.45;    // 六角島嶼半徑 (島嶼顯著放大，氣派壯闊)
+  const HEX_HEIGHT = 0.95;    // 島嶼土壤高度
+  const PLANET_RADIUS = 68.0; // 地球星球半徑 (舒展大弧度)
   const PLANET_CENTER = new THREE.Vector3(2.1, -PLANET_RADIUS, 0); // 球心座標
 
   // 將 2D 六角座標投影至帶有地球地平線弧度的 3D 微縮星球表面
@@ -1646,7 +1646,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let starfieldPoints, milkyWayPoints;
   let cloudsGroup;             // 低空慢速雲朵
   let oceanMesh, oceanGeo, oceanInitialPositions;
-  let nightGlowMaterial;       // 路燈與窗戶夜間發光材質
+  let nightGlowMaterial = new THREE.MeshBasicMaterial({ color: 0x475569 }); // 路燈與窗戶夜間發光材質
   let nightPointLights = [];   // 島嶼夜間暖光
   let isAutoDayNight = true;   // 是否開啟 180s 自動循環
   let targetCycle = 0.25;      // 當前目標時間 (預設正午 0.25)
@@ -1666,9 +1666,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let birdFlockData = null;
 
   // 動態相機飛行參數
-  let cameraTarget = new THREE.Vector3(2.1, 0, 0);
-  let cameraLookAt = new THREE.Vector3(2.1, 0, 0);
-  let cameraDestPos = new THREE.Vector3(2.1, 17, 21);
+  let cameraTarget = new THREE.Vector3(2.1, 3.5, 0);
+  let cameraLookAt = new THREE.Vector3(2.1, 3.5, 0);
+  let cameraDestPos = new THREE.Vector3(2.1, 28, 48);
   let flightStartTime = 0;
   let flightDuration = 0;
   let flightStartPos = new THREE.Vector3();
@@ -1679,12 +1679,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     // Scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xd7edf6);
-    scene.fog = new THREE.FogExp2(0xd7edf6, 0.016);
+    scene.fog = new THREE.FogExp2(0xd7edf6, 0.012);
 
     // Camera
     const aspect = container.clientWidth / container.clientHeight;
-    camera = new THREE.PerspectiveCamera(38, aspect, 0.5, 200);
-    camera.position.set(2.1, 18, 22);
+    camera = new THREE.PerspectiveCamera(38, aspect, 0.5, 450);
+    camera.position.set(2.1, 28, 48);
 
     // WebGL Renderer
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -1711,7 +1711,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     controls.dampingFactor = 0.06;
     controls.maxPolarAngle = Math.PI / 2.15; // 不穿入星球水底
     controls.minDistance = 5;
-    controls.maxDistance = 45;
+    controls.maxDistance = 120;
     controls.target.copy(cameraLookAt);
 
     // 添加核心群組
@@ -1725,12 +1725,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     createStarfieldAndMilkyWay(); // 2. 穹頂星空與銀河微粒
     createLowPolyClouds();    // 3. 漂浮低空慢速白雲
     createCurvedOcean();      // 4. 動態波浪海洋
-    buildIslands();           // 5. 24 座微縮島嶼
-    buildBridges();           // 6. 連接木橋
-    buildFlowLines();         // 7. 跨界光流索
-    spawnWalkers();           // 8. 漫步小人
-    birdFlockData = createBirdFlock(); // 9. 飛鳥振翅盤旋
-    setupNightLights();       // 10. 島嶼路燈與夜間發光窗戶
+    setupNightLights();       // 5. 初始化夜間發光材質 (在建島與造橋前就緒)
+    buildIslands();           // 6. 24 座微縮島嶼
+    buildBridges();           // 7. 連接木橋
+    buildFlowLines();         // 8. 跨界光流索
+    spawnWalkers();           // 9. 漫步小人
+    birdFlockData = createBirdFlock(); // 10. 飛鳥振翅盤旋
     setupRaycaster();
     setupUI();
 
@@ -1743,10 +1743,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const activeBtn = document.querySelector(`[data-time="${timeParam}"]`);
       if (activeBtn) activeBtn.classList.add('active');
 
-      if (timeParam === 'dawn') targetCycle = currentCycle = 0.02;
-      else if (timeParam === 'noon') targetCycle = currentCycle = 0.25;
-      else if (timeParam === 'dusk') targetCycle = currentCycle = 0.48;
-      else if (timeParam === 'night') targetCycle = currentCycle = 0.75;
+      applyTimePreset(timeParam);
     }
 
     window.addEventListener('resize', onWindowResize);
@@ -1821,55 +1818,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   function applyTimePreset(time) {
-    switch (time) {
-      case 'dawn':
-        scene.background.set(0xfbeee6);
-        scene.fog.color.set(0xfbeee6);
-        ambientLight.color.set(0xffeedb);
-        ambientLight.intensity = 0.62;
-        hemiLight.color.set(0xfed7aa);
-        hemiLight.groundColor.set(0x78350f);
-        dirLight.color.set(0xffedd5);
-        dirLight.intensity = 1.15;
-        dirLight.position.set(24, 15, 12);
-        if (waterSphere) waterSphere.material.color.set(0x74b4c7);
-        break;
-      case 'noon':
-        scene.background.set(0xd7edf6);
-        scene.fog.color.set(0xd7edf6);
-        ambientLight.color.set(0xfff7ed);
-        ambientLight.intensity = 0.72;
-        hemiLight.color.set(0xd9f0fc);
-        hemiLight.groundColor.set(0x826d5e);
-        dirLight.color.set(0xfff4e6);
-        dirLight.intensity = 1.45;
-        dirLight.position.set(16, 26, 18);
-        if (waterSphere) waterSphere.material.color.set(0x48a8c4);
-        break;
-      case 'dusk':
-        scene.background.set(0xfed7aa);
-        scene.fog.color.set(0xfed7aa);
-        ambientLight.color.set(0xffedd5);
-        ambientLight.intensity = 0.58;
-        hemiLight.color.set(0xfb923c);
-        hemiLight.groundColor.set(0x431407);
-        dirLight.color.set(0xf97316);
-        dirLight.intensity = 1.25;
-        dirLight.position.set(-22, 11, 16);
-        if (waterSphere) waterSphere.material.color.set(0x5c7c8c);
-        break;
-      case 'night':
-        scene.background.set(0x0f172a);
-        scene.fog.color.set(0x0f172a);
-        ambientLight.color.set(0x38bdf8);
-        ambientLight.intensity = 0.38;
-        hemiLight.color.set(0x1e293b);
-        hemiLight.groundColor.set(0x090d16);
-        dirLight.color.set(0x93c5fd);
-        dirLight.intensity = 0.65;
-        dirLight.position.set(-10, 22, -10);
-        if (waterSphere) waterSphere.material.color.set(0x0e2f44);
-        break;
+    manualTimeLock = true;
+    isAutoDayNight = false;
+    if (time === 'dawn') targetCycle = currentCycle = 0.02;
+    else if (time === 'noon') targetCycle = currentCycle = 0.25;
+    else if (time === 'dusk') targetCycle = currentCycle = 0.48;
+    else if (time === 'night') targetCycle = currentCycle = 0.75;
+
+    const isNightTime = currentCycle > 0.46 && currentCycle < 0.96;
+    if (nightGlowMaterial) {
+      nightGlowMaterial.color.set(isNightTime ? 0xffea79 : 0x475569);
+    }
+    nightPointLights.forEach((pl) => {
+      pl.intensity = isNightTime ? 3.2 : 0.0;
+    });
+    if (starfieldPoints) {
+      starfieldPoints.visible = isNightTime;
+      starfieldPoints.material.opacity = isNightTime ? 1.0 : 0.0;
+    }
+    if (milkyWayPoints) {
+      milkyWayPoints.visible = isNightTime;
+      milkyWayPoints.material.opacity = isNightTime ? 1.0 : 0.0;
     }
   }
 
@@ -1982,7 +1951,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   // ══════════════════════════════════════════════════════════════════════
-  // 系統 2: 璀璨星空與銀河粒子系統 (遠景深度 + 圓形星芒)
+  // 系統 2: 璀璨星空與壯闊銀河系統 (夜空星光點點 + 雙重銀河拱門)
   // ══════════════════════════════════════════════════════════════════════
   function createStarfieldAndMilkyWay() {
     const starCanvas = document.createElement('canvas');
@@ -1991,34 +1960,39 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const sctx = starCanvas.getContext('2d');
     const sgrad = sctx.createRadialGradient(32, 32, 2, 32, 32, 32);
     sgrad.addColorStop(0.0, 'rgba(255, 255, 255, 1.0)');
-    sgrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.75)');
-    sgrad.addColorStop(0.7, 'rgba(199, 210, 254, 0.25)');
+    sgrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.85)');
+    sgrad.addColorStop(0.65, 'rgba(199, 210, 254, 0.35)');
     sgrad.addColorStop(1.0, 'rgba(199, 210, 254, 0.0)');
     sctx.fillStyle = sgrad;
     sctx.fillRect(0, 0, 64, 64);
     const starTexture = new THREE.CanvasTexture(starCanvas);
 
-    // 1. 穹頂星空 (2,500 顆，半徑 75~105，高空遠景)
-    const starCount = 2500;
+    // 1. 遠景天穹星空 (4,500 顆深邃夜空細緻星點，位於後方天幕視角，fog: false 絕不被霧氣衰減)
+    const starCount = 4500;
     const starGeo = new THREE.BufferGeometry();
     const starPositions = new Float32Array(starCount * 3);
+    const starSizes = new Float32Array(starCount);
 
     for (let i = 0; i < starCount; i++) {
-      const radius = 75 + Math.random() * 30;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(0.15 + Math.random() * 0.75); // 只在高空穹頂
-      starPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta) + 2.1;
-      starPositions[i * 3 + 1] = radius * Math.cos(phi) + 12; // 確保高於島嶼
-      starPositions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+      const x = (Math.random() - 0.5) * 280 + 2.1;
+      const y = 6 + Math.random() * 88;
+      const z = -25 - Math.random() * 140; // 位於島嶼群正後方開闊天際
+      starPositions[i * 3] = x;
+      starPositions[i * 3 + 1] = y;
+      starPositions[i * 3 + 2] = z;
+      starSizes[i] = 1.0 + Math.random() * 1.5;
     }
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    starGeo.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
 
     const starMat = new THREE.PointsMaterial({
       map: starTexture,
       color: 0xffffff,
-      size: 1.4,
+      size: 7.5,
+      sizeAttenuation: false, // 璀璨星芒晶瑩透亮
       transparent: true,
       opacity: 0,
+      fog: false, // 璀璨星空不受霧氣遮擋
       blending: THREE.AdditiveBlending,
       depthTest: true,
       depthWrite: false
@@ -2027,31 +2001,29 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     starfieldPoints.visible = false;
     scene.add(starfieldPoints);
 
-    // 2. 銀河拱門微粒帶 (3,500 顆彩色微粒，高空大圓弧)
-    const mwCount = 3500;
+    // 2. 壯麗遠景銀河拱門 (8,000 顆夢幻星雲微粒，斜貫夜空天際)
+    const mwCount = 8000;
     const mwGeo = new THREE.BufferGeometry();
     const mwPositions = new Float32Array(mwCount * 3);
     const mwColors = new Float32Array(mwCount * 3);
 
-    const c1 = new THREE.Color(0xc084fc);
-    const c2 = new THREE.Color(0xf472b6);
-    const c3 = new THREE.Color(0x93c5fd);
-    const c4 = new THREE.Color(0xffffff);
-    const palette = [c1, c2, c3, c4];
+    const c1 = new THREE.Color(0xd8b4fe); // 夢幻星雲紫
+    const c2 = new THREE.Color(0xf472b6); // 浪漫玫瑰粉
+    const c3 = new THREE.Color(0x93c5fd); // 冰晶寶石藍
+    const c4 = new THREE.Color(0xffffff); // 耀眼鑽石白
+    const c5 = new THREE.Color(0xfef08a); // 金色微塵
+    const palette = [c1, c2, c3, c4, c5];
 
     for (let i = 0; i < mwCount; i++) {
-      const t = (Math.random() - 0.5) * Math.PI * 1.5;
-      const spread = (Math.random() + Math.random() - 1) * 6.0;
-      const radius = 80 + (Math.random() - 0.5) * 8;
+      const progress = (i / mwCount - 0.5) * 2; // -1.0 ~ +1.0
+      const x = progress * 110 + 2.1 + (Math.random() - 0.5) * 18;
+      // 壯麗天際銀河拱門 (位於相機仰角天空中段 y: 14 ~ 30, z: -35 ~ -55)
+      const arcY = 28 - (progress * progress) * 14 + (Math.random() - 0.5) * 10;
+      const z = -35 - Math.abs(progress) * 22 + (Math.random() - 0.5) * 14;
 
-      const rawX = Math.cos(t) * radius;
-      const rawY = Math.sin(t) * radius * 0.55 + 32; // 高聳銀河拱橋
-      const rawZ = spread * 4.0;
-
-      const rot = 0.65;
-      mwPositions[i * 3] = (rawX * Math.cos(rot) - rawZ * Math.sin(rot)) + 2.1;
-      mwPositions[i * 3 + 1] = Math.max(rawY, 14.0);
-      mwPositions[i * 3 + 2] = rawX * Math.sin(rot) + rawZ * Math.cos(rot);
+      mwPositions[i * 3] = x;
+      mwPositions[i * 3 + 1] = Math.max(arcY, 6.0);
+      mwPositions[i * 3 + 2] = z;
 
       const col = palette[Math.floor(Math.random() * palette.length)];
       mwColors[i * 3] = col.r;
@@ -2064,9 +2036,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const mwMat = new THREE.PointsMaterial({
       map: starTexture,
       vertexColors: true,
-      size: 1.8,
+      size: 11.0,
+      sizeAttenuation: false,
       transparent: true,
       opacity: 0,
+      fog: false, // 銀河星雲不受霧氣遮擋
       blending: THREE.AdditiveBlending,
       depthTest: true,
       depthWrite: false
@@ -2155,25 +2129,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // 系統 5: 夜間點燈 (路燈與窗戶發光)
   // ══════════════════════════════════════════════════════════════════════
   function setupNightLights() {
-    // 共享發光材質
-    nightGlowMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffedd5,
-      emissive: 0xff9900,
-      emissiveIntensity: 0.0,
-      roughness: 0.3
-    });
-
-    // 在 4 座主要島嶼上方配置夜間微弱暖色點光源
-    const majorIslands = ['endoscopy', 'stomach', 'wealth-ladder', 'golden-rules'];
-    majorIslands.forEach((id) => {
-      const islObj = islandObjectsMap.get(id);
-      if (islObj) {
-        const pLight = new THREE.PointLight(0xffaa44, 0, 12, 1.8);
-        pLight.position.set(0, HEX_HEIGHT + 2.5, 0);
-        islObj.add(pLight);
-        nightPointLights.push(pLight);
-      }
-    });
+    // 共享發光材質初始設定
+    nightGlowMaterial.color.set(0x475569);
   }
 
   // ══════════════════════════════════════════════════════════════════════
@@ -2267,15 +2224,24 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     if (starfieldPoints) starfieldPoints.rotation.y += 0.0003;
     if (milkyWayPoints) milkyWayPoints.rotation.y += 0.00025;
 
-    // 5. 夜間點燈邏輯 (路燈與發光窗戶)
+    // 5. 夜間點燈邏輯 (建築物窗戶、島嶼路燈與木橋路燈全數點亮，暖黃光芒流淌)
     const isNightTime = cycle > 0.46 && cycle < 0.96;
-    const glowTarget = isNightTime ? 2.0 : 0.0;
     if (nightGlowMaterial) {
-      nightGlowMaterial.emissiveIntensity += (glowTarget - nightGlowMaterial.emissiveIntensity) * 0.05;
+      nightGlowMaterial.color.set(isNightTime ? 0xffea79 : 0x475569);
     }
     nightPointLights.forEach((pl) => {
-      pl.intensity += ((isNightTime ? 1.5 : 0.0) - pl.intensity) * 0.05;
+      pl.intensity = isNightTime ? 3.0 : 0.0;
     });
+
+    // 雲朵在夜晚調暗半透明度，襯托星空與銀河
+    if (cloudsGroup) {
+      const cloudOpacity = isNightTime ? 0.28 : 0.94;
+      cloudsGroup.children.forEach((c) => {
+        c.children.forEach((puff) => {
+          if (puff.material) puff.material.opacity = cloudOpacity;
+        });
+      });
+    }
 
     // 6. 海水色彩隨時間過渡
     if (oceanMesh) {
@@ -2415,6 +2381,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       group.add(badgeObj);
       badgeObjects.push(badgeDiv);
 
+      // 6. 島嶼專屬夜間暖光 (照亮島嶼地表與村落)
+      const pLight = new THREE.PointLight(0xffb703, 0, 16, 1.4);
+      pLight.position.set(0, HEX_HEIGHT + 1.8, 0);
+      group.add(pLight);
+      nightPointLights.push(pLight);
+
       islandsGroup.add(group);
       islandObjectsMap.set(island.id, group);
     });
@@ -2533,6 +2505,16 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       roof.position.set(0, HEX_HEIGHT + 1.4 + 0.42, 0);
       roof.castShadow = true;
       group.add(roof);
+      // 窗戶 (夜間亮燈)
+      const winGeo = new THREE.BoxGeometry(0.18, 0.22, 0.04);
+      const winFront = new THREE.Mesh(winGeo, nightGlowMaterial);
+      winFront.position.set(0, HEX_HEIGHT + 0.35, 0.34);
+      group.add(winFront);
+
+      const winSide = new THREE.Mesh(winGeo, nightGlowMaterial);
+      winSide.rotation.y = Math.PI / 2;
+      winSide.position.set(0.39, HEX_HEIGHT + 0.35, 0);
+      group.add(winSide);
 
       const stairGeo = new THREE.BoxGeometry(0.9, 0.15, 0.9);
       const stair = new THREE.Mesh(stairGeo, wallMat);
@@ -2586,6 +2568,17 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       roof.position.set(0, HEX_HEIGHT + 0.65 + 0.27, 0);
       roof.castShadow = true;
       group.add(roof);
+
+      // 主屋夜間發光窗戶 (正門與側面)
+      const winGeo = new THREE.BoxGeometry(0.2, 0.22, 0.04);
+      const winFront = new THREE.Mesh(winGeo, nightGlowMaterial);
+      winFront.position.set(0, HEX_HEIGHT + 0.32, 0.34);
+      group.add(winFront);
+
+      const winSide = new THREE.Mesh(winGeo, nightGlowMaterial);
+      winSide.rotation.y = Math.PI / 2;
+      winSide.position.set(0.39, HEX_HEIGHT + 0.32, 0);
+      group.add(winSide);
     }
 
     // 2. 周圍小木屋與毛線絨球質感小樹
@@ -2613,6 +2606,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         miniRoof.position.set(pos.x, HEX_HEIGHT + 0.45 + 0.18, pos.z);
         miniRoof.castShadow = true;
         group.add(miniRoof);
+        const miniWin = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 0.03), nightGlowMaterial);
+        miniWin.position.set(pos.x, HEX_HEIGHT + 0.22, pos.z + 0.25);
+        miniWin.rotation.y = miniHouse.rotation.y;
+        group.add(miniWin);
       } else {
         const trunkGeo = new THREE.CylinderGeometry(0.08, 0.11, 0.4, 6);
         const trunkMat = new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.9 });
@@ -2630,32 +2627,91 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         group.add(foliage);
       }
     });
+
+    // 3. 島嶼地表立體金屬路燈 (黑色復古燈柱 + 圓弧燈罩 + 暖黃發光球 bulb，夜間全面亮燈)
+    const slCoords = [
+      { x: HEX_RADIUS * 0.55, z: HEX_RADIUS * 0.42 },
+      { x: -HEX_RADIUS * 0.55, z: HEX_RADIUS * 0.36 },
+      { x: 0.12, z: -HEX_RADIUS * 0.62 }
+    ];
+
+    slCoords.forEach((slPos) => {
+      const slGroup = new THREE.Group();
+      slGroup.position.set(slPos.x, HEX_HEIGHT, slPos.z);
+
+      // 黑色金屬燈柱
+      const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.05, 0.07, 0.95, 6),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.7 })
+      );
+      pole.position.y = 0.48;
+      pole.castShadow = true;
+      slGroup.add(pole);
+
+      // 燈柱頂部遮雨燈罩
+      const hood = new THREE.Mesh(
+        new THREE.ConeGeometry(0.35, 0.14, 8),
+        new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.6 })
+      );
+      hood.position.y = 1.05;
+      slGroup.add(hood);
+
+      // 夜間顯著發光燈球 (立體大圓燈，如暖金燈籠般明亮)
+      const bulb = new THREE.Mesh(
+        new THREE.SphereGeometry(0.24, 12, 12),
+        nightGlowMaterial
+      );
+      bulb.position.y = 0.90;
+      slGroup.add(bulb);
+
+      group.add(slGroup);
+    });
   }
 
   // ══════════════════════════════════════════════════════════════════════
   // 7. 拱橋系統 (沿地平線弧度架設)
   // ══════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════
+  // 連接群島木橋系統 (含橋上夜間發光路燈)
+  // ══════════════════════════════════════════════════════════════════════
   function buildBridges() {
+    // 24 座主題島嶼相鄰網絡連接
     const BRIDGE_PAIRS = [
-      ['cardio', 'stomach'],
-      ['cardio', 'endoscopy'],
-      ['cardio', 'metabolism'],
-      ['stomach', 'liver'],
-      ['stomach', 'colon'],
-      ['stomach', 'endoscopy'],
-      ['liver', 'endoscopy'],
-      ['colon', 'metabolism'],
-      // 跨界大天橋 (Grand Cross-Realm Bridge)
-      ['cardio', 'wealth-ladder'],
-      // 知識宇宙群島互連
-      ['wealth-ladder', 'six-neuro'],
+      // 醫學專科島內部互連
+      ['endoscopy', 'stomach'],
+      ['endoscopy', 'intestine'],
+      ['endoscopy', 'medication'],
+      ['endoscopy', 'ultrasound'],
+      ['stomach', 'intestine'],
+      ['stomach', 'hepatitis'],
+      ['hepatitis', 'liver-biliary'],
+      ['stomach', 'liver-biliary'],
+      ['intestine', 'weight-loss'],
+      ['weight-loss', 'diet'],
+      ['weight-loss', 'diabetes'],
+      ['weight-loss', 'exercise'],
+      ['diabetes', 'lipids'],
+      ['lipids', 'hypertension'],
+      ['lipids', 'health-red'],
+      ['health-red', 'health-check'],
+      ['health-red', 'chronic'],
+      ['diabetes', 'chronic'],
+      // 跨界大天橋 (Grand Cross-Realm Bridges)
+      ['diabetes', 'wealth-ladder'],
+      ['weight-loss', 'random-walk'],
+      ['health-red', 'most-important'],
+      // 知識宇宙島互連
       ['wealth-ladder', 'random-walk'],
-      ['wealth-ladder', 'die-with-zero'],
-      ['six-neuro', 'glucose-goddess'],
-      ['six-neuro', 'die-with-zero'],
-      ['glucose-goddess', 'die-with-zero'],
-      ['random-walk', 'four-pillars'],
-      ['die-with-zero', 'four-pillars']
+      ['wealth-ladder', 'golden-rules'],
+      ['wealth-ladder', 'most-important'],
+      ['random-walk', 'golden-rules'],
+      ['random-walk', 'die-with-zero'],
+      ['golden-rules', 'most-important'],
+      ['golden-rules', 'glucose'],
+      ['die-with-zero', 'glucose'],
+      ['most-important', 'brain-neuro'],
+      ['glucose', 'sapiens'],
+      ['brain-neuro', 'sapiens']
     ];
 
     BRIDGE_PAIRS.forEach(([idA, idB]) => {
@@ -2665,20 +2721,17 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
       const pA = objA.position;
       const pB = objB.position;
-      const isCrossRealm = (idA === 'cardio' && idB === 'wealth-ladder');
+      const isCrossRealm = (objA.userData.islandData.realm !== objB.userData.islandData.realm);
 
-      // 拱橋中點往球面法線方向抬升，吻合地球地平線弧度
       const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
       const radialDir = new THREE.Vector3().subVectors(mid, PLANET_CENTER).normalize();
       const dist = pA.distanceTo(pB);
 
-      // 將中點拉回球面外緣並加上拱高
-      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + (isCrossRealm ? 0.15 : 0.08));
+      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + (isCrossRealm ? 0.22 : 0.12));
 
       const bridgeGroup = new THREE.Group();
       bridgeGroup.position.copy(mid);
 
-      // 橋體朝向
       const forward = new THREE.Vector3().subVectors(pB, pA).normalize();
       const up = radialDir;
       const right = new THREE.Vector3().crossVectors(up, forward).normalize();
@@ -2686,30 +2739,53 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const mat4 = new THREE.Matrix4().makeBasis(forward, realUp, right);
       bridgeGroup.quaternion.setFromRotationMatrix(mat4);
 
-      const bridgeLen = dist * 0.48;
-      const bridgeWidth = isCrossRealm ? 0.72 : 0.52;
+      const bridgeLen = dist * 0.44;
+      const bridgeWidth = isCrossRealm ? 0.95 : 0.72;
 
-      const archGeo = new THREE.BoxGeometry(bridgeLen, 0.16, bridgeWidth);
+      // 橋面主體
+      const archGeo = new THREE.BoxGeometry(bridgeLen, 0.2, bridgeWidth);
       const archMat = new THREE.MeshStandardMaterial({
-        color: isCrossRealm ? 0xfcd34d : 0xf1ebe5,
-        roughness: 0.6,
-        metalness: isCrossRealm ? 0.3 : 0.05
+        color: isCrossRealm ? 0xfcd34d : 0xecdfcc,
+        roughness: 0.65,
+        metalness: isCrossRealm ? 0.35 : 0.08
       });
       const arch = new THREE.Mesh(archGeo, archMat);
       arch.castShadow = true;
       arch.receiveShadow = true;
       bridgeGroup.add(arch);
 
-      // 欄杆
-      const railGeo = new THREE.BoxGeometry(bridgeLen, 0.12, 0.06);
-      const railMat = new THREE.MeshStandardMaterial({ color: isCrossRealm ? 0xd97706 : 0xa8a29e, roughness: 0.7 });
-      const rail1 = new THREE.Mesh(railGeo, railMat);
-      rail1.position.set(0, 0.14, bridgeWidth / 2 - 0.03);
-      bridgeGroup.add(rail1);
+      // 橋兩側護欄
+      const railGeo = new THREE.BoxGeometry(bridgeLen, 0.14, 0.08);
+      const railMat = new THREE.MeshStandardMaterial({ color: 0x6e523e, roughness: 0.8 });
+      const railL = new THREE.Mesh(railGeo, railMat);
+      railL.position.set(0, 0.16, bridgeWidth / 2 - 0.04);
+      bridgeGroup.add(railL);
 
-      const rail2 = new THREE.Mesh(railGeo, railMat);
-      rail2.position.set(0, 0.14, -bridgeWidth / 2 + 0.03);
-      bridgeGroup.add(rail2);
+      const railR = new THREE.Mesh(railGeo, railMat);
+      railR.position.set(0, 0.16, -bridgeWidth / 2 + 0.04);
+      bridgeGroup.add(railR);
+
+      // 橋上夜間發光小路燈 (橋頭兩側各 2 盞)
+      const poleGeo = new THREE.CylinderGeometry(0.04, 0.05, 0.42, 6);
+      const poleMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.6 });
+      const bulbGeo = new THREE.SphereGeometry(0.18, 10, 10);
+
+      const lampPositions = [
+        [-bridgeLen * 0.35, bridgeWidth / 2 + 0.04],
+        [-bridgeLen * 0.35, -bridgeWidth / 2 - 0.04],
+        [bridgeLen * 0.35, bridgeWidth / 2 + 0.04],
+        [bridgeLen * 0.35, -bridgeWidth / 2 - 0.04]
+      ];
+
+      lampPositions.forEach(([lx, lz]) => {
+        const pole = new THREE.Mesh(poleGeo, poleMat);
+        pole.position.set(lx, 0.28, lz);
+        bridgeGroup.add(pole);
+
+        const bulb = new THREE.Mesh(bulbGeo, nightGlowMaterial);
+        bulb.position.set(lx, 0.52, lz);
+        bridgeGroup.add(bulb);
+      });
 
       bridgesGroup.add(bridgeGroup);
     });
