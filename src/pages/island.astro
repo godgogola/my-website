@@ -1686,52 +1686,34 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   ];
 
   // ══════════════════════════════════════════════════════════════════════
-  // 2. 地球地平線弧度數學模型 (Spherical Earth Curvature Horizon)
+  // 2. 標準蜂巢六角形網格 (Axial Hexagonal Grid) 平面座標模型 (y = 0 桌遊微縮模型)
   // ══════════════════════════════════════════════════════════════════════
-  const SPACING = 5.85;       // 六角中心間距 (水道大幅拓寬至 4.6 單位，留出舒展明澈的碧藍海域)
-  const HEX_RADIUS = 3.20;    // 六角島嶼半徑 (適度收斂，凸顯水景與木橋)
+  // 定義每個六角島嶼外接圓半徑 R、土壤高度 HEX_HEIGHT 與中心間距參數 D
+  const HEX_RADIUS = 3.60;    // 外接圓半徑 R
   const HEX_HEIGHT = 0.95;    // 島嶼土壤高度
-  const PLANET_RADIUS = 88.0; // 地球星球半徑 (舒展大弧度，地平線更自然)
-  const PLANET_CENTER = new THREE.Vector3(2.1, -PLANET_RADIUS, 0); // 球心座標
+  const HEX_APOTHEM = HEX_RADIUS * Math.cos(Math.PI / 6); // 內切圓半徑 r_inner = 3.118 (中心到六角平邊的距離)
+  const SPACING = 6.25;       // 網格間距參數 D (使得相鄰島中心距離 dist = sqrt(3)*D = 10.825)
+  // 水道淨寬 = dist - 2 * r_inner = 10.825 - 6.235 = 4.59 單位 (完美符合 4.5~5 規範)
 
-  // 兩大群島：醫學筆島群 (health) 與 讀書筆記島群 (wisdom)，中間隔著一道海峽 (以渡船往來，不架橋)
-  const ARCHIPELAGO_GAP = 18.0; // 兩群島額外拉開的距離 (開闊蔚藍海峽)
-  // 偏移量 (平面 X)：讓「兩群島 + 海峽」整體左右對稱地置於湖心
+  // 兩大群島：醫學筆島群 (health) 與 讀書筆記島群 (wisdom)，左右並列，中間隔著開闊海峽 (由渡船往來)
+  const ARCHIPELAGO_GAP = 20.0;
   const REALM_OFFSET_X = {
-    health: PLANET_CENTER.x - ARCHIPELAGO_GAP / 2,
-    wisdom: PLANET_CENTER.x + ARCHIPELAGO_GAP / 2
+    health: -ARCHIPELAGO_GAP / 2,
+    wisdom: ARCHIPELAGO_GAP / 2
   };
-  const HEX_APOTHEM = HEX_RADIUS * Math.cos(Math.PI / 6); // 2.771
 
-  // 將 2D 六角座標投影至帶有地球地平線弧度的 3D 微縮星球表面
+  // 標準蜂巢六角座標 (q, r) 轉換為 3D 平面世界座標 (x, y=0, z)
+  // x = D * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r)
+  // z = D * (1.5 * r)
   function hexToPlanet(q, r, realm = 'health') {
-    // 1. 平面網格座標 (含群島偏移)
-    const flatX = Math.sqrt(3) * SPACING * (q + r / 2) + (REALM_OFFSET_X[realm] ?? 0);
-    const flatZ = 1.5 * SPACING * r;
-
-    // 2. 計算與星球頂點的平面距離
-    const dx = flatX - PLANET_CENTER.x;
-    const dz = flatZ - PLANET_CENTER.z;
-    const dist2D = Math.sqrt(dx * dx + dz * dz);
-
-    // 3. 球面角 (弧度) 與地平線下陷高度
-    const angle = dist2D / PLANET_RADIUS;
-    const heightDrop = PLANET_RADIUS * (1 - Math.cos(angle));
-
-    // 4. 沿著球面外擴與下陷
-    const ratio = angle > 0.0001 ? Math.sin(angle) / (dist2D / PLANET_RADIUS) : 1;
-    const worldX = PLANET_CENTER.x + dx * ratio;
-    const worldZ = PLANET_CENTER.z + dz * ratio;
-    const worldY = -heightDrop;
-
-    // 5. 球面法向量與旋轉姿態 (沿地平線傾角)
-    const normal = new THREE.Vector3(dx, PLANET_RADIUS - heightDrop, dz).normalize();
-    const orientation = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+    const worldX = SPACING * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r) + (REALM_OFFSET_X[realm] ?? 0);
+    const worldZ = SPACING * (1.5 * r);
+    const worldY = 0; // 徹底移除地球弧度下陷，所有島嶼基準基座純平放在 y = 0 平面上
 
     return {
       position: new THREE.Vector3(worldX, worldY, worldZ),
-      normal,
-      orientation
+      normal: new THREE.Vector3(0, 1, 0),
+      orientation: new THREE.Quaternion() // 純水平無傾角
     };
   }
 
@@ -1780,9 +1762,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let birdFlockData = null;
 
   // 動態相機飛行參數
-  let cameraTarget = new THREE.Vector3(2.1, 3.5, 0);
-  let cameraLookAt = new THREE.Vector3(2.1, 3.5, 0);
-  let cameraDestPos = new THREE.Vector3(2.1, 28, 48);
+  let cameraTarget = new THREE.Vector3(0, 0, 0);
+  let cameraLookAt = new THREE.Vector3(0, 0, 0);
+  let cameraDestPos = new THREE.Vector3(0, 54, 70);
   let flightStartTime = 0;
   let flightDuration = 0;
   let flightStartPos = new THREE.Vector3();
@@ -1795,10 +1777,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     scene.background = new THREE.Color(0xd7edf6);
     scene.fog = null; // 徹底移除全域霧氣，呈現通透、高對比且色彩鮮豔的清晰視覺
 
-    // Camera
+    // Camera: 採用窄視角微縮透視鏡頭 (FOV 32° 斜角俯瞰)，呈現精緻桌遊微縮等角感
     const aspect = container.clientWidth / container.clientHeight;
-    camera = new THREE.PerspectiveCamera(38, aspect, 0.5, 450);
-    camera.position.set(2.1, 28, 48);
+    camera = new THREE.PerspectiveCamera(32, aspect, 0.5, 450);
+    camera.position.set(0, 54, 70);
 
     // WebGL Renderer
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -1823,10 +1805,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
-    controls.maxPolarAngle = Math.PI / 2.15; // 不穿入星球水底
+    controls.maxPolarAngle = Math.PI / 2.15; // 不穿入水底
     controls.minDistance = 5;
     controls.maxDistance = 180;
-    controls.target.copy(cameraLookAt);
+    controls.target.set(0, 0, 0);
 
     // 添加核心群組
     scene.add(lightsGroup);
@@ -2171,12 +2153,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   // ══════════════════════════════════════════════════════════════════════
-  // 系統 4: 動態波浪海洋 (高反射率 + 頂點海浪動畫)
+  // 系統 4: 平面微縮湖水模型 (平面 CircleGeometry + 頂點微波起伏)
   // ══════════════════════════════════════════════════════════════════════
   function createCurvedOcean() {
-    const oceanRadius = PLANET_RADIUS - 0.18;
-    // 96x64 細分度，提供細緻海浪起伏
-    oceanGeo = new THREE.SphereGeometry(oceanRadius, 96, 64, 0, Math.PI * 2, 0, Math.PI * 0.48);
+    const oceanRadius = 66.0;
+    oceanGeo = new THREE.CircleGeometry(oceanRadius, 96);
+    oceanGeo.rotateX(-Math.PI / 2); // 旋轉為 X-Z 水平面
     
     // 保存初始頂點位置
     const pos = oceanGeo.attributes.position;
@@ -2187,14 +2169,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
     const oceanMat = new THREE.MeshStandardMaterial({
       color: 0x2f8fb5,
-      roughness: 0.42,
-      metalness: 0.06,
+      roughness: 0.38,
+      metalness: 0.08,
       transparent: true,
       opacity: 0.95,
       flatShading: true
     });
     oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
-    oceanMesh.position.copy(PLANET_CENTER);
+    oceanMesh.position.set(0, -0.05, 0); // 略低於島嶼基座 (y = 0)
     oceanMesh.receiveShadow = true;
     scene.add(oceanMesh);
     waterSphere = oceanMesh;
@@ -2351,18 +2333,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         const oy = oceanInitialPositions[i * 3 + 1];
         const oz = oceanInitialPositions[i * 3 + 2];
 
-        // 疊加正弦波
-        const wave = Math.sin(ox * 0.35 + elapsedTime * 1.8) * 0.16 +
-                     Math.cos(oz * 0.28 + elapsedTime * 1.4) * 0.12 +
-                     Math.sin((ox + oz) * 0.2 + elapsedTime * 2.1) * 0.08;
+        // 疊加正弦波 (平面垂直微波)
+        const wave = Math.sin(ox * 0.32 + elapsedTime * 1.8) * 0.08 +
+                     Math.cos(oz * 0.26 + elapsedTime * 1.4) * 0.06;
 
-        // 沿法向量方向微幅浮動
-        const len = Math.sqrt(ox * ox + oy * oy + oz * oz);
-        const nx = ox / len;
-        const ny = oy / len;
-        const nz = oz / len;
-
-        pos.setXYZ(i, ox + nx * wave, oy + ny * wave, oz + nz * wave);
+        pos.setXYZ(i, ox, oy + wave, oz);
       }
       pos.needsUpdate = true;
       oceanGeo.computeVertexNormals();
@@ -2554,16 +2529,16 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       if (neighbor) {
         const dq = neighbor.q - island.q;
         const dr = neighbor.r - island.r;
-        const dx = Math.sqrt(3) * (dq + dr / 2);
-        const dz = 1.5 * dr;
-        const angle = Math.atan2(dz, dx);
+        const dx = SPACING * (Math.sqrt(3) * dq + (Math.sqrt(3) / 2) * dr);
+        const dz = SPACING * (1.5 * dr);
+        const angle = Math.atan2(dx, dz);
 
         const roadMesh = new THREE.Mesh(
-          new THREE.BoxGeometry(roadLen, 0.015, 0.72),
+          new THREE.BoxGeometry(0.72, 0.015, roadLen),
           dirtMat
         );
-        roadMesh.position.set(Math.cos(angle) * midR, 0, Math.sin(angle) * midR);
-        roadMesh.rotation.y = -angle;
+        roadMesh.position.set(Math.sin(angle) * midR, 0, Math.cos(angle) * midR);
+        roadMesh.rotation.y = angle;
         roadMesh.receiveShadow = true;
         roadGroup.add(roadMesh);
       }
@@ -2943,22 +2918,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   const HM_UP = new THREE.Vector3(0, 1, 0);
 
-  // 平面座標 (x,z) + 沿球心外推高度 h → 星球曲面世界座標 (與 hexToPlanet 同一套弧度公式)
+  // 平面座標 (x, z) + 高度 h → 平面 3D 世界座標 (y = 0 基準面)
   function planetPoint(x, z, h = 0, out = new THREE.Vector3()) {
-    const dx = x - PLANET_CENTER.x;
-    const dz = z - PLANET_CENTER.z;
-    const d = Math.sqrt(dx * dx + dz * dz);
-    const a = d / PLANET_RADIUS;
-    const k = d > 1e-6 ? Math.sin(a) / d : 0;
-    const rr = PLANET_RADIUS + h;
-    return out.set(
-      PLANET_CENTER.x + dx * k * rr,
-      PLANET_CENTER.y + Math.cos(a) * rr,
-      PLANET_CENTER.z + dz * k * rr
-    );
+    return out.set(x, h, z);
   }
   function planetNormal(p, out = new THREE.Vector3()) {
-    return out.subVectors(p, PLANET_CENTER).normalize();
+    return out.set(0, 1, 0);
   }
 
   // ── 小工具：平滑階梯 / 雜湊雜訊 / 分形雜訊 / 固定種子亂數 ──
@@ -2989,7 +2954,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   // 13-1. 環湖群山地形 (群島坐落在一座被山脈環抱的湖心)
   // ══════════════════════════════════════════════════════════════════════
-  const MOUNTAIN_CENTER_X = PLANET_CENTER.x;
+  const MOUNTAIN_CENTER_X = 0;
   let mountainGroup = null;
 
   // 湖岸半徑隨角度起伏 (不規則湖岸線)
@@ -2998,7 +2963,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   const _ts = { h: 0, e: 0 };
-  // 取樣地形：h = 沿球心外推高度 (相對海平面)，e = 0..1 相對海拔 (著色用)
+  // 取樣地形：h = 地形高於湖面之高度，e = 0..1 相對海拔 (著色用)
   function terrainSample(r, th) {
     const cs = Math.cos(th), sn = Math.sin(th);
     const t = (r - shoreRadius(th)) / 18;
@@ -3014,11 +2979,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const facing = 0.24 + 0.76 * (1 - sn) / 2;
     const rise = hmSmooth(0, 1.0, t);
     const land = (6 + 11 * base + 8 * ridge * ridge) * facing * rise;
-    // 山谷「碗形」補償：抵銷星球曲率造成的下陷，讓山脈像盆地邊緣般環繞升起
-    const ang = r / PLANET_RADIUS;
-    const bowl = PLANET_RADIUS * (1 - Math.cos(ang)) * 0.55 * hmSmooth(0, 0.9, t);
     const taper = 1 - hmSmooth(76, 104, r) * 0.5;
-    _ts.h = (-0.2 + land + bowl) * taper;
+    _ts.h = (-0.2 + land) * taper;
     _ts.e = Math.min(1, land / 24);
     return _ts;
   }
@@ -3332,10 +3294,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   // 13-5. 彩色拱橋 (石橋墩 + 拼花橋面 + 雙層漸層護欄 + 夜間路燈)
   // ══════════════════════════════════════════════════════════════════════
-  function paintGeo(geo, hex, x = 0, y = 0, z = 0, rotZ = 0) {
+  // 13-5. 橋樑幾何上色輔助函式 (長度沿 Z 軸展開，rotX 為俯仰角)
+  // ══════════════════════════════════════════════════════════════════════
+  function paintGeo(geo, hex, x = 0, y = 0, z = 0, rotX = 0) {
     const g = geo.index ? geo.toNonIndexed() : geo.clone();
     g.deleteAttribute('uv');
-    if (rotZ) g.rotateZ(rotZ);
+    if (rotX) g.rotateX(rotX);
     g.translate(x, y, z);
     const c = new THREE.Color(hex);
     const n = g.attributes.position.count;
@@ -3348,7 +3312,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function buildScenicBridges(bridgeList) {
     const deckMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.76, metalness: 0.03, flatShading: true });
     const foamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false });
-    const WATER_Y = -(HEX_HEIGHT + 0.06 + 0.18) + 0.08;
+    // 橋面基座放置於島頂 (y = HEX_HEIGHT)，故水面在橋體局部座標系中為 -HEX_HEIGHT - 0.05
+    const WATER_Y = -HEX_HEIGHT - 0.05;
 
     // 圖二溫暖明亮的蜜糖原木色系
     const honeyDeckHex = 0xd89c62;  // 蜜糖原木主色 (明亮溫暖)
@@ -3372,21 +3337,26 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const dA = objA.userData.islandData, dB = objB.userData.islandData;
       const pA = objA.position, pB = objB.position;
 
-      const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
-      const radialDir = new THREE.Vector3().subVectors(mid, PLANET_CENTER).normalize();
-      const dist = pA.distanceTo(pB);
-      // 橋體基底高度置於島嶼表面，兩端牢固平穩搭接
-      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + 0.02);
-
+      // 1. 橋樑中心位置 (Position)：置於兩島中心點的正中間，高度置於土壤表面 HEX_HEIGHT
+      const midX = (pA.x + pB.x) / 2;
+      const midZ = (pA.z + pB.z) / 2;
       const bridgeGroup = new THREE.Group();
-      bridgeGroup.position.copy(mid);
-      const forward = new THREE.Vector3().subVectors(pB, pA).normalize();
-      const right = new THREE.Vector3().crossVectors(radialDir, forward).normalize();
-      const realUp = new THREE.Vector3().crossVectors(forward, right).normalize();
-      bridgeGroup.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(forward, realUp, right));
+      bridgeGroup.position.set(midX, HEX_HEIGHT, midZ);
 
-      // 水道大幅加寬至 4.6 單位，橋長約 5.8 單位，覆蓋兩端島緣各 0.6 單位
-      const L = Math.max(3.2, dist - 2 * HEX_APOTHEM + 1.25);
+      // 2. 橋樑旋轉角度 (Rotation)：
+      // 橋長度方向為 Z 軸 (Depth)，使用 Math.atan2(dx, dz) 旋轉，精準對齊 6 個 60 度軸向
+      const dx = pB.x - pA.x;
+      const dz = pB.z - pA.z;
+      const angle = Math.atan2(dx, dz);
+      bridgeGroup.rotation.y = angle;
+
+      // 3. 橋樑長度 (Length)：
+      // 兩島中心距離 dist，內切圓半徑 r_inner = HEX_APOTHEM
+      // 兩端剛好搭在島緣各 0.3 單位處，完美貼合兩島邊緣
+      const dist = Math.hypot(dx, dz);
+      const canalGap = dist - (HEX_APOTHEM * 2);
+      const L = Math.max(3.2, canalGap + 0.60);
+
       const parts = [];
       const foamParts = [];
       const pts = [];
@@ -3397,39 +3367,40 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         // ════════════════════════════════════════════════════════════
         const W = 0.72;
         const T = 0.08;
-        const rise = 0.52; // 優美舒展的大拱弧
+        const rise = 0.52; // 優美舒展的木拱弧
         const SEGS = 18;
         const segL = (L / SEGS) * 1.05;
 
-        // 1. 弧形原木橋面與底層支撐弧肋
+        // 1. 弧形原木橋面與底層支撐弧肋 (沿 Z 軸展開，寬度沿 X 軸)
         for (let i = 0; i < SEGS; i++) {
           const u = (i + 0.5) / SEGS - 0.5;
-          const x = u * L;
+          const z = u * L;
           const y = rise * (1 - 4 * u * u);
           const tangent = -8 * rise * u / L;
-          const rotZ = Math.atan(tangent);
+          const rotX = Math.atan(-tangent);
 
           const col = (i % 2 === 0) ? honeyDeckHex : woodDarkHex;
-          parts.push(paintGeo(new THREE.BoxGeometry(segL, T, W), col, x, y - T / 2, 0, rotZ));
+          // BoxGeometry: Width along X (W), Height along Y (T), Length along Z (segL)
+          parts.push(paintGeo(new THREE.BoxGeometry(W, T, segL), col, 0, y - T / 2, z, rotX));
 
           // 兩側底層支撐弧樑
           for (const side of [-1, 1]) {
-            parts.push(paintGeo(new THREE.BoxGeometry(segL, 0.07, 0.055), beamUnderHex, x, y - T - 0.035, side * (W / 2 - 0.035), rotZ));
+            parts.push(paintGeo(new THREE.BoxGeometry(0.055, 0.07, segL), beamUnderHex, side * (W / 2 - 0.035), y - T - 0.035, z, rotX));
           }
 
           // 兩側弧形扶手
           for (const side of [-1, 1]) {
-            const z = side * (W / 2 + 0.025);
-            parts.push(paintGeo(new THREE.BoxGeometry(segL, 0.05, 0.06), honeyDeckHex, x, y + 0.36, z, rotZ));
+            const x = side * (W / 2 + 0.025);
+            parts.push(paintGeo(new THREE.BoxGeometry(0.06, 0.05, segL), honeyDeckHex, x, y + 0.36, z, rotX));
           }
         }
 
         // 2. 四角方形立柱與寶頂柱頭 (擬寶珠)
         for (const u of [-0.48, 0.48]) {
-          const x = u * L;
+          const z = u * L;
           const y = rise * (1 - 4 * u * u);
           for (const side of [-1, 1]) {
-            const z = side * (W / 2 + 0.025);
+            const x = side * (W / 2 + 0.025);
             parts.push(paintGeo(new THREE.BoxGeometry(0.09, 0.48, 0.09), woodDarkHex, x, y + 0.20, z));
             parts.push(paintGeo(new THREE.BoxGeometry(0.13, 0.04, 0.13), finialCollar, x, y + 0.45, z));
             parts.push(paintGeo(new THREE.SphereGeometry(0.055, 8, 8), finialBall, x, y + 0.51, z));
@@ -3440,26 +3411,26 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         const balusterCount = 7;
         for (let k = 1; k <= balusterCount; k++) {
           const u = (k / (balusterCount + 1)) - 0.5;
-          const x = u * L;
+          const z = u * L;
           const y_deck = rise * (1 - 4 * u * u);
           const y_rail = y_deck + 0.36;
           const h = y_rail - y_deck;
           for (const side of [-1, 1]) {
-            const z = side * (W / 2 + 0.025);
+            const x = side * (W / 2 + 0.025);
             parts.push(paintGeo(new THREE.BoxGeometry(0.045, h, 0.045), woodDarkHex, x, y_deck + h / 2, z));
           }
         }
 
-        // 4. 兩端平滑登橋木踏階
+        // 4. 兩端平滑登橋木踏階 (銜接島嶼邊緣)
         for (const side of [-1, 1]) {
-          const endX = side * (L / 2 - 0.15);
-          parts.push(paintGeo(new THREE.BoxGeometry(0.42, 0.07, W * 1.15), stoneStepHex, endX, 0.03, 0));
+          const endZ = side * (L / 2 - 0.15);
+          parts.push(paintGeo(new THREE.BoxGeometry(W * 1.15, 0.07, 0.42), stoneStepHex, 0, 0.03, endZ));
         }
 
         // 5. 橋下水景：睡蓮荷葉與粉紅荷花
         for (let li = 0; li < 4; li++) {
-          const lx = (li - 1.5) * 0.75;
-          const lz = ((li % 2) * 2 - 1) * (W / 2 + 0.32);
+          const lz = (li - 1.5) * 0.75;
+          const lx = ((li % 2) * 2 - 1) * (W / 2 + 0.32);
           const lily = new THREE.CircleGeometry(0.18 + (li % 3) * 0.04, 8).toNonIndexed();
           lily.rotateX(-Math.PI / 2);
           lily.translate(lx, WATER_Y + 0.02, lz);
@@ -3474,18 +3445,18 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
         // 6. 水下加固木樁
         for (const u of [-0.32, 0.32]) {
-          const x = u * L;
+          const z = u * L;
           const y = rise * (1 - 4 * u * u);
           const top = y - T - 0.05;
           const bottom = WATER_Y - 0.45;
           const h = top - bottom;
           for (const side of [-1, 1]) {
-            const pz = side * (W / 2 - 0.04);
-            parts.push(paintGeo(new THREE.CylinderGeometry(0.05, 0.06, h, 6), beamUnderHex, x, (top + bottom) / 2, pz));
+            const px = side * (W / 2 - 0.04);
+            parts.push(paintGeo(new THREE.CylinderGeometry(0.05, 0.06, h, 6), beamUnderHex, px, (top + bottom) / 2, z));
           }
           const ring = new THREE.RingGeometry(0.20, 0.46, 12).toNonIndexed();
           ring.rotateX(-Math.PI / 2);
-          ring.translate(x, WATER_Y, 0);
+          ring.translate(0, WATER_Y, z);
           foamParts.push(ring);
         }
 
@@ -3494,7 +3465,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         for (let i = 0; i <= WALK_N; i++) {
           const u = i / WALK_N - 0.5;
           const y = rise * (1 - 4 * u * u);
-          pts.push(new THREE.Vector3(u * L, y + 0.03, 0).applyMatrix4(bridgeGroup.matrix));
+          pts.push(new THREE.Vector3(0, y + 0.03, u * L).applyMatrix4(bridgeGroup.matrix));
         }
 
       } else if (bridgeType === 'boardwalk') {
@@ -3507,42 +3478,42 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         const SEGS = 14;
         const segL = (L / SEGS) * 1.05;
 
-        // 棧道原木拼板
+        // 棧道原木拼板 (沿 Z 軸)
         for (let i = 0; i < SEGS; i++) {
           const u = (i + 0.5) / SEGS - 0.5;
-          const x = u * L;
+          const z = u * L;
           const col = (i % 2 === 0) ? rusticCedarHex : rusticDarkWood;
-          parts.push(paintGeo(new THREE.BoxGeometry(segL, T, W), col, x, boardY - T / 2, 0));
+          parts.push(paintGeo(new THREE.BoxGeometry(W, T, segL), col, 0, boardY - T / 2, z));
         }
 
         // 兩側通透低矮護欄
         for (const side of [-1, 1]) {
-          const z = side * (W / 2 + 0.02);
+          const x = side * (W / 2 + 0.02);
           for (let p = -3; p <= 3; p++) {
-            const px = (p / 3.5) * (L / 2);
-            parts.push(paintGeo(new THREE.BoxGeometry(0.045, 0.28, 0.045), rusticDarkWood, px, boardY + 0.14, z));
+            const pz = (p / 3.5) * (L / 2);
+            parts.push(paintGeo(new THREE.BoxGeometry(0.045, 0.28, 0.045), rusticDarkWood, x, boardY + 0.14, pz));
           }
-          parts.push(paintGeo(new THREE.BoxGeometry(L * 0.96, 0.035, 0.04), rusticCedarHex, 0, boardY + 0.26, z));
+          parts.push(paintGeo(new THREE.BoxGeometry(0.04, 0.035, L * 0.96), rusticCedarHex, x, boardY + 0.26, 0));
         }
 
         // 入水木樁與泡沫
-        for (const px of [-L * 0.32, 0, L * 0.32]) {
+        for (const pz of [-L * 0.32, 0, L * 0.32]) {
           const top = boardY - T;
           const bottom = WATER_Y - 0.45;
           const h = top - bottom;
           for (const side of [-1, 1]) {
-            parts.push(paintGeo(new THREE.CylinderGeometry(0.045, 0.05, h, 6), rusticDarkWood, px, (top + bottom) / 2, side * (W / 2 - 0.03)));
+            parts.push(paintGeo(new THREE.CylinderGeometry(0.045, 0.05, h, 6), rusticDarkWood, side * (W / 2 - 0.03), (top + bottom) / 2, pz));
           }
           const ring = new THREE.RingGeometry(0.16, 0.38, 10).toNonIndexed();
           ring.rotateX(-Math.PI / 2);
-          ring.translate(px, WATER_Y, 0);
+          ring.translate(0, WATER_Y, pz);
           foamParts.push(ring);
         }
 
         // 漂浮荷葉
         for (let li = 0; li < 3; li++) {
-          const lx = (li - 1) * 1.1;
-          const lz = ((li % 2) * 2 - 1) * (W / 2 + 0.28);
+          const lz = (li - 1) * 1.1;
+          const lx = ((li % 2) * 2 - 1) * (W / 2 + 0.28);
           const lily = new THREE.CircleGeometry(0.16, 8).toNonIndexed();
           lily.rotateX(-Math.PI / 2);
           lily.translate(lx, WATER_Y + 0.02, lz);
@@ -3553,7 +3524,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         const WALK_N = 8;
         for (let i = 0; i <= WALK_N; i++) {
           const u = i / WALK_N - 0.5;
-          pts.push(new THREE.Vector3(u * L, boardY + 0.03, 0).applyMatrix4(bridgeGroup.matrix));
+          pts.push(new THREE.Vector3(0, boardY + 0.03, u * L).applyMatrix4(bridgeGroup.matrix));
         }
 
       } else {
@@ -3565,8 +3536,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
         for (let s = 0; s < stoneCount; s++) {
           const u = (s + 0.5) / stoneCount - 0.5;
-          const sx = u * (L * 0.88);
-          const sz = Math.sin(s * 1.7) * 0.22;
+          const sz = u * (L * 0.88);
+          const sx = Math.sin(s * 1.7) * 0.22;
           const col = (s % 3 === 0) ? stoneCol1 : (s % 3 === 1 ? stoneCol2 : stoneCol3);
 
           const r = 0.38 + (s % 2) * 0.06;
@@ -3584,11 +3555,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           if (s % 2 === 1) {
             const lily = new THREE.CircleGeometry(0.17, 8).toNonIndexed();
             lily.rotateX(-Math.PI / 2);
-            lily.translate(sx, WATER_Y + 0.02, -sz * 1.4);
+            lily.translate(-sx * 1.4, WATER_Y + 0.02, sz);
             parts.push(paintGeo(lily, 0x3d7e35, 0, 0, 0));
 
             const fl = new THREE.SphereGeometry(0.045, 6, 6).toNonIndexed();
-            fl.translate(sx + 0.02, WATER_Y + 0.06, -sz * 1.4 + 0.02);
+            fl.translate(-sx * 1.4 + 0.02, WATER_Y + 0.06, sz + 0.02);
             parts.push(paintGeo(fl, 0xfce7f3, 0, 0, 0));
           }
 
@@ -3598,10 +3569,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
         // 首尾平滑過渡島面階梯
         for (const side of [-1, 1]) {
-          const endX = side * (L / 2 - 0.2);
+          const endZ = side * (L / 2 - 0.2);
           const stepGeo = new THREE.DodecahedronGeometry(0.42, 0).toNonIndexed();
           stepGeo.scale(1.1, 0.28, 1.1);
-          parts.push(paintGeo(stepGeo, stoneCol1, endX, 0.03, 0));
+          parts.push(paintGeo(stepGeo, stoneCol1, 0, 0.03, endZ));
         }
       }
 
@@ -3639,10 +3610,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       closeDetailCard();
       islandObjectsMap.forEach((obj) => { if (obj.userData.selectionRing) obj.userData.selectionRing.material.opacity = 0; });
       document.querySelectorAll('.sidebar-island-row').forEach(r => r.classList.remove('active'));
-      startCameraFlight(new THREE.Vector3(2.1, 112, 34), new THREE.Vector3(2.1, -4, 3), 2200);
+      startCameraFlight(new THREE.Vector3(0, 95, 36), new THREE.Vector3(0, 0, 0), 2200);
     } else {
       controls.autoRotate = false;
-      startCameraFlight(new THREE.Vector3(2.1, 28, 48), new THREE.Vector3(2.1, 3.5, 0), 1600);
+      startCameraFlight(new THREE.Vector3(0, 54, 70), new THREE.Vector3(0, 0, 0), 1600);
     }
   }
   function exitBirdViewSilently() {
@@ -3667,13 +3638,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const normA = objA.userData.normal;
       const normB = objB.userData.normal;
 
-      const pA = objA.position.clone().addScaledVector(normA, HEX_HEIGHT + 0.4);
-      const pB = objB.position.clone().addScaledVector(normB, HEX_HEIGHT + 0.4);
+      const pA = objA.position.clone().setY(HEX_HEIGHT + 0.4);
+      const pB = objB.position.clone().setY(HEX_HEIGHT + 0.4);
       const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
-      const radialDir = new THREE.Vector3().subVectors(mid, PLANET_CENTER).normalize();
-
-      // 能量弧線拋向大氣層高空
-      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + 2.8 + pA.distanceTo(pB) * 0.2);
+      // 能量光流弧線拋向半空高處
+      mid.y = HEX_HEIGHT + 3.2 + pA.distanceTo(pB) * 0.18;
 
       const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
       const points = curve.getPoints(50);
