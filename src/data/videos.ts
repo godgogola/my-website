@@ -36,6 +36,20 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/25) ---
+  {
+    id: 'PENDING_ID',
+    title: '咽喉異物感',
+    description: '喉嚨總是有卡卡的、想咳咳不出來，吞口水特別明顯，但吃大餐喝水卻完全沒事？你可能也遇上了門診極為常見的「咽喉異物感（Globus Pharyngeus）」！成因涵蓋咽喉逆流 (LPR)、鼻涕倒流、自律神經與壓力、異位性胃黏膜及甲狀腺壓迫。醫師提醒若合併吞嚥困難或聲音沙啞應及早檢查！',
+    category: '胃部疾病',
+    duration: '1:01',
+    url: 'https://drhuanggi.vercel.app/posts/咽喉異物感',
+    featured: true,
+    order: 1,
+    thumbnail: '/images/咽喉異物感.webp',
+    articleSlug: '咽喉異物感',
+    articleTitle: '咽喉異物感',
+  },
   // --- 2026 最新發布影音 (2026/10/23) ---
   {
     id: 'PENDING_ID',

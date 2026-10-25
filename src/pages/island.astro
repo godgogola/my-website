@@ -76,7 +76,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 ---
 
 <Layout
-  title="3D 微縮星球群島｜人體健康 × 知識宇宙探索世界 - 黃冠智醫師"
+  title="3D 微縮星球群島｜醫學筆島群 × 讀書筆記島群 - 黃冠智醫師"
   meta_title="3D 微縮星球群島｜人體健康微縮群島 × 知識宇宙 - 黃冠智醫師"
   description="走進黃冠智醫師的 3D 微縮星球群島：帶有地球地平線弧度的微型世界，完整收錄人體醫學六大領域與經典思想名著全文章與章節。"
   fullWidth={true}
@@ -114,20 +114,20 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         <div class="hud-icon">🌍</div>
         <div class="hud-titles">
           <h1 class="hud-main-title">3D 微縮星球群島</h1>
-          <span class="hud-badge">地球地平線弧度 · 雙星 12 島 · 272 篇全收錄</span>
+          <span class="hud-badge">地球地平線弧度 · 雙群島 24 島 · 渡船往來 · 272 篇全收錄</span>
         </div>
       </div>
 
       <!-- 星系切換鈕 -->
       <div class="hud-realm-tabs">
         <button class="realm-pill active" data-realm="all">
-          <span class="dot all"></span>全部星系 (24)
+          <span class="dot all"></span>全部群島 (24)
         </button>
         <button class="realm-pill" data-realm="health">
-          <span class="dot health"></span>🏥 人體健康 (16)
+          <span class="dot health"></span>🏥 醫學筆島群 (16)
         </button>
         <button class="realm-pill" data-realm="wisdom">
-          <span class="dot wisdom"></span>📚 知識宇宙 (8)
+          <span class="dot wisdom"></span>📚 讀書筆記島群 (8)
         </button>
       </div>
 
@@ -238,7 +238,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         <!-- 區塊 1: 人體健康微縮群島 -->
         <div class="realm-group" data-realm-group="health">
           <div class="realm-group-title">
-            <span class="realm-badge health">🏥 人體健康微縮群島</span>
+            <span class="realm-badge health">🏥 醫學筆島群</span>
             <span class="realm-stat" id="healthTotalStat">6 座島嶼</span>
           </div>
           <div class="realm-items" id="healthItems"></div>
@@ -247,7 +247,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         <!-- 區塊 2: 知識宇宙探索群島 -->
         <div class="realm-group" data-realm-group="wisdom">
           <div class="realm-group-title">
-            <span class="realm-badge wisdom">📚 知識宇宙探索群島</span>
+            <span class="realm-badge wisdom">📚 讀書筆記島群</span>
             <span class="realm-stat" id="wisdomTotalStat">6 部經典</span>
           </div>
           <div class="realm-items" id="wisdomItems"></div>
@@ -1114,6 +1114,21 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     pointer-events: none;
   }
 
+  /* 渡船碼頭標籤 */
+  .ferry-label {
+    padding: 3px 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff7ea;
+    background: rgba(37, 99, 135, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 999px;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+  .ferry-label.labels-hidden { opacity: 0; }
+
   /* 鳥瞰模式：標籤縮為精簡小膠囊，避免俯視時互相堆疊 */
   .viewport-container.bird-mode .island-3d-badge-inner { padding: 3px 9px; gap: 4px; }
   .viewport-container.bird-mode .badge-icon { font-size: 0.8rem; }
@@ -1190,6 +1205,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
   // 24 座群島基礎元資料 (位置、主題色系、簡介與專題連結)
   const ISLAND_META = [
+    // ══════════════════════════════════════════════════════════════════
+    // 【醫學筆島群 (16 座)】- 日常自然地面 (綠地、水泥地、操場紅土、柏油路)
+    // 💡 提示：每個島嶼皆標註地面材質，您隨時可在此個別調整每個島的顏色！
+    // ══════════════════════════════════════════════════════════════════
     {
       id: 'endoscopy',
       realm: 'health',
@@ -1197,9 +1216,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '內視鏡檢查島',
       shortName: '內視鏡島',
       icon: '🔬',
-      color: 0x0ea5e9,
-      roofColor: 0x0369a1,
-      accentColor: 0x38bdf8,
+      // 地面材質：米白水泥廣場
+      color: 0x649752,
+      roofColor: 0x3d6b67,
+      accentColor: 0x4a827d,
       subtitle: '無痛舒眠胃鏡、大腸鏡與早期癌篩檢',
       desc: '以高解析放大內視鏡、NBI 窄頻影像技術，精準洞察食道、胃部與大腸黏膜微血管，讓息肉與早期病變無所遁形。',
       ctaUrl: '/health-column',
@@ -1213,9 +1233,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '胃部疾病島',
       shortName: '胃部島',
       icon: '🫄',
-      color: 0xf59e0b,
-      roofColor: 0xb45309,
-      accentColor: 0xfbbf24,
+      // 地面材質：清新草坪綠地
+      color: 0x5d904c,
+      roofColor: 0xb55a3a,
+      accentColor: 0x82b26e,
       subtitle: '胃食道逆流、幽門桿菌與胃潰瘍前瞻處置',
       desc: '深入探討胃酸抑制劑機轉、胃黏膜保護、功能性消化不良及萎縮性胃炎的完整臨床治療方針。',
       ctaUrl: '/health-column',
@@ -1229,9 +1250,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '腸道疾病島',
       shortName: '腸道島',
       icon: '🧬',
-      color: 0x10b981,
-      roofColor: 0x047857,
-      accentColor: 0x34d399,
+      // 地面材質：生態公園深綠地
+      color: 0x6a9e56,
+      roofColor: 0x456c3f,
+      accentColor: 0x73a462,
       subtitle: '腸躁症、腸漏症、便秘與腸道菌群平衡',
       desc: '探索人體第二大腦——腸道菌相與免疫系統的互動，提供膳食纖維、益生菌與腸道黏膜修復的最佳解方。',
       ctaUrl: '/health-column',
@@ -1245,9 +1267,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '肝病特區島',
       shortName: '肝病島',
       icon: '🫁',
-      color: 0xef4444,
-      roofColor: 0xb91c1c,
-      accentColor: 0xf87171,
+      // 地面材質：操場紅土跑道
+      color: 0x568845,
+      roofColor: 0x7a3626,
+      accentColor: 0xcc755b,
       subtitle: 'B型肝炎、C型肝炎根治與最新抗病毒藥物',
       desc: '追蹤 B 肝臨床治癒路徑、口服 DAA 抗病毒藥物、肝硬化逆轉與肝細胞癌早期監測。',
       ctaUrl: '/health-column',
@@ -1261,9 +1284,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '肝膽胰疾病島',
       shortName: '肝膽胰島',
       icon: '🧪',
-      color: 0xd97706,
-      roofColor: 0x92400e,
-      accentColor: 0xfbbf24,
+      // 地面材質：庭園暖土沙岩石板
+      color: 0x609450,
+      roofColor: 0x8a5530,
+      accentColor: 0xe0d4b8,
       subtitle: '脂肪肝、膽囊息肉、膽結石與胰臟病變',
       desc: '代謝性脂肪肝全方位逆轉策略、膽結石追蹤時機與胰臟囊腫的精準影像鑑別。',
       ctaUrl: '/health-column',
@@ -1277,9 +1301,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '高血脂島',
       shortName: '高血脂島',
       icon: '🩸',
-      color: 0xe11d48,
-      roofColor: 0x9f1239,
-      accentColor: 0xfb7185,
+      // 地面材質：都會水泥石磚地
+      color: 0x689b54,
+      roofColor: 0x9e4332,
+      accentColor: 0xdbd6cb,
       subtitle: 'LDL-C、ApoB、Lp(a) 與心血管硬化斑塊防治',
       desc: '超壞膽固醇 sdLDL、PCSK9 抑制劑與進階脂蛋白指標解讀，守護動脈彈性與心血管健康。',
       ctaUrl: '/health-column',
@@ -1293,9 +1318,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '高血壓島',
       shortName: '高血壓島',
       icon: '💓',
-      color: 0xf43f5e,
-      roofColor: 0xbe123c,
-      accentColor: 0xfb7185,
+      // 地面材質：操場紅土跑道
+      color: 0x598c47,
+      roofColor: 0x8f3829,
+      accentColor: 0xd9836a,
       subtitle: '722 血壓量測法、S-ABCDE 生活調整與靶器官保護',
       desc: '由心臟、大腦到腎臟，建構多重血管保護網，破除隱形殺手帶來的長期動脈硬化風險。',
       ctaUrl: '/health-column',
@@ -1309,9 +1335,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '糖尿病島',
       shortName: '糖尿病島',
       icon: '🧁',
-      color: 0x8b5cf6,
-      roofColor: 0x6d28d9,
-      accentColor: 0xa78bfa,
+      // 地面材質：城市深色柏油路
+      color: 0x639651,
+      roofColor: 0x3d4a5c,
+      accentColor: 0x6b7785,
       subtitle: '糖化血色素、胰島素阻抗與連續血糖監測',
       desc: '新世代 SGLT2 抑制劑與 GLP-1 腸泌素，結合個人化飲食策略，達成糖尿病緩解與心腎器官保護。',
       ctaUrl: '/health-column',
@@ -1325,9 +1352,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '減重島',
       shortName: '減重島',
       icon: '⚖️',
-      color: 0x14b8a6,
-      roofColor: 0x0f766e,
-      accentColor: 0x2dd4bf,
+      // 地面材質：陽光運動公園綠地
+      color: 0x669953,
+      roofColor: 0xb55a3a,
+      accentColor: 0x95c280,
       subtitle: '瘦瘦針 GLP-1/GIP 雙受體促效劑與體組成優化',
       desc: '突破體重設定點！科學化劑量遞增、肌少症預防與停藥不復胖管理，找回健康自信體態。',
       ctaUrl: '/health-column',
@@ -1341,9 +1369,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '健康飲食島',
       shortName: '飲食島',
       icon: '🥗',
-      color: 0x84cc16,
-      roofColor: 0x4d7c0f,
-      accentColor: 0xa3e635,
+      // 地面材質：農莊休閒綠地
+      color: 0x5f924e,
+      roofColor: 0x8f5a38,
+      accentColor: 0x87b574,
       subtitle: '地中海飲食、抗發炎食物與微量營養素指南',
       desc: '以科學飲食抵禦慢性發炎，從維生素 B 群、鋅、鎂到優質脂肪，用日常餐盤打造長壽體質。',
       ctaUrl: '/health-column',
@@ -1357,9 +1386,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '藥物介紹島',
       shortName: '藥物島',
       icon: '💊',
-      color: 0x06b6d4,
-      roofColor: 0x0e7490,
-      accentColor: 0x67e8f9,
+      // 地面材質：藥學研究中心水泥地
+      color: 0x689b55,
+      roofColor: 0x475a6e,
+      accentColor: 0x5a738c,
       subtitle: '藥物機轉、交互作用與安全用藥常識',
       desc: '拆解 P-CAB、PPI、解痙劑與各類常用處方藥的藥理機制，讓服藥更安心、效果更卓越。',
       ctaUrl: '/health-column',
@@ -1373,9 +1403,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '健檢紅字島',
       shortName: '健檢紅字島',
       icon: '⚠️',
-      color: 0xf97316,
-      roofColor: 0xc2410c,
-      accentColor: 0xfb923c,
+      // 地面材質：操場磚紅地坪
+      color: 0x578a46,
+      roofColor: 0x702f21,
+      accentColor: 0xbf6c55,
       subtitle: '肝指數 GOT/GPT、腎功能、尿酸與膽紅素判讀',
       desc: '健檢紅字不用慌！逐項深入剖析異常指標的真正臨床意義與後續追蹤方針。',
       ctaUrl: '/health-column',
@@ -1389,9 +1420,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '健檢項目島',
       shortName: '健檢項目島',
       icon: '📋',
-      color: 0x3b82f6,
-      roofColor: 0x1d4ed8,
-      accentColor: 0x60a5fa,
+      // 地面材質：瀝青街道柏油路
+      color: 0x61944f,
+      roofColor: 0x69727d,
+      accentColor: 0x7b8591,
       subtitle: '腫瘤標記、糞便潛血與預防醫學黃金組合',
       desc: '精選各年齡層必備健檢組合，釐清高階影像與抽血指標的最佳篩檢效益。',
       ctaUrl: '/health-column',
@@ -1405,9 +1437,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '超音波檢查島',
       shortName: '超音波島',
       icon: '📡',
-      color: 0x6366f1,
-      roofColor: 0x4338ca,
-      accentColor: 0x818cf8,
+      // 地面材質：水岸石板廣場
+      color: 0x699d57,
+      roofColor: 0x365e6d,
+      accentColor: 0x497a8c,
       subtitle: '腹部超音波、甲狀腺篩檢與即時臨床掃描',
       desc: '醫師的第三隻眼睛！無輻射、高穿透力，即時偵測肝囊腫、血管瘤、腎結石與甲狀腺結節。',
       ctaUrl: '/health-column',
@@ -1421,9 +1454,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '要活就要動島',
       shortName: '運動活力島',
       icon: '🏃',
-      color: 0x10b981,
-      roofColor: 0x047857,
-      accentColor: 0x34d399,
+      // 地面材質：體育場運動綠地
+      color: 0x5c8e4a,
+      roofColor: 0xd4dadf,
+      accentColor: 0x72a461,
       subtitle: '阻力訓練、有氧耐力與肌少症防禦',
       desc: '運動是最好的天然藥物！增肌減脂、改善胰島素敏感度、活化粒線體能量工廠。',
       ctaUrl: '/health-column',
@@ -1437,15 +1471,20 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '慢性病島',
       shortName: '慢性病島',
       icon: '🩺',
-      color: 0xa855f7,
-      roofColor: 0x7e22ce,
-      accentColor: 0xc084fc,
+      // 地面材質：社區休閒草坪綠地
+      color: 0x659853,
+      roofColor: 0x8a5332,
+      accentColor: 0x7fae69,
       subtitle: '慢性腎臟病 CKD、代謝症候群與全人照護',
       desc: '跨專科整合管理，建立保腎護心長遠防線，享有高品質的樂活晚年。',
       ctaUrl: '/health-column',
       ctaText: '探索更多「慢性病島」專題文章',
       landmark: 'church'
     },
+    // ══════════════════════════════════════════════════════════════════
+    // 【讀書筆記島群 (8 座)】- 日常自然地面 (水泥地、柏油路、綠地、石板)
+    // 💡 提示：每個島嶼皆標註地面材質，您隨時可在此個別調整每個島的顏色！
+    // ══════════════════════════════════════════════════════════════════
     {
       id: 'wealth-ladder',
       realm: 'wisdom',
@@ -1453,9 +1492,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《財富階梯》島',
       shortName: '財富階梯島',
       icon: '🪜',
-      color: 0x8b5cf6,
-      roofColor: 0x581c87,
-      accentColor: 0xc084fc,
+      // 地面材質：市政水泥廣場
+      color: 0x5e914d,
+      roofColor: 0x3d454f,
+      accentColor: 0x525c69,
       subtitle: 'Nick Maggiulli 著｜看清你的財務位階與資產躍遷',
       desc: '從儲蓄率到資產收益率，解析人生各財富階段的最優決策路徑，擺脫無效努力，穩步晉級。',
       ctaUrl: '/books',
@@ -1469,9 +1509,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《漫步華爾街》島',
       shortName: '漫步華爾街島',
       icon: '📈',
-      color: 0x3b82f6,
-      roofColor: 0x1e3a8a,
-      accentColor: 0x60a5fa,
+      // 地面材質：城市深色柏油路
+      color: 0x679a55,
+      roofColor: 0x475569,
+      accentColor: 0x64748b,
       subtitle: 'Burton Malkiel 著｜半世紀不敗的指數化投資聖經',
       desc: '隨機漫步假說與效率市場理論，破除技術分析迷思，用低成本廣泛指數基金擁抱全球經濟成長。',
       ctaUrl: '/books',
@@ -1485,9 +1526,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《投資金律》島',
       shortName: '投資金律島',
       icon: '🏛️',
-      color: 0x0d9488,
-      roofColor: 0x134e4a,
-      accentColor: 0x2dd4bf,
+      // 地面材質：古典石板庭園
+      color: 0x5b8d49,
+      roofColor: 0x2d4740,
+      accentColor: 0x3f6259,
       subtitle: 'William Bernstein 著｜理論、歷史、心理學與產業四大投資支柱',
       desc: '神經外科醫師跨界投資大師！以嚴謹醫學實證精神，建立跨越百年市場風暴的資產配置長城。',
       ctaUrl: '/books',
@@ -1501,9 +1543,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《投資前最重要的事》島',
       shortName: '最重要事島',
       icon: '💡',
-      color: 0xf59e0b,
-      roofColor: 0xb45309,
-      accentColor: 0xfbbf24,
+      // 地面材質：陽光草地綠地
+      color: 0x639652,
+      roofColor: 0x995c32,
+      accentColor: 0x93be7f,
       subtitle: 'Ben Carlson 著｜簡單至上、心理防禦與避免代價高昂的錯誤',
       desc: '專注你能掌控的事！克服群眾狂熱、接納市場常態，用優雅簡約的紀律勝過複雜演算法。',
       ctaUrl: '/books',
@@ -1517,9 +1560,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《別把你的錢留到死》島',
       shortName: '留錢到死島',
       icon: '⌛',
-      color: 0xec4899,
-      roofColor: 0x9d174d,
-      accentColor: 0xf472b6,
+      // 地面材質：操場紅土磚坪
+      color: 0x588b47,
+      roofColor: 0x823b28,
+      accentColor: 0xd1785e,
       subtitle: 'Bill Perkins 著｜人生是體驗的總和，極大化你的生命記憶股息',
       desc: '在健康、時間與財富的黃金交叉點投資體驗！不要在躺在病床上時才帶著滿手遺憾離開。',
       ctaUrl: '/books',
@@ -1533,9 +1577,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《90%的病，控糖就會好》島',
       shortName: '控糖生活島',
       icon: '🥑',
-      color: 0x10b981,
-      roofColor: 0x047857,
-      accentColor: 0x34d399,
+      // 地面材質：生機有機綠地
+      color: 0x6a9e58,
+      roofColor: 0x3d6938,
+      accentColor: 0x72a360,
       subtitle: 'Jessie Inchauspé 著｜餐序原則、醋水與平穩葡萄糖曲線',
       desc: '風靡全球的葡萄糖革命！不用嚴格節食，透過調整進食順序與餐後散步，告別疲勞、嗜甜與體重困擾。',
       ctaUrl: '/books',
@@ -1549,9 +1594,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《你的人生他們六個說了算》島',
       shortName: '神經傳導島',
       icon: '🧠',
-      color: 0x6366f1,
-      roofColor: 0x3730a3,
-      accentColor: 0xa5b4fc,
+      // 地面材質：學院水泥步道
+      color: 0x60924e,
+      roofColor: 0x33475b,
+      accentColor: 0x465f7a,
       subtitle: '多巴胺、血清素、催產素、皮質醇等六大情緒荷爾蒙大腦掌控術',
       desc: '掌握大腦神經化學物質的規律，調節專注、焦慮、動機與滿足感，做自己心智的真正主人。',
       ctaUrl: '/books',
@@ -1565,9 +1611,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       name: '《人類大歷史》島',
       shortName: '人類歷史島',
       icon: '🌍',
-      color: 0xd97706,
-      roofColor: 0x78350f,
-      accentColor: 0xfcd34d,
+      // 地面材質：大地沙岩暖土
+      color: 0x5d904c,
+      roofColor: 0x7e522e,
+      accentColor: 0xa46e42,
       subtitle: 'Yuval Noah Harari 著｜從認知革命、農業革命到智人的未來',
       desc: '虛構故事的力量如何凝聚數十億智人，站在宏觀歷史視野反思科技、金錢與人生的終極意義。',
       ctaUrl: '/books',
@@ -1594,18 +1641,72 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   ];
 
   // ══════════════════════════════════════════════════════════════════════
+  // 連接群島景觀橋樑拓撲 (Option B: 外環漫步迴路 + 核心放射通道)
+  // 主要大通道：圖二日式蜜糖木拱橋 ('arch')
+  // 次要通道：水上木棧道 ('boardwalk') 與 日式庭園踏水石階 ('stones')
+  // ══════════════════════════════════════════════════════════════════════
+  const ALL_SCENIC_BRIDGES = [
+    // ── 醫學筆島群 (Option B: 外環漫步迴路 + 核心 4 向放射) ──
+    // 核心放射主通道 (主要大通道 - 圖二日式蜜糖木拱橋)
+    ['endoscopy', 'stomach', 'arch'],
+    ['endoscopy', 'diabetes', 'arch'],
+    ['endoscopy', 'lipids', 'arch'],
+    ['endoscopy', 'weight-loss', 'arch'],
+
+    // 外環遊園漫步迴路 (層次搭配：木拱橋 / 水上木棧道 / 踏水石階)
+    ['stomach', 'hepatitis', 'boardwalk'],
+    ['hepatitis', 'liver-biliary', 'stones'],
+    ['liver-biliary', 'intestine', 'boardwalk'],
+    ['intestine', 'diet', 'arch'],
+    ['diet', 'weight-loss', 'stones'],
+    ['weight-loss', 'chronic', 'boardwalk'],
+    ['chronic', 'diabetes', 'arch'],
+    ['diabetes', 'health-check', 'stones'],
+    ['health-check', 'health-red', 'boardwalk'],
+    ['health-red', 'hypertension', 'stones'],
+    ['hypertension', 'lipids', 'arch'],
+    ['hypertension', 'ultrasound', 'boardwalk'],
+    ['ultrasound', 'medication', 'stones'],
+    ['medication', 'exercise', 'boardwalk'],
+    ['exercise', 'stomach', 'stones'],
+
+    // ── 讀書筆記島群 (Option B: 外環漫步迴路 + 核心 3 向放射) ──
+    // 核心放射主通道 (主要大通道 - 圖二日式蜜糖木拱橋)
+    ['golden-rules', 'wealth-ladder', 'arch'],
+    ['golden-rules', 'glucose', 'arch'],
+    ['golden-rules', 'most-important', 'arch'],
+
+    // 外環遊園迴路
+    ['wealth-ladder', 'random-walk', 'boardwalk'],
+    ['random-walk', 'die-with-zero', 'stones'],
+    ['die-with-zero', 'glucose', 'boardwalk'],
+    ['glucose', 'sapiens', 'arch'],
+    ['sapiens', 'most-important', 'stones'],
+    ['most-important', 'brain-neuro', 'boardwalk'],
+  ];
+
+  // ══════════════════════════════════════════════════════════════════════
   // 2. 地球地平線弧度數學模型 (Spherical Earth Curvature Horizon)
   // ══════════════════════════════════════════════════════════════════════
-  const SPACING = 4.85;       // 六角中心間距 (間隔大幅放大，留出開闊舒展的蔚藍海峽)
-  const HEX_RADIUS = 3.45;    // 六角島嶼半徑 (島嶼顯著放大，氣派壯闊)
+  const SPACING = 5.85;       // 六角中心間距 (水道大幅拓寬至 4.6 單位，留出舒展明澈的碧藍海域)
+  const HEX_RADIUS = 3.20;    // 六角島嶼半徑 (適度收斂，凸顯水景與木橋)
   const HEX_HEIGHT = 0.95;    // 島嶼土壤高度
-  const PLANET_RADIUS = 68.0; // 地球星球半徑 (舒展大弧度)
+  const PLANET_RADIUS = 88.0; // 地球星球半徑 (舒展大弧度，地平線更自然)
   const PLANET_CENTER = new THREE.Vector3(2.1, -PLANET_RADIUS, 0); // 球心座標
 
+  // 兩大群島：醫學筆島群 (health) 與 讀書筆記島群 (wisdom)，中間隔著一道海峽 (以渡船往來，不架橋)
+  const ARCHIPELAGO_GAP = 18.0; // 兩群島額外拉開的距離 (開闊蔚藍海峽)
+  // 偏移量 (平面 X)：讓「兩群島 + 海峽」整體左右對稱地置於湖心
+  const REALM_OFFSET_X = {
+    health: PLANET_CENTER.x - ARCHIPELAGO_GAP / 2,
+    wisdom: PLANET_CENTER.x + ARCHIPELAGO_GAP / 2
+  };
+  const HEX_APOTHEM = HEX_RADIUS * Math.cos(Math.PI / 6); // 2.771
+
   // 將 2D 六角座標投影至帶有地球地平線弧度的 3D 微縮星球表面
-  function hexToPlanet(q, r) {
-    // 1. 平面網格座標
-    const flatX = Math.sqrt(3) * SPACING * (q + r / 2);
+  function hexToPlanet(q, r, realm = 'health') {
+    // 1. 平面網格座標 (含群島偏移)
+    const flatX = Math.sqrt(3) * SPACING * (q + r / 2) + (REALM_OFFSET_X[realm] ?? 0);
     const flatZ = 1.5 * SPACING * r;
 
     // 2. 計算與星球頂點的平面距離
@@ -1743,7 +1844,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     createCurvedOcean();      // 4. 動態波浪海洋
     setupNightLights();       // 5. 初始化夜間發光材質 (在建島與造橋前就緒)
     buildIslands();           // 6. 24 座微縮島嶼
-    buildBridges();           // 7. 連接木橋
+    buildBridges();           // 7. 連接木橋 (同群島相鄰島之間)
+    createFerries();          // 7b. 兩大群島之間的渡船與碼頭
     buildFlowLines();         // 8. 跨界光流索
     spawnWalkers();           // 9. 漫步小人
     birdFlockData = createBirdFlock(); // 10. 飛鳥振翅盤旋
@@ -2219,7 +2321,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     // 6. 海水色彩隨時間過渡
     if (oceanMesh) {
       const dayOcean = new THREE.Color(0x2f8fb5);
-      const sunsetOcean = new THREE.Color(0x8f5a52);
+      const sunsetOcean = new THREE.Color(0x286685); // 暮色清澈蔚藍，避免偏土偏褐
       const nightOcean = new THREE.Color(0x0a192f);
       const curOcean = new THREE.Color();
 
@@ -2269,12 +2371,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     // 2. 雲海漂移與湖上帆船
     updateCloudDrift(elapsedTime);
     updateBoats(elapsedTime);
+    updateFerries(elapsedTime);
   }
 
 
   function buildIslands() {
     ISLAND_DATA.forEach((island) => {
-      const proj = hexToPlanet(island.q, island.r);
+      const proj = hexToPlanet(island.q, island.r, island.realm);
       const group = new THREE.Group();
       group.position.copy(proj.position);
       group.quaternion.copy(proj.orientation);
@@ -2289,7 +2392,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const hexGeo = new THREE.CylinderGeometry(HEX_RADIUS, HEX_RADIUS * 1.03, HEX_HEIGHT, 6, 1);
       const topMat = new THREE.MeshStandardMaterial({
         color: island.color,
-        roughness: 0.72,
+        roughness: 0.78,
         metalness: 0.05,
         flatShading: true
       });
@@ -2305,7 +2408,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       // 3. 雙層拍岸白浪花光環
       createShoreFoamRings(group);
 
-      // 4. 島嶼地表微縮村落與專屬地標模型
+      // 4. 中世紀溫潤土道路 (Rustic Medieval Dirt Roads) - 直通各橋頭
+      addMedievalDirtRoads(group, island);
+
+      // 5. 島嶼地表微縮村落與專屬地標模型
       populateMiniatureCity(group, island);
 
       // 4. 島嶼光圈／選取反白環 (Selection Beacon Ring)
@@ -2410,6 +2516,62 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     group.add(foam);
   }
 
+  // ── 中世紀溫潤土道路 (Rustic Medieval Dirt Roads - 僅連接有橋之通道) ──
+  function addMedievalDirtRoads(group, island) {
+    const dirtMat = new THREE.MeshStandardMaterial({
+      color: 0xba925c,   // 溫潤土黃色砂石泥土路
+      roughness: 0.95,
+      metalness: 0.02,
+      flatShading: true
+    });
+
+    const roadGroup = new THREE.Group();
+    roadGroup.position.y = HEX_HEIGHT + 0.005;
+
+    // 1. 中央設施周圍的小巧圓形泥土廣場
+    const centerPlaza = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.15, 1.15, 0.015, 16),
+      dirtMat
+    );
+    centerPlaza.receiveShadow = true;
+    roadGroup.add(centerPlaza);
+
+    // 2. 僅向「實際有架橋連接之鄰島」方向鋪設平緩泥土步道 (每島僅 2~4 條，大面積保留青翠草坪)
+    const byId = new Map();
+    ISLAND_DATA.forEach((d) => byId.set(d.id, d));
+
+    const connectedNeighborIds = [];
+    ALL_SCENIC_BRIDGES.forEach(([idA, idB]) => {
+      if (idA === island.id) connectedNeighborIds.push(idB);
+      else if (idB === island.id) connectedNeighborIds.push(idA);
+    });
+
+    const roadLen = HEX_APOTHEM - 0.95;
+    const midR = (1.0 + HEX_APOTHEM) / 2;
+
+    connectedNeighborIds.forEach((nId) => {
+      const neighbor = byId.get(nId);
+      if (neighbor) {
+        const dq = neighbor.q - island.q;
+        const dr = neighbor.r - island.r;
+        const dx = Math.sqrt(3) * (dq + dr / 2);
+        const dz = 1.5 * dr;
+        const angle = Math.atan2(dz, dx);
+
+        const roadMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(roadLen, 0.015, 0.72),
+          dirtMat
+        );
+        roadMesh.position.set(Math.cos(angle) * midR, 0, Math.sin(angle) * midR);
+        roadMesh.rotation.y = -angle;
+        roadMesh.receiveShadow = true;
+        roadGroup.add(roadMesh);
+      }
+    });
+
+    group.add(roadGroup);
+  }
+
   // ── 可愛毛線小羊 (示意圖專屬生物) ──
   function createAmigurumiSheep(group, x, z, scale = 0.35) {
     const sheepGroup = new THREE.Group();
@@ -2453,51 +2615,184 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const isWisdom = island.realm === 'wisdom';
     const mainRoofColor = island.roofColor;
 
-    // 1. 中央主題大建築 (Central Archetype Building)
-    if (island.id === 'cardio' || island.id === 'wealth-ladder') {
-      const towerBaseGeo = new THREE.BoxGeometry(0.7, 1.4, 0.7);
-      const wallMat = new THREE.MeshStandardMaterial({ color: 0xfaf5ef, roughness: 0.6 });
-      const towerBase = new THREE.Mesh(towerBaseGeo, wallMat);
-      towerBase.position.set(0, HEX_HEIGHT + 0.7, 0);
-      towerBase.castShadow = true;
-      group.add(towerBase);
+    // ── 依據使用者下載之中世紀、城堡、瀑布自然景觀 3D 參考圖進行設施配置 ──
 
-      const roofGeo = new THREE.ConeGeometry(0.58, 0.85, 4);
-      const roofMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.5 });
-      const roof = new THREE.Mesh(roofGeo, roofMat);
-      roof.rotation.y = Math.PI / 4;
-      roof.position.set(0, HEX_HEIGHT + 1.4 + 0.42, 0);
-      roof.castShadow = true;
-      group.add(roof);
-      // 窗戶 (夜間亮燈)
-      const winGeo = new THREE.BoxGeometry(0.18, 0.22, 0.04);
-      const winFront = new THREE.Mesh(winGeo, nightGlowMaterial);
-      winFront.position.set(0, HEX_HEIGHT + 0.35, 0.34);
+    // 🏰 類型 A：中世紀石造宏偉要塞城堡 (Grand Medieval Fortress Castle)
+    // 參考 istockphoto-671701946：圓柱石塔、橘紅圓錐尖頂 (Terracotta Cones)、城垛齒牆、拱門
+    if (island.id === 'cardio' || island.id === 'wealth-ladder' || island.id === 'diabetes') {
+      const stoneMat = new THREE.MeshStandardMaterial({ color: 0xe8e2d5, roughness: 0.65, flatShading: true });
+      const towerRoofMat = new THREE.MeshStandardMaterial({ color: 0xd95a28, roughness: 0.5, flatShading: true }); // 經典中世紀橘紅圓錐頂
+      const woodDoorMat = new THREE.MeshStandardMaterial({ color: 0x4a2c14, roughness: 0.8 });
+
+      // 1. 中央石造主堡 (Keep)
+      const keep = new THREE.Mesh(new THREE.BoxGeometry(0.92, 1.25, 0.92), stoneMat);
+      keep.position.set(0, HEX_HEIGHT + 0.625, 0);
+      keep.castShadow = true; keep.receiveShadow = true;
+      group.add(keep);
+
+      // 2. 主堡頂部城垛 (Crenellations / Battlements)
+      for (const sx of [-0.42, 0, 0.42]) {
+        for (const sz of [-0.42, 0.42]) {
+          const crenel = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 0.08), stoneMat);
+          crenel.position.set(sx, HEX_HEIGHT + 1.25 + 0.07, sz);
+          group.add(crenel);
+        }
+      }
+      for (const sz of [-0.21, 0.21]) {
+        for (const sx of [-0.42, 0.42]) {
+          const crenel = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 0.12), stoneMat);
+          crenel.position.set(sx, HEX_HEIGHT + 1.25 + 0.07, sz);
+          group.add(crenel);
+        }
+      }
+
+      // 3. 四角圓柱防禦塔樓 + 經典橘紅圓錐尖頂 (4 Corner Turrets with Terracotta Cones)
+      const turretPositions = [
+        [0.48, 0.48], [-0.48, 0.48], [0.48, -0.48], [-0.48, -0.48]
+      ];
+      turretPositions.forEach(([tx, tz]) => {
+        const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.23, 1.5, 8), stoneMat);
+        turret.position.set(tx, HEX_HEIGHT + 0.75, tz);
+        turret.castShadow = true;
+        group.add(turret);
+
+        // 橘紅圓錐塔尖
+        const cone = new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.65, 8), towerRoofMat);
+        cone.position.set(tx, HEX_HEIGHT + 1.5 + 0.32, tz);
+        cone.castShadow = true;
+        group.add(cone);
+
+        // 塔頂金屬尖飾
+        const finial = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.02, 0.16, 4), new THREE.MeshStandardMaterial({ color: 0xffd166, metalness: 0.8 }));
+        finial.position.set(tx, HEX_HEIGHT + 1.5 + 0.65 + 0.08, tz);
+        group.add(finial);
+      });
+
+      // 4. 拱形城門 (Arched Portal)
+      const gate = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.44, 0.06), woodDoorMat);
+      gate.position.set(0, HEX_HEIGHT + 0.22, 0.47);
+      group.add(gate);
+
+      // 5. 主堡高樓旗桿與飄揚小三角旗
+      const flagpole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.8, 4), woodDoorMat);
+      flagpole.position.set(0, HEX_HEIGHT + 1.25 + 0.4, 0);
+      const flag = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.16, 0.02), new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.4 }));
+      flag.position.set(0.14, HEX_HEIGHT + 1.25 + 0.65, 0);
+      group.add(flagpole, flag);
+
+      // 6. 城樓夜間發光窗戶
+      const winFront = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.18, 0.04), nightGlowMaterial);
+      winFront.position.set(0, HEX_HEIGHT + 0.85, 0.47);
       group.add(winFront);
+    }
+    // 🌊 類型 B：層疊石壁瀑布與和風清潭 (Cascading Rock Waterfall & Zen Garden Pond)
+    // 參考 ujUZHhkLRX.jpg / 7ynHQk9mXN.jpg / 圖二：疊石、垂柳、櫻花、清泉瀑布、池塘
+    else if (island.id === 'stomach' || island.id === 'hepatitis' || island.id === 'lipids' || island.id === 'brain-neuro') {
+      const rockCliffMat = new THREE.MeshStandardMaterial({ color: 0x6e5c4d, roughness: 0.95, flatShading: true });
+      const waterMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.15, transparent: true, opacity: 0.88 });
 
-      const winSide = new THREE.Mesh(winGeo, nightGlowMaterial);
-      winSide.rotation.y = Math.PI / 2;
-      winSide.position.set(0.39, HEX_HEIGHT + 0.35, 0);
-      group.add(winSide);
+      // 1. 後方疊層高聳岩壁 (Tiered Cascading Cliffs)
+      const cliff1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.85, 0), rockCliffMat);
+      cliff1.scale.set(1.4, 1.2, 0.9);
+      cliff1.position.set(0, HEX_HEIGHT + 0.7, -0.45);
+      cliff1.castShadow = true;
+      group.add(cliff1);
 
-      const stairGeo = new THREE.BoxGeometry(0.9, 0.15, 0.9);
-      const stair = new THREE.Mesh(stairGeo, wallMat);
-      stair.position.set(0, HEX_HEIGHT + 0.08, 0);
-      group.add(stair);
-    } else if (island.id === 'endoscopy') {
-      const lightGeo = new THREE.CylinderGeometry(0.28, 0.45, 1.6, 8);
-      const lightMat = new THREE.MeshStandardMaterial({ color: 0xf0fdfa, roughness: 0.5 });
-      const lighthouse = new THREE.Mesh(lightGeo, lightMat);
-      lighthouse.position.set(0, HEX_HEIGHT + 0.8, 0);
-      lighthouse.castShadow = true;
-      group.add(lighthouse);
+      const cliff2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.55, 0), rockCliffMat);
+      cliff2.scale.set(1.1, 0.9, 0.8);
+      cliff2.position.set(0.65, HEX_HEIGHT + 0.5, -0.2);
+      cliff2.castShadow = true;
+      group.add(cliff2);
 
-      const domeGeo = new THREE.SphereGeometry(0.32, 8, 8);
-      const domeMat = new THREE.MeshStandardMaterial({ color: 0x2dd4bf, roughness: 0.2, emissive: 0x14b8a6, emissiveIntensity: 0.3 });
-      const dome = new THREE.Mesh(domeGeo, domeMat);
-      dome.position.set(0, HEX_HEIGHT + 1.7, 0);
-      group.add(dome);
-    } else if (isWisdom) {
+      // 2. 傾瀉而下的奔流瀑布 (Cascading Waterfall Ribbon)
+      const fallGeo = new THREE.BoxGeometry(0.36, 0.95, 0.08);
+      const fall = new THREE.Mesh(fallGeo, waterMat);
+      fall.position.set(0, HEX_HEIGHT + 0.45, -0.05);
+      fall.rotation.x = 0.15;
+      group.add(fall);
+
+      // 瀑布激起水花白泡
+      const foam = new THREE.Mesh(new THREE.RingGeometry(0.12, 0.32, 10), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 }));
+      foam.rotation.x = -Math.PI / 2;
+      foam.position.set(0, HEX_HEIGHT + 0.05, 0.08);
+      group.add(foam);
+
+      // 3. 山腳清澈水潭 (Crystal Plunge Pool)
+      const pool = new THREE.Mesh(new THREE.CircleGeometry(0.72, 14), waterMat);
+      pool.rotation.x = -Math.PI / 2;
+      pool.position.set(0.1, HEX_HEIGHT + 0.03, 0.4);
+      group.add(pool);
+
+      // 4. 水潭旁的垂柳樹 (Weeping Willow Tree - 如圖二)
+      const willowTrunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.7, 6), new THREE.MeshStandardMaterial({ color: 0x6e431f, roughness: 0.9 }));
+      willowTrunk.position.set(-0.75, HEX_HEIGHT + 0.35, 0.4);
+      willowTrunk.rotation.z = -0.15;
+      group.add(willowTrunk);
+      // 垂柳多層垂落綠樹冠
+      for (let w = 0; w < 3; w++) {
+        const willowLeaf = new THREE.Mesh(new THREE.DodecahedronGeometry(0.38 - w * 0.05, 1), new THREE.MeshStandardMaterial({ color: 0x6ca332, roughness: 0.85, flatShading: true }));
+        willowLeaf.scale.set(1.1, 1.4, 1.1);
+        willowLeaf.position.set(-0.85 + (w - 1) * 0.15, HEX_HEIGHT + 0.75 - w * 0.1, 0.4);
+        group.add(willowLeaf);
+      }
+
+      // 5. 浪漫粉紅櫻花樹 (Cherry Blossom Tree - 如圖二)
+      const sakuraTrunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 0.6, 6), new THREE.MeshStandardMaterial({ color: 0x5a3818, roughness: 0.9 }));
+      sakuraTrunk.position.set(0.85, HEX_HEIGHT + 0.3, 0.3);
+      const sakuraFoliage = new THREE.Mesh(new THREE.DodecahedronGeometry(0.42, 1), new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.8, flatShading: true }));
+      sakuraFoliage.position.set(0.85, HEX_HEIGHT + 0.65, 0.3);
+      group.add(sakuraTrunk, sakuraFoliage);
+    }
+    // 🌾 類型 C：中世紀石造風車與農莊莊園 (Medieval Windmill & Estate)
+    // 參考 low-poly-countryside...：八角磨坊石塔、四翼旋轉木葉片、斜頂農舍
+    else if (island.id === 'diet' || island.id === 'exercise' || island.id === 'intestine') {
+      const stoneMillMat = new THREE.MeshStandardMaterial({ color: 0xe2ded4, roughness: 0.7 });
+      const woodMillMat = new THREE.MeshStandardMaterial({ color: 0x7c4a1e, roughness: 0.8 });
+
+      // 1. 圓錐高聳石造風車站 (Tapering Stone Windmill Tower)
+      const millTower = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.48, 1.35, 8), stoneMillMat);
+      millTower.position.set(-0.35, HEX_HEIGHT + 0.675, 0);
+      millTower.castShadow = true;
+      group.add(millTower);
+
+      const millRoof = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.5, 8), woodMillMat);
+      millRoof.position.set(-0.35, HEX_HEIGHT + 1.35 + 0.25, 0);
+      millRoof.castShadow = true;
+      group.add(millRoof);
+
+      // 風車四翼葉片 (4 Medieval Lattice Sails)
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.12, 6), woodMillMat);
+      hub.rotation.x = Math.PI / 2;
+      hub.position.set(-0.35, HEX_HEIGHT + 1.25, 0.38);
+      group.add(hub);
+
+      for (let s = 0; s < 4; s++) {
+        const arm = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.85, 0.02), woodMillMat);
+        arm.position.set(0, 0.42, 0);
+        const sailGroup = new THREE.Group();
+        sailGroup.position.copy(hub.position);
+        sailGroup.rotation.z = (s * Math.PI) / 2 + 0.35;
+        sailGroup.add(arm);
+        // 白色帆布網格
+        const cloth = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.65, 0.01), new THREE.MeshStandardMaterial({ color: 0xfef9c3, roughness: 0.9 }));
+        cloth.position.set(0.07, 0.45, 0.01);
+        sailGroup.add(cloth);
+        group.add(sailGroup);
+      }
+
+      // 2. 旁邊的半木結構田園農舍 (Tudor Farm Cottage)
+      const barn = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.48, 0.52), new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.7 }));
+      barn.position.set(0.65, HEX_HEIGHT + 0.24, 0.25);
+      barn.castShadow = true;
+      group.add(barn);
+
+      const barnRoof = new THREE.Mesh(new THREE.ConeGeometry(0.46, 0.42, 4), new THREE.MeshStandardMaterial({ color: 0xb84a26, roughness: 0.6 }));
+      barnRoof.rotation.y = Math.PI / 4;
+      barnRoof.position.set(0.65, HEX_HEIGHT + 0.48 + 0.21, 0.25);
+      group.add(barnRoof);
+    }
+    // 🏛️ 類型 D：中世紀古代圖書館與浮空奧術水晶 (Ancient Cathedral Library)
+    else if (isWisdom) {
       const bookGeo = new THREE.BoxGeometry(0.65, 0.8, 0.5);
       const bookMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.4 });
       const bookMesh = new THREE.Mesh(bookGeo, bookMat);
@@ -2506,46 +2801,48 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       bookMesh.castShadow = true;
       group.add(bookMesh);
 
-      const gemGeo = new THREE.OctahedronGeometry(0.25);
+      const gemGeo = new THREE.OctahedronGeometry(0.28);
       const gemMat = new THREE.MeshStandardMaterial({
         color: island.accentColor,
         roughness: 0.1,
         emissive: island.accentColor,
-        emissiveIntensity: 0.4
+        emissiveIntensity: 0.5
       });
       const gem = new THREE.Mesh(gemGeo, gemMat);
-      gem.position.set(0, HEX_HEIGHT + 1.25, 0);
+      gem.position.set(0, HEX_HEIGHT + 1.3, 0);
       gem.userData = { isFloatingGem: true, baseSpeed: 1.5 + Math.random() * 0.5 };
       group.add(gem);
-    } else {
-      const houseGeo = new THREE.BoxGeometry(0.75, 0.65, 0.65);
-      const wallMat = new THREE.MeshStandardMaterial({ color: 0xfffbeb, roughness: 0.7 });
+    }
+    // 🏡 類型 E：中世紀半木結構城鎮小屋 (Half-timbered Tudor Village)
+    else {
+      const houseGeo = new THREE.BoxGeometry(0.78, 0.65, 0.68);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xfdf6e2, roughness: 0.7 });
       const house = new THREE.Mesh(houseGeo, wallMat);
       house.position.set(0, HEX_HEIGHT + 0.33, 0);
       house.castShadow = true;
       group.add(house);
 
-      const roofGeo = new THREE.ConeGeometry(0.62, 0.55, 4);
+      // 斜頂瓦頂
+      const roofGeo = new THREE.ConeGeometry(0.65, 0.58, 4);
       const roofMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.6 });
       const roof = new THREE.Mesh(roofGeo, roofMat);
       roof.rotation.y = Math.PI / 4;
-      roof.position.set(0, HEX_HEIGHT + 0.65 + 0.27, 0);
+      roof.position.set(0, HEX_HEIGHT + 0.65 + 0.29, 0);
       roof.castShadow = true;
       group.add(roof);
 
-      // 主屋夜間發光窗戶 (正門與側面)
-      const winGeo = new THREE.BoxGeometry(0.2, 0.22, 0.04);
-      const winFront = new THREE.Mesh(winGeo, nightGlowMaterial);
-      winFront.position.set(0, HEX_HEIGHT + 0.32, 0.34);
-      group.add(winFront);
+      // 石造煙囪
+      const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.5, 0.15), new THREE.MeshStandardMaterial({ color: 0x786a5e, roughness: 0.9 }));
+      chimney.position.set(0.24, HEX_HEIGHT + 0.9, 0.15);
+      group.add(chimney);
 
-      const winSide = new THREE.Mesh(winGeo, nightGlowMaterial);
-      winSide.rotation.y = Math.PI / 2;
-      winSide.position.set(0.39, HEX_HEIGHT + 0.32, 0);
-      group.add(winSide);
+      // 發光暖窗
+      const winFront = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.22, 0.04), nightGlowMaterial);
+      winFront.position.set(0, HEX_HEIGHT + 0.32, 0.35);
+      group.add(winFront);
     }
 
-    // 2. 周圍小木屋與毛線絨球質感小樹
+    // 2. 周圍中世紀村落附屬小屋與樹木
     const offsets = [
       { x: 0.85, z: 0.5, type: 'house' },
       { x: -0.75, z: 0.65, type: 'tree' },
@@ -2555,44 +2852,42 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
     offsets.forEach((pos, idx) => {
       if (pos.type === 'house') {
-        const miniGeo = new THREE.BoxGeometry(0.48, 0.45, 0.48);
-        const miniWall = new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.7 });
-        const miniHouse = new THREE.Mesh(miniGeo, miniWall);
+        const miniHouse = new THREE.Mesh(
+          new THREE.BoxGeometry(0.48, 0.45, 0.48),
+          new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.7 })
+        );
         miniHouse.position.set(pos.x, HEX_HEIGHT + 0.22, pos.z);
         miniHouse.rotation.y = (idx * Math.PI) / 3;
         miniHouse.castShadow = true;
         group.add(miniHouse);
 
-        const miniRoofGeo = new THREE.ConeGeometry(0.38, 0.38, 4);
-        const miniRoofMat = new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.6 });
-        const miniRoof = new THREE.Mesh(miniRoofGeo, miniRoofMat);
+        const miniRoof = new THREE.Mesh(
+          new THREE.ConeGeometry(0.38, 0.38, 4),
+          new THREE.MeshStandardMaterial({ color: mainRoofColor, roughness: 0.6 })
+        );
         miniRoof.rotation.y = miniHouse.rotation.y + Math.PI / 4;
         miniRoof.position.set(pos.x, HEX_HEIGHT + 0.45 + 0.18, pos.z);
-        miniRoof.castShadow = true;
         group.add(miniRoof);
-        const miniWin = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 0.03), nightGlowMaterial);
-        miniWin.position.set(pos.x, HEX_HEIGHT + 0.22, pos.z + 0.25);
-        miniWin.rotation.y = miniHouse.rotation.y;
-        group.add(miniWin);
       } else {
-        const trunkGeo = new THREE.CylinderGeometry(0.08, 0.11, 0.4, 6);
-        const trunkMat = new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.9 });
-        const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-        trunk.position.set(pos.x, HEX_HEIGHT + 0.2, pos.z);
-        trunk.castShadow = true;
+        const trunk = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.07, 0.10, 0.42, 6),
+          new THREE.MeshStandardMaterial({ color: 0x6a4018, roughness: 0.9 })
+        );
+        trunk.position.set(pos.x, HEX_HEIGHT + 0.21, pos.z);
         group.add(trunk);
 
-        const foliageGeo = new THREE.DodecahedronGeometry(0.36, 1);
-        const treeColor = isWisdom ? 0x6366f1 : (idx % 2 === 0 ? 0x15803d : 0x16a34a);
-        const foliageMat = new THREE.MeshStandardMaterial({ color: treeColor, roughness: 0.85, flatShading: true });
-        const foliage = new THREE.Mesh(foliageGeo, foliageMat);
+        const treeCol = isWisdom ? 0x6366f1 : (idx % 2 === 0 ? 0x228b22 : 0x2e8b57);
+        const foliage = new THREE.Mesh(
+          new THREE.DodecahedronGeometry(0.35, 1),
+          new THREE.MeshStandardMaterial({ color: treeCol, roughness: 0.85, flatShading: true })
+        );
         foliage.position.set(pos.x, HEX_HEIGHT + 0.52, pos.z);
         foliage.castShadow = true;
         group.add(foliage);
       }
     });
 
-    // 3. 島嶼地表立體金屬路燈 (黑色復古燈柱 + 圓弧燈罩 + 暖黃發光球 bulb，夜間全面亮燈)
+    // 3. 中世紀鍛鐵復古路燈 (黑色細鐵柱 + 琥珀暖光吊燈)
     const slCoords = [
       { x: HEX_RADIUS * 0.55, z: HEX_RADIUS * 0.42 },
       { x: -HEX_RADIUS * 0.55, z: HEX_RADIUS * 0.36 },
@@ -2603,29 +2898,28 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const slGroup = new THREE.Group();
       slGroup.position.set(slPos.x, HEX_HEIGHT, slPos.z);
 
-      // 黑色金屬燈柱
+      // 細長黑色鍛鐵燈柱
       const pole = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.05, 0.07, 0.95, 6),
-        new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.7 })
+        new THREE.CylinderGeometry(0.035, 0.05, 0.9, 6),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.8 })
       );
-      pole.position.y = 0.48;
-      pole.castShadow = true;
+      pole.position.y = 0.45;
       slGroup.add(pole);
 
-      // 燈柱頂部遮雨燈罩
+      // 復古六角形鍛鐵宮燈罩
       const hood = new THREE.Mesh(
-        new THREE.ConeGeometry(0.35, 0.14, 8),
-        new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.6 })
+        new THREE.ConeGeometry(0.18, 0.12, 6),
+        new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5, metalness: 0.9 })
       );
-      hood.position.y = 1.05;
+      hood.position.y = 0.96;
       slGroup.add(hood);
 
-      // 夜間顯著發光燈球 (立體大圓燈，如暖金燈籠般明亮)
+      // 溫潤發光燈心
       const bulb = new THREE.Mesh(
-        new THREE.SphereGeometry(0.24, 12, 12),
+        new THREE.SphereGeometry(0.12, 8, 8),
         nightGlowMaterial
       );
-      bulb.position.y = 0.90;
+      bulb.position.y = 0.85;
       slGroup.add(bulb);
 
       group.add(slGroup);
@@ -2633,52 +2927,15 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   // ══════════════════════════════════════════════════════════════════════
-  // 7. 拱橋系統 (沿地平線弧度架設)
+  // 連接群島木橋系統 (嚴格相鄰判定與去重)
   // ══════════════════════════════════════════════════════════════════════
-  // ══════════════════════════════════════════════════════════════════════
-  // 連接群島木橋系統 (含橋上夜間發光路燈)
-  // ══════════════════════════════════════════════════════════════════════
-  function buildBridges() {
-    // 24 座主題島嶼相鄰網絡連接
-    const BRIDGE_PAIRS = [
-      // 醫學專科島內部互連
-      ['endoscopy', 'stomach'],
-      ['endoscopy', 'intestine'],
-      ['endoscopy', 'medication'],
-      ['endoscopy', 'ultrasound'],
-      ['stomach', 'intestine'],
-      ['stomach', 'hepatitis'],
-      ['hepatitis', 'liver-biliary'],
-      ['stomach', 'liver-biliary'],
-      ['intestine', 'weight-loss'],
-      ['weight-loss', 'diet'],
-      ['weight-loss', 'diabetes'],
-      ['weight-loss', 'exercise'],
-      ['diabetes', 'lipids'],
-      ['lipids', 'hypertension'],
-      ['lipids', 'health-red'],
-      ['health-red', 'health-check'],
-      ['health-red', 'chronic'],
-      ['diabetes', 'chronic'],
-      // 跨界大天橋 (Grand Cross-Realm Bridges)
-      ['diabetes', 'wealth-ladder'],
-      ['weight-loss', 'random-walk'],
-      ['health-red', 'most-important'],
-      // 知識宇宙島互連
-      ['wealth-ladder', 'random-walk'],
-      ['wealth-ladder', 'golden-rules'],
-      ['wealth-ladder', 'most-important'],
-      ['random-walk', 'golden-rules'],
-      ['random-walk', 'die-with-zero'],
-      ['golden-rules', 'most-important'],
-      ['golden-rules', 'glucose'],
-      ['die-with-zero', 'glucose'],
-      ['most-important', 'brain-neuro'],
-      ['glucose', 'sapiens'],
-      ['brain-neuro', 'sapiens']
-    ];
+  const bridgeLinks = new Map();
 
-    buildArchBridges(BRIDGE_PAIRS);
+  function buildBridges() {
+    // 依使用者選擇之【選項 B】：外環漫步迴路 + 核心放射通道
+    // 主要通道：圖二日式蜜糖木拱橋 (arch)
+    // 次要通道：水上木棧道 (boardwalk) 與 日式庭園踏水石階 (stones)
+    buildScenicBridges(ALL_SCENIC_BRIDGES);
   }
 
   // ══════════════════════════════════════════════════════════════════════
@@ -2923,7 +3180,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const N = 7;
     for (let i = 0; i < N; i++) {
       const th = (i / N) * Math.PI * 2 + 0.35 + rnd() * 0.3;
-      const r = 33.6 + rnd() * 1.9;
+      let r = 33.6 + rnd() * 1.9;
+      // 若沙洲落在島嶼上 (群島重新佈局後)，就往外海推開
+      const nearIsland = (rr) => ISLAND_DATA.some((d) => {
+        const f = hexFlat(d.q, d.r, d.realm);
+        return Math.hypot(MOUNTAIN_CENTER_X + rr * Math.cos(th) - f.x, rr * Math.sin(th) - f.z) < HEX_RADIUS + 3.2;
+      });
+      for (let guard = 0; guard < 12 && nearIsland(r); guard++) r += 1.5;
       const rad = 1.15 + rnd() * 0.9;
       const g = new THREE.Group();
       const p = planetPoint(MOUNTAIN_CENTER_X + r * Math.cos(th), r * Math.sin(th), 0);
@@ -3082,25 +3345,38 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     return g;
   }
 
-  function buildArchBridges(pairs) {
-    const deckMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.74, metalness: 0.03, flatShading: true });
-    const foamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, depthWrite: false });
-    const bulbGeo = new THREE.SphereGeometry(0.16, 10, 10);
-    const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+  function buildScenicBridges(bridgeList) {
+    const deckMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.76, metalness: 0.03, flatShading: true });
+    const foamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false });
     const WATER_Y = -(HEX_HEIGHT + 0.06 + 0.18) + 0.08;
 
-    pairs.forEach(([idA, idB]) => {
+    // 圖二溫暖明亮的蜜糖原木色系
+    const honeyDeckHex = 0xd89c62;  // 蜜糖原木主色 (明亮溫暖)
+    const woodDarkHex  = 0xba7c42;  // 結構木樑與直櫺扶手立柱
+    const beamUnderHex = 0x9e6230;  // 橋底弧形拱肋
+    const finialCollar = 0xdca670;  // 寶頂柱頭基座
+    const finialBall   = 0xf3c58e;  // 寶頂圓球 (圓潤精緻)
+    const stoneStepHex = 0xc6874a;  // 兩島接合處木踏板
+
+    // 棧道與踏石專屬色彩
+    const rusticCedarHex = 0xab7b48; // 棧道杉木色
+    const rusticDarkWood = 0x7c522a; // 棧道暗木色
+    const stoneCol1      = 0x8c8275; // 溪石暖灰
+    const stoneCol2      = 0x72695d; // 溪石深灰
+    const stoneCol3      = 0x9e9488; // 溪石淺斑
+
+    bridgeList.forEach(([idA, idB, bridgeType]) => {
       const objA = islandObjectsMap.get(idA);
       const objB = islandObjectsMap.get(idB);
       if (!objA || !objB) return;
       const dA = objA.userData.islandData, dB = objB.userData.islandData;
       const pA = objA.position, pB = objB.position;
-      const isCross = dA.realm !== dB.realm;
 
       const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
       const radialDir = new THREE.Vector3().subVectors(mid, PLANET_CENTER).normalize();
       const dist = pA.distanceTo(pB);
-      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + 0.06);
+      // 橋體基底高度置於島嶼表面，兩端牢固平穩搭接
+      mid.copy(PLANET_CENTER).addScaledVector(radialDir, PLANET_RADIUS + HEX_HEIGHT + 0.02);
 
       const bridgeGroup = new THREE.Group();
       bridgeGroup.position.copy(mid);
@@ -3109,90 +3385,243 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const realUp = new THREE.Vector3().crossVectors(forward, right).normalize();
       bridgeGroup.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(forward, realUp, right));
 
-      const L = dist * 0.44;
-      const W = isCross ? 1.1 : 0.86;
-      const rise = Math.min(0.62, 0.2 + L * 0.06);
-      const T = 0.17;
-      const SEG = 14;
-      const archY = (u) => rise * 4 * u * (1 - u);
-      const slope = (u) => Math.atan((rise * 4 * (1 - 2 * u)) / L);
-      const deckHex = isCross ? 0xf0d48a : 0xece1cc;
-      const stripHex = isCross ? 0xd9b968 : 0xcdbb97;
-      const colA = new THREE.Color(dA.accentColor), colB = new THREE.Color(dB.accentColor);
+      // 水道大幅加寬至 4.6 單位，橋長約 5.8 單位，覆蓋兩端島緣各 0.6 單位
+      const L = Math.max(3.2, dist - 2 * HEX_APOTHEM + 1.25);
       const parts = [];
-
-      // 拱形橋面 (側面輪廓擠出)
-      const shape = new THREE.Shape();
-      shape.moveTo(-L / 2, archY(0) - T);
-      for (let i = 0; i <= SEG; i++) { const u = i / SEG; shape.lineTo((u - 0.5) * L, archY(u)); }
-      shape.lineTo(L / 2, archY(1) - T);
-      for (let i = SEG; i >= 0; i--) { const u = i / SEG; shape.lineTo((u - 0.5) * L, archY(u) - T); }
-      const deckGeo = new THREE.ExtrudeGeometry(shape, { depth: W, bevelEnabled: false, steps: 1 });
-      deckGeo.translate(0, 0, -W / 2);
-      parts.push(paintGeo(deckGeo, deckHex));
-
-      // 橋面拼花橫條
-      const strips = Math.max(4, Math.round(L / 0.34));
-      for (let i = 1; i < strips; i++) {
-        const u = i / strips;
-        parts.push(paintGeo(new THREE.BoxGeometry(0.05, 0.03, W * 0.98), stripHex, (u - 0.5) * L, archY(u) + 0.012, 0, slope(u)));
-      }
-
-      // 雙側護欄：漸層彩色立柱 + 白色雙層扶手
-      for (const side of [-1, 1]) {
-        const z = side * (W / 2 - 0.05);
-        for (let i = 0; i <= SEG; i++) {
-          const u = i / SEG;
-          const c = colA.clone().lerp(colB, u).lerp(new THREE.Color(0xffffff), 0.2);
-          parts.push(paintGeo(new THREE.BoxGeometry(0.085, 0.38, 0.085), c, (u - 0.5) * L, archY(u) + 0.19, z));
-        }
-        for (let i = 0; i < SEG; i++) {
-          const u0 = i / SEG, u1 = (i + 1) / SEG;
-          const x0 = (u0 - 0.5) * L, x1 = (u1 - 0.5) * L;
-          const y0 = archY(u0), y1 = archY(u1);
-          const len = Math.hypot(x1 - x0, y1 - y0) + 0.012;
-          const ang = Math.atan2(y1 - y0, x1 - x0);
-          const xm = (x0 + x1) / 2, ym = (y0 + y1) / 2;
-          parts.push(paintGeo(new THREE.BoxGeometry(len, 0.055, 0.065), 0xfff8ee, xm, ym + 0.37, z, ang));
-          parts.push(paintGeo(new THREE.BoxGeometry(len, 0.035, 0.045), 0xe9d9bd, xm, ym + 0.19, z, ang));
-        }
-        // 兩側路燈燈桿 (燈球另用夜間發光材質)
-        for (const u of [0.14, 0.86]) {
-          parts.push(paintGeo(new THREE.CylinderGeometry(0.035, 0.045, 0.6, 6), 0x2b2b30, (u - 0.5) * L, archY(u) + 0.3, side * (W / 2 + 0.04)));
-        }
-      }
-
-      // 石橋墩 + 墩帽 + 水面浪花
-      const piers = L > 6 ? [0.3, 0.5, 0.7] : [0.3, 0.7];
       const foamParts = [];
-      piers.forEach((u) => {
-        const x = (u - 0.5) * L;
-        const top = archY(u) - T + 0.02;
-        const bottom = WATER_Y - 0.6;
-        parts.push(paintGeo(new THREE.BoxGeometry(0.42, top - bottom, W * 0.86), 0xb5a994, x, (top + bottom) / 2, 0));
-        parts.push(paintGeo(new THREE.BoxGeometry(0.62, 0.1, W * 0.96), 0xdb8a64, x, top + 0.02, 0));
-        const ring = new THREE.RingGeometry(0.32, 0.62, 14).toNonIndexed();
-        ring.rotateX(-Math.PI / 2);
-        ring.scale(1, 1, Math.max(1, W * 1.15));
-        ring.translate(x, WATER_Y, 0);
-        foamParts.push(ring);
-      });
+      const pts = [];
+
+      if (bridgeType === 'arch') {
+        // ════════════════════════════════════════════════════════════
+        // 類型 1：【圖二】日式蜜糖木拱橋 (Zen Arched Bridge)
+        // ════════════════════════════════════════════════════════════
+        const W = 0.72;
+        const T = 0.08;
+        const rise = 0.52; // 優美舒展的大拱弧
+        const SEGS = 18;
+        const segL = (L / SEGS) * 1.05;
+
+        // 1. 弧形原木橋面與底層支撐弧肋
+        for (let i = 0; i < SEGS; i++) {
+          const u = (i + 0.5) / SEGS - 0.5;
+          const x = u * L;
+          const y = rise * (1 - 4 * u * u);
+          const tangent = -8 * rise * u / L;
+          const rotZ = Math.atan(tangent);
+
+          const col = (i % 2 === 0) ? honeyDeckHex : woodDarkHex;
+          parts.push(paintGeo(new THREE.BoxGeometry(segL, T, W), col, x, y - T / 2, 0, rotZ));
+
+          // 兩側底層支撐弧樑
+          for (const side of [-1, 1]) {
+            parts.push(paintGeo(new THREE.BoxGeometry(segL, 0.07, 0.055), beamUnderHex, x, y - T - 0.035, side * (W / 2 - 0.035), rotZ));
+          }
+
+          // 兩側弧形扶手
+          for (const side of [-1, 1]) {
+            const z = side * (W / 2 + 0.025);
+            parts.push(paintGeo(new THREE.BoxGeometry(segL, 0.05, 0.06), honeyDeckHex, x, y + 0.36, z, rotZ));
+          }
+        }
+
+        // 2. 四角方形立柱與寶頂柱頭 (擬寶珠)
+        for (const u of [-0.48, 0.48]) {
+          const x = u * L;
+          const y = rise * (1 - 4 * u * u);
+          for (const side of [-1, 1]) {
+            const z = side * (W / 2 + 0.025);
+            parts.push(paintGeo(new THREE.BoxGeometry(0.09, 0.48, 0.09), woodDarkHex, x, y + 0.20, z));
+            parts.push(paintGeo(new THREE.BoxGeometry(0.13, 0.04, 0.13), finialCollar, x, y + 0.45, z));
+            parts.push(paintGeo(new THREE.SphereGeometry(0.055, 8, 8), finialBall, x, y + 0.51, z));
+          }
+        }
+
+        // 3. 均勻排列的直櫺扶手立柱
+        const balusterCount = 7;
+        for (let k = 1; k <= balusterCount; k++) {
+          const u = (k / (balusterCount + 1)) - 0.5;
+          const x = u * L;
+          const y_deck = rise * (1 - 4 * u * u);
+          const y_rail = y_deck + 0.36;
+          const h = y_rail - y_deck;
+          for (const side of [-1, 1]) {
+            const z = side * (W / 2 + 0.025);
+            parts.push(paintGeo(new THREE.BoxGeometry(0.045, h, 0.045), woodDarkHex, x, y_deck + h / 2, z));
+          }
+        }
+
+        // 4. 兩端平滑登橋木踏階
+        for (const side of [-1, 1]) {
+          const endX = side * (L / 2 - 0.15);
+          parts.push(paintGeo(new THREE.BoxGeometry(0.42, 0.07, W * 1.15), stoneStepHex, endX, 0.03, 0));
+        }
+
+        // 5. 橋下水景：睡蓮荷葉與粉紅荷花
+        for (let li = 0; li < 4; li++) {
+          const lx = (li - 1.5) * 0.75;
+          const lz = ((li % 2) * 2 - 1) * (W / 2 + 0.32);
+          const lily = new THREE.CircleGeometry(0.18 + (li % 3) * 0.04, 8).toNonIndexed();
+          lily.rotateX(-Math.PI / 2);
+          lily.translate(lx, WATER_Y + 0.02, lz);
+          parts.push(paintGeo(lily, 0x3d7e35, 0, 0, 0));
+
+          if (li % 2 === 0) {
+            const flower = new THREE.SphereGeometry(0.05, 6, 6).toNonIndexed();
+            flower.translate(lx + 0.03, WATER_Y + 0.07, lz + 0.02);
+            parts.push(paintGeo(flower, 0xf472b6, 0, 0, 0));
+          }
+        }
+
+        // 6. 水下加固木樁
+        for (const u of [-0.32, 0.32]) {
+          const x = u * L;
+          const y = rise * (1 - 4 * u * u);
+          const top = y - T - 0.05;
+          const bottom = WATER_Y - 0.45;
+          const h = top - bottom;
+          for (const side of [-1, 1]) {
+            const pz = side * (W / 2 - 0.04);
+            parts.push(paintGeo(new THREE.CylinderGeometry(0.05, 0.06, h, 6), beamUnderHex, x, (top + bottom) / 2, pz));
+          }
+          const ring = new THREE.RingGeometry(0.20, 0.46, 12).toNonIndexed();
+          ring.rotateX(-Math.PI / 2);
+          ring.translate(x, WATER_Y, 0);
+          foamParts.push(ring);
+        }
+
+        // 軌跡路徑
+        const WALK_N = 12;
+        for (let i = 0; i <= WALK_N; i++) {
+          const u = i / WALK_N - 0.5;
+          const y = rise * (1 - 4 * u * u);
+          pts.push(new THREE.Vector3(u * L, y + 0.03, 0).applyMatrix4(bridgeGroup.matrix));
+        }
+
+      } else if (bridgeType === 'boardwalk') {
+        // ════════════════════════════════════════════════════════════
+        // 類型 2：【次要通道】水上木棧道 (Wooden Boardwalk)
+        // ════════════════════════════════════════════════════════════
+        const W = 0.62;
+        const T = 0.065;
+        const boardY = 0.06;
+        const SEGS = 14;
+        const segL = (L / SEGS) * 1.05;
+
+        // 棧道原木拼板
+        for (let i = 0; i < SEGS; i++) {
+          const u = (i + 0.5) / SEGS - 0.5;
+          const x = u * L;
+          const col = (i % 2 === 0) ? rusticCedarHex : rusticDarkWood;
+          parts.push(paintGeo(new THREE.BoxGeometry(segL, T, W), col, x, boardY - T / 2, 0));
+        }
+
+        // 兩側通透低矮護欄
+        for (const side of [-1, 1]) {
+          const z = side * (W / 2 + 0.02);
+          for (let p = -3; p <= 3; p++) {
+            const px = (p / 3.5) * (L / 2);
+            parts.push(paintGeo(new THREE.BoxGeometry(0.045, 0.28, 0.045), rusticDarkWood, px, boardY + 0.14, z));
+          }
+          parts.push(paintGeo(new THREE.BoxGeometry(L * 0.96, 0.035, 0.04), rusticCedarHex, 0, boardY + 0.26, z));
+        }
+
+        // 入水木樁與泡沫
+        for (const px of [-L * 0.32, 0, L * 0.32]) {
+          const top = boardY - T;
+          const bottom = WATER_Y - 0.45;
+          const h = top - bottom;
+          for (const side of [-1, 1]) {
+            parts.push(paintGeo(new THREE.CylinderGeometry(0.045, 0.05, h, 6), rusticDarkWood, px, (top + bottom) / 2, side * (W / 2 - 0.03)));
+          }
+          const ring = new THREE.RingGeometry(0.16, 0.38, 10).toNonIndexed();
+          ring.rotateX(-Math.PI / 2);
+          ring.translate(px, WATER_Y, 0);
+          foamParts.push(ring);
+        }
+
+        // 漂浮荷葉
+        for (let li = 0; li < 3; li++) {
+          const lx = (li - 1) * 1.1;
+          const lz = ((li % 2) * 2 - 1) * (W / 2 + 0.28);
+          const lily = new THREE.CircleGeometry(0.16, 8).toNonIndexed();
+          lily.rotateX(-Math.PI / 2);
+          lily.translate(lx, WATER_Y + 0.02, lz);
+          parts.push(paintGeo(lily, 0x3d7e35, 0, 0, 0));
+        }
+
+        // 軌跡路徑
+        const WALK_N = 8;
+        for (let i = 0; i <= WALK_N; i++) {
+          const u = i / WALK_N - 0.5;
+          pts.push(new THREE.Vector3(u * L, boardY + 0.03, 0).applyMatrix4(bridgeGroup.matrix));
+        }
+
+      } else {
+        // ════════════════════════════════════════════════════════════
+        // 類型 3：【自然通道】日式庭園踏水石階 (Stepping Stones)
+        // ════════════════════════════════════════════════════════════
+        const stoneCount = 7;
+        const stoneStepY = WATER_Y + 0.16;
+
+        for (let s = 0; s < stoneCount; s++) {
+          const u = (s + 0.5) / stoneCount - 0.5;
+          const sx = u * (L * 0.88);
+          const sz = Math.sin(s * 1.7) * 0.22;
+          const col = (s % 3 === 0) ? stoneCol1 : (s % 3 === 1 ? stoneCol2 : stoneCol3);
+
+          const r = 0.38 + (s % 2) * 0.06;
+          const stoneGeo = new THREE.DodecahedronGeometry(r, 0).toNonIndexed();
+          stoneGeo.scale(1.0, 0.32, 1.0);
+          parts.push(paintGeo(stoneGeo, col, sx, stoneStepY, sz));
+
+          // 踏石邊緣水波漣漪
+          const ring = new THREE.RingGeometry(r * 0.9, r * 1.35, 12).toNonIndexed();
+          ring.rotateX(-Math.PI / 2);
+          ring.translate(sx, WATER_Y + 0.01, sz);
+          foamParts.push(ring);
+
+          // 踏石間睡蓮與粉紅白花
+          if (s % 2 === 1) {
+            const lily = new THREE.CircleGeometry(0.17, 8).toNonIndexed();
+            lily.rotateX(-Math.PI / 2);
+            lily.translate(sx, WATER_Y + 0.02, -sz * 1.4);
+            parts.push(paintGeo(lily, 0x3d7e35, 0, 0, 0));
+
+            const fl = new THREE.SphereGeometry(0.045, 6, 6).toNonIndexed();
+            fl.translate(sx + 0.02, WATER_Y + 0.06, -sz * 1.4 + 0.02);
+            parts.push(paintGeo(fl, 0xfce7f3, 0, 0, 0));
+          }
+
+          // 踏石路徑點
+          pts.push(new THREE.Vector3(sx, stoneStepY + 0.12, sz).applyMatrix4(bridgeGroup.matrix));
+        }
+
+        // 首尾平滑過渡島面階梯
+        for (const side of [-1, 1]) {
+          const endX = side * (L / 2 - 0.2);
+          const stepGeo = new THREE.DodecahedronGeometry(0.42, 0).toNonIndexed();
+          stepGeo.scale(1.1, 0.28, 1.1);
+          parts.push(paintGeo(stepGeo, stoneCol1, endX, 0.03, 0));
+        }
+      }
 
       const deckMesh = new THREE.Mesh(mergeGeometries(parts), deckMat);
       deckMesh.castShadow = true;
       deckMesh.receiveShadow = true;
       bridgeGroup.add(deckMesh);
-      bridgeGroup.add(new THREE.Mesh(mergeGeometries(foamParts), foamMat));
-
-      // 夜間發光燈球
-      for (const side of [-1, 1]) {
-        for (const u of [0.14, 0.86]) {
-          const bulb = new THREE.Mesh(bulbGeo, nightGlowMaterial);
-          bulb.position.set((u - 0.5) * L, archY(u) + 0.66, side * (W / 2 + 0.04));
-          bridgeGroup.add(bulb);
-        }
+      if (foamParts.length > 0) {
+        bridgeGroup.add(new THREE.Mesh(mergeGeometries(foamParts), foamMat));
       }
+
+      bridgeGroup.userData = { realm: dA.realm, pair: [idA, idB], type: bridgeType };
       bridgesGroup.add(bridgeGroup);
+
+      // 登記通行路徑 (過橋路網)
+      bridgeGroup.updateMatrix();
+      if (!bridgeLinks.has(idA)) bridgeLinks.set(idA, []);
+      if (!bridgeLinks.has(idB)) bridgeLinks.set(idB, []);
+      bridgeLinks.get(idA).push({ to: idB, points: pts });
+      bridgeLinks.get(idB).push({ to: idA, points: pts.slice().reverse() });
     });
   }
 
@@ -3276,9 +3705,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   // 9. 黏土小人微型漫步者 (Chibi Walkers on Curved Planet)
   // ══════════════════════════════════════════════════════════════════════
+  const _walkNormal = new THREE.Vector3();
   function spawnWalkers() {
     const walkerColors = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899];
-    const totalWalkers = 10;
+    const totalWalkers = ISLAND_DATA.length; // 每座島嶼一位居民，之後會沿橋串門子
 
     for (let i = 0; i < totalWalkers; i++) {
       const walkerGroup = new THREE.Group();
@@ -3310,8 +3740,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         group: walkerGroup,
         currentIsland: island.id,
         targetPos: walkerGroup.position.clone(),
+        queue: [],            // 待走的路徑點 (過橋用)
+        arriveIsland: null,   // 走完路徑後所在的島
         speed: 0.015 + Math.random() * 0.015,
-        pauseTicks: 0
+        pauseTicks: Math.floor(Math.random() * 120)
       });
     }
   }
@@ -3329,15 +3761,46 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const dist = curPos.distanceTo(w.targetPos);
 
       if (dist < 0.1) {
+        // 正在過橋：走向下一個橋面路徑點
+        if (w.queue.length) {
+          w.targetPos.copy(w.queue.shift());
+          if (!w.queue.length && w.arriveIsland) {
+            w.currentIsland = w.arriveIsland;
+            w.arriveIsland = null;
+          }
+          return;
+        }
+
         w.pauseTicks = Math.floor(60 + Math.random() * 120);
 
         const island = islandObjectsMap.get(w.currentIsland);
-        if (island) {
-          const origin = island.position;
-          const normal = island.userData.normal;
+        if (!island) return;
+        const origin = island.position;
+        const normal = island.userData.normal;
+        const links = bridgeLinks.get(w.currentIsland);
+
+        if (links && links.length && Math.random() < 0.45) {
+          // 決定走橋去鄰島串門子：橋面路徑 + 對岸島上的落腳點
+          const link = links[Math.floor(Math.random() * links.length)];
+          const dest = islandObjectsMap.get(link.to);
+          w.queue = link.points.map((p) => p.clone());
+          if (dest) {
+            const dn = dest.userData.normal;
+            const dt = new THREE.Vector3(1, 0, 0).cross(dn).normalize();
+            const db = new THREE.Vector3().crossVectors(dn, dt).normalize();
+            const a = Math.random() * Math.PI * 2;
+            const rr = 0.6 + Math.random() * 0.7;
+            w.queue.push(dest.position.clone()
+              .addScaledVector(dt, Math.cos(a) * rr)
+              .addScaledVector(db, Math.sin(a) * rr)
+              .addScaledVector(dn, HEX_HEIGHT));
+          }
+          w.arriveIsland = link.to;
+          w.targetPos.copy(w.queue.shift());
+          w.pauseTicks = Math.floor(20 + Math.random() * 40);
+        } else {
           const tangent = new THREE.Vector3(1, 0, 0).cross(normal).normalize();
           const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
-
           const angle = Math.random() * Math.PI * 2;
           const r = Math.random() * 1.3;
           w.targetPos.copy(origin)
@@ -3348,7 +3811,154 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       } else {
         const dir = new THREE.Vector3().subVectors(w.targetPos, curPos).normalize();
         curPos.addScaledVector(dir, w.speed);
+        // 隨星球曲面保持站立 (過橋時也不會歪倒)
+        w.group.quaternion.setFromUnitVectors(HM_UP, planetNormal(curPos, _walkNormal));
       }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 9-2. 渡船：兩座群島之間隔著海峽、不架橋，改搭船往返
+  // ══════════════════════════════════════════════════════════════════════
+  const ferries = [];
+  // 六角島中心的平面座標 (與 hexToPlanet 同一套公式)
+  function hexFlat(q, r, realm) {
+    return {
+      x: Math.sqrt(3) * SPACING * (q + r / 2) + (REALM_OFFSET_X[realm] ?? 0),
+      z: 1.5 * SPACING * r
+    };
+  }
+
+  function createFerries() {
+    const byId = (id) => ISLAND_DATA.find((d) => d.id === id);
+    // 兩條航線：醫學筆島群 ↔ 讀書筆記島群 (起點、終點皆為面對海峽的島嶼)
+    const ROUTES = [
+      { from: 'chronic', to: 'random-walk', hull: 0xdb6a41, offset: 0 },
+      { from: 'health-check', to: 'wealth-ladder', hull: 0x2a9d8f, offset: 0.5 }
+    ];
+
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x9a6b43, roughness: 0.85, flatShading: true });
+    const woodDark = new THREE.MeshStandardMaterial({ color: 0x6b4a2f, roughness: 0.9, flatShading: true });
+    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xfaf5ea, roughness: 0.7, flatShading: true });
+
+    ROUTES.forEach((route, ri) => {
+      const A = byId(route.from), B = byId(route.to);
+      if (!A || !B) return;
+      const fa = hexFlat(A.q, A.r, A.realm), fb = hexFlat(B.q, B.r, B.realm);
+      const dx = fb.x - fa.x, dz = fb.z - fa.z;
+      const len = Math.hypot(dx, dz);
+      const ux = dx / len, uz = dz / len;
+
+      // 碼頭：棧橋從島緣向海面延伸，末端即渡船停靠點
+      const PIER_IN = HEX_APOTHEM - 0.5, PIER_OUT = HEX_APOTHEM + 1.7;
+      const docks = [
+        { cx: fa.x, cz: fa.z, sx: ux, sz: uz, name: A.shortName },
+        { cx: fb.x, cz: fb.z, sx: -ux, sz: -uz, name: B.shortName }
+      ];
+      const stops = [];
+      docks.forEach((dk, di) => {
+        const startX = dk.cx + dk.sx * PIER_IN, startZ = dk.cz + dk.sz * PIER_IN;
+        const endX = dk.cx + dk.sx * PIER_OUT, endZ = dk.cz + dk.sz * PIER_OUT;
+        const mx = (startX + endX) / 2, mz = (startZ + endZ) / 2;
+        const p = planetPoint(mx, mz, HEX_HEIGHT + 0.02);
+        const pier = new THREE.Group();
+        pier.position.copy(p);
+        pier.quaternion.setFromUnitVectors(HM_UP, planetNormal(p));
+        const yaw = new THREE.Quaternion().setFromAxisAngle(HM_UP, Math.atan2(dk.sx, dk.sz));
+        pier.quaternion.multiply(yaw);
+        const pierLen = PIER_OUT - PIER_IN;
+        const deck = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.1, pierLen), woodMat);
+        deck.castShadow = true; deck.receiveShadow = true;
+        pier.add(deck);
+        for (let k = 0; k <= 4; k++) {
+          for (const sd of [-1, 1]) {
+            const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.95, 6), woodDark);
+            post.position.set(sd * 0.42, -0.4, -pierLen / 2 + (k / 4) * pierLen);
+            pier.add(post);
+          }
+        }
+        // 碼頭末端燈柱 (夜間發光)
+        const lampPole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.8, 6), woodDark);
+        lampPole.position.set(0.38, 0.45, pierLen / 2 - 0.12);
+        const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 10), nightGlowMaterial);
+        lamp.position.set(0.38, 0.9, pierLen / 2 - 0.12);
+        pier.add(lampPole, lamp);
+        scene.add(pier);
+
+        // 碼頭標示 (HTML 浮動標籤)
+        const label = document.createElement('div');
+        label.className = 'ferry-label';
+        label.textContent = '⛴ 渡船碼頭';
+        const labelObj = new CSS2DObject(label);
+        labelObj.position.set(0, 1.5, 0);
+        pier.add(labelObj);
+        badgeObjects.push(label);
+
+        // 渡船停靠點 (碼頭末端再往海面 0.9)
+        stops.push({ x: endX + dk.sx * 0.9, z: endZ + dk.sz * 0.9 });
+      });
+
+      // 渡船模型
+      const ferry = new THREE.Group();
+      const hullMat = new THREE.MeshStandardMaterial({ color: route.hull, roughness: 0.6, flatShading: true });
+      const hull = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.32, 0.86), hullMat);
+      hull.position.y = 0.16;
+      const bow = new THREE.Mesh(new THREE.ConeGeometry(0.43, 0.7, 4), hullMat);
+      bow.rotation.z = -Math.PI / 2; bow.rotation.y = Math.PI / 4; bow.position.set(1.38, 0.16, 0);
+      const stripe = new THREE.Mesh(new THREE.BoxGeometry(2.12, 0.07, 0.88), whiteMat);
+      stripe.position.y = 0.31;
+      const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.5, 0.62), whiteMat);
+      cabin.position.set(-0.45, 0.6, 0);
+      const cabinRoof = new THREE.Mesh(new THREE.BoxGeometry(0.98, 0.09, 0.74), hullMat);
+      cabinRoof.position.set(-0.45, 0.89, 0);
+      const winGeo = new THREE.BoxGeometry(0.16, 0.16, 0.64);
+      const w1 = new THREE.Mesh(winGeo, nightGlowMaterial); w1.position.set(-0.7, 0.64, 0);
+      const w2 = new THREE.Mesh(winGeo, nightGlowMaterial); w2.position.set(-0.2, 0.64, 0);
+      const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.55, 5), woodDark);
+      flagPole.position.set(-0.45, 1.2, 0);
+      const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.2), new THREE.MeshStandardMaterial({ color: 0xfbbf24, side: THREE.DoubleSide }));
+      flag.position.set(-0.28, 1.36, 0);
+      ferry.add(hull, bow, stripe, cabin, cabinRoof, w1, w2, flagPole, flag);
+      // 甲板乘客 (毛線風小人)
+      [0.55, 0.9].forEach((px, pi) => {
+        const pass = new THREE.Group();
+        const pb = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 0.2, 8),
+          new THREE.MeshStandardMaterial({ color: [0xef4444, 0x3b82f6][pi], roughness: 0.7 }));
+        pb.position.y = 0.13;
+        const ph = new THREE.Mesh(new THREE.SphereGeometry(0.085, 10, 10),
+          new THREE.MeshStandardMaterial({ color: 0xffedd5, roughness: 0.8 }));
+        ph.position.y = 0.3;
+        pass.add(pb, ph);
+        pass.position.set(px, 0.33, (pi ? 0.14 : -0.14));
+        ferry.add(pass);
+      });
+      ferry.scale.setScalar(1.15);
+      ferry.userData = { stops, bob: ri * 2.1, offset: route.offset };
+      scene.add(ferry);
+      ferries.push(ferry);
+    });
+  }
+
+  // 渡船往返：靠岸停留 → 航行 → 靠岸停留 → 返航 (循環 30 秒)
+  const _fQn = new THREE.Quaternion(), _fQy = new THREE.Quaternion(), _fN = new THREE.Vector3();
+  function updateFerries(t) {
+    const CYCLE = 30, DWELL = 4, TRAVEL = 11; // DWELL*2 + TRAVEL*2 = 30
+    ferries.forEach((f) => {
+      const u = f.userData;
+      const ph = (((t / CYCLE) + u.offset) % 1) * CYCLE;
+      let k, dirSign;
+      if (ph < DWELL) { k = 0; dirSign = 1; }
+      else if (ph < DWELL + TRAVEL) { k = hmSmooth(0, 1, (ph - DWELL) / TRAVEL); dirSign = 1; }
+      else if (ph < 2 * DWELL + TRAVEL) { k = 1; dirSign = -1; }
+      else { k = 1 - hmSmooth(0, 1, (ph - 2 * DWELL - TRAVEL) / TRAVEL); dirSign = -1; }
+
+      const a = u.stops[0], b = u.stops[1];
+      const x = a.x + (b.x - a.x) * k, z = a.z + (b.z - a.z) * k;
+      planetPoint(x, z, 0.03 + Math.sin(t * 1.6 + u.bob) * 0.04, f.position);
+      _fQn.setFromUnitVectors(HM_UP, planetNormal(f.position, _fN));
+      const fx = (b.x - a.x) * dirSign, fz = (b.z - a.z) * dirSign;
+      _fQy.setFromAxisAngle(HM_UP, Math.atan2(-fz, fx));
+      f.quaternion.copy(_fQn).multiply(_fQy);
     });
   }
 
@@ -3653,6 +4263,19 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       group.visible = visible;
     });
 
+    bridgesGroup.children.forEach((b) => {
+      if (b.userData && b.userData.realm) {
+        b.visible = (realm === 'all' || b.userData.realm === realm);
+      }
+    });
+
+    walkers.forEach((w) => {
+      const island = ISLAND_DATA.find(i => i.id === w.currentIsland);
+      if (island && w.group) {
+        w.group.visible = showWalkers && (realm === 'all' || island.realm === realm);
+      }
+    });
+
     document.querySelectorAll('.realm-group').forEach((group) => {
       const groupRealm = group.dataset.realmGroup;
       const visible = realm === 'all' || groupRealm === realm;
@@ -3678,7 +4301,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const ctaBtn = document.getElementById('cardCtaBtn');
     const drawerSearch = document.getElementById('drawerArticleSearch');
 
-    realmTag.textContent = island.realm === 'health' ? '🏥 人體健康微縮群島' : '📚 知識宇宙探索群島';
+    realmTag.textContent = island.realm === 'health' ? '🏥 醫學筆島群' : '📚 讀書筆記島群';
     realmTag.classList.toggle('wisdom-style', island.realm === 'wisdom');
 
     icon.textContent = island.icon;
