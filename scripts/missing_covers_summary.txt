@@ -1,20 +1,23 @@
-未設封面圖衛教專文: 5 篇
-未設封面圖書籍章節: 9 篇
+未設封面圖衛教專文: 0 篇
+未設封面圖書籍章節: 17 篇
 
 === 未設封面圖書籍章節列表 ===
-src/content/books\人類大歷史\01-人類一種也沒什麼特別的動物.md -> 01、人類：一種也沒什麼特別的動物
-src/content/books\人類大歷史\02-知善惡樹.md -> 02、知善惡樹
-src/content/books\人類大歷史\03-亞當和夏娃的一天.md -> 03、亞當和夏娃的一天
-src/content/books\投資前最重要的事\05-找出你自己的投資哲學.md -> 05、找出你自己的投資哲學
-src/content/books\投資前最重要的事\06-華爾街的行為.md -> 06、華爾街的行為
-src/content/books\投資前最重要的事\07-資產配置.md -> 07、資產配置
-src/content/books\投資前最重要的事\08-完整的綜合投資計畫.md -> 08、完整的綜合投資計畫
-src/content/books\投資前最重要的事\09-理財專業人士.md -> 09、理財專業人士
-src/content/books\投資前最重要的事\10-結語十個投資概念與建議書單.md -> 10、結語：十個投資概念與建議書單
+src/content/books\人類大歷史\04-毀天滅地的人類洪水.md -> 04、毀天滅地的人類洪水
+src/content/books\人類大歷史\05-史上最大騙局.md -> 05、史上最大騙局
+src/content/books\人類大歷史\06-蓋起監獄高牆.md -> 06、蓋起監獄高牆
+src/content/books\人類大歷史\07-大腦記憶過載.md -> 07、大腦記憶過載
+src/content/books\人類大歷史\08-歷史從無正義.md -> 08、歷史從無正義
+src/content/books\人類大歷史\09-歷史的方向.md -> 09、歷史的方向
+src/content/books\人類大歷史\10-金錢的氣味.md -> 10、金錢的氣味
+src/content/books\人類大歷史\11-帝國的願景.md -> 11、帝國的願景
+src/content/books\人類大歷史\12-宗教的法則.md -> 12、宗教的法則
+src/content/books\人類大歷史\13-成敗的祕密.md -> 13、成敗的祕密
+src/content/books\人類大歷史\14-發現自己的無知.md -> 14、發現自己的無知
+src/content/books\人類大歷史\15-科學與帝國的聯姻.md -> 15、科學與帝國的聯姻
+src/content/books\人類大歷史\16-資本主義的教條.md -> 16、資本主義的教條
+src/content/books\人類大歷史\17-工業的巨輪.md -> 17、工業的巨輪
+src/content/books\人類大歷史\18-一場永遠的革命.md -> 18、一場永遠的革命
+src/content/books\人類大歷史\19-從此過著幸福快樂的日子.md -> 19、從此過著幸福快樂的日子
+src/content/books\人類大歷史\20-智人末日.md -> 20、智人末日
 
 === 未設封面圖衛教專文列表 (前 30 篇) ===
-src/content/posts\c型肝炎實證台灣c型肝炎治療最新微消除政策與長期預後報告-2025-2026.md -> 【C型肝炎】【實證】台灣C型肝炎治療最新、微消除政策與長期預後報告 (2025-2026)
-src/content/posts\glp-1實證腸泌素類藥物延伸效益防癌抗成癮防自戕護腦.md -> 【GLP-1】【實證】腸泌素類藥物延伸效益（防癌・抗成癮・防自戕・護腦）
-src/content/posts\咽喉異物感.md -> 咽喉異物感
-src/content/posts\多囊性腎臟.md -> 多囊性腎臟
-src/content/posts\實證功能性消化不良頂尖期刊臨床實證與前瞻處置.md -> 【實證】功能性消化不良頂尖期刊臨床實證與前瞻處置
