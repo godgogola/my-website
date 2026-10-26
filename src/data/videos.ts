@@ -38,12 +38,12 @@ export const videoCategories = [
 export const videos: VideoItem[] = [
   // --- 2026 最新發布影音 (2026/10/26) ---
   {
-    id: 'PENDING_ID',
+    id: 'dJoBaaJizFs',
     title: '食道裂孔疝氣的原因',
     description: '吃飽經常火燒心、胃藥總吃不好？小心是胃部悄悄滑進胸腔了！橫膈膜裂孔韌帶因老化鬆弛，加上長期腹壓推擠，使得胃頂端滑入胸口。無痛胃鏡精準診斷，搭配制酸與促動力藥物封閉逆流；生活中減輕腹重、吃飽別躺下，守護橫膈膜讓逆流不再來！',
     category: '胃部疾病',
     duration: '0:41',
-    url: 'https://drhuanggi.vercel.app/posts/食道裂孔疝氣的原因',
+    url: 'https://www.youtube.com/watch?v=dJoBaaJizFs',
     featured: true,
     order: 1,
     thumbnail: '/images/食道裂孔疝氣的原因_video_thumb.webp',
@@ -52,12 +52,12 @@ export const videos: VideoItem[] = [
   },
   // --- 2026 最新發布影音 (2026/10/25) ---
   {
-    id: 'PENDING_ID',
+    id: 'jh99G9JS4-U',
     title: '咽喉異物感',
     description: '喉嚨總是有卡卡的、想咳咳不出來，吞口水特別明顯，但吃大餐喝水卻完全沒事？你可能也遇上了門診極為常見的「咽喉異物感（Globus Pharyngeus）」！成因涵蓋咽喉逆流 (LPR)、鼻涕倒流、自律神經與壓力、異位性胃黏膜及甲狀腺壓迫。醫師提醒若合併吞嚥困難或聲音沙啞應及早檢查！',
     category: '胃部疾病',
     duration: '1:01',
-    url: 'https://drhuanggi.vercel.app/posts/咽喉異物感',
+    url: 'https://www.youtube.com/watch?v=jh99G9JS4-U',
     featured: true,
     order: 1,
     thumbnail: '/images/咽喉異物感_video_thumb.webp',
@@ -66,12 +66,12 @@ export const videos: VideoItem[] = [
   },
   // --- 2026 最新發布影音 (2026/10/23) ---
   {
-    id: 'PENDING_ID',
+    id: 'IpNvepoi-E4',
     title: '高血壓藥物在一般族群及共病族群的選擇',
     description: '高血壓降壓藥別再一顆一顆慢慢加！最新指引強調「早期單錠複方 (SPC)」與「依共病量身訂做」。無共病首選 A+C 或 A+D；心衰竭與心梗必備乙型阻斷劑；腎病蛋白尿首選 ACEI/ARB 但嚴禁兩者混搭；高齡長輩採單藥慢調預防低血壓跌倒！',
     category: '高血壓',
     duration: '1:01',
-    url: 'https://drhuanggi.vercel.app/posts/高血壓藥物在一般族群及共病族群的選擇',
+    url: 'https://www.youtube.com/watch?v=IpNvepoi-E4',
     featured: true,
     order: 1,
     thumbnail: '/images/高血壓藥物在一般族群及共病族群的選擇_video_thumb.webp',
