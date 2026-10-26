@@ -133,6 +133,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
       <!-- 時序光影與輔助開關 -->
       <div class="hud-controls">
+        <button class="hud-action-btn" id="dayNightQuickToggle" title="點擊切換「☀️ 白天 / 🌙 夜晚」中世紀點燈模式">
+          <span id="dayNightIcon">☀️</span>
+          <span class="btn-text" id="dayNightText">白天</span>
+        </button>
+
+        <div class="hud-divider"></div>
+
         <div class="time-presets" title="調整星球時序光照">
           <button class="time-btn" data-time="dawn" title="晨曦 (06:00)">🌅</button>
           <button class="time-btn active" data-time="noon" title="正午 (12:00)">☀️</button>
@@ -527,6 +534,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     background: #eef7fa;
     border-color: #4a90a4;
     color: #2b6d80;
+  }
+
+  #dayNightQuickToggle.night-active {
+    background: #0f172a;
+    border-color: #f59e0b;
+    color: #fbbf24;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.4);
   }
 
   /* ════════════ 左側：島嶼全文章探索抽屜 ════════════ */
@@ -1811,8 +1825,55 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let starfieldPoints, milkyWayPoints;
   let cloudsGroup;             // 低空慢速雲朵
   let oceanMesh, oceanGeo, oceanInitialPositions;
-  let nightGlowMaterial = new THREE.MeshBasicMaterial({ color: 0x475569 }); // 路燈與窗戶夜間發光材質
-  let nightPointLights = [];   // 島嶼夜間暖光
+  // ── 中世紀夜景與點燈系統 (Medieval Night Lighting System) ──
+  // 1. 發光材質 (emissive 自發光材質，白天 0，夜晚拉高至 1.8~2.5)
+  const nightLanternMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffaa33,
+    emissive: 0xffaa33,
+    emissiveIntensity: 0,
+    roughness: 0.25
+  });
+  const nightWindowMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffa033,
+    emissive: 0xff9922,
+    emissiveIntensity: 0,
+    roughness: 0.35
+  });
+  const roseWindowMaterial = new THREE.MeshStandardMaterial({
+    color: 0xf59e0b,
+    emissive: 0xd8b4fe,
+    emissiveIntensity: 0,
+    roughness: 0.25
+  });
+  const bridgeLanternMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffb703,
+    emissive: 0xffb703,
+    emissiveIntensity: 0,
+    roughness: 0.3
+  });
+  const wallSconceMaterial = new THREE.MeshStandardMaterial({
+    color: 0xff7711,
+    emissive: 0xff5500,
+    emissiveIntensity: 0
+  });
+
+  // 2. 地面半透明發光圓盤材質 (路燈正下方平貼地面光斑，夜晚顯示，白天隱藏)
+  const groundLightPoolMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffaa33,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+
+  // 3. 收集發光物件、壁燈與真實 PointLight (每島 1 顆 + 每船 1 顆，嚴格確保 60 FPS)
+  let nightPointLights = [];   // 每座島主建築上方 1 顆 PointLight (0xff9933)
+  let boatPointLights = [];    // 每艘小船船頭 1 顆 PointLight (0xffbb55)
+  let wallSconces = [];        // 壁燈列表，夜間模擬火焰微幅閃爍
+  let firefliesPoints = null;  // 夜空中的螢火蟲 / 星火微粒 (THREE.Points)
+
+  let nightGlowMaterial = nightLanternMaterial; // 相容舊參照
   let isAutoDayNight = true;   // 是否開啟 180s 自動循環
   let targetCycle = 0.25;      // 當前目標時間 (預設正午 0.25)
   let currentCycle = 0.25;     // 插值平滑 cycle
@@ -1907,6 +1968,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
     createDayNightSystem();   // 1. 太陽月亮 180s 日夜循環
     createStarfieldAndMilkyWay(); // 2. 穹頂星空與銀河微粒
+    createFireflies();        // 2b. 夜間微光螢火蟲浮游粒子
     createMountainRing();     // 3a. 環湖群山 + 松林 + 山坡小屋
     createIslets();           // 3b. 湖心沙洲與燈塔
     createLowPolyClouds();    // 3c. 群山之上的雲海
@@ -2276,15 +2338,106 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   // ══════════════════════════════════════════════════════════════════════
-  // 系統 5: 夜間點燈 (路燈與窗戶發光)
+  // ══════════════════════════════════════════════════════════════════════
+  // 系統 5: 夜間點燈 (路燈、地面光暈、窗戶與真實 PointLight)
   // ══════════════════════════════════════════════════════════════════════
   function setupNightLights() {
-    // 共享發光材質初始設定
-    nightGlowMaterial.color.set(0x475569);
+    nightLanternMaterial.emissiveIntensity = 0;
+    nightWindowMaterial.emissiveIntensity = 0;
+    roseWindowMaterial.emissiveIntensity = 0;
+    bridgeLanternMaterial.emissiveIntensity = 0;
+    wallSconceMaterial.emissiveIntensity = 0;
+    groundLightPoolMaterial.opacity = 0;
+  }
+
+  // ── 6. 夜間空氣感加分細節：螢火蟲 / 星火微粒 (THREE.Points) ──
+  function createFireflies() {
+    const COUNT = 60;
+    const geo = new THREE.BufferGeometry();
+    const positions = new Float32Array(COUNT * 3);
+    const initialPos = [];
+    const rnd = hmRng(9988);
+
+    for (let i = 0; i < COUNT; i++) {
+      const realm = (i % 2 === 0) ? -ARCHIPELAGO_GAP / 2 : ARCHIPELAGO_GAP / 2;
+      const x = realm + (rnd() - 0.5) * 26;
+      const z = (rnd() - 0.5) * 28;
+      const y = HEX_HEIGHT + 0.8 + rnd() * 2.6;
+
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+
+      initialPos.push({
+        baseX: x, baseY: y, baseZ: z,
+        speed: 0.6 + rnd() * 0.7,
+        phase: rnd() * Math.PI * 2,
+        radius: 0.4 + rnd() * 0.55
+      });
+    }
+
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const c = document.createElement('canvas');
+    c.width = 64; c.height = 64;
+    const ctx = c.getContext('2d');
+    const grad = ctx.createRadialGradient(32, 32, 2, 32, 32, 32);
+    grad.addColorStop(0, 'rgba(254, 240, 138, 1)');   // 鵝黃暖金星火
+    grad.addColorStop(0.3, 'rgba(190, 242, 100, 0.85)'); // 螢火蟲黃綠
+    grad.addColorStop(0.7, 'rgba(163, 230, 53, 0.25)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 64, 64);
+    const tex = new THREE.CanvasTexture(c);
+
+    const mat = new THREE.PointsMaterial({
+      size: 0.85,
+      map: tex,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    firefliesPoints = new THREE.Points(geo, mat);
+    firefliesPoints.userData = { initialPos };
+    scene.add(firefliesPoints);
+  }
+
+  function updateFireflies(elapsedTime, nightFactor) {
+    if (!firefliesPoints) return;
+    firefliesPoints.visible = nightFactor > 0.05;
+    firefliesPoints.material.opacity = nightFactor * 0.95;
+    if (nightFactor <= 0.05) return;
+
+    const posAttr = firefliesPoints.geometry.attributes.position;
+    const arr = posAttr.array;
+    const initList = firefliesPoints.userData.initialPos;
+
+    for (let i = 0; i < initList.length; i++) {
+      const p = initList[i];
+      const t = elapsedTime * p.speed + p.phase;
+      arr[i * 3]     = p.baseX + Math.sin(t * 0.8) * p.radius;
+      arr[i * 3 + 1] = p.baseY + Math.sin(t * 1.6) * 0.35 + Math.cos(t * 0.9) * 0.2;
+      arr[i * 3 + 2] = p.baseZ + Math.cos(t * 0.8) * p.radius;
+    }
+    posAttr.needsUpdate = true;
+  }
+
+  function updateDayNightUI(isNight) {
+    const icon = document.getElementById('dayNightIcon');
+    const text = document.getElementById('dayNightText');
+    const btn = document.getElementById('dayNightQuickToggle');
+    if (icon) icon.textContent = isNight ? '🌙' : '☀️';
+    if (text) text.textContent = isNight ? '夜晚' : '白天';
+    if (btn) {
+      if (isNight) btn.classList.add('night-active');
+      else btn.classList.remove('night-active');
+    }
   }
 
   // ══════════════════════════════════════════════════════════════════════
-  // 系統 6: 日夜時序光影插值更新 (在 animate 每幀調用)
+  // 系統 6: 日夜平滑切換系統與中世紀全場景點燈更新 (animate 每幀調用)
   // ══════════════════════════════════════════════════════════════════════
   function updateDayNightCycle(elapsedTime) {
     if (isAutoDayNight && !manualTimeLock) {
@@ -2304,43 +2457,47 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       celestialPivot.rotation.x = Math.sin(cycle * Math.PI * 2) * 0.28;
     }
 
-    // 2. 太陽與月亮光照強度切換
-    // 白天：0.0~0.5 (正午 ~0.25)；夜晚：0.5~1.0 (午夜 ~0.75)
-    const isDay = cycle < 0.5;
-    const sunAltitude = Math.sin(cycle * Math.PI * 2); // > 0 為在天空
-    const sunIntensity = Math.max(0, sunAltitude) * 1.2;
-    const moonIntensity = Math.max(0, -sunAltitude) * 0.45;
+    // 2. 計算夜間平滑過渡因子 (nightFactor: 白天 0.0 ~ 深夜 1.0)
+    let nightFactor = 0;
+    if (cycle >= 0.44 && cycle <= 0.96) {
+      if (cycle < 0.54) nightFactor = (cycle - 0.44) / 0.10;
+      else if (cycle > 0.86) nightFactor = (0.96 - cycle) / 0.10;
+      else nightFactor = 1.0;
+    }
 
-    if (sunLight) sunLight.intensity = sunIntensity;
-    if (moonLight) moonLight.intensity = moonIntensity;
+    // 3. 太陽、月亮與環境光過渡
+    const sunAltitude = Math.sin(cycle * Math.PI * 2);
+    if (sunLight) {
+      sunLight.intensity = Math.max(0, sunAltitude) * 1.25 * (1 - nightFactor);
+    }
+    if (moonLight) {
+      moonLight.color.set(0x6b8cce); // 微弱冷藍色月光
+      moonLight.intensity = 0.25 * nightFactor;
+    }
+    if (hemiLight) {
+      hemiLight.intensity = 0.9 * (1 - nightFactor * 0.67); // 降至 0.30
+    }
+    if (ambientLight) {
+      ambientLight.intensity = 0.55 * (1 - nightFactor * 0.70); // 降至 ~0.16，讓暖光強烈跳出
+    }
 
-    // 3. 天空背景色與霧氣平滑插值 (Lerp)
-    // 4 個關鍵時段色彩：
-    // Noon(0.25): #75c2d6 (清新淡青藍); Dusk(0.48): #fd5e53; Midnight(0.75): #060919; Dawn(0.02): #fbcfe8
+    // 4. 天空背景色平滑插值 (深夜過渡為深邃魔幻午夜藍 #0d1b2a)
     const noonCol = new THREE.Color(0x75c2d6);
     const duskCol = new THREE.Color(0xfd5e53);
-    const nightCol = new THREE.Color(0x060919);
+    const nightCol = new THREE.Color(0x0d1b2a); // 深邃魔幻午夜藍
     const dawnCol = new THREE.Color(0xfbcfe8);
 
     const curSky = new THREE.Color();
     const curFog = new THREE.Color();
 
     if (cycle < 0.25) {
-      // 晨曦 (0.02) ➔ 正午 (0.25)
-      const t = (cycle) / 0.25;
-      curSky.lerpColors(dawnCol, noonCol, t);
+      curSky.lerpColors(dawnCol, noonCol, cycle / 0.25);
     } else if (cycle < 0.5) {
-      // 正午 (0.25) ➔ 暮霞黃昏 (0.5)
-      const t = (cycle - 0.25) / 0.25;
-      curSky.lerpColors(noonCol, duskCol, t);
+      curSky.lerpColors(noonCol, duskCol, (cycle - 0.25) / 0.25);
     } else if (cycle < 0.75) {
-      // 暮霞黃昏 (0.5) ➔ 深夜 (0.75)
-      const t = (cycle - 0.5) / 0.25;
-      curSky.lerpColors(duskCol, nightCol, t);
+      curSky.lerpColors(duskCol, nightCol, (cycle - 0.5) / 0.25);
     } else {
-      // 深夜 (0.75) ➔ 晨曦 (1.0)
-      const t = (cycle - 0.75) / 0.25;
-      curSky.lerpColors(nightCol, dawnCol, t);
+      curSky.lerpColors(nightCol, dawnCol, (cycle - 0.75) / 0.25);
     }
 
     scene.background.copy(curSky);
@@ -2349,51 +2506,54 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       scene.fog.color.copy(curFog);
     }
 
-    // 4. 星空與銀河透明度 (夜晚淡入，白天隱藏)
+    // 5. 星空與銀河透明度
     let starAlpha = 0;
-    const isNightVisible = cycle > 0.46 && cycle < 0.98;
-    if (isNightVisible) {
-      if (cycle >= 0.54 && cycle <= 0.92) {
-        starAlpha = 1.0;
-      } else if (cycle < 0.54) {
-        starAlpha = (cycle - 0.46) / 0.08;
-      } else {
-        starAlpha = (0.98 - cycle) / 0.06;
-      }
+    if (cycle > 0.46 && cycle < 0.98) {
+      if (cycle >= 0.54 && cycle <= 0.92) starAlpha = 1.0;
+      else if (cycle < 0.54) starAlpha = (cycle - 0.46) / 0.08;
+      else starAlpha = (0.98 - cycle) / 0.06;
     }
     if (starfieldPoints) {
       starfieldPoints.visible = starAlpha > 0.02;
       starfieldPoints.material.opacity = starAlpha;
+      starfieldPoints.rotation.y += 0.0003;
     }
     if (milkyWayPoints) {
       milkyWayPoints.visible = starAlpha > 0.02;
       milkyWayPoints.material.opacity = starAlpha * 0.95;
+      milkyWayPoints.rotation.y += 0.00025;
     }
 
-    // 星空緩慢自轉
-    if (starfieldPoints) starfieldPoints.rotation.y += 0.0003;
-    if (milkyWayPoints) milkyWayPoints.rotation.y += 0.00025;
+    // 6. 中世紀發光材質群組強度更新 (emissiveIntensity 白天歸零，夜晚拉高至 1.8~2.4)
+    const curEmissive = nightFactor * 2.2;
+    nightLanternMaterial.emissiveIntensity = curEmissive;
+    nightWindowMaterial.emissiveIntensity = curEmissive * 1.05;
+    roseWindowMaterial.emissiveIntensity = curEmissive * 1.25;
+    bridgeLanternMaterial.emissiveIntensity = curEmissive * 1.1;
+    wallSconceMaterial.emissiveIntensity = nightFactor * (1.8 + Math.sin(elapsedTime * 11) * 0.35); // 火焰微幅閃爍呼吸
 
-    // 5. 夜間點燈邏輯 (建築物窗戶、島嶼路燈與木橋路燈全數點亮，暖黃光芒流淌)
-    const isNightTime = cycle > 0.46 && cycle < 0.96;
-    if (nightGlowMaterial) {
-      nightGlowMaterial.color.set(isNightTime ? 0xffea79 : 0x475569);
-    }
+    // 7. 地面光暈圓盤 (半透明發光圓盤，夜晚顯示，白天隱藏)
+    groundLightPoolMaterial.opacity = nightFactor * 0.35;
+
+    // 8. 關鍵處真實 PointLight (24 座島嶼主光源 + 2 艘小船船頭探照燈)
     nightPointLights.forEach((pl) => {
-      pl.intensity = isNightTime ? 3.0 : 0.0;
+      pl.intensity = nightFactor * 2.0;
+    });
+    boatPointLights.forEach((bpl) => {
+      bpl.intensity = nightFactor * 2.5;
     });
 
-    // 燈塔旋轉光束更新 (夜間發亮並持續掃掠海面)
+    // 9. 燈塔旋轉雙光束
     if (lighthouseBeam) {
-      lighthouseBeam.visible = isNightTime;
-      if (isNightTime) {
+      lighthouseBeam.visible = nightFactor > 0.08;
+      if (nightFactor > 0.08) {
         lighthouseBeam.rotation.y += 0.024;
       }
     }
 
-    // 雲朵在夜晚調暗半透明度，襯托星空與銀河
+    // 10. 雲朵夜晚半透明調暗
     if (cloudsGroup) {
-      const cloudOpacity = isNightTime ? 0.28 : 0.94;
+      const cloudOpacity = 0.94 * (1 - nightFactor * 0.70);
       cloudsGroup.children.forEach((c) => {
         c.children.forEach((puff) => {
           if (puff.material) puff.material.opacity = cloudOpacity;
@@ -2401,11 +2561,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
     }
 
-    // 6. 海水色彩隨時間過渡
+    // 11. 海水色彩平滑過渡 (夜晚深邃魔幻海面 #132a42)
     if (oceanMesh) {
       const dayOcean = new THREE.Color(0x2f8fb5);
-      const sunsetOcean = new THREE.Color(0x286685); // 暮色清澈蔚藍，避免偏土偏褐
-      const nightOcean = new THREE.Color(0x0a192f);
+      const sunsetOcean = new THREE.Color(0x286685);
+      const nightOcean = new THREE.Color(0x132a42); // 深邃魔幻海面
       const curOcean = new THREE.Color();
 
       if (cycle < 0.4) {
@@ -2419,6 +2579,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       }
       oceanMesh.material.color.copy(curOcean);
     }
+
+    // 12. 螢火蟲星火粒子更新
+    updateFireflies(elapsedTime, nightFactor);
+
+    // 13. 同步右上角日夜開關 UI 狀態
+    updateDayNightUI(nightFactor > 0.5);
   }
 
   // ══════════════════════════════════════════════════════════════════════
@@ -2582,9 +2748,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       group.add(badgeObj);
       badgeObjects.push(badgeDiv);
 
-      // 9. 島嶼夜間柔和暖光
-      const pLight = new THREE.PointLight(0xffea79, 0, 16, 1.4);
-      pLight.position.set(0, HEX_HEIGHT + 1.8, 0);
+      // 9. 島嶼主光源：夜間開啟、白天為 0，真實暖光立體照亮 3D 建築與樹木
+      const pLight = new THREE.PointLight(0xff9933, 0, 18, 1.35);
+      pLight.position.set(0, HEX_HEIGHT + 2.2, 0);
       group.add(pLight);
       nightPointLights.push(pLight);
 
@@ -2593,7 +2759,73 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     });
   }
 
-  // ── 六角堤防未連橋邊緣：迷你欄杆與小路燈 ──
+  // ── 中世紀鍛鐵吊臂路燈 (木柱燈桿 + 鍛鐵橫臂 + 提燈燈籠 + 地面發光圓盤) ──
+  function createMedievalStreetLamp(facingAngle = 0) {
+    const lampGroup = new THREE.Group();
+
+    // 1. 深褐色細圓柱燈桿
+    const woodDarkMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.85 });
+    const ironMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.7 });
+
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.022, 0.034, 0.68, 6),
+      woodDarkMat
+    );
+    pole.position.y = 0.34;
+    pole.castShadow = true;
+    lampGroup.add(pole);
+
+    // 2. 頂部橫向短支架 (鍛鐵吊臂) 與 45° 斜撐
+    const armGroup = new THREE.Group();
+    armGroup.position.y = 0.64;
+    armGroup.rotation.y = facingAngle;
+
+    const arm = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.022, 0.022),
+      ironMat
+    );
+    arm.position.x = 0.09;
+    armGroup.add(arm);
+
+    const brace = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.016, 0.016),
+      ironMat
+    );
+    brace.position.set(0.045, -0.04, 0);
+    brace.rotation.z = Math.PI / 4;
+    armGroup.add(brace);
+
+    // 3. 懸掛一個小巧八角柱提燈燈籠 (夜晚亮起溫暖琥珀橘黃光 0xffaa33)
+    const lantern = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.042, 0.052, 0.09, 8),
+      nightLanternMaterial
+    );
+    lantern.position.set(0.15, -0.065, 0);
+    lantern.castShadow = true;
+    armGroup.add(lantern);
+
+    // 燈籠黑鐵頂蓋
+    const lanternCap = new THREE.Mesh(
+      new THREE.ConeGeometry(0.056, 0.042, 8),
+      ironMat
+    );
+    lanternCap.position.set(0.15, -0.01, 0);
+    armGroup.add(lanternCap);
+
+    lampGroup.add(armGroup);
+
+    // 4. 地面受光效果：平貼稍微浮起 (y + 0.02) 的半透明漸層發光小圓盤
+    const groundPoolGeo = new THREE.CircleGeometry(0.85, 14);
+    const groundPool = new THREE.Mesh(groundPoolGeo, groundLightPoolMaterial);
+    groundPool.rotation.x = -Math.PI / 2;
+    // 光斑位置稍微偏移至提燈正下方
+    groundPool.position.set(Math.cos(facingAngle) * 0.15, 0.02, -Math.sin(facingAngle) * 0.15);
+    lampGroup.add(groundPool);
+
+    return lampGroup;
+  }
+
+  // ── 六角堤防未連橋邊緣：迷你欄杆與中世紀鍛鐵吊臂路燈 ──
   function addHexEdgeRailingsAndLamps(group, island) {
     const byId = new Map();
     ISLAND_DATA.forEach((d) => byId.set(d.id, d));
@@ -2627,6 +2859,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     });
 
     const rApothem = HEX_RADIUS * Math.cos(Math.PI / 6); // 邊心距
+    let placedLampsCount = 0;
 
     // 6 個六角形邊的中心角度 (30°, 90°, 150°, 210°, 270°, 330°)
     for (let k = 0; k < 6; k++) {
@@ -2668,34 +2901,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
         group.add(edgeGroup);
 
-        // 在無橋邊緣角隅點綴小巧白柱暖光路燈
-        if (k % 2 === 0) {
-          const lampX = Math.sin(edgeAngle + 0.32) * (rApothem * 0.92);
-          const lampZ = Math.cos(edgeAngle + 0.32) * (rApothem * 0.92);
-          const lampGroup = new THREE.Group();
-          lampGroup.position.set(lampX, HEX_HEIGHT + 0.08, lampZ);
-
-          const pole = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.02, 0.03, 0.45, 6),
-            railingMat
-          );
-          pole.position.y = 0.225;
-          pole.castShadow = true;
-          lampGroup.add(pole);
-
-          const bulb = new THREE.Mesh(
-            new THREE.SphereGeometry(0.05, 8, 8),
-            new THREE.MeshStandardMaterial({
-              color: 0xfef08a,
-              roughness: 0.2,
-              emissive: 0xfef08a,
-              emissiveIntensity: 0.6
-            })
-          );
-          bulb.position.y = 0.45;
-          lampGroup.add(bulb);
-
-          group.add(lampGroup);
+        // 配置 3~4 盞中世紀鍛鐵木柱路燈 (含吊臂提燈與地面光暈圓盤)
+        if (placedLampsCount < 4) {
+          const lampX = Math.sin(edgeAngle + 0.28) * (rApothem * 0.90);
+          const lampZ = Math.cos(edgeAngle + 0.28) * (rApothem * 0.90);
+          // 吊臂朝向島嶼內側步道
+          const inwardAngle = Math.atan2(-lampX, -lampZ);
+          const lamp = createMedievalStreetLamp(inwardAngle);
+          lamp.position.set(lampX, HEX_HEIGHT + 0.08, lampZ);
+          group.add(lamp);
+          placedLampsCount++;
+        }
+      } else {
+        // 連接橋頭兩側也適度配置中世紀路燈，引導步道視線
+        if (placedLampsCount < 4) {
+          const bridgeFlankX = Math.sin(edgeAngle + 0.42) * (rApothem * 0.88);
+          const bridgeFlankZ = Math.cos(edgeAngle + 0.42) * (rApothem * 0.88);
+          const inwardAngle = Math.atan2(-bridgeFlankX, -bridgeFlankZ);
+          const bridgeFlankLamp = createMedievalStreetLamp(inwardAngle);
+          bridgeFlankLamp.position.set(bridgeFlankX, HEX_HEIGHT + 0.08, bridgeFlankZ);
+          group.add(bridgeFlankLamp);
+          placedLampsCount++;
         }
       }
     }
@@ -2950,6 +3176,32 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     return new THREE.Mesh(roofGeo, roofMat);
   }
 
+  // ── 輔助：嵌入式長方形發光窗戶 ──
+  function createGlowingWindowMesh(w = 0.16, h = 0.28, d = 0.04) {
+    const winGeo = new THREE.BoxGeometry(w, h, d);
+    return new THREE.Mesh(winGeo, nightWindowMaterial);
+  }
+
+  // ── 輔助：中世紀外牆微型鍛鐵壁燈 / 火把 (微調呼吸閃爍) ──
+  function createWallSconceMesh() {
+    const sconceGroup = new THREE.Group();
+    const ironMount = new THREE.Mesh(
+      new THREE.BoxGeometry(0.035, 0.07, 0.045),
+      new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.8 })
+    );
+    sconceGroup.add(ironMount);
+
+    const flameTorch = new THREE.Mesh(
+      new THREE.BoxGeometry(0.055, 0.08, 0.055),
+      wallSconceMaterial
+    );
+    flameTorch.position.set(0, 0.03, 0.038);
+    sconceGroup.add(flameTorch);
+    wallSconces.push(flameTorch);
+
+    return sconceGroup;
+  }
+
   // ══════════════════════════════════════════════════════════════════════
   // 1. 🏰 主城堡要塞生成模組 (Castle & Royal Fortress)
   // ══════════════════════════════════════════════════════════════════════
@@ -2979,11 +3231,29 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       keepLower.castShadow = true; keepLower.receiveShadow = true;
       castleGroup.add(keepLower);
 
+      // 主堡一樓發光窗戶
+      [-0.45, 0.45].forEach((wx) => {
+        const win = createGlowingWindowMesh(0.18, 0.28, 0.05);
+        win.position.set(wx, 0.28 + 0.85, 0.81);
+        castleGroup.add(win);
+      });
+
       // 二樓出挑木石堞樓 (Machicolated Upper Keep)
       const keepUpper = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.0, 1.8), stoneMat);
       keepUpper.position.set(0, 0.28 + 1.45 + 0.5, 0);
       keepUpper.castShadow = true;
       castleGroup.add(keepUpper);
+
+      // 二樓暖橘發光窗戶 (正反兩面)
+      [-0.5, 0, 0.5].forEach((wx) => {
+        const winFront = createGlowingWindowMesh(0.18, 0.32, 0.05);
+        winFront.position.set(wx, 0.28 + 1.45 + 0.5, 0.91);
+        castleGroup.add(winFront);
+
+        const winBack = createGlowingWindowMesh(0.18, 0.32, 0.05);
+        winBack.position.set(wx, 0.28 + 1.45 + 0.5, -0.91);
+        castleGroup.add(winBack);
+      });
 
       // 主堡頂部一圈城垛 (Crenellations / Battlements)
       const batGeo = new THREE.BoxGeometry(0.24, 0.22, 0.14);
@@ -3007,6 +3277,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         turretTower.position.set(tx, 0.28 + 1.6, tz);
         turretTower.castShadow = true;
         castleGroup.add(turretTower);
+
+        // 箭塔微型射箭孔發光窗
+        const slitWin = createGlowingWindowMesh(0.08, 0.22, 0.05);
+        const outwardAngle = Math.atan2(tx, tz);
+        slitWin.position.set(tx + Math.sin(outwardAngle) * 0.31, 0.28 + 2.2, tz + Math.cos(outwardAngle) * 0.31);
+        slitWin.rotation.y = outwardAngle;
+        castleGroup.add(slitWin);
 
         // 塔頂外擴石垛圈
         const ringCorbel = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.30, 0.16, 10), stoneDarkMat);
@@ -3046,11 +3323,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       gateWood.position.set(0, 0.28 + 0.325, 0.96);
       castleGroup.add(gateWood);
 
-      // 城門兩側小火炬 (夜間發光)
+      // 城門兩側大門壁燈 (Wall Sconces, 夜間發出閃爍呼吸火光)
       [-0.32, 0.32].forEach((tx) => {
-        const torch = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 6), nightGlowMaterial);
-        torch.position.set(tx, 0.28 + 0.65, 1.02);
-        castleGroup.add(torch);
+        const sconce = createWallSconceMesh();
+        sconce.position.set(tx, 0.28 + 0.65, 1.02);
+        castleGroup.add(sconce);
       });
 
       group.add(castleGroup);
@@ -3092,6 +3369,18 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       abbey.castShadow = true;
       watchGroup.add(abbey);
 
+      // 修道院兩側發光窗戶
+      [-0.8, 0.1].forEach((wx) => {
+        const win = createGlowingWindowMesh(0.18, 0.32, 0.05);
+        win.position.set(wx, 0.75, 0.78);
+        watchGroup.add(win);
+      });
+
+      // 修道院門口閃爍壁燈
+      const abbeySconce = createWallSconceMesh();
+      abbeySconce.position.set(-0.35, 0.55, 0.78);
+      watchGroup.add(abbeySconce);
+
       const abbeyRoof = createGabledRoof(1.5, 1.9, 0.95, 0xb45309);
       abbeyRoof.rotation.y = Math.PI / 2;
       abbeyRoof.position.set(-0.35, 1.45 + 0.475, 0.1);
@@ -3103,9 +3392,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       chimney.position.set(-0.95, 1.45 + 0.6, 0.4);
       watchGroup.add(chimney);
 
-      // 拱形彩繪花窗 (發光)
-      const rose = new THREE.Mesh(new THREE.CircleGeometry(0.24, 12), new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.6 }));
-      rose.position.set(-0.35, 1.05, 0.78);
+      // 拱形彩繪花窗 (使用 roseWindowMaterial)
+      const rose = new THREE.Mesh(new THREE.CircleGeometry(0.24, 12), roseWindowMaterial);
+      rose.position.set(-0.35, 1.15, 0.78);
       watchGroup.add(rose);
 
       group.add(watchGroup);
@@ -3159,13 +3448,29 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       spire.castShadow = true;
       cathGroup.add(spire);
 
-      // (4) 正立面發光圓形玫瑰花窗 (Luminescent Rose Window)
+      // (4) 正立面發光圓形玫瑰花窗 (Luminescent Rose Window - 金黃與淡紫奇幻光芒)
       const rose = new THREE.Mesh(
         new THREE.CircleGeometry(0.38, 16),
-        new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xf59e0b, emissiveIntensity: 0.85 })
+        roseWindowMaterial
       );
       rose.position.set(0, 1.25, 1.61);
       cathGroup.add(rose);
+
+      // 正面大門兩側閃爍壁燈 (Wall Sconces)
+      [-0.35, 0.35].forEach((sx) => {
+        const sconce = createWallSconceMesh();
+        sconce.position.set(sx, 0.55, 1.62);
+        cathGroup.add(sconce);
+      });
+
+      // 主殿兩側長形發光窗 (Gothic Clerestory Windows)
+      [-0.72, 0.72].forEach((sx) => {
+        [-0.8, 0.4].forEach((sz) => {
+          const highWin = createGlowingWindowMesh(0.04, 0.42, 0.18);
+          highWin.position.set(sx, 1.15, sz);
+          cathGroup.add(highWin);
+        });
+      });
 
       // (5) 拱形正門 (Gothic Arch Portal)
       const portal = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.75, 0.08), new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.85 }));
@@ -3201,6 +3506,22 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       upperFloor.position.set(-0.35, 1.0 + 0.575, 0);
       upperFloor.castShadow = true;
       alcGroup.add(upperFloor);
+
+      // 煉金小屋一二樓嵌入式長方形發光窗
+      const wLower = createGlowingWindowMesh(0.22, 0.28, 0.05);
+      wLower.position.set(-0.65, 0.55, 0.71);
+      alcGroup.add(wLower);
+
+      [-0.65, -0.05].forEach((wx) => {
+        const wUpper = createGlowingWindowMesh(0.20, 0.30, 0.05);
+        wUpper.position.set(wx, 1.0 + 0.6, 0.81);
+        alcGroup.add(wUpper);
+      });
+
+      // 工坊大門兩側閃爍壁燈
+      const alcSconce = createWallSconceMesh();
+      alcSconce.position.set(-0.15, 0.45, 0.71);
+      alcGroup.add(alcSconce);
 
       // 深色木條筋架裝飾線
       const frame1 = new THREE.Mesh(new THREE.BoxGeometry(1.88, 0.08, 1.62), timberMat);
@@ -3359,6 +3680,16 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       farmHovel.castShadow = true;
       millGroup.add(farmHovel);
 
+      // 農莊小屋長方形發光窗
+      const farmWin = createGlowingWindowMesh(0.18, 0.24, 0.05);
+      farmWin.position.set(0.7, 0.52, 0.49);
+      millGroup.add(farmWin);
+
+      // 農莊門口微型閃爍壁燈
+      const farmSconce = createWallSconceMesh();
+      farmSconce.position.set(0.42, 0.42, 0.49);
+      millGroup.add(farmSconce);
+
       const fRoof = createGabledRoof(1.1, 1.3, 0.7, 0x854d0e);
       fRoof.rotation.y = Math.PI / 2;
       fRoof.position.set(0.7, 0.95 + 0.35, 0.0);
@@ -3379,6 +3710,23 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       innMain.castShadow = true;
       mktGroup.add(innMain);
 
+      // 主酒館一樓與二樓暖黃長方形發光窗戶
+      [-0.8, -0.1].forEach((wx) => {
+        const innWinUpper = createGlowingWindowMesh(0.20, 0.28, 0.05);
+        innWinUpper.position.set(wx, 1.05, 0.54);
+        mktGroup.add(innWinUpper);
+      });
+      const innWinLower = createGlowingWindowMesh(0.22, 0.28, 0.05);
+      innWinLower.position.set(-0.8, 0.48, 0.54);
+      mktGroup.add(innWinLower);
+
+      // 酒館大門兩側閃爍壁燈 (Wall Sconces)
+      [-0.35, 0.15].forEach((wx) => {
+        const sconce = createWallSconceMesh();
+        sconce.position.set(wx, 0.45, 0.54);
+        mktGroup.add(sconce);
+      });
+
       // 木筋橫樑
       const timberBand = new THREE.Mesh(new THREE.BoxGeometry(1.68, 0.08, 1.48), woodTrim);
       timberBand.position.set(-0.45, 0.85, -0.2);
@@ -3394,6 +3742,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       annex.position.set(0.7, 0.5, -0.45);
       annex.castShadow = true;
       mktGroup.add(annex);
+
+      // 側翼矮房發光窗
+      const annexWin = createGlowingWindowMesh(0.18, 0.25, 0.05);
+      annexWin.position.set(0.7, 0.55, 0.11);
+      mktGroup.add(annexWin);
 
       const annexRoof = createGabledRoof(1.2, 1.25, 0.75, 0x1e3a8a);
       annexRoof.rotation.y = Math.PI / 2;
@@ -4274,6 +4627,29 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           pts.push(new THREE.Vector3(0, y + 0.03, u * L).applyMatrix4(bridgeGroup.matrix));
         }
 
+        // 橋樑中世紀木柱引道燈 (金黃色 0xffb703) 與地面光斑
+        [-0.36, 0, 0.36].forEach((u) => {
+          const z = u * L;
+          const y = rise * (1 - 4 * u * u);
+          for (const side of [-1, 1]) {
+            const x = side * (W / 2 + 0.05);
+            const lampGroup = new THREE.Group();
+            lampGroup.position.set(x, y + 0.36, z);
+
+            const post = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.20, 6), new THREE.MeshStandardMaterial({ color: woodDarkHex, roughness: 0.85 }));
+            post.position.y = 0.10;
+            const lantern = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.046, 0.075, 6), bridgeLanternMaterial);
+            lantern.position.y = 0.24;
+            lampGroup.add(post, lantern);
+            bridgeGroup.add(lampGroup);
+          }
+          // 橋面金黃光斑
+          const pool = new THREE.Mesh(new THREE.CircleGeometry(0.55, 10), groundLightPoolMaterial);
+          pool.rotation.x = -Math.PI / 2;
+          pool.position.set(0, y + 0.02, z);
+          bridgeGroup.add(pool);
+        });
+
       } else if (bridgeType === 'boardwalk') {
         // ════════════════════════════════════════════════════════════
         // 類型 2：【次要通道】水上木棧道 (Wooden Boardwalk)
@@ -4333,6 +4709,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           pts.push(new THREE.Vector3(0, boardY + 0.03, u * L).applyMatrix4(bridgeGroup.matrix));
         }
 
+        // 棧道兩側中世紀木柱引道燈與橋面光斑
+        [-0.30, 0, 0.30].forEach((u) => {
+          const z = u * L;
+          for (const side of [-1, 1]) {
+            const x = side * (W / 2 + 0.04);
+            const lampGroup = new THREE.Group();
+            lampGroup.position.set(x, boardY + 0.26, z);
+
+            const post = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.18, 6), new THREE.MeshStandardMaterial({ color: rusticDarkWood, roughness: 0.85 }));
+            post.position.y = 0.09;
+            const lantern = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.044, 0.07, 6), bridgeLanternMaterial);
+            lantern.position.y = 0.22;
+            lampGroup.add(post, lantern);
+            bridgeGroup.add(lampGroup);
+          }
+          const pool = new THREE.Mesh(new THREE.CircleGeometry(0.50, 10), groundLightPoolMaterial);
+          pool.rotation.x = -Math.PI / 2;
+          pool.position.set(0, boardY + 0.02, z);
+          bridgeGroup.add(pool);
+        });
+
       } else {
         // ════════════════════════════════════════════════════════════
         // 類型 3：【自然通道】日式庭園踏水石階 (Stepping Stones)
@@ -4380,6 +4777,20 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           stepGeo.scale(1.1, 0.28, 1.1);
           parts.push(paintGeo(stepGeo, stoneCol1, 0, 0.03, endZ));
         }
+
+        // 踏水石階：水面微光漂浮水燈 (微光溫暖金黃 0xffb703)
+        [-0.28, 0.28].forEach((u, idx) => {
+          const z = u * L;
+          const x = (idx % 2 === 0 ? 0.42 : -0.42);
+          const waterLantern = new THREE.Group();
+          waterLantern.position.set(x, WATER_Y + 0.04, z);
+
+          const floatTray = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.03, 6), new THREE.MeshStandardMaterial({ color: rusticDarkWood, roughness: 0.85 }));
+          const lanternMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.048, 0.075, 6), bridgeLanternMaterial);
+          lanternMesh.position.y = 0.055;
+          waterLantern.add(floatTray, lanternMesh);
+          bridgeGroup.add(waterLantern);
+        });
       }
 
       const deckMesh = new THREE.Mesh(mergeGeometries(parts), deckMat);
@@ -4652,12 +5063,24 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
             pier.add(post);
           }
         }
-        // 碼頭末端燈柱 (夜間發光)
-        const lampPole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.8, 6), woodDark);
-        lampPole.position.set(0.38, 0.45, pierLen / 2 - 0.12);
-        const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 10), nightGlowMaterial);
-        lamp.position.set(0.38, 0.9, pierLen / 2 - 0.12);
-        pier.add(lampPole, lamp);
+        // 碼頭末端中世紀海港提燈 (夜間發光與地面光暈)
+        const harborLampGroup = new THREE.Group();
+        harborLampGroup.position.set(0.38, 0.05, pierLen / 2 - 0.12);
+
+        const lampPole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.055, 1.15, 6), woodDark);
+        lampPole.position.y = 0.575;
+        const lampArm = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.03), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 }));
+        lampArm.position.set(-0.06, 1.10, 0);
+        const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.065, 0.12, 8), nightLanternMaterial);
+        lamp.position.set(-0.12, 1.02, 0);
+
+        // 碼頭地面溫暖受光光斑
+        const pierGroundPool = new THREE.Mesh(new THREE.CircleGeometry(0.75, 12), groundLightPoolMaterial);
+        pierGroundPool.rotation.x = -Math.PI / 2;
+        pierGroundPool.position.set(-0.12, 0.06, 0);
+
+        harborLampGroup.add(lampPole, lampArm, lamp, pierGroundPool);
+        pier.add(harborLampGroup);
         scene.add(pier);
 
         // 碼頭標示 (HTML 浮動標籤，極簡純文字)
@@ -4700,14 +5123,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       cabin.position.set(-0.45, 0.6, 0);
       const cabinRoof = new THREE.Mesh(new THREE.BoxGeometry(0.98, 0.09, 0.74), hullMat);
       cabinRoof.position.set(-0.45, 0.89, 0);
+
+      // 船艙發光窗戶 (使用 nightWindowMaterial)
       const winGeo = new THREE.BoxGeometry(0.16, 0.16, 0.64);
-      const w1 = new THREE.Mesh(winGeo, nightGlowMaterial); w1.position.set(-0.7, 0.64, 0);
-      const w2 = new THREE.Mesh(winGeo, nightGlowMaterial); w2.position.set(-0.2, 0.64, 0);
+      const w1 = new THREE.Mesh(winGeo, nightWindowMaterial); w1.position.set(-0.7, 0.64, 0);
+      const w2 = new THREE.Mesh(winGeo, nightWindowMaterial); w2.position.set(-0.2, 0.64, 0);
+
+      // 船頭航海提燈 (深色鐵架 + 琥珀發光提燈)
+      const bowLamp = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.10, 8), nightLanternMaterial);
+      bowLamp.position.set(1.68, 0.38, 0);
+
+      // 船頭關鍵真實 PointLight (夜晚拉高至 2.5，航行時真實照亮船身與周圍海水)
+      const bowLight = new THREE.PointLight(0xffbb55, 0, 12, 1.3);
+      bowLight.position.set(1.72, 0.42, 0);
+      ferry.add(bowLight);
+      boatPointLights.push(bowLight);
+
       const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.55, 5), woodDark);
       flagPole.position.set(-0.45, 1.2, 0);
       const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.2), new THREE.MeshStandardMaterial({ color: 0xfbbf24, side: THREE.DoubleSide }));
       flag.position.set(-0.28, 1.36, 0);
-      ferry.add(hull, bow, stripe, cabin, cabinRoof, w1, w2, flagPole, flag);
+      ferry.add(hull, bow, stripe, cabin, cabinRoof, w1, w2, bowLamp, flagPole, flag);
       // 甲板乘客 (毛線風小人)
       [0.55, 0.9].forEach((px, pi) => {
         const pass = new THREE.Group();
@@ -5745,6 +6181,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         filterRealm(pill.dataset.realm);
       });
     });
+
+    // 🌙/☀️ 日夜平滑切換快捷鈕 (HUD 右上角)
+    const dayNightQuickToggle = document.getElementById('dayNightQuickToggle');
+    if (dayNightQuickToggle) {
+      dayNightQuickToggle.addEventListener('click', () => {
+        toggleDayNight();
+      });
+    }
 
     // 光照時序鈕
     const timeBtns = document.querySelectorAll('.time-btn');
