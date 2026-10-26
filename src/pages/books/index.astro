@@ -578,6 +578,20 @@ const defaultCategory = sortedCategories[0] || '';
     display: none;
   }
 
+  /* 電腦版：直接換行展示出全部書籍膠囊，不再被截斷或滾動 */
+  @media (min-width: 900px) {
+    .filter-bar-track {
+      flex-wrap: wrap;
+      white-space: normal;
+      border-radius: 26px;
+      padding: 10px 14px;
+      justify-content: center;
+      row-gap: 10px;
+      column-gap: 8px;
+      overflow-x: visible;
+    }
+  }
+
   .filter-bar-track.is-expanded {
     flex-wrap: wrap;
     white-space: normal;
