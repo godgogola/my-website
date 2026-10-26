@@ -732,8 +732,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     .nav-track {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 5px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
       background: transparent;
       border: none;
       padding: 0;
@@ -743,10 +743,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       display: none;
     }
     .nav-item {
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       font-weight: 700;
-      padding: 6px 3px;
-      border-radius: 8px;
+      padding: 8px 4px;
+      border-radius: 10px;
       background: #ffffff;
       border: 1px solid var(--color-border);
       box-shadow: 0 1px 4px rgba(74, 144, 164, 0.06);
@@ -754,24 +754,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 36px;
+      min-height: 40px;
       color: var(--color-text-title);
       white-space: nowrap;
       transition: all 0.2s ease;
-    }
-    /* 第一排 4 個項目均分：首頁、無痛腸胃鏡、健康享瘦、影音專區 */
-    .nav-item:nth-of-type(1),
-    .nav-item:nth-of-type(2),
-    .nav-item:nth-of-type(3),
-    .nav-item:nth-of-type(4) {
-      grid-column: span 3;
-    }
-    /* 第二排 4 個項目均分：醫學筆記、互動解剖圖鑑、健康工具、讀書筆記 */
-    .nav-item:nth-of-type(5),
-    .nav-item:nth-of-type(6),
-    .nav-item:nth-of-type(7),
-    .nav-item:nth-of-type(8) {
-      grid-column: span 3;
     }
     .nav-item.active {
       background: linear-gradient(135deg, var(--color-primary), #3b7688);

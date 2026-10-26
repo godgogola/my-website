@@ -505,25 +505,27 @@ const sortedCategories = [
   .open-drawer-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: #FFFFFF;
-    color: var(--color-primary, #4a90a4);
-    border: 1.5px solid var(--color-border, #d4e5eb);
-    padding: 10px 18px;
-    border-radius: 9999px;
+    gap: 6px;
+    background-color: #ffffff;
+    color: #1e6076;
+    border: 1.5px solid #cbd5e1;
+    padding: 8px 16px;
+    border-radius: 12px;
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 0.92rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(74, 144, 164, 0.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     transition: all 0.2s ease;
     white-space: nowrap;
-    min-height: 48px;
+    min-height: 42px;
   }
 
   .open-drawer-btn:hover {
-    background: var(--color-primary-light, #eef7f9);
-    border-color: var(--color-primary, #4a90a4);
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f4c5c;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transform: translateY(-1px);
   }
 
@@ -534,70 +536,60 @@ const sortedCategories = [
     font-weight: 700;
   }
 
-  /* ── AnimatedTabs 彈簧磁吸滑塊 (電腦版支援全顯示換行) ── */
+  /* ── 膠囊容器（預設單行橫向滑動，支援展開） ── */
   .filter-bar-wrapper {
     max-width: 1200px;
     margin: 0 auto 24px;
     position: relative;
   }
 
-  /* 行動版右側漸層提示：表示可以左右滑動看更多分類 */
-  .filter-bar-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 48px;
-    height: 100%;
-    background: linear-gradient(to right, transparent, #f0f4f6 90%);
-    border-radius: 0 9999px 9999px 0;
-    pointer-events: none;
-    z-index: 10;
-  }
-
   .filter-bar-track {
     position: relative;
     display: flex;
-    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
     overflow-x: auto;
-    gap: 4px;
-    background: #eef2f5;
-    padding: 6px;
-    border-radius: 9999px;
-    border: 1px solid var(--color-border, #d4e5eb);
-    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    padding: 8px 10px;
+    background: #3e4452;
+    border-radius: 999px;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
   }
 
   .filter-bar-track::-webkit-scrollbar {
     display: none;
   }
 
-  /* 電腦版 (>= 860px)：完整顯示所有分類，自動折成二行 */
-  @media (min-width: 860px) {
-    .filter-bar-wrapper::after {
-      display: none;
-    }
+  .filter-bar-track.is-expanded {
+    flex-wrap: wrap;
+    white-space: normal;
+    border-radius: 20px;
+    padding: 12px;
+  }
 
+  /* 電腦版 (>= 860px)：完整顯示所有分類，自動折成多行 */
+  @media (min-width: 860px) {
     .filter-bar-track {
       flex-wrap: wrap;
       overflow-x: visible;
       border-radius: 20px;
-      padding: 8px;
+      padding: 10px 12px;
       gap: 8px 6px;
       justify-content: flex-start;
     }
   }
 
-  /* 彈簧磁吸白色膠囊 Indicator */
+  /* 彈簧磁吸高質感亮白膠囊 Indicator */
   .filter-spring-indicator {
     position: absolute;
     top: 0;
     left: 0;
-    border-radius: 9999px;
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(30, 58, 76, 0.08), 0 1px 3px rgba(30, 58, 76, 0.04);
-    border: 1px solid rgba(212, 229, 235, 0.85);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.1);
     pointer-events: none;
     z-index: 1;
     opacity: 0;
@@ -609,30 +601,34 @@ const sortedCategories = [
     z-index: 2;
     display: inline-flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
+    max-width: 240px;
     background: transparent;
     border: none;
-    padding: 9px 18px;
-    border-radius: 9999px;
+    padding: 8px 14px;
+    border-radius: 999px;
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: var(--color-text-muted, #5a7a8a);
+    color: #cbd5e1;
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
     line-height: 1.2;
     flex-shrink: 0;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
 
   .filter-tab-btn:hover {
-    color: var(--color-text-title, #1e3a4c);
+    color: #ffffff;
   }
 
   .filter-tab-btn.active {
-    color: var(--color-text-title, #1e3a4c);
+    color: #0f172a;
     font-weight: 800;
+    background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .tab-label {
@@ -643,19 +639,19 @@ const sortedCategories = [
   .tab-count {
     position: relative;
     z-index: 2;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 800;
     padding: 2px 8px;
-    border-radius: 9999px;
+    border-radius: 999px;
     line-height: 1.3;
-    background-color: rgba(74, 144, 164, 0.12);
-    color: var(--color-primary, #4a90a4);
+    background: rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
     transition: all 0.2s ease;
   }
 
   .filter-tab-btn.active .tab-count {
-    background-color: var(--color-primary-light, #eef7f9);
-    color: var(--color-primary, #4a90a4);
+    background: #0f172a;
+    color: #ffffff;
   }
 
   /* ── 卡片網格 ── */
