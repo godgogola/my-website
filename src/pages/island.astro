@@ -5970,9 +5970,16 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       parentTail = segGroup;
     }
 
-    // 放大至巨龍氣勢尺寸 (翼展超過 6.5 單位，盤旋於雙群島上空清晰壯觀)
-    dragonGroup.scale.setScalar(1.45);
-    dragonGroup.position.set(0, 11.5, 0);
+    // 放大至巨龍氣勢尺寸 (翼展超過 10 單位，盤旋於雙群島正上空清晰壯觀)
+    dragonGroup.scale.setScalar(2.35);
+    dragonGroup.position.set(0, 10.2, 0);
+
+    // 大範圍隱形點擊碰撞球，讓滑鼠輕鬆點擊飛行中的巨龍
+    const dragonHitMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(1.8, 8, 8),
+      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
+    );
+    dragonGroup.add(dragonHitMesh);
 
     // 標記互動屬性，支援滑鼠懸停與點擊噴火
     dragonGroup.userData = { isDragon: true, isWobbleable: true };
@@ -6169,21 +6176,64 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     }
   }
 
-  // ── (3) 3D 對話泡泡與健康/理財冷知識金句庫 ──
+  // ── (3) 3D 對話泡泡與各動物專屬健康/理財冷知識金句庫 ──
+  const ANIMAL_QUOTES_BY_TYPE = {
+    cat: [
+      '🐱 喵嗚～像貓咪一樣細嚼慢嚥、飯後別馬上躺平，胃食道逆流不找碴！',
+      '🐱 呼嚕嚕～睡眠充足能穩定皮質醇與瘦體素，今晚跟貓咪一樣早點睡吧！',
+      '🐱 喵～定期伸展筋骨＋補充優質蛋白質與鈣質，預防肌少症與骨質疏鬆！',
+      '🐱 喵嗚！投資就像貓咪狩獵，耐心等待、長期持有，不隨市場雜音亂跳！'
+    ],
+    puppy: [
+      '🐶 汪汪！每天陪我快走 30 分鐘，胰島素敏感度 UP，血壓血糖乖乖聽話！',
+      '🐶 汪！運動是最好的天然良藥，有氧搭配肌力訓練，護心又減脂！',
+      '🐶 汪嗚～少吃加工食品與高鈉零食，血管年輕有彈性，活力汪汪叫！',
+      '🐶 汪！忠誠守護你的資產配置，定期定額就像小狗一樣死忠不渝！'
+    ],
+    sheep: [
+      '🐑 咩～天天吃足夠的原型蔬菜與膳食纖維，腸道益生菌像小羊一樣快樂！',
+      '🐑 咩咩～按照「水、肉、菜、飯、果」順序進食，餐後血糖平穩不坐雲霄飛車！',
+      '🐑 咩～定期安排無痛胃腸鏡篩檢，息肉早期切除，守護消化道一輩子平安！',
+      '🐑 咩～別跟著羊群盲目追高殺低，指數化投資讓你夜夜數羊好眠！'
+    ],
+    cockatoo: [
+      '🦜 嘎～！多喝白開水代替含糖手搖飲，告別脂肪肝與高尿酸！',
+      '🦜 嘎嘎！健檢報告有紅字別慌張，找黃醫師專業判讀、定期追蹤最安心！',
+      '🦜 嘎～量血壓記得「722 原則」：連續7天、早晚2次、每次量2遍取平均！',
+      '🦜 嘎！每天閱讀一篇醫學或理財筆記，讓知識複利帶你展翅高飛！'
+    ],
+    turtle: [
+      '🐢 慢慢存、穩穩賺，指數化投資就像海龜一樣長壽又穩健！',
+      '🐢 護腎秘訣：三高控制好、不亂吃來路不明止痛藥，腎絲球過濾率長保青春！'
+    ],
+    dolphin: [
+      '🐬 噗咻～定期腹部超音波檢查，肝膽胰脾腎健康一目了然無死角！',
+      '🐬 多攝取富含 Omega-3 的深海魚與堅果，降低三酸甘油酯、保護心血管！'
+    ],
+    duck: [
+      '🐥 呱呱！做好股債資產配置，面對市場大風大浪也能優雅漂浮！',
+      '🐥 減重不求快，科學控糖搭配 GLP-1 專業醫療評估，健康瘦身不復胖！'
+    ]
+  };
+
   const HEALTH_WEALTH_QUOTES = [
-    '🐑 咩～定期做無痛胃鏡，守護腸胃一生健康！',
-    '🐶 汪！每天快走 30 分鐘，血壓血糖乖乖聽話！',
-    '🦜 嘎～多喝溫水少重鹹，腎臟天天笑瞇瞇！',
-    '🐢 慢慢存、穩穩賺，指數投資像烏龜一樣長青！',
-    '🐬 噗咻～定期腹部超音波，肝臟健康無死角！',
-    '🐟 噗通！多吃富含 Omega-3 的深海魚，血管通暢不卡關！',
-    '🐥 呱呱！做好資產配置，面對市場波動不慌張！',
     '🏰 城堡衛兵：早睡早起身體好，今晚早點休息吧！',
     '⛪ 教堂鐘聲：心平氣和、飲食定時，胃食道逆流不上門！',
     '🩺 黃醫師小叮嚀：每年定期健康檢查，預防勝於治療！',
     '📚 智慧小箴言：每天閱讀 15 分鐘，思想財富雙豐收！',
     '🌾 稻香微風：高纖蔬果天天吃，腸道益生菌活力滿滿！'
   ];
+
+  function triggerAnimalInteraction(animalRoot) {
+    if (!animalRoot) return;
+    triggerSquash(animalRoot);
+    const worldPos = new THREE.Vector3();
+    animalRoot.getWorldPosition(worldPos);
+    const aType = animalRoot.userData && animalRoot.userData.animalType;
+    const pool = (aType && ANIMAL_QUOTES_BY_TYPE[aType]) ? ANIMAL_QUOTES_BY_TYPE[aType] : HEALTH_WEALTH_QUOTES;
+    const msg = pool[Math.floor(Math.random() * pool.length)];
+    showSpeechBubble(worldPos, msg);
+  }
 
   function initSpeechBubble() {
     speechBubbleDiv = document.createElement('div');
@@ -6421,10 +6471,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
   // ── (9) 動物生機動畫即時更新 ──
   function updateFauna(elapsedTime) {
-    // 陸地動物：小狗搖尾巴、小羊轉身、鸚鵡點頭
+    // 陸地動物：小貓與小狗搖尾巴、小羊轉身、鸚鵡點頭
     faunaCreatures.forEach(c => {
-      if (c.type === 'puppy' && c.tailMesh) {
-        c.tailMesh.rotation.y = Math.sin(elapsedTime * 12) * 0.45;
+      if ((c.type === 'puppy' || c.type === 'cat') && c.tailMesh) {
+        c.tailMesh.rotation.y = Math.sin(elapsedTime * 10 + c.phase) * 0.45;
       } else if (c.type === 'sheep') {
         c.mesh.rotation.y = c.baseRotY + Math.sin(elapsedTime * 1.5 + c.phase) * 0.08;
       } else if (c.type === 'cockatoo') {
@@ -6644,10 +6694,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           testNode = testNode.parent;
         }
         if (animalRoot) {
-          triggerSquash(animalRoot);
-          const worldPos = new THREE.Vector3();
-          animalRoot.getWorldPosition(worldPos);
-          showSpeechBubble(worldPos);
+          triggerAnimalInteraction(animalRoot);
           return;
         }
 
