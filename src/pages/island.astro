@@ -169,9 +169,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           <span class="btn-text">全景</span>
         </button>
 
-        <button class="hud-action-btn" id="summonDragonBtn" title="召喚赤紅巨龍咆哮噴火！" style="border-color: #fca5a5; background: #fef2f2; color: #b91c1c;">
+        <button class="hud-action-btn" id="summonDragonBtn" title="切換「🐉 騎乘飛龍視角」並噴出黃金烈焰！" style="border-color: #fca5a5; background: #fef2f2; color: #b91c1c;">
           <span>🐉</span>
-          <span class="btn-text">巨龍</span>
+          <span class="btn-text" id="dragonBtnText">騎龍</span>
+        </button>
+
+        <button class="hud-action-btn" id="weatherMagicBtn" title="切換中古世紀天氣魔法：晴空 / ❄️ 飄雪 / 🍁 黃金落葉 / 🌠 流星雨" style="border-color: #c4b5fd; background: #f5f3ff; color: #5b21b6;">
+          <span id="weatherBtnIcon">✨</span>
+          <span class="btn-text" id="weatherBtnText">天氣</span>
         </button>
 
         <button class="hud-action-btn" id="birdViewBtn" title="鳥瞰：升空俯視環湖群山，並緩慢環繞">
@@ -1940,7 +1945,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let lighthouseBeam = null;
   let dragonGroup = null;
   let dragonData = null;
+  let isDragonRideMode = false;
   const dragonFireParticles = [];
+  const treasureChests = [];
+  const treasureCoins = [];
+  let currentWeatherMode = 'clear'; // 'clear' | 'snow' | 'leaves' | 'meteor'
+  let snowParticlesGroup = null;
+  let leavesParticlesGroup = null;
+  const shootingStars = [];
 
   // 動態相機飛行參數
   let cameraTarget = new THREE.Vector3(0, 0, 0);
@@ -2016,6 +2028,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     birdFlockData = createBirdFlock(); // 10. 飛鳥振翅盤旋
     createRedDragon();        // 10b. 中古世紀赤紅巨龍盤旋與噴火互動
     createMiniFauna();        // 11. 療癒 Q 版小動物與海洋魚群
+    createTreasureChests();   // 11b. 黃金寶箱與噴金幣系統
+    initWeatherMagicSystem(); // 11c. 天氣魔法與許願流星雨系統
     initSpeechBubble();       // 12. 3D 對話氣泡系統
     setupRaycaster();
     setupUI();
@@ -5404,34 +5418,36 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const whiteMat = new THREE.MeshStandardMaterial({ color: 0xfcfbfa, roughness: 0.7, flatShading: true });
     const crestMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.6, flatShading: true });
     const beakMat = new THREE.MeshStandardMaterial({ color: 0x4b5563, roughness: 0.8 });
-    const woodMat = new THREE.MeshStandardMaterial({ color: 0x7c4f2e, roughness: 0.9 });
+    const footMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.8 });
 
-    // 棲木樁
-    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.6, 6), woodMat);
-    post.position.y = 0.3;
-    g.add(post);
+    // 兩隻可愛小鳥腳 (可在草地上活潑散步跳躍)
+    [-0.06, 0.06].forEach(fz => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.14, 5), footMat);
+      leg.position.set(0, 0.07, fz);
+      g.add(leg);
+    });
 
     // 身軀
     const body = new THREE.Mesh(new THREE.SphereGeometry(0.18, 6, 6), whiteMat);
-    body.scale.set(0.9, 1.3, 0.9);
-    body.position.set(0, 0.68, 0);
+    body.scale.set(1.05, 1.25, 0.95);
+    body.position.set(0, 0.26, 0);
     g.add(body);
 
     // 頭部
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 6, 6), whiteMat);
-    head.position.set(0.05, 0.92, 0);
+    head.position.set(0.08, 0.48, 0);
     g.add(head);
 
     // 招牌黃色羽冠
     const crest = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.24, 4), crestMat);
     crest.rotation.z = -0.45;
-    crest.position.set(0.02, 1.08, 0);
+    crest.position.set(0.04, 0.64, 0);
     g.add(crest);
 
     // 灰彎喙
     const beak = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12, 4), beakMat);
     beak.rotation.z = Math.PI / 2 + 0.3;
-    beak.position.set(0.16, 0.91, 0);
+    beak.position.set(0.20, 0.47, 0);
     g.add(beak);
 
     g.userData = { isAnimal: true, animalType: 'cockatoo', isWobbleable: true };
@@ -5590,47 +5606,54 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         triggerAnimalInteraction(creatureMesh);
       });
       const pillObj = new CSS2DObject(pill);
-      pillObj.position.set(0, type === 'cockatoo' ? 1.25 : 0.85, 0);
+      pillObj.position.set(0, 0.72, 0);
       creatureMesh.add(pillObj);
       badgeObjects.push(pill);
     }
   }
 
   function createMiniFauna() {
+    // 3 條遠離中央建築物、水池與樹木的外環空曠草地散步路線 (半徑 r ≈ 2.05 ~ 2.35)
+    const PATROL_ROUTES = [
+      { ax: -0.95, az: 2.18, bx: 0.95, bz: 2.18 },  // 路線 0：島嶼正前方外緣寬敞草地走廊
+      { ax: 1.55, az: 1.82, bx: 2.28, bz: 0.22 },   // 路線 1：島嶼右前方外緣寬敞草地走廊
+      { ax: -2.28, az: -0.05, bx: -1.62, bz: 1.78 } // 路線 2：島嶼左前方外緣寬敞草地走廊
+    ];
+
     // 陸地療癒動物：小橘貓 (cat)、小柴犬 (puppy)、小綿羊 (sheep)、巴丹鸚鵡 (cockatoo) 遍佈各座主題島嶼！
     const FAUNA_DISTRIBUTION = [
       // 🐱 小橘貓 (Cat)
-      { islandId: 'endoscopy', type: 'cat', x: 1.15, z: 0.85 },
-      { islandId: 'intestine', type: 'cat', x: -1.10, z: 0.85 },
-      { islandId: 'liver-biliary', type: 'cat', x: 1.05, z: 0.75 },
-      { islandId: 'medication', type: 'cat', x: -1.15, z: 0.80 },
-      { islandId: 'random-walk', type: 'cat', x: 1.10, z: 0.80 },
-      { islandId: 'golden-rules', type: 'cat', x: -1.05, z: 0.85 },
+      { islandId: 'endoscopy', type: 'cat', route: 0 },
+      { islandId: 'intestine', type: 'cat', route: 1 },
+      { islandId: 'liver-biliary', type: 'cat', route: 2 },
+      { islandId: 'medication', type: 'cat', route: 0 },
+      { islandId: 'random-walk', type: 'cat', route: 1 },
+      { islandId: 'golden-rules', type: 'cat', route: 2 },
 
       // 🐶 小柴犬 (Puppy)
-      { islandId: 'exercise', type: 'puppy', x: 1.25, z: -0.65 },
-      { islandId: 'stomach', type: 'puppy', x: -1.15, z: 0.65 },
-      { islandId: 'diabetes', type: 'puppy', x: 1.10, z: 0.80 },
-      { islandId: 'weight-loss', type: 'puppy', x: -1.05, z: 0.85 },
-      { islandId: 'wealth-ladder', type: 'puppy', x: 1.10, z: 0.75 },
-      { islandId: 'sapiens', type: 'puppy', x: -1.10, z: 0.75 },
+      { islandId: 'exercise', type: 'puppy', route: 0 },
+      { islandId: 'stomach', type: 'puppy', route: 1 },
+      { islandId: 'diabetes', type: 'puppy', route: 2 },
+      { islandId: 'weight-loss', type: 'puppy', route: 0 },
+      { islandId: 'wealth-ladder', type: 'puppy', route: 1 },
+      { islandId: 'sapiens', type: 'puppy', route: 2 },
 
       // 🐑 小綿羊 (Sheep)
-      { islandId: 'glucose', type: 'sheep', x: 1.10, z: 0.80 },
-      { islandId: 'diet', type: 'sheep', x: -1.05, z: 0.90 },
-      { islandId: 'chronic', type: 'sheep', x: 1.05, z: 0.80 },
-      { islandId: 'lipids', type: 'sheep', x: -1.10, z: 0.75 },
-      { islandId: 'die-with-zero', type: 'sheep', x: -0.95, z: 0.80 },
+      { islandId: 'glucose', type: 'sheep', route: 0 },
+      { islandId: 'diet', type: 'sheep', route: 1 },
+      { islandId: 'chronic', type: 'sheep', route: 2 },
+      { islandId: 'lipids', type: 'sheep', route: 0 },
+      { islandId: 'die-with-zero', type: 'sheep', route: 1 },
 
       // 🦜 巴丹鸚鵡 (Cockatoo)
-      { islandId: 'hypertension', type: 'cockatoo', x: -1.25, z: 0.75 },
-      { islandId: 'ultrasound', type: 'cockatoo', x: 1.10, z: 0.80 },
-      { islandId: 'hepatitis', type: 'cockatoo', x: 1.05, z: 0.75 },
-      { islandId: 'brain-neuro', type: 'cockatoo', x: 1.05, z: -0.85 },
-      { islandId: 'most-important', type: 'cockatoo', x: -1.10, z: 0.80 }
+      { islandId: 'hypertension', type: 'cockatoo', route: 2 },
+      { islandId: 'ultrasound', type: 'cockatoo', route: 0 },
+      { islandId: 'hepatitis', type: 'cockatoo', route: 1 },
+      { islandId: 'brain-neuro', type: 'cockatoo', route: 2 },
+      { islandId: 'most-important', type: 'cockatoo', route: 0 }
     ];
 
-    FAUNA_DISTRIBUTION.forEach(item => {
+    FAUNA_DISTRIBUTION.forEach((item, idx) => {
       const islandObj = islandObjectsMap.get(item.islandId);
       if (!islandObj) return;
 
@@ -5642,16 +5665,21 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
       if (!creatureMesh) return;
       attachAnimalHitboxAndBadge(creatureMesh, item.type);
-      creatureMesh.position.set(item.x, HEX_HEIGHT + 0.08, item.z);
-      creatureMesh.rotation.y = Math.random() * Math.PI * 2;
+
+      const rt = PATROL_ROUTES[item.route % PATROL_ROUTES.length];
+      creatureMesh.position.set(rt.ax, HEX_HEIGHT + 0.08, rt.az);
       islandObj.add(creatureMesh);
 
       faunaCreatures.push({
         mesh: creatureMesh,
         type: item.type,
         islandId: item.islandId,
-        baseRotY: creatureMesh.rotation.y,
-        phase: Math.random() * Math.PI * 2,
+        ax: rt.ax,
+        az: rt.az,
+        bx: rt.bx,
+        bz: rt.bz,
+        walkSpeed: 0.85 + (idx % 4) * 0.14,
+        phase: idx * 1.35,
         tailMesh: creatureMesh.userData.tailMesh
       });
     });
@@ -6174,6 +6202,439 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         fp.mesh.material.opacity = (1 - prog) * 0.9;
       }
     }
+
+    // 🐉 若處於「騎乘飛龍視角 (Dragon Rider Mode)」，相機平滑跟隨在巨龍背脊斜後方俯瞰群島
+    if (isDragonRideMode) {
+      const rideCamOffset = new THREE.Vector3(0, 3.8, -8.5).applyQuaternion(dragonData.group.quaternion);
+      const desiredCamPos = dragonData.group.position.clone().add(rideCamOffset);
+      const lookForwardOffset = new THREE.Vector3(0, -2.2, 16.0).applyQuaternion(dragonData.group.quaternion);
+      const desiredLookAt = dragonData.group.position.clone().add(lookForwardOffset);
+
+      camera.position.lerp(desiredCamPos, 0.08);
+      controls.target.lerp(desiredLookAt, 0.10);
+    }
+  }
+
+  // 切換「🐉 騎乘飛龍第一人稱追尾視角」
+  function toggleDragonRideMode() {
+    setDragonRideMode(!isDragonRideMode);
+  }
+
+  function setDragonRideMode(on) {
+    isDragonRideMode = on;
+    const btn = document.getElementById('summonDragonBtn');
+    const txt = document.getElementById('dragonBtnText');
+    if (btn) btn.classList.toggle('active', on);
+    if (txt) txt.textContent = on ? '下龍' : '騎龍';
+
+    if (on) {
+      exitBirdViewSilently();
+      closeDetailCard();
+      isFlightActive = false;
+      triggerDragonInteraction();
+      showMiniToast('🐉 已登上赤紅巨龍背脊！正在翱翔巡視 24 座群島（再點一次「下龍」或「全景」可恢復視角）');
+    } else {
+      resetView();
+    }
+  }
+
+  function exitDragonRideSilently() {
+    if (!isDragonRideMode) return;
+    isDragonRideMode = false;
+    const btn = document.getElementById('summonDragonBtn');
+    const txt = document.getElementById('dragonBtnText');
+    if (btn) btn.classList.remove('active');
+    if (txt) txt.textContent = '騎龍';
+  }
+
+  // ── (2c) 中古世紀深海黃金寶箱與噴金幣互動系統 (Golden Treasure Chests & Coin Fountain) ──
+  const TREASURE_QUOTES = [
+    '💰 寶箱大開！巴菲特：人生就像滾雪球，最重要的是找到濕的雪和長長的山坡（健康的身體）！',
+    '💰 獲得黃金秘寶！複利是世界第八大奇蹟，而定期無痛腸胃鏡則是守護奇蹟的護城河！',
+    '💰 金幣噴發！留在市場裡的時間（Time in the market），遠比猜測高低點（Timing）更重要！',
+    '💰 王國寶藏箴言：今日省下一杯含糖飲料，明日收穫健康的肝臟與滿滿的複利股息！',
+    '💰 傳奇秘寶：最好的投資是投資自己的健康與大腦，這兩樣資產永遠不會被通膨課稅！'
+  ];
+
+  function createTreasureChests() {
+    const CHEST_SPOTS = [
+      { x: 0.0, z: 3.6, rotY: 0.15, label: '💰 黃金寶箱' },
+      { x: -4.4, z: -5.4, rotY: 0.65, label: '💰 醫療秘寶箱' },
+      { x: 4.6, z: -5.2, rotY: -0.55, label: '💰 財富秘寶箱' }
+    ];
+
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.75, flatShading: true });
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.25, metalness: 0.7, flatShading: true });
+    const glowGoldMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+    const rubyMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+    const raftRockMat = new THREE.MeshStandardMaterial({ color: 0xe6d5ac, roughness: 0.9, flatShading: true });
+
+    CHEST_SPOTS.forEach((spot, idx) => {
+      const root = new THREE.Group();
+      root.position.set(spot.x, 0.05, spot.z);
+      root.rotation.y = spot.rotY;
+
+      // 底部迷你金沙礁石底座
+      const reef = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.25, 0.28, 7), raftRockMat);
+      reef.position.y = 0.06;
+      reef.castShadow = true;
+      reef.receiveShadow = true;
+      root.add(reef);
+
+      // 寶箱主體群組 (可彈跳)
+      const chestGroup = new THREE.Group();
+      chestGroup.position.y = 0.20;
+      root.add(chestGroup);
+
+      // 下半部木箱與黃金邊框
+      const boxBase = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.46, 0.64), woodMat);
+      boxBase.position.y = 0.23;
+      boxBase.castShadow = true;
+      chestGroup.add(boxBase);
+
+      const goldTrim = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.10, 0.68), goldMat);
+      goldTrim.position.y = 0.42;
+      chestGroup.add(goldTrim);
+
+      const lockPlate = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.24, 0.06), goldMat);
+      lockPlate.position.set(0, 0.40, 0.34);
+      chestGroup.add(lockPlate);
+
+      // 箱內滿滿的發光金幣與紅寶石 (開箱時閃耀露出)
+      const innerGold = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.14, 0.54), glowGoldMat);
+      innerGold.position.y = 0.44;
+      chestGroup.add(innerGold);
+
+      [-0.22, 0, 0.22].forEach((rx, ri) => {
+        const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.10, 0), ri === 1 ? rubyMat : goldMat);
+        gem.position.set(rx, 0.54, 0.04);
+        chestGroup.add(gem);
+      });
+
+      // 可掀開的上蓋樞紐 (Lid Pivot，軸心設於箱體後緣)
+      const lidPivot = new THREE.Group();
+      lidPivot.position.set(0, 0.46, -0.32);
+      chestGroup.add(lidPivot);
+
+      const lidWood = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.92, 8, 1, false, 0, Math.PI), woodMat);
+      lidWood.rotation.z = Math.PI / 2;
+      lidWood.position.set(0, 0, 0.32);
+      lidWood.castShadow = true;
+      lidPivot.add(lidWood);
+
+      const lidBand1 = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.10, 8, 1, false, 0, Math.PI), goldMat);
+      lidBand1.rotation.z = Math.PI / 2;
+      lidBand1.position.set(-0.34, 0, 0.32);
+      const lidBand2 = lidBand1.clone();
+      lidBand2.position.set(0.34, 0, 0.32);
+      lidPivot.add(lidBand1, lidBand2);
+
+      // 隱形大範圍點擊碰撞球
+      const hitSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(1.15, 8, 8),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
+      );
+      hitSphere.position.y = 0.45;
+      chestGroup.add(hitSphere);
+
+      // 頭頂浮動小標籤
+      const badge = document.createElement('div');
+      badge.className = 'animal-mini-pill';
+      badge.style.background = 'linear-gradient(135deg, #fef08a, #f59e0b)';
+      badge.style.borderColor = '#b45309';
+      badge.style.color = '#451a03';
+      badge.textContent = spot.label;
+      badge.title = '點擊打開黃金寶箱噴出滿滿金幣！';
+      badge.addEventListener('pointerdown', (e) => e.stopPropagation());
+      badge.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerTreasureChest(idx);
+      });
+      const badgeObj = new CSS2DObject(badge);
+      badgeObj.position.set(0, 1.15, 0);
+      chestGroup.add(badgeObj);
+      badgeObjects.push(badge);
+
+      root.userData = { isTreasureChest: true, chestIndex: idx, isWobbleable: true };
+      root.traverse(c => {
+        c.userData.isTreasureChest = true;
+        c.userData.chestIndex = idx;
+        c.userData.parentWobble = chestGroup;
+        c.userData.isWobbleable = true;
+      });
+
+      scene.add(root);
+      treasureChests.push({
+        root,
+        chestGroup,
+        lidPivot,
+        openUntil: 0,
+        curLidAngle: 0,
+        bobPhase: idx * 2.1
+      });
+    });
+  }
+
+  const coinGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.05, 10);
+  function triggerTreasureChest(idx) {
+    const item = treasureChests[idx];
+    if (!item) return;
+
+    item.openUntil = Date.now() + 3600;
+    triggerSquash(item.chestGroup);
+
+    const worldPos = new THREE.Vector3();
+    item.chestGroup.getWorldPosition(worldPos);
+    createWaterRipple(worldPos);
+
+    // 噴射 28 枚旋轉閃耀 3D 黃金硬幣噴泉！
+    for (let k = 0; k < 28; k++) {
+      const isRuby = (k % 7 === 0);
+      const mat = new THREE.MeshStandardMaterial({
+        color: isRuby ? 0xef4444 : 0xfacc15,
+        emissive: isRuby ? 0x991b1b : 0xd97706,
+        emissiveIntensity: 0.45,
+        roughness: 0.2,
+        metalness: 0.8
+      });
+      const coin = new THREE.Mesh(coinGeo, mat);
+      coin.position.copy(worldPos).add(new THREE.Vector3(0, 0.55, 0));
+      coin.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      scene.add(coin);
+
+      const ang = Math.random() * Math.PI * 2;
+      const radSpd = 0.04 + Math.random() * 0.11;
+      treasureCoins.push({
+        mesh: coin,
+        vx: Math.cos(ang) * radSpd,
+        vy: 0.18 + Math.random() * 0.16,
+        vz: Math.sin(ang) * radSpd,
+        rx: (Math.random() - 0.5) * 0.35,
+        ry: (Math.random() - 0.5) * 0.35,
+        startTime: Date.now(),
+        duration: 1450 + Math.random() * 500
+      });
+    }
+
+    const quote = TREASURE_QUOTES[Math.floor(Math.random() * TREASURE_QUOTES.length)];
+    showSpeechBubble(worldPos, quote);
+    showMiniToast('💰 黃金寶箱開啟！噴出滿滿健康與複利金幣！');
+  }
+
+  function updateTreasureChests(elapsedTime) {
+    const now = Date.now();
+    treasureChests.forEach(tc => {
+      // 隨海浪微微起伏
+      tc.root.position.y = 0.04 + Math.sin(elapsedTime * 2.0 + tc.bobPhase) * 0.035;
+      // 上蓋平滑開合動畫
+      const targetAngle = (now < tc.openUntil) ? -1.15 : 0;
+      tc.curLidAngle += (targetAngle - tc.curLidAngle) * 0.14;
+      tc.lidPivot.rotation.x = tc.curLidAngle;
+    });
+
+    // 更新拋物線噴發金幣粒子
+    for (let i = treasureCoins.length - 1; i >= 0; i--) {
+      const c = treasureCoins[i];
+      const age = now - c.startTime;
+      if (age >= c.duration) {
+        scene.remove(c.mesh);
+        c.mesh.material.dispose();
+        treasureCoins.splice(i, 1);
+      } else {
+        c.vy -= 0.0068; // 重力加速度落下
+        c.mesh.position.x += c.vx;
+        c.mesh.position.y += c.vy;
+        c.mesh.position.z += c.vz;
+        c.mesh.rotation.x += c.rx;
+        c.mesh.rotation.y += c.ry;
+        if (c.mesh.position.y < 0.05 && c.vy < 0) {
+          c.vy = -c.vy * 0.45; // 碰到水面輕微彈跳
+        }
+      }
+    }
+  }
+
+  // ── (2d) 中古世紀天氣魔法與許願流星雨系統 (Snow / Golden Leaves / Meteor Shower) ──
+  function initWeatherMagicSystem() {
+    // 1. ❄️ 奇幻飄雪粒子群 (320 朵立體六角雪花)
+    snowParticlesGroup = new THREE.Group();
+    snowParticlesGroup.visible = false;
+    const snowGeo = new THREE.OctahedronGeometry(0.14, 0);
+    const snowMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
+    for (let i = 0; i < 320; i++) {
+      const flake = new THREE.Mesh(snowGeo, snowMat);
+      flake.position.set(
+        (Math.random() - 0.5) * 76,
+        Math.random() * 28,
+        (Math.random() - 0.5) * 52
+      );
+      flake.scale.setScalar(0.6 + Math.random() * 0.8);
+      flake.userData = {
+        fallSpeed: 0.05 + Math.random() * 0.06,
+        swaySpeed: 1.2 + Math.random() * 1.5,
+        phase: Math.random() * Math.PI * 2
+      };
+      snowParticlesGroup.add(flake);
+    }
+    scene.add(snowParticlesGroup);
+
+    // 2. 🍁 黃金秋楓落葉粒子群 (220 片金黃、琥珀、楓紅落葉)
+    leavesParticlesGroup = new THREE.Group();
+    leavesParticlesGroup.visible = false;
+    const leafGeo = new THREE.ConeGeometry(0.18, 0.04, 5);
+    const leafColors = [0xf59e0b, 0xea580c, 0xfacc15, 0xd97706, 0xef4444];
+    const leafMats = leafColors.map(col => new THREE.MeshBasicMaterial({ color: col, side: THREE.DoubleSide }));
+    for (let i = 0; i < 220; i++) {
+      const leaf = new THREE.Mesh(leafGeo, leafMats[i % leafMats.length]);
+      leaf.position.set(
+        (Math.random() - 0.5) * 74,
+        Math.random() * 26,
+        (Math.random() - 0.5) * 50
+      );
+      leaf.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      leaf.userData = {
+        fallSpeed: 0.04 + Math.random() * 0.05,
+        swaySpeed: 1.5 + Math.random() * 1.6,
+        phase: Math.random() * Math.PI * 2,
+        rotSpeed: 0.03 + Math.random() * 0.05
+      };
+      leavesParticlesGroup.add(leaf);
+    }
+    scene.add(leavesParticlesGroup);
+  }
+
+  function cycleWeatherMagic() {
+    const modes = ['clear', 'snow', 'leaves', 'meteor'];
+    const nextIdx = (modes.indexOf(currentWeatherMode) + 1) % modes.length;
+    currentWeatherMode = modes[nextIdx];
+
+    const btn = document.getElementById('weatherMagicBtn');
+    const icon = document.getElementById('weatherBtnIcon');
+    const text = document.getElementById('weatherBtnText');
+
+    if (snowParticlesGroup) snowParticlesGroup.visible = (currentWeatherMode === 'snow');
+    if (leavesParticlesGroup) leavesParticlesGroup.visible = (currentWeatherMode === 'leaves');
+
+    if (currentWeatherMode === 'clear') {
+      if (btn) btn.classList.remove('active');
+      if (icon) icon.textContent = '✨';
+      if (text) text.textContent = '天氣';
+      showMiniToast('☀️ 天氣魔法：恢復晴朗清澈天際！');
+    } else if (currentWeatherMode === 'snow') {
+      if (btn) btn.classList.add('active');
+      if (icon) icon.textContent = '❄️';
+      if (text) text.textContent = '飄雪';
+      showMiniToast('❄️ 天氣魔法：中古世紀奇幻瑞雪紛飛！');
+    } else if (currentWeatherMode === 'leaves') {
+      if (btn) btn.classList.add('active');
+      if (icon) icon.textContent = '🍁';
+      if (text) text.textContent = '楓葉';
+      showMiniToast('🍁 天氣魔法：黃金秋楓隨風飄舞！');
+    } else if (currentWeatherMode === 'meteor') {
+      if (btn) btn.classList.add('active');
+      if (icon) icon.textContent = '🌠';
+      if (text) text.textContent = '流星';
+      // 自動切換至璀璨星夜，讓流星雨在銀河下閃耀
+      isAutoDayNight = false;
+      manualTimeLock = true;
+      targetCycle = 0.75;
+      for (let k = 0; k < 5; k++) spawnShootingStar();
+      showMiniToast('🌠 天氣魔法：夜空降下璀璨許願流星雨！快許下健康與財富心願！');
+    }
+  }
+
+  function spawnShootingStar() {
+    if (shootingStars.length > 14) return;
+    const group = new THREE.Group();
+
+    // 耀眼流星頭 + 漸細長光尾
+    const headMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+    const head = new THREE.Mesh(new THREE.OctahedronGeometry(0.32, 0), headMat);
+    group.add(head);
+
+    const tailGeo = new THREE.ConeGeometry(0.24, 6.8, 6);
+    tailGeo.rotateX(-Math.PI / 2);
+    tailGeo.translate(0, 0, -3.4);
+    const tailMat = new THREE.MeshBasicMaterial({
+      color: Math.random() > 0.4 ? 0x38bdf8 : 0xfde047,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const tail = new THREE.Mesh(tailGeo, tailMat);
+    group.add(tail);
+
+    // 從天際高處斜掠而下
+    const startX = -38 + Math.random() * 55;
+    const startY = 22 + Math.random() * 16;
+    const startZ = -18 - Math.random() * 28;
+    group.position.set(startX, startY, startZ);
+
+    const vel = new THREE.Vector3(
+      0.65 + Math.random() * 0.45,
+      -0.38 - Math.random() * 0.22,
+      0.15 + (Math.random() - 0.5) * 0.25
+    );
+    group.lookAt(group.position.clone().add(vel));
+    scene.add(group);
+
+    shootingStars.push({
+      group,
+      tailMat,
+      vel,
+      startTime: Date.now(),
+      duration: 950 + Math.random() * 550
+    });
+  }
+
+  function updateWeatherMagic(elapsedTime) {
+    // 1. ❄️ 飄雪更新
+    if (currentWeatherMode === 'snow' && snowParticlesGroup) {
+      snowParticlesGroup.children.forEach(flake => {
+        const u = flake.userData;
+        flake.position.y -= u.fallSpeed;
+        flake.position.x += Math.sin(elapsedTime * u.swaySpeed + u.phase) * 0.025;
+        flake.rotation.y += 0.02;
+        if (flake.position.y < 0) {
+          flake.position.y = 26 + Math.random() * 4;
+        }
+      });
+    }
+
+    // 2. 🍁 黃金落葉更新
+    if (currentWeatherMode === 'leaves' && leavesParticlesGroup) {
+      leavesParticlesGroup.children.forEach(leaf => {
+        const u = leaf.userData;
+        leaf.position.y -= u.fallSpeed;
+        leaf.position.x += Math.sin(elapsedTime * u.swaySpeed + u.phase) * 0.04;
+        leaf.position.z += Math.cos(elapsedTime * u.swaySpeed + u.phase) * 0.02;
+        leaf.rotation.x += u.rotSpeed;
+        leaf.rotation.z += u.rotSpeed * 0.8;
+        if (leaf.position.y < 0) {
+          leaf.position.y = 24 + Math.random() * 4;
+        }
+      });
+    }
+
+    // 3. 🌠 流星雨更新
+    if (currentWeatherMode === 'meteor' && Math.random() < 0.14) {
+      spawnShootingStar();
+    }
+    const now = Date.now();
+    for (let i = shootingStars.length - 1; i >= 0; i--) {
+      const st = shootingStars[i];
+      const age = now - st.startTime;
+      if (age >= st.duration) {
+        scene.remove(st.group);
+        st.tailMat.dispose();
+        shootingStars.splice(i, 1);
+      } else {
+        const prog = age / st.duration;
+        st.group.position.add(st.vel);
+        st.tailMat.opacity = (1 - prog) * 0.85;
+      }
+    }
   }
 
   // ── (3) 3D 對話泡泡與各動物專屬健康/理財冷知識金句庫 ──
@@ -6469,16 +6930,58 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     }
   }
 
-  // ── (9) 動物生機動畫即時更新 ──
+  // ── (9) 動物生機動畫即時更新 (定兩點 A ↔ B 來回散步、轉向與搖尾巴) ──
   function updateFauna(elapsedTime) {
-    // 陸地動物：小貓與小狗搖尾巴、小羊轉身、鸚鵡點頭
     faunaCreatures.forEach(c => {
+      // 1. 計算 A ↔ B 兩點來回散步週期 (10 秒一循環：去程 3.8s -> 停留 1.2s -> 回程 3.8s -> 停留 1.2s)
+      const cycle = (elapsedTime * (c.walkSpeed || 0.9) + c.phase) % 10.0;
+      let u = 0;
+      let isWalking = false;
+      let dirSign = 1; // +1: A -> B, -1: B -> A
+
+      if (cycle < 3.8) {
+        u = cycle / 3.8;
+        isWalking = true;
+        dirSign = 1;
+      } else if (cycle < 5.0) {
+        u = 1.0;
+        isWalking = false;
+        dirSign = 1;
+      } else if (cycle < 8.8) {
+        u = 1.0 - (cycle - 5.0) / 3.8;
+        isWalking = true;
+        dirSign = -1;
+      } else {
+        u = 0.0;
+        isWalking = false;
+        dirSign = -1;
+      }
+
+      // 平滑插值當前位置 (遠離中央建築物與樹木的外環草地)
+      const curX = c.ax + (c.bx - c.ax) * u;
+      const curZ = c.az + (c.bz - c.az) * u;
+      c.mesh.position.x = curX;
+      c.mesh.position.z = curZ;
+
+      // 若未處於被點擊的高跳動畫中，加入散步小碎步輕快彈跳
+      const isSquashing = activeSquashAnims.some(a => a.mesh === c.mesh);
+      if (!isSquashing) {
+        const hopY = isWalking ? Math.abs(Math.sin(elapsedTime * 11 + c.phase)) * 0.065 : 0;
+        c.mesh.position.y = HEX_HEIGHT + 0.08 + hopY;
+      }
+
+      // 計算朝向角度 (動物模型頭部朝向 +X 軸)
+      const dx = (c.bx - c.ax) * dirSign;
+      const dz = (c.bz - c.az) * dirSign;
+      const targetRotY = Math.atan2(-dz, dx);
+      const lookAround = isWalking ? 0 : Math.sin(elapsedTime * 3.0 + c.phase) * 0.18;
+      c.mesh.rotation.y = targetRotY + lookAround;
+
+      // 尾巴搖擺與鸚鵡點頭細節
       if ((c.type === 'puppy' || c.type === 'cat') && c.tailMesh) {
-        c.tailMesh.rotation.y = Math.sin(elapsedTime * 10 + c.phase) * 0.45;
-      } else if (c.type === 'sheep') {
-        c.mesh.rotation.y = c.baseRotY + Math.sin(elapsedTime * 1.5 + c.phase) * 0.08;
+        c.tailMesh.rotation.y = Math.sin(elapsedTime * 12 + c.phase) * 0.48;
       } else if (c.type === 'cockatoo') {
-        c.mesh.rotation.z = Math.sin(elapsedTime * 2.0 + c.phase) * 0.06;
+        c.mesh.rotation.z = Math.sin(elapsedTime * 4.5 + c.phase) * 0.06;
       }
     });
 
@@ -6554,6 +7057,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
       const checkList = [];
       if (dragonGroup) checkList.push(dragonGroup);
+      if (treasureChests && treasureChests.length > 0) checkList.push(...treasureChests.map(tc => tc.root));
       if (faunaGroup && faunaGroup.children.length > 0) checkList.push(faunaGroup);
       if (islandsGroup && islandsGroup.children.length > 0) checkList.push(islandsGroup);
       if (ferries && ferries.length > 0) checkList.push(...ferries);
@@ -6624,6 +7128,18 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         while (testNode && testNode !== scene) {
           if (testNode.userData && testNode.userData.isDragon) {
             triggerDragonInteraction();
+            return;
+          }
+          testNode = testNode.parent;
+        }
+      }
+
+      // 【最高優先級 1.5】若點擊射線穿過黃金寶箱，100% 優先開啟寶箱噴射金幣噴泉
+      for (let i = 0; i < allIntersects.length; i++) {
+        let testNode = allIntersects[i].object;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isTreasureChest) {
+            triggerTreasureChest(testNode.userData.chestIndex ?? 0);
             return;
           }
           testNode = testNode.parent;
@@ -6770,6 +7286,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // ══════════════════════════════════════════════════════════════════════
   function focusIsland(islandId) {
     exitBirdViewSilently();
+    exitDragonRideSilently();
     const island = ISLAND_DATA.find((i) => i.id === islandId);
     if (!island) return;
 
@@ -6808,6 +7325,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
   function resetView() {
     exitBirdViewSilently();
+    exitDragonRideSilently();
     activeIsland = null;
     closeDetailCard();
 
@@ -6878,11 +7396,19 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
     }
 
-    // 🐉 赤紅巨龍召喚按鈕
+    // 🐉 騎乘飛龍視角切換按鈕
     const summonDragonBtn = document.getElementById('summonDragonBtn');
     if (summonDragonBtn) {
       summonDragonBtn.addEventListener('click', () => {
-        triggerDragonInteraction();
+        toggleDragonRideMode();
+      });
+    }
+
+    // ✨ 天氣魔法切換按鈕 (晴空 / 飄雪 / 黃金楓葉 / 許願流星雨)
+    const weatherMagicBtn = document.getElementById('weatherMagicBtn');
+    if (weatherMagicBtn) {
+      weatherMagicBtn.addEventListener('click', () => {
+        cycleWeatherMagic();
       });
     }
 
@@ -7213,8 +7739,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       }
     });
 
-    // 5. 療癒微縮世界互動更新 (赤紅巨龍、動物生機、果凍物理、彈跳縮放、水波紋、船尾水花)
+    // 5. 療癒微縮世界互動更新 (赤紅巨龍、黃金寶箱、天氣魔法、動物生機、果凍物理、彈跳縮放、水波紋、船尾水花)
     updateRedDragon(elapsedTime);
+    updateTreasureChests(elapsedTime);
+    updateWeatherMagic(elapsedTime);
     updateFauna(elapsedTime);
     updateJellyAnims();
     updateSquashAnims();
