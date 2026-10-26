@@ -174,6 +174,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           <span class="btn-text" id="dragonBtnText">騎龍</span>
         </button>
 
+        <button class="hud-action-btn" id="summonTurtleBtn" title="切換「🐢 聖劍大海龜視角」在海峽乘風破浪！" style="border-color: #6ee7b7; background: #ecfdf5; color: #047857;">
+          <span>🐢</span>
+          <span class="btn-text" id="turtleBtnText">騎龜</span>
+        </button>
+
         <button class="hud-action-btn" id="weatherMagicBtn" title="切換中古世紀天氣魔法：晴空 / ❄️ 飄雪 / 🍁 黃金落葉 / 🌠 流星雨" style="border-color: #c4b5fd; background: #f5f3ff; color: #5b21b6;">
           <span id="weatherBtnIcon">✨</span>
           <span class="btn-text" id="weatherBtnText">天氣</span>
@@ -277,15 +282,15 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       </div>
     </aside>
 
-    <!-- 騎乘飛龍模式專屬：底部中央醒目「下龍 / 噴火」懸浮控制列 (手機與電腦皆一鍵可見) -->
+    <!-- 騎乘飛龍 / 大海龜模式專屬：底部中央醒目「下坐騎 / 互動」懸浮控制列 (手機與電腦皆一鍵可見) -->
     <div class="dragon-ride-float-bar" id="dragonRideFloatBar" aria-hidden="true">
       <button class="dragon-float-fire-btn" id="dragonFloatFireBtn" type="button">
-        <span>🔥</span>
-        <span>噴出龍息</span>
+        <span id="floatActionIcon">🔥</span>
+        <span id="floatActionText">噴出龍息</span>
       </button>
       <button class="dragon-float-exit-btn" id="dragonFloatExitBtn" type="button">
-        <span>🐉</span>
-        <span>下龍 · 回到全景 ✕</span>
+        <span id="floatExitIcon">🐉</span>
+        <span id="floatExitText">下龍 · 回到全景 ✕</span>
       </button>
     </div>
 
@@ -2092,6 +2097,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let dragonData = null;
   let isDragonRideMode = false;
   const dragonFireParticles = [];
+  let giantTurtleGroup = null;
+  let giantTurtleData = null;
+  let isTurtleRideMode = false;
+  const giantTurtleSplashParticles = [];
   const treasureChests = [];
   const treasureCoins = [];
   let currentWeatherMode = 'clear'; // 'clear' | 'snow' | 'leaves' | 'meteor'
@@ -2173,6 +2182,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     spawnWalkers();           // 9. 漫步小人
     birdFlockData = createBirdFlock(); // 10. 飛鳥振翅盤旋
     createRedDragon();        // 10b. 中古世紀赤紅巨龍盤旋與噴火互動
+    createGiantSeaTurtle();   // 10c. 《聖劍傳說3》布斯卡布風潛水鏡大海龜坐騎
     createMiniFauna();        // 11. 療癒 Q 版小動物與海洋魚群
     createTreasureChests();   // 11b. 黃金寶箱與噴金幣系統
     initWeatherMagicSystem(); // 11c. 天氣魔法與許願流星雨系統
@@ -2201,6 +2211,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     } else if (urlParams.get('dragon') === '1') {
       setTimeout(() => {
         setDragonRideMode(true);
+      }, 520);
+    } else if (urlParams.get('turtle') === '1') {
+      setTimeout(() => {
+        setTurtleRideMode(true);
       }, 520);
     }
 
@@ -5649,6 +5663,23 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           osc.start(now);
           osc.stop(now + 0.75);
         });
+      } else if (type === 'giant-turtle') {
+        // 🐢 聖劍傳說3 布斯卡布 (Vuscav) 召喚笛音 + 歡樂乘浪水花聲
+        [587.33, 783.99, 880.0, 1174.66].forEach((freq, i) => {
+          const t0 = now + i * 0.085;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, t0);
+          osc.frequency.exponentialRampToValueAtTime(freq * 1.04, t0 + 0.14);
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.18, t0 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.24);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.26);
+        });
       } else if (type === 'water' || type === 'dolphin' || type === 'turtle') {
         // 💧 清脆水滴泡泡聲
         const osc = ctx.createOscillator();
@@ -6686,13 +6717,24 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   function setDragonRideMode(on) {
+    if (on) exitTurtleRideSilently();
     isDragonRideMode = on;
     const btn = document.getElementById('summonDragonBtn');
     const txt = document.getElementById('dragonBtnText');
     const floatBar = document.getElementById('dragonRideFloatBar');
     const tipsEl = document.querySelector('.island-floating-tips');
+    const fActIcon = document.getElementById('floatActionIcon');
+    const fActText = document.getElementById('floatActionText');
+    const fExitIcon = document.getElementById('floatExitIcon');
+    const fExitText = document.getElementById('floatExitText');
     if (btn) btn.classList.toggle('active', on);
     if (txt) txt.textContent = on ? '下龍' : '騎龍';
+    if (on) {
+      if (fActIcon) fActIcon.textContent = '🔥';
+      if (fActText) fActText.textContent = '噴出龍息';
+      if (fExitIcon) fExitIcon.textContent = '🐉';
+      if (fExitText) fExitText.textContent = '下龍 · 回到全景 ✕';
+    }
     if (floatBar) {
       floatBar.classList.toggle('active', on);
       floatBar.setAttribute('aria-hidden', on ? 'false' : 'true');
@@ -6749,6 +6791,424 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         dragonData.dragonBadge.style.display = '';
       }
       dragonData.group.scale.setScalar(2.35);
+    }
+  }
+
+  // ── (2b-2) 《聖劍傳說3》布斯卡布 (Vuscav) 潛水鏡大海龜坐騎系統 ──
+  const GIANT_TURTLE_QUOTES = [
+    '🐢 噗咻～！我是戴著潛水鏡的聖劍大海龜！像海龜一樣長壽健康的秘訣，就是定期健檢與無痛腸胃鏡！',
+    '🐢 咕嚕嚕～！海龜不急不徐橫渡大海，正如「指數化投資」穩健長期持有，終能抵達財富彼岸！',
+    '🐢 呼哈～！每天補充充足水分與高纖蔬果，讓你的腸道與腎臟像大海一樣清澈順暢！',
+    '🐢 乘風破浪！三高（血壓、血糖、血脂）控制好，血管不硬化，跟海龜一樣活到一百歲！',
+    '🐢 噗通～！壓力大的時候，來海島上陪我游一圈，深呼吸放鬆自律神經，胃食道逆流自然好！'
+  ];
+
+  function createGiantSeaTurtle() {
+    giantTurtleGroup = new THREE.Group();
+
+    const shellGreenMat = new THREE.MeshStandardMaterial({ color: 0x3f6212, roughness: 0.65, flatShading: true });
+    const scuteDarkMat = new THREE.MeshStandardMaterial({ color: 0x365314, roughness: 0.7, flatShading: true });
+    const rimCreamMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.6, flatShading: true });
+    const bellyYellowMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.7, flatShading: true });
+    const skinGreenMat = new THREE.MeshStandardMaterial({ color: 0x65a30d, roughness: 0.65, flatShading: true });
+    const beakYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5, flatShading: true });
+    const strapLeatherMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8, flatShading: true });
+    const goggleRedMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.35, flatShading: true });
+    const lensBlueMat = new THREE.MeshStandardMaterial({ color: 0xe0f2fe, emissive: 0x38bdf8, emissiveIntensity: 0.25, roughness: 0.15 });
+    const darkPupilMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+    const flagRedMat = new THREE.MeshStandardMaterial({ color: 0xef4444, side: THREE.DoubleSide, roughness: 0.5 });
+
+    const bodyRoot = new THREE.Group();
+    giantTurtleGroup.add(bodyRoot);
+
+    // 1. 圓潤飽滿的立體大龜殼 (Domed Carapace + 六角龜甲紋 + 奶油金滾邊)
+    const carapace = new THREE.Mesh(
+      new THREE.SphereGeometry(1.15, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.56),
+      shellGreenMat
+    );
+    carapace.scale.set(1.05, 0.78, 1.25);
+    carapace.position.y = 0.12;
+    carapace.castShadow = true;
+    bodyRoot.add(carapace);
+
+    // 龜背立體六角甲片 (Scutes)
+    const scuteOffsets = [
+      [0, 0.96, 0],
+      [0, 0.88, 0.52],
+      [0, 0.88, -0.52],
+      [-0.52, 0.78, 0.24],
+      [0.52, 0.78, 0.24],
+      [-0.52, 0.78, -0.28],
+      [0.52, 0.78, -0.28]
+    ];
+    scuteOffsets.forEach(([sx, sy, sz]) => {
+      const scute = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 0.10, 6), scuteDarkMat);
+      scute.position.set(sx, sy, sz);
+      bodyRoot.add(scute);
+    });
+
+    // 龜殼外緣奶油黃護邊與腹甲
+    const shellRim = new THREE.Mesh(new THREE.TorusGeometry(1.12, 0.11, 7, 16), rimCreamMat);
+    shellRim.rotation.x = Math.PI / 2;
+    shellRim.scale.set(1.04, 1.24, 0.85);
+    shellRim.position.y = 0.16;
+    bodyRoot.add(shellRim);
+
+    const plastron = new THREE.Mesh(new THREE.CylinderGeometry(1.02, 0.92, 0.22, 10), bellyYellowMat);
+    plastron.scale.set(1.0, 1.0, 1.2);
+    plastron.position.y = 0.04;
+    bodyRoot.add(plastron);
+
+    // 2. 《聖劍傳說3》布斯卡布招牌皮革背帶 + 龜背紅色探險三角小旗 (🚩)
+    const strap1 = new THREE.Mesh(new THREE.TorusGeometry(1.13, 0.065, 6, 14, Math.PI), strapLeatherMat);
+    strap1.scale.set(1.04, 0.84, 1.0);
+    strap1.position.set(0, 0.14, 0.25);
+    bodyRoot.add(strap1);
+
+    const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 0.95, 6), strapLeatherMat);
+    flagPole.position.set(0.32, 1.18, -0.45);
+    flagPole.rotation.x = -0.22;
+    bodyRoot.add(flagPole);
+
+    const pennantGeo = new THREE.ConeGeometry(0.22, 0.52, 3);
+    pennantGeo.rotateZ(Math.PI / 2);
+    const turtleFlag = new THREE.Mesh(pennantGeo, flagRedMat);
+    turtleFlag.position.set(0.10, 1.52, -0.56);
+    bodyRoot.add(turtleFlag);
+
+    // 3. 呆萌大龜頭 + 黃色鳥喙嘴 + 頭頂小呆毛 + 招牌紅框潛水護目鏡 (Diving Goggles)
+    const headPivot = new THREE.Group();
+    headPivot.position.set(0, 0.42, 1.48);
+    bodyRoot.add(headPivot);
+
+    const headMesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.46, 1), skinGreenMat);
+    headMesh.scale.set(1.05, 0.95, 1.12);
+    headMesh.castShadow = true;
+    headPivot.add(headMesh);
+
+    // 可愛黃色小鳥喙與微笑下巴
+    const beakMesh = new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.32, 5), beakYellowMat);
+    beakMesh.rotation.x = Math.PI / 2;
+    beakMesh.position.set(0, -0.08, 0.48);
+    headPivot.add(beakMesh);
+
+    // 頭頂布斯卡布招牌黑色小天線呆毛
+    const antenna = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.32, 5), darkPupilMat);
+    antenna.position.set(0, 0.54, 0.10);
+    antenna.rotation.x = 0.25;
+    headPivot.add(antenna);
+
+    // 復古紅框雙眼潛水護目鏡 (Goggles)
+    const goggleStrap = new THREE.Mesh(new THREE.CylinderGeometry(0.47, 0.47, 0.12, 12), strapLeatherMat);
+    goggleStrap.position.set(0, 0.12, 0.02);
+    headPivot.add(goggleStrap);
+
+    for (const side of [-1, 1]) {
+      const gFrame = new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.20, 0.14, 10), goggleRedMat);
+      gFrame.rotation.x = Math.PI / 2;
+      gFrame.position.set(side * 0.21, 0.13, 0.40);
+      headPivot.add(gFrame);
+
+      const gLens = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.15, 10), lensBlueMat);
+      gLens.rotation.x = Math.PI / 2;
+      gLens.position.set(side * 0.21, 0.13, 0.41);
+      headPivot.add(gLens);
+
+      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 6), darkPupilMat);
+      pupil.position.set(side * 0.19, 0.13, 0.49);
+      headPivot.add(pupil);
+    }
+
+    // 4. 前後四隻強壯划水大鰭足 (Flippers) + 小尾巴
+    function makeFlipper(isFront, side) {
+      const pivot = new THREE.Group();
+      pivot.position.set(side * (isFront ? 1.05 : 0.88), 0.15, isFront ? 0.72 : -0.78);
+      const mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(isFront ? 0.95 : 0.68, 0.12, isFront ? 0.42 : 0.32),
+        skinGreenMat
+      );
+      mesh.position.set(side * (isFront ? 0.42 : 0.30), 0, 0);
+      mesh.rotation.y = side * (isFront ? -0.25 : 0.35);
+      mesh.castShadow = true;
+      pivot.add(mesh);
+      bodyRoot.add(pivot);
+      return pivot;
+    }
+
+    const leftFrontFlipper = makeFlipper(true, -1);
+    const rightFrontFlipper = makeFlipper(true, 1);
+    const leftRearFlipper = makeFlipper(false, -1);
+    const rightRearFlipper = makeFlipper(false, 1);
+
+    const tailPivot = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.42, 5), skinGreenMat);
+    tailPivot.rotation.x = -Math.PI / 2;
+    tailPivot.position.set(0, 0.14, -1.48);
+    bodyRoot.add(tailPivot);
+
+    // 放大至醒目可愛的聖劍大海龜尺寸
+    giantTurtleGroup.scale.setScalar(1.55);
+    giantTurtleGroup.position.set(0, 0.16, 8.0);
+
+    // 隱形大範圍點擊碰撞球
+    const hitSphere = new THREE.Mesh(
+      new THREE.SphereGeometry(1.75, 8, 8),
+      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
+    );
+    hitSphere.position.y = 0.5;
+    giantTurtleGroup.add(hitSphere);
+
+    giantTurtleGroup.userData = { isGiantTurtle: true, isWobbleable: true };
+    giantTurtleGroup.traverse(c => {
+      c.userData.isGiantTurtle = true;
+      c.userData.parentGiantTurtle = giantTurtleGroup;
+      c.userData.isWobbleable = true;
+      c.userData.parentWobble = bodyRoot;
+    });
+
+    // 頭頂專屬祖母綠懸浮小徽章
+    const turtleBadge = document.createElement('div');
+    turtleBadge.className = 'ferry-label';
+    turtleBadge.style.background = 'linear-gradient(135deg, rgba(5, 150, 105, 0.94), rgba(13, 148, 136, 0.94))';
+    turtleBadge.style.borderColor = '#a7f3d0';
+    turtleBadge.style.cursor = 'pointer';
+    turtleBadge.style.pointerEvents = 'auto';
+    turtleBadge.textContent = '🐢 聖劍大海龜 (點擊乘騎)';
+    turtleBadge.addEventListener('pointerdown', (e) => e.stopPropagation());
+    turtleBadge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerGiantTurtleInteraction();
+    });
+    const turtleLabelObj = new CSS2DObject(turtleBadge);
+    turtleLabelObj.position.set(0, 1.55, 0);
+    giantTurtleGroup.add(turtleLabelObj);
+    badgeObjects.push(turtleBadge);
+
+    scene.add(giantTurtleGroup);
+
+    giantTurtleData = {
+      group: giantTurtleGroup,
+      bodyRoot,
+      headPivot,
+      leftFrontFlipper,
+      rightFrontFlipper,
+      leftRearFlipper,
+      rightRearFlipper,
+      tailPivot,
+      turtleFlag,
+      turtleBadge,
+      swimPhase: 0,
+      boostSpeed: 0,
+      waveUntil: 0
+    };
+  }
+
+  const splashDropGeo = new THREE.DodecahedronGeometry(0.14, 0);
+  function triggerGiantTurtleInteraction() {
+    if (!giantTurtleData) return;
+    playIslandSound('giant-turtle');
+    const now = Date.now();
+    giantTurtleData.waveUntil = now + 2200;
+    giantTurtleData.boostSpeed = 0.45;
+
+    const worldPos = new THREE.Vector3();
+    giantTurtleData.group.getWorldPosition(worldPos);
+    createWaterRipple(worldPos);
+
+    // 噴出清涼湛藍與純白浪花水珠特效！
+    const splashColors = [0xffffff, 0xe0f2fe, 0x7dd3fc, 0x38bdf8];
+    for (let k = 0; k < 22; k++) {
+      const col = splashColors[k % splashColors.length];
+      const mat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.9 });
+      const drop = new THREE.Mesh(splashDropGeo, mat);
+      drop.position.copy(worldPos).add(new THREE.Vector3((Math.random() - 0.5) * 1.6, 0.35, (Math.random() - 0.5) * 1.6));
+      scene.add(drop);
+
+      const ang = Math.random() * Math.PI * 2;
+      const spd = 0.05 + Math.random() * 0.12;
+      giantTurtleSplashParticles.push({
+        mesh: drop,
+        vx: Math.cos(ang) * spd,
+        vy: 0.16 + Math.random() * 0.16,
+        vz: Math.sin(ang) * spd,
+        startTime: now,
+        duration: 850 + Math.random() * 350
+      });
+    }
+
+    const quote = GIANT_TURTLE_QUOTES[Math.floor(Math.random() * GIANT_TURTLE_QUOTES.length)];
+    showSpeechBubble(worldPos, quote);
+    showMiniToast('🐢 聖劍大海龜揮手歡呼，激起清涼海浪水花！');
+  }
+
+  let _lastGiantTurtleTime = 0;
+  function updateGiantSeaTurtle(elapsedTime) {
+    if (!giantTurtleData) return;
+    const dt = _lastGiantTurtleTime ? Math.min(0.05, elapsedTime - _lastGiantTurtleTime) : 0.016;
+    _lastGiantTurtleTime = elapsedTime;
+
+    const now = Date.now();
+    const isWaving = now < giantTurtleData.waveUntil;
+
+    giantTurtleData.boostSpeed *= 0.96;
+    const omega = 0.095 + giantTurtleData.boostSpeed * 0.08;
+    giantTurtleData.swimPhase += dt * omega;
+    const u = giantTurtleData.swimPhase;
+
+    // 沿著雙群島中央壯闊海峽與外海平穩巡航 (S 型海峽航道)
+    const x = Math.sin(u * 2) * 4.2;
+    const z = Math.sin(u) * 16.5;
+    const y = 0.15 + Math.sin(elapsedTime * 1.8) * 0.03;
+
+    const uNext = u + 0.025;
+    const nx = Math.sin(uNext * 2) * 4.2;
+    const nz = Math.sin(uNext) * 16.5;
+
+    giantTurtleData.group.position.set(x, y, z);
+    giantTurtleData.group.lookAt(nx, y, nz);
+
+    // 划水動作與點擊時右前鰭像《聖劍傳說3》截圖一樣熱情揮手打招呼！
+    const rowSin = Math.sin(elapsedTime * 2.6);
+    const rowCos = Math.cos(elapsedTime * 2.6);
+    giantTurtleData.leftFrontFlipper.rotation.y = 0.25 + rowSin * 0.38;
+    giantTurtleData.leftFrontFlipper.rotation.z = rowCos * 0.15;
+
+    if (isWaving) {
+      // 像截圖中布斯卡布一樣舉起前鰭開心揮手！
+      giantTurtleData.rightFrontFlipper.rotation.z = 0.65 + Math.sin(elapsedTime * 14) * 0.28;
+      giantTurtleData.rightFrontFlipper.rotation.y = -0.15;
+      giantTurtleData.headPivot.rotation.z = 0.18;
+      giantTurtleData.headPivot.rotation.x = -0.18;
+    } else {
+      giantTurtleData.rightFrontFlipper.rotation.y = -0.25 - rowSin * 0.38;
+      giantTurtleData.rightFrontFlipper.rotation.z = -rowCos * 0.15;
+      giantTurtleData.headPivot.rotation.z = Math.sin(elapsedTime * 1.5) * 0.05;
+      giantTurtleData.headPivot.rotation.x = Math.sin(elapsedTime * 2.0) * 0.05;
+    }
+
+    giantTurtleData.leftRearFlipper.rotation.y = -0.3 + rowCos * 0.25;
+    giantTurtleData.rightRearFlipper.rotation.y = 0.3 - rowCos * 0.25;
+    giantTurtleData.tailPivot.rotation.y = Math.sin(elapsedTime * 4.0) * 0.22;
+    giantTurtleData.turtleFlag.rotation.y = Math.sin(elapsedTime * 6.0) * 0.25;
+
+    // 游動時身後自然產生白色水花軌跡
+    if (Math.random() < 0.28) {
+      spawnWakeParticle(new THREE.Vector3(x, 0.07, z));
+    }
+
+    // 更新水花粒子
+    for (let i = giantTurtleSplashParticles.length - 1; i >= 0; i--) {
+      const sp = giantTurtleSplashParticles[i];
+      const age = now - sp.startTime;
+      if (age >= sp.duration) {
+        scene.remove(sp.mesh);
+        sp.mesh.material.dispose();
+        giantTurtleSplashParticles.splice(i, 1);
+      } else {
+        sp.vy -= 0.008;
+        sp.mesh.position.x += sp.vx;
+        sp.mesh.position.y += sp.vy;
+        sp.mesh.position.z += sp.vz;
+        sp.mesh.material.opacity = (1 - age / sp.duration) * 0.9;
+      }
+    }
+
+    // 🐢 若處於「騎乘聖劍大海龜視角 (Trials of Mana 3 Vuscav Sea-Level Camera)」：
+    // 鏡頭貼近海平面，從海龜正後方望過龜殼與紅色小旗，仰望兩側壯麗的六角島嶼、燈塔與跨海渡輪！
+    if (isTurtleRideMode) {
+      const forwardDir = new THREE.Vector3(nx - x, 0, nz - z).normalize();
+      const isMobile = window.innerWidth <= 768;
+      const backDist = isMobile ? 10.2 : 8.2;
+      const upHeight = isMobile ? 3.2 : 2.55;
+
+      const desiredCamPos = new THREE.Vector3(
+        x - forwardDir.x * backDist,
+        y + upHeight,
+        z - forwardDir.z * backDist
+      );
+      // 視線直接穿過大海龜龜殼上方望向海峽前方，確保手機與電腦螢幕皆 100% 置中看見大海龜！
+      const desiredLookAt = new THREE.Vector3(
+        x + forwardDir.x * 2.2,
+        y + 0.95,
+        z + forwardDir.z * 2.2
+      );
+
+      camera.position.lerp(desiredCamPos, 0.20);
+      controls.target.lerp(desiredLookAt, 0.24);
+    }
+  }
+
+  function toggleTurtleRideMode() {
+    setTurtleRideMode(!isTurtleRideMode);
+  }
+
+  function setTurtleRideMode(on) {
+    if (on) exitDragonRideSilently();
+    isTurtleRideMode = on;
+    const btn = document.getElementById('summonTurtleBtn');
+    const txt = document.getElementById('turtleBtnText');
+    const floatBar = document.getElementById('dragonRideFloatBar');
+    const tipsEl = document.querySelector('.island-floating-tips');
+    const fActIcon = document.getElementById('floatActionIcon');
+    const fActText = document.getElementById('floatActionText');
+    const fExitIcon = document.getElementById('floatExitIcon');
+    const fExitText = document.getElementById('floatExitText');
+
+    if (btn) btn.classList.toggle('active', on);
+    if (txt) txt.textContent = on ? '下龜' : '騎龜';
+    if (on) {
+      if (fActIcon) fActIcon.textContent = '💦';
+      if (fActText) fActText.textContent = '龜龜歡呼噴水';
+      if (fExitIcon) fExitIcon.textContent = '🐢';
+      if (fExitText) fExitText.textContent = '下龜 · 回到全景 ✕';
+    }
+    if (floatBar) {
+      floatBar.classList.toggle('active', on);
+      floatBar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    if (tipsEl) {
+      tipsEl.style.opacity = on ? '0' : '';
+      tipsEl.style.pointerEvents = on ? 'none' : '';
+    }
+    if (giantTurtleData && giantTurtleData.turtleBadge) {
+      giantTurtleData.turtleBadge.style.display = on ? 'none' : '';
+    }
+
+    if (on) {
+      exitBirdViewSilently();
+      closeDetailCard();
+      isFlightActive = false;
+      camera.fov = window.innerWidth <= 768 ? 54 : 46;
+      camera.updateProjectionMatrix();
+      triggerGiantTurtleInteraction();
+      showMiniToast('🐢 已乘上《聖劍傳說》布斯卡布大海龜！正在海峽乘風破浪（點擊下方「🐢 下龜」可返回）');
+    } else {
+      camera.fov = 32;
+      camera.updateProjectionMatrix();
+      resetView();
+    }
+  }
+
+  function exitTurtleRideSilently() {
+    if (!isTurtleRideMode) return;
+    isTurtleRideMode = false;
+    camera.fov = 32;
+    camera.updateProjectionMatrix();
+    const btn = document.getElementById('summonTurtleBtn');
+    const txt = document.getElementById('turtleBtnText');
+    const floatBar = document.getElementById('dragonRideFloatBar');
+    const tipsEl = document.querySelector('.island-floating-tips');
+    if (btn) btn.classList.remove('active');
+    if (txt) txt.textContent = '騎龜';
+    if (floatBar) {
+      floatBar.classList.remove('active');
+      floatBar.setAttribute('aria-hidden', 'true');
+    }
+    if (tipsEl) {
+      tipsEl.style.opacity = '';
+      tipsEl.style.pointerEvents = '';
+    }
+    if (giantTurtleData && giantTurtleData.turtleBadge) {
+      giantTurtleData.turtleBadge.style.display = '';
     }
   }
 
@@ -7568,6 +8028,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
       const checkList = [];
       if (dragonGroup) checkList.push(dragonGroup);
+      if (giantTurtleGroup) checkList.push(giantTurtleGroup);
       if (treasureChests && treasureChests.length > 0) checkList.push(...treasureChests.map(tc => tc.root));
       if (faunaGroup && faunaGroup.children.length > 0) checkList.push(faunaGroup);
       if (islandsGroup && islandsGroup.children.length > 0) checkList.push(islandsGroup);
@@ -7639,6 +8100,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         while (testNode && testNode !== scene) {
           if (testNode.userData && testNode.userData.isDragon) {
             triggerDragonInteraction();
+            return;
+          }
+          if (testNode.userData && testNode.userData.isGiantTurtle) {
+            setTurtleRideMode(true);
             return;
           }
           testNode = testNode.parent;
@@ -7800,6 +8265,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function focusIsland(islandId) {
     exitBirdViewSilently();
     exitDragonRideSilently();
+    exitTurtleRideSilently();
     const island = ISLAND_DATA.find((i) => i.id === islandId);
     if (!island) return;
     playIslandSound('island');
@@ -7840,6 +8306,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function resetView() {
     exitBirdViewSilently();
     exitDragonRideSilently();
+    exitTurtleRideSilently();
     activeIsland = null;
     closeDetailCard();
 
@@ -7910,23 +8377,31 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
     }
 
-    // 🐉 騎乘飛龍視角切換按鈕與底部懸浮「下龍 / 噴火」控制列
+    // 🐉 騎乘飛龍 / 🐢 騎乘大海龜 視角切換按鈕與底部懸浮控制列
     const summonDragonBtn = document.getElementById('summonDragonBtn');
     if (summonDragonBtn) {
       summonDragonBtn.addEventListener('click', () => {
         toggleDragonRideMode();
       });
     }
+    const summonTurtleBtn = document.getElementById('summonTurtleBtn');
+    if (summonTurtleBtn) {
+      summonTurtleBtn.addEventListener('click', () => {
+        toggleTurtleRideMode();
+      });
+    }
     const dragonFloatExitBtn = document.getElementById('dragonFloatExitBtn');
     if (dragonFloatExitBtn) {
       dragonFloatExitBtn.addEventListener('click', () => {
-        setDragonRideMode(false);
+        if (isTurtleRideMode) setTurtleRideMode(false);
+        else setDragonRideMode(false);
       });
     }
     const dragonFloatFireBtn = document.getElementById('dragonFloatFireBtn');
     if (dragonFloatFireBtn) {
       dragonFloatFireBtn.addEventListener('click', () => {
-        triggerDragonInteraction();
+        if (isTurtleRideMode) triggerGiantTurtleInteraction();
+        else triggerDragonInteraction();
       });
     }
 
@@ -8286,8 +8761,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       }
     });
 
-    // 5. 療癒微縮世界互動更新 (赤紅巨龍、黃金寶箱、天氣魔法、動物生機、果凍物理、彈跳縮放、水波紋、船尾水花)
+    // 5. 療癒微縮世界互動更新 (赤紅巨龍、聖劍大海龜、黃金寶箱、天氣魔法、動物生機、果凍物理、彈跳縮放、水波紋、船尾水花)
     updateRedDragon(elapsedTime);
+    updateGiantSeaTurtle(elapsedTime);
     updateTreasureChests(elapsedTime);
     updateWeatherMagic(elapsedTime);
     updateFauna(elapsedTime);

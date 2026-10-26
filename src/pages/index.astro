@@ -216,7 +216,10 @@ const formatDate = (date: Date) => {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
             <a href="/island?dragon=1" class="btn-island-dragon">
-              <span>🐉 直接騎乘赤紅飛龍視角</span>
+              <span>🐉 騎飛龍高空俯瞰</span>
+            </a>
+            <a href="/island?turtle=1" class="btn-island-turtle">
+              <span>🐢 乘大海龜海上巡航</span>
             </a>
           </div>
         </div>
@@ -1096,6 +1099,29 @@ const formatDate = (date: Date) => {
     border-color: #fde047;
     color: #ffffff;
     box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+  }
+
+  .btn-island-turtle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #a7f3d0;
+    background: rgba(5, 150, 105, 0.38);
+    border: 1.5px solid rgba(52, 211, 153, 0.68);
+    text-decoration: none;
+    transition: all 0.22s ease;
+  }
+
+  .btn-island-turtle:hover {
+    transform: translateY(-2px);
+    background: rgba(5, 150, 105, 0.68);
+    border-color: #fef08a;
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.38);
   }
 
   /* 右側：熱門島嶼任意門面板 */
