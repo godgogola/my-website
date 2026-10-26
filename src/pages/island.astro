@@ -179,6 +179,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           <span class="btn-text" id="weatherBtnText">天氣</span>
         </button>
 
+        <button class="hud-action-btn active" id="toggleSoundBtn" title="開啟/關閉 3D 小島互動音效 (巨龍咆哮、貓狗叫聲、寶箱金幣、渡輪汽笛)">
+          <span id="soundBtnIcon">🔊</span>
+          <span class="btn-text" id="soundBtnText">音效</span>
+        </button>
+
         <button class="hud-action-btn" id="birdViewBtn" title="鳥瞰：升空俯視環湖群山，並緩慢環繞">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           <span class="btn-text">鳥瞰</span>
@@ -1072,25 +1077,25 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   .island-3d-badge-inner {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 2px 7px;
+    gap: 5px;
+    padding: 4px 11px;
     border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(203, 213, 225, 0.95);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14), 0 1px 3px rgba(15, 23, 42, 0.08);
     white-space: nowrap;
     user-select: none;
-    color: #1e293b;
+    color: #0f172a;
   }
 
   .island-3d-badge.health .island-3d-badge-inner {
-    border-color: rgba(251, 146, 60, 0.45);
+    border-color: rgba(249, 115, 22, 0.65);
   }
 
   .island-3d-badge.wisdom .island-3d-badge-inner {
-    border-color: rgba(167, 139, 250, 0.45);
+    border-color: rgba(139, 92, 246, 0.65);
   }
 
   .badge-icon {
@@ -1098,17 +1103,17 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   .badge-title {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     font-weight: 800;
-    letter-spacing: 0.2px;
-    color: #1e293b;
+    letter-spacing: 0.3px;
+    color: #0f172a;
     text-shadow: none;
   }
 
   .badge-pins-count {
-    font-size: 0.62rem;
-    font-weight: 700;
-    padding: 1px 5px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 1.5px 6px;
     border-radius: 9999px;
     background: #f1f5f9;
     color: #475569;
@@ -1222,25 +1227,29 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
   .ferry-label.labels-hidden { opacity: 0; pointer-events: none; }
 
-  /* 療癒小動物點擊小氣泡標籤 */
+  /* 療癒小動物點擊小氣泡標籤：深翠綠森林半透明迷你膠囊，與純白大型島嶼名牌徹底區隔 */
   .animal-mini-pill {
-    padding: 2px 7px;
-    font-size: 0.68rem;
-    font-weight: 800;
-    color: #7c2d12;
-    background: rgba(255, 251, 235, 0.94);
-    border: 1.5px solid #fbbf24;
+    padding: 1px 5.5px;
+    font-size: 0.54rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: #ecfdf5;
+    background: rgba(6, 78, 59, 0.86);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(52, 211, 153, 0.82);
     border-radius: 999px;
     white-space: nowrap;
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
-    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease, background 0.18s ease;
   }
   .animal-mini-pill:hover {
-    transform: scale(1.16) translateY(-2px);
-    background: #fef3c7;
-    border-color: #f59e0b;
+    transform: scale(1.18) translateY(-2px);
+    background: rgba(4, 120, 87, 0.96);
+    border-color: #6ee7b7;
+    color: #ffffff;
   }
   .animal-mini-pill.labels-hidden {
     opacity: 0;
@@ -5257,6 +5266,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function launchFerry(ri) {
     const ferry = ferries[ri];
     if (!ferry) return;
+    playIslandSound('ferry');
     const u = ferry.userData;
     u.manualBoost = (u.manualBoost || 0) + 5.2; // 推進進度立即啟航
     triggerSquash(ferry);
@@ -5264,6 +5274,299 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       spawnWakeParticle(ferry.position);
     }
     showMiniToast('🚢 渡輪鳴笛啟航！正開往對岸碼頭～');
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 9-3. Web Audio API 零外部依賴即時擬真合成音效引擎 (Procedural Sound Synthesizer)
+  // ══════════════════════════════════════════════════════════════════════
+  let soundEnabled = true;
+  let _audioCtx = null;
+
+  function getAudioCtx() {
+    if (!soundEnabled) return null;
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      if (!_audioCtx) _audioCtx = new AudioContextClass();
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+      return _audioCtx;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function playIslandSound(type) {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    try {
+      if (type === 'dragon') {
+        // 🐉 赤紅巨龍威武咆哮 + 熾熱噴火風聲
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const roarGain = ctx.createGain();
+        osc1.type = 'sawtooth';
+        osc2.type = 'triangle';
+
+        osc1.frequency.setValueAtTime(145, now);
+        osc1.frequency.exponentialRampToValueAtTime(62, now + 0.35);
+        osc1.frequency.exponentialRampToValueAtTime(98, now + 0.65);
+        osc1.frequency.exponentialRampToValueAtTime(46, now + 1.25);
+
+        osc2.frequency.setValueAtTime(72, now);
+        osc2.frequency.exponentialRampToValueAtTime(34, now + 1.25);
+
+        roarGain.gain.setValueAtTime(0.001, now);
+        roarGain.gain.linearRampToValueAtTime(0.22, now + 0.08);
+        roarGain.gain.exponentialRampToValueAtTime(0.14, now + 0.7);
+        roarGain.gain.exponentialRampToValueAtTime(0.001, now + 1.3);
+
+        osc1.connect(roarGain);
+        osc2.connect(roarGain);
+        roarGain.connect(ctx.destination);
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 1.32);
+        osc2.stop(now + 1.32);
+
+        // 火焰噴射白噪音濾波聲
+        const bufSize = Math.floor(ctx.sampleRate * 1.15);
+        const noiseBuf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = noiseBuf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = noiseBuf;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(900, now);
+        filter.frequency.exponentialRampToValueAtTime(280, now + 1.1);
+        filter.Q.value = 1.4;
+
+        const fireGain = ctx.createGain();
+        fireGain.gain.setValueAtTime(0.001, now);
+        fireGain.gain.linearRampToValueAtTime(0.26, now + 0.12);
+        fireGain.gain.exponentialRampToValueAtTime(0.001, now + 1.15);
+
+        noise.connect(filter);
+        filter.connect(fireGain);
+        fireGain.connect(ctx.destination);
+        noise.start(now);
+        noise.stop(now + 1.15);
+      } else if (type === 'cat') {
+        // 🐱 小橘貓撒嬌喵嗚聲 (平滑升降頻泛音)
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(960, now + 0.16);
+        osc.frequency.exponentialRampToValueAtTime(610, now + 0.44);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.22, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.46);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.48);
+      } else if (type === 'puppy') {
+        // 🐶 小柴犬元氣雙連吠「汪！汪！」
+        [0, 0.16].forEach(offset => {
+          const t0 = now + offset;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(310, t0);
+          osc.frequency.exponentialRampToValueAtTime(620, t0 + 0.045);
+          osc.frequency.exponentialRampToValueAtTime(190, t0 + 0.12);
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1400, t0);
+
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.20, t0 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.13);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.14);
+        });
+      } else if (type === 'sheep') {
+        // 🐑 小綿羊顫音「咩～～」
+        const osc = ctx.createOscillator();
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        const gain = ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(370, now);
+        osc.frequency.linearRampToValueAtTime(325, now + 0.52);
+
+        lfo.frequency.value = 24; // 快速羊咩顫音
+        lfoGain.gain.value = 22;
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 950;
+        filter.Q.value = 1.8;
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.22, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.54);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        lfo.start(now);
+        osc.stop(now + 0.55);
+        lfo.stop(now + 0.55);
+      } else if (type === 'cockatoo') {
+        // 🦜 巴丹鸚鵡清脆雙音鳥鳴
+        [0, 0.13].forEach((offset, idx) => {
+          const t0 = now + offset;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(idx === 0 ? 1150 : 1450, t0);
+          osc.frequency.exponentialRampToValueAtTime(idx === 0 ? 2100 : 2550, t0 + 0.09);
+
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.18, t0 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.11);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.12);
+        });
+      } else if (type === 'duck') {
+        // 🐥 小黃鴨可愛「呱呱！」
+        [0, 0.14].forEach(offset => {
+          const t0 = now + offset;
+          const osc = ctx.createOscillator();
+          const filter = ctx.createBiquadFilter();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(440, t0);
+          osc.frequency.exponentialRampToValueAtTime(290, t0 + 0.10);
+          filter.type = 'bandpass';
+          filter.frequency.value = 1100;
+          filter.Q.value = 3.0;
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.20, t0 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.11);
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.12);
+        });
+      } else if (type === 'treasure') {
+        // 💰 黃金寶箱開啟 + 閃耀金幣叮噹琶音
+        const notes = [1046.5, 1318.5, 1568.0, 1975.5, 2093.0, 2637.0];
+        notes.forEach((freq, i) => {
+          const t0 = now + i * 0.065;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t0);
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.18, t0 + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.38);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.40);
+        });
+      } else if (type === 'ferry') {
+        // 🚢 渡輪溫暖雙音蒸汽汽笛「嗚～～」
+        [220, 277.18].forEach(freq => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.15, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now + 0.42);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.72);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.75);
+        });
+      } else if (type === 'water' || type === 'dolphin' || type === 'turtle') {
+        // 💧 清脆水滴泡泡聲
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.exponentialRampToValueAtTime(760, now + 0.13);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.20, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      } else if (type === 'island') {
+        // 🏰 登陸島嶼：中古世紀豎琴溫暖三和弦
+        [523.25, 659.25, 783.99].forEach((freq, i) => {
+          const t0 = now + i * 0.055;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, t0);
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.13, t0 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.36);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.38);
+        });
+      } else if (type === 'building') {
+        // 🏠 點擊建築物 Q 彈果凍音效
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.exponentialRampToValueAtTime(510, now + 0.14);
+        osc.frequency.exponentialRampToValueAtTime(340, now + 0.26);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.18, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.30);
+      } else if (type === 'magic') {
+        // ✨ 天氣魔法與日夜切換：星光風鈴音階
+        [880, 1174.66, 1318.5, 1760].forEach((freq, i) => {
+          const t0 = now + i * 0.05;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t0);
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.13, t0 + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.34);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.36);
+        });
+      }
+    } catch (e) {
+      // Ignore audio errors if blocked by browser policy
+    }
   }
 
   // ══════════════════════════════════════════════════════════════════════
@@ -5570,10 +5873,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
   // ── (2) 佈置島嶼生機小動物 (貓、狗、小羊、鸚鵡) 與海洋生物 ──
   const ANIMAL_BADGE_LABELS = {
-    cat: '🐱 小橘貓',
-    puppy: '🐶 小柴犬',
-    sheep: '🐑 小綿羊',
-    cockatoo: '🦜 巴丹鸚鵡'
+    cat: '🐱 橘貓',
+    puppy: '🐶 柴犬',
+    sheep: '🐑 綿羊',
+    cockatoo: '🦜 鸚鵡'
   };
 
   function attachAnimalHitboxAndBadge(creatureMesh, type) {
@@ -5594,19 +5897,19 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     };
     creatureMesh.add(hitSphere);
 
-    // 3. 加上精緻可點擊浮動小標籤 (點擊標籤或 3D 動物模型皆會跳躍並彈出專屬衛教小語)
+    // 3. 加上精緻深翠綠迷你小膠囊 (高度貼近動物頭頂 0.52，尺寸與色彩皆和純白大型島嶼名牌徹底區隔)
     if (ANIMAL_BADGE_LABELS[type]) {
       const pill = document.createElement('div');
       pill.className = 'animal-mini-pill';
       pill.textContent = ANIMAL_BADGE_LABELS[type];
-      pill.title = '點擊聽聽小動物的衛教與理財叮嚀！';
+      pill.title = '點擊聽聽小動物的叫聲與衛教叮嚀！';
       pill.addEventListener('pointerdown', (e) => e.stopPropagation());
       pill.addEventListener('click', (e) => {
         e.stopPropagation();
         triggerAnimalInteraction(creatureMesh);
       });
       const pillObj = new CSS2DObject(pill);
-      pillObj.position.set(0, 0.72, 0);
+      pillObj.position.set(0, 0.52, 0);
       creatureMesh.add(pillObj);
       badgeObjects.push(pill);
     }
@@ -6058,6 +6361,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   // 觸發赤紅巨龍噴火、翻滾加速與金句互動
   function triggerDragonInteraction() {
     if (!dragonData) return;
+    playIslandSound('dragon');
     const now = Date.now();
     dragonData.fireUntil = now + 2600;       // 連續噴火 2.6 秒
     dragonData.boostSpeed = 1.65;            // 振翅加速衝刺
@@ -6337,21 +6641,23 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       hitSphere.position.y = 0.45;
       chestGroup.add(hitSphere);
 
-      // 頭頂浮動小標籤
+      // 頭頂浮動小標籤 (皇家紫金配色，與純白島名、深翠綠動物膠囊明顯區隔)
       const badge = document.createElement('div');
       badge.className = 'animal-mini-pill';
-      badge.style.background = 'linear-gradient(135deg, #fef08a, #f59e0b)';
-      badge.style.borderColor = '#b45309';
-      badge.style.color = '#451a03';
+      badge.style.background = 'rgba(88, 28, 135, 0.90)';
+      badge.style.borderColor = '#facc15';
+      badge.style.color = '#fef08a';
+      badge.style.fontSize = '0.58rem';
+      badge.style.padding = '1.5px 6.5px';
       badge.textContent = spot.label;
-      badge.title = '點擊打開黃金寶箱噴出滿滿金幣！';
+      badge.title = '點擊打開黃金寶箱噴出滿滿金幣與叮噹音效！';
       badge.addEventListener('pointerdown', (e) => e.stopPropagation());
       badge.addEventListener('click', (e) => {
         e.stopPropagation();
         triggerTreasureChest(idx);
       });
       const badgeObj = new CSS2DObject(badge);
-      badgeObj.position.set(0, 1.15, 0);
+      badgeObj.position.set(0, 1.05, 0);
       chestGroup.add(badgeObj);
       badgeObjects.push(badge);
 
@@ -6379,6 +6685,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function triggerTreasureChest(idx) {
     const item = treasureChests[idx];
     if (!item) return;
+    playIslandSound('treasure');
 
     item.openUntil = Date.now() + 3600;
     triggerSquash(item.chestGroup);
@@ -6504,6 +6811,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   function cycleWeatherMagic() {
+    playIslandSound('magic');
     const modes = ['clear', 'snow', 'leaves', 'meteor'];
     const nextIdx = (modes.indexOf(currentWeatherMode) + 1) % modes.length;
     currentWeatherMode = modes[nextIdx];
@@ -6691,6 +6999,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const worldPos = new THREE.Vector3();
     animalRoot.getWorldPosition(worldPos);
     const aType = animalRoot.userData && animalRoot.userData.animalType;
+    playIslandSound(aType || 'cat');
     const pool = (aType && ANIMAL_QUOTES_BY_TYPE[aType]) ? ANIMAL_QUOTES_BY_TYPE[aType] : HEALTH_WEALTH_QUOTES;
     const msg = pool[Math.floor(Math.random() * pool.length)];
     showSpeechBubble(worldPos, msg);
@@ -6743,6 +7052,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
   // ── (4) 日夜點燈切換系統 ──
   function toggleDayNight() {
+    playIslandSound('magic');
     isAutoDayNight = false;
     manualTimeLock = true;
     const isCurrentlyDay = (currentCycle >= 0.05 && currentCycle < 0.52);
@@ -7250,6 +7560,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           testNode = testNode.parent;
         }
         if (buildingRoot) {
+          playIslandSound('building');
           triggerSquash(buildingRoot);
           const worldPos = new THREE.Vector3();
           buildingRoot.getWorldPosition(worldPos);
@@ -7274,6 +7585,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
         // 7. 海洋水面點擊 ➔ 生成向外擴散的水波紋
         if (cur === oceanMesh || (cur.userData && cur.userData.isOcean)) {
+          playIslandSound('water');
           createWaterRipple(hit.point);
           return;
         }
@@ -7289,6 +7601,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     exitDragonRideSilently();
     const island = ISLAND_DATA.find((i) => i.id === islandId);
     if (!island) return;
+    playIslandSound('island');
 
     activeIsland = islandId;
 
@@ -7409,6 +7722,25 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     if (weatherMagicBtn) {
       weatherMagicBtn.addEventListener('click', () => {
         cycleWeatherMagic();
+      });
+    }
+
+    // 🔊 音效開關切換按鈕
+    const toggleSoundBtn = document.getElementById('toggleSoundBtn');
+    if (toggleSoundBtn) {
+      toggleSoundBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        toggleSoundBtn.classList.toggle('active', soundEnabled);
+        const sIcon = document.getElementById('soundBtnIcon');
+        const sText = document.getElementById('soundBtnText');
+        if (sIcon) sIcon.textContent = soundEnabled ? '🔊' : '🔇';
+        if (sText) sText.textContent = soundEnabled ? '音效' : '靜音';
+        if (soundEnabled) {
+          playIslandSound('magic');
+          showMiniToast('🔊 3D 小島互動音效已開啟！（點擊巨龍、小動物、寶箱、海面皆有專屬音效）');
+        } else {
+          showMiniToast('🔇 已切換為靜音模式');
+        }
       });
     }
 
