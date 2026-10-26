@@ -6579,23 +6579,55 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     dragonData.flightPhase += dt * baseOmega;
     const u = dragonData.flightPhase;
 
-    // 2. 寬廣大橢圓等高滑行航線 (純水平恆定高度 y = 12.2，徹底消除上下顛簸與左右急轉)
-    const spanX = 24.0;
-    const spanZ = 14.5;
+    // 2. 寬廣大橢圓等高滑行航線 (純水平恆定高度，徹底消除上下顛簸與左右急轉)
+    const spanX = 24.5;
+    const spanZ = 15.0;
     const x = Math.cos(u) * spanX;
     const z = Math.sin(u) * spanZ;
-    const y = 12.2;
+    const y = isDragonRideMode ? 14.8 : 12.2;
 
     const uNext = u + 0.03;
     const nx = Math.cos(uNext) * spanX;
     const nz = Math.sin(uNext) * spanZ;
-    const ny = 12.2;
+    const ny = y;
 
     dragonData.group.position.set(x, y, z);
-    dragonData.group.lookAt(nx, ny, nz);
 
-    // 3. 身體維持平穩微傾滑行姿態 (不翻滾、不劇烈搖晃)
-    dragonData.bodyRoot.rotation.z = -0.07;
+    // 🐉 若處於「騎乘飛龍視角 (聖劍傳說3 芙拉米高空置中俯瞰視角)」：
+    // 讓巨龍朝向群島內側前方滑翔，並將相機鎖定在巨龍正後方高處、視線 100% 穿過巨龍正中央俯瞰整片群島！
+    if (isDragonRideMode) {
+      // 切線方向 + 朝向群島中心方向混合，確保畫面正前方永遠是壯麗的 24 座群島
+      const tang = new THREE.Vector3(nx - x, 0, nz - z).normalize();
+      const inward = new THREE.Vector3(-x, 0, -z).normalize();
+      const viewDir = tang.multiplyScalar(0.62).add(inward.multiplyScalar(0.78)).normalize();
+
+      // 巨龍水平朝向視野正前方滑翔
+      dragonData.group.lookAt(x + viewDir.x * 10, y - 0.8, z + viewDir.z * 10);
+      dragonData.bodyRoot.rotation.z = -0.05;
+
+      // 聖劍傳說3 高空第三人稱置中構圖：
+      // controls.target 直接對準巨龍軀幹正中央，確保不論手機直立或電腦寬螢幕，巨龍 100% 穩居畫面正中央！
+      const isMobile = window.innerWidth <= 768;
+      const backDist = isMobile ? 21.5 : 17.5;
+      const upHeight = isMobile ? 9.8 : 8.2;
+
+      const desiredCamPos = new THREE.Vector3(
+        x - viewDir.x * backDist,
+        y + upHeight,
+        z - viewDir.z * backDist
+      );
+      const desiredLookAt = new THREE.Vector3(
+        x + viewDir.x * 1.2,
+        y - 0.55,
+        z + viewDir.z * 1.2
+      );
+
+      camera.position.lerp(desiredCamPos, 0.22);
+      controls.target.lerp(desiredLookAt, 0.25);
+    } else {
+      dragonData.group.lookAt(nx, ny, nz);
+      dragonData.bodyRoot.rotation.z = -0.07;
+    }
 
     // 4. 雙翼平展御風滑翔 (僅有極微幅的慢速呼吸感起伏，徹底告別劇烈拍動)
     const flapFreq = isBreathingFire ? 2.2 : 0.9;
@@ -6646,17 +6678,6 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         fp.mesh.material.opacity = (1 - prog) * 0.9;
       }
     }
-
-    // 🐉 若處於「騎乘飛龍視角 (Dragon Rider Mode)」，鏡頭拉高拉遠並穩定望向群島中央前方，絲滑平穩絕不頭暈
-    if (isDragonRideMode) {
-      const rideCamOffset = new THREE.Vector3(0, 7.2, -16.0).applyQuaternion(dragonData.group.quaternion);
-      const desiredCamPos = dragonData.group.position.clone().add(rideCamOffset);
-      const forwardVec = new THREE.Vector3(0, 0, 10.0).applyQuaternion(dragonData.group.quaternion);
-      const desiredLookAt = dragonData.group.position.clone().multiplyScalar(0.35).add(forwardVec).setY(1.2);
-
-      camera.position.lerp(desiredCamPos, 0.035);
-      controls.target.lerp(desiredLookAt, 0.04);
-    }
   }
 
   // 切換「🐉 騎乘飛龍第一人稱追尾視角」
@@ -6669,23 +6690,37 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const btn = document.getElementById('summonDragonBtn');
     const txt = document.getElementById('dragonBtnText');
     const floatBar = document.getElementById('dragonRideFloatBar');
+    const tipsEl = document.querySelector('.island-floating-tips');
     if (btn) btn.classList.toggle('active', on);
     if (txt) txt.textContent = on ? '下龍' : '騎龍';
     if (floatBar) {
       floatBar.classList.toggle('active', on);
       floatBar.setAttribute('aria-hidden', on ? 'false' : 'true');
     }
-    if (dragonData && dragonData.dragonBadge) {
-      dragonData.dragonBadge.style.display = on ? 'none' : '';
+    if (tipsEl) {
+      tipsEl.style.opacity = on ? '0' : '';
+      tipsEl.style.pointerEvents = on ? 'none' : '';
+    }
+    if (dragonData) {
+      if (dragonData.dragonBadge) {
+        dragonData.dragonBadge.style.display = on ? 'none' : '';
+      }
+      // 騎龍時縮放為精緻《聖劍傳說3》芙拉米比例，確保手機直向螢幕也能完整看見全身雙翼與長尾！
+      dragonData.group.scale.setScalar(on ? 1.32 : 2.35);
     }
 
     if (on) {
       exitBirdViewSilently();
       closeDetailCard();
       isFlightActive = false;
+      // 切換為開闊高空廣角視野 (如同聖劍傳說3 飛行全景)
+      camera.fov = window.innerWidth <= 768 ? 54 : 45;
+      camera.updateProjectionMatrix();
       triggerDragonInteraction();
-      showMiniToast('🐉 已登上巨龍平穩滑翔！點擊畫面下方「🐉 下龍 · 回到全景」即可隨時返回');
+      showMiniToast('🐉 已展開高空飛龍視角！可環視整座群島，點擊下方「🐉 下龍」即可返回');
     } else {
+      camera.fov = 32;
+      camera.updateProjectionMatrix();
       resetView();
     }
   }
@@ -6693,17 +6728,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function exitDragonRideSilently() {
     if (!isDragonRideMode) return;
     isDragonRideMode = false;
+    camera.fov = 32;
+    camera.updateProjectionMatrix();
     const btn = document.getElementById('summonDragonBtn');
     const txt = document.getElementById('dragonBtnText');
     const floatBar = document.getElementById('dragonRideFloatBar');
+    const tipsEl = document.querySelector('.island-floating-tips');
     if (btn) btn.classList.remove('active');
     if (txt) txt.textContent = '騎龍';
     if (floatBar) {
       floatBar.classList.remove('active');
       floatBar.setAttribute('aria-hidden', 'true');
     }
-    if (dragonData && dragonData.dragonBadge) {
-      dragonData.dragonBadge.style.display = '';
+    if (tipsEl) {
+      tipsEl.style.opacity = '';
+      tipsEl.style.pointerEvents = '';
+    }
+    if (dragonData) {
+      if (dragonData.dragonBadge) {
+        dragonData.dragonBadge.style.display = '';
+      }
+      dragonData.group.scale.setScalar(2.35);
     }
   }
 
