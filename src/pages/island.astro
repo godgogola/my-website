@@ -169,6 +169,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           <span class="btn-text">全景</span>
         </button>
 
+        <button class="hud-action-btn" id="summonDragonBtn" title="召喚赤紅巨龍咆哮噴火！" style="border-color: #fca5a5; background: #fef2f2; color: #b91c1c;">
+          <span>🐉</span>
+          <span class="btn-text">巨龍</span>
+        </button>
+
         <button class="hud-action-btn" id="birdViewBtn" title="鳥瞰：升空俯視環湖群山，並緩慢環繞">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           <span class="btn-text">鳥瞰</span>
@@ -1210,7 +1215,32 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     pointer-events: none;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
-  .ferry-label.labels-hidden { opacity: 0; }
+  .ferry-label.labels-hidden { opacity: 0; pointer-events: none; }
+
+  /* 療癒小動物點擊小氣泡標籤 */
+  .animal-mini-pill {
+    padding: 2px 7px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #7c2d12;
+    background: rgba(255, 251, 235, 0.94);
+    border: 1.5px solid #fbbf24;
+    border-radius: 999px;
+    white-space: nowrap;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+  }
+  .animal-mini-pill:hover {
+    transform: scale(1.16) translateY(-2px);
+    background: #fef3c7;
+    border-color: #f59e0b;
+  }
+  .animal-mini-pill.labels-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
 
   /* 鳥瞰模式：標籤縮為精簡小膠囊，避免俯視時互相堆疊 */
   .viewport-container.bird-mode .island-3d-badge-inner { padding: 3px 9px; gap: 4px; }
@@ -1908,6 +1938,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let speechBubbleDiv = null;
   let speechBubbleTimer = null;
   let lighthouseBeam = null;
+  let dragonGroup = null;
+  let dragonData = null;
+  const dragonFireParticles = [];
 
   // 動態相機飛行參數
   let cameraTarget = new THREE.Vector3(0, 0, 0);
@@ -1981,6 +2014,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     buildFlowLines();         // 8. 跨界光流索
     spawnWalkers();           // 9. 漫步小人
     birdFlockData = createBirdFlock(); // 10. 飛鳥振翅盤旋
+    createRedDragon();        // 10b. 中古世紀赤紅巨龍盤旋與噴火互動
     createMiniFauna();        // 11. 療癒 Q 版小動物與海洋魚群
     initSpeechBubble();       // 12. 3D 對話氣泡系統
     setupRaycaster();
@@ -5304,6 +5338,67 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     return g;
   }
 
+  function createCatModel() {
+    const g = new THREE.Group();
+    const orangeMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.75, flatShading: true });
+    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xfffbeb, roughness: 0.8, flatShading: true });
+    const pinkMat = new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.7 });
+    const eyeMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 });
+
+    // 橘白貓圓潤身軀
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 7, 6), orangeMat);
+    body.scale.set(1.35, 0.92, 0.95);
+    body.position.y = 0.24;
+    g.add(body);
+
+    // 白肚肚與胸毛
+    const chest = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), whiteMat);
+    chest.position.set(0.18, 0.24, 0);
+    g.add(chest);
+
+    // 圓圓貓頭
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 7, 7), orangeMat);
+    head.position.set(0.28, 0.42, 0);
+    g.add(head);
+
+    // 尖尖三角貓耳
+    const earGeo = new THREE.ConeGeometry(0.075, 0.16, 4);
+    const ear1 = new THREE.Mesh(earGeo, orangeMat);
+    ear1.position.set(0.28, 0.58, 0.11);
+    ear1.rotation.x = 0.22;
+    const ear2 = new THREE.Mesh(earGeo, orangeMat);
+    ear2.position.set(0.28, 0.58, -0.11);
+    ear2.rotation.x = -0.22;
+    g.add(ear1, ear2);
+
+    // 粉紅小鼻頭與黑眼睛
+    const nose = new THREE.Mesh(new THREE.SphereGeometry(0.03, 5, 5), pinkMat);
+    nose.position.set(0.45, 0.41, 0);
+    const eye1 = new THREE.Mesh(new THREE.SphereGeometry(0.026, 5, 5), eyeMat);
+    eye1.position.set(0.42, 0.46, 0.08);
+    const eye2 = new THREE.Mesh(new THREE.SphereGeometry(0.026, 5, 5), eyeMat);
+    eye2.position.set(0.42, 0.46, -0.08);
+    g.add(nose, eye1, eye2);
+
+    // 四隻白襪子小腳
+    const legGeo = new THREE.CylinderGeometry(0.04, 0.036, 0.18, 5);
+    [[-0.14, -0.08], [-0.14, 0.08], [0.14, -0.08], [0.14, 0.08]].forEach(([lx, lz]) => {
+      const leg = new THREE.Mesh(legGeo, whiteMat);
+      leg.position.set(lx, 0.09, lz);
+      g.add(leg);
+    });
+
+    // 高高翹起的修長貓尾巴
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.032, 0.34, 5), orangeMat);
+    tail.position.set(-0.28, 0.42, 0);
+    tail.rotation.z = 0.38;
+    g.add(tail);
+
+    g.userData = { isAnimal: true, animalType: 'cat', tailMesh: tail, isWobbleable: true };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; c.userData.isWobbleable = true; c.userData.parentWobble = g; });
+    return g;
+  }
+
   function createCockatooModel() {
     const g = new THREE.Group();
     const whiteMat = new THREE.MeshStandardMaterial({ color: 0xfcfbfa, roughness: 0.7, flatShading: true });
@@ -5567,6 +5662,447 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         rippled: false
       });
     });
+  }
+
+  // ── (2b) 中古世紀守護神獸：巨大赤紅飛龍 (Giant Medieval Crimson Dragon) ──
+  const DRAGON_QUOTES = [
+    '🐉 吼嗚～！我是守護群島的赤紅巨龍！小心別讓「胃酸逆流」像我一樣噴火喔！',
+    '🐉 昂吼～！巨龍守護黃金寶藏，而人生最珍貴的寶藏就是「健康的身體」與「複利資產」！',
+    '🐉 呼嚕噴火～！少吃油炸燒烤與重鹹，別讓身體裡燃起「慢性發炎」的熊熊烈火！',
+    '🐉 展翅高飛！定期無痛胃腸鏡與腹部超音波，就像巨龍之眼一樣洞察先機！',
+    '🐉 龍息覺醒！規律有氧加上阻力訓練，讓你的新陳代謝像飛龍一樣充滿爆發力！',
+    '🐉 吼～市場大風大浪不用怕，騎在指數投資的龍背上，穿越牛熊穩穩飛向財富自由！'
+  ];
+
+  function createRedDragon() {
+    dragonGroup = new THREE.Group();
+
+    // 材質定義：深紅龍鱗、金珀色腹甲與翼膜、黑曜石龍角、發光黃金龍眼
+    const crimsonMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.55, metalness: 0.08, flatShading: true });
+    const darkRedMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.6, flatShading: true });
+    const goldBellyMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.5, metalness: 0.15, flatShading: true });
+    const wingMembraneMat = new THREE.MeshStandardMaterial({
+      color: 0xea580c,
+      emissive: 0x9a3412,
+      emissiveIntensity: 0.25,
+      roughness: 0.6,
+      side: THREE.DoubleSide,
+      flatShading: true
+    });
+    const hornMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.3, flatShading: true });
+    const spineGoldMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.4, metalness: 0.2, flatShading: true });
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+
+    // 內部主體群組 (朝向 +Z 軸飛行，方便 lookAt 導航)
+    const bodyRoot = new THREE.Group();
+    dragonGroup.add(bodyRoot);
+
+    // 1. 龍身軀幹 (強壯流線胸腔與腹甲)
+    const torso = new THREE.Mesh(new THREE.DodecahedronGeometry(0.68, 1), crimsonMat);
+    torso.scale.set(0.95, 0.88, 1.85);
+    torso.castShadow = true;
+    bodyRoot.add(torso);
+
+    const belly = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.32, 1.95), goldBellyMat);
+    belly.position.set(0, -0.38, 0.05);
+    belly.castShadow = true;
+    bodyRoot.add(belly);
+
+    // 背部金色鋸齒龍脊刺
+    for (let i = -2; i <= 2; i++) {
+      const spine = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.42, 4), spineGoldMat);
+      spine.position.set(0, 0.62, i * 0.42);
+      spine.rotation.x = -0.28;
+      spine.castShadow = true;
+      bodyRoot.add(spine);
+    }
+
+    // 2. 龍頸與威武龍頭 (含可張開噴火的下顎)
+    const neckGroup = new THREE.Group();
+    neckGroup.position.set(0, 0.25, 1.05);
+    bodyRoot.add(neckGroup);
+
+    const neck1 = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.46, 0.85, 7), crimsonMat);
+    neck1.rotation.x = Math.PI / 3.2;
+    neck1.position.set(0, 0.22, 0.32);
+    neck1.castShadow = true;
+    neckGroup.add(neck1);
+
+    const headGroup = new THREE.Group();
+    headGroup.position.set(0, 0.52, 0.72);
+    neckGroup.add(headGroup);
+
+    // 上頭顱與吻部
+    const skull = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.44, 0.62), crimsonMat);
+    skull.castShadow = true;
+    headGroup.add(skull);
+
+    const snout = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.28, 0.58), crimsonMat);
+    snout.position.set(0, -0.04, 0.52);
+    snout.castShadow = true;
+    headGroup.add(snout);
+
+    // 鼻孔與尖牙
+    [-0.12, 0.12].forEach(nx => {
+      const nostril = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.08), darkRedMat);
+      nostril.position.set(nx, 0.11, 0.72);
+      headGroup.add(nostril);
+
+      const fang = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.14, 4), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      fang.rotation.x = Math.PI;
+      fang.position.set(nx, -0.22, 0.68);
+      headGroup.add(fang);
+    });
+
+    // 發光黃金龍眼與威嚴眉骨
+    [-0.26, 0.26].forEach(ex => {
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.085, 6, 6), eyeMat);
+      eye.position.set(ex, 0.08, 0.18);
+      headGroup.add(eye);
+
+      const brow = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.34), darkRedMat);
+      brow.position.set(ex * 1.02, 0.18, 0.18);
+      brow.rotation.z = ex > 0 ? -0.25 : 0.25;
+      headGroup.add(brow);
+    });
+
+    // 後掠雙長龍角 (雙節彎角)
+    [-0.22, 0.22].forEach(hx => {
+      const hornBase = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.95, 5), hornMat);
+      hornBase.position.set(hx, 0.42, -0.35);
+      hornBase.rotation.x = -Math.PI / 2.8;
+      hornBase.rotation.z = hx > 0 ? -0.22 : 0.22;
+      hornBase.castShadow = true;
+      headGroup.add(hornBase);
+
+      const hornTip = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.55, 5), spineGoldMat);
+      hornTip.position.set(hx * 1.35, 0.68, -0.82);
+      hornTip.rotation.x = -Math.PI / 3.1;
+      hornTip.rotation.z = hx > 0 ? -0.28 : 0.28;
+      headGroup.add(hornTip);
+    });
+
+    // 可張合下顎 (Jaw Pivot) + 噴火發射點
+    const jawPivot = new THREE.Group();
+    jawPivot.position.set(0, -0.16, 0.15);
+    headGroup.add(jawPivot);
+
+    const lowerJaw = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.14, 0.62), goldBellyMat);
+    lowerJaw.position.set(0, -0.04, 0.28);
+    jawPivot.add(lowerJaw);
+
+    const fireEmitter = new THREE.Object3D();
+    fireEmitter.position.set(0, 0.02, 0.72);
+    jawPivot.add(fireEmitter);
+
+    // 龍口烈焰動態點光源 (噴火時瞬間照亮)
+    const fireLight = new THREE.PointLight(0xff5500, 0, 18, 1.4);
+    fireLight.position.set(0, 0.0, 0.85);
+    headGroup.add(fireLight);
+
+    // 3. 巨大雙翼 (Left & Right Articulated Dragon Wings)
+    function buildDragonWing(side) {
+      const wingPivot = new THREE.Group();
+      wingPivot.position.set(side * 0.52, 0.36, 0.25);
+
+      // 主翼骨 (內段)
+      const innerArm = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.12, 0.16), darkRedMat);
+      innerArm.position.set(side * 0.75, 0.12, 0.18);
+      innerArm.rotation.z = side * 0.15;
+      innerArm.rotation.y = -side * 0.12;
+      innerArm.castShadow = true;
+      wingPivot.add(innerArm);
+
+      // 翼肘皇冠爪
+      const thumbClaw = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.28, 4), hornMat);
+      thumbClaw.position.set(side * 1.48, 0.24, 0.42);
+      thumbClaw.rotation.x = Math.PI / 2;
+      wingPivot.add(thumbClaw);
+
+      // 內側翼膜
+      const innerMembrane = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.04, 1.35), wingMembraneMat);
+      innerMembrane.position.set(side * 0.78, 0.08, -0.42);
+      innerMembrane.rotation.z = side * 0.12;
+      innerMembrane.castShadow = true;
+      wingPivot.add(innerMembrane);
+
+      // 外段翼骨關節 (次級延遲扇動，讓飛行更逼真柔順)
+      const outerPivot = new THREE.Group();
+      outerPivot.position.set(side * 1.48, 0.22, 0.22);
+      wingPivot.add(outerPivot);
+
+      const outerArm = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.09, 0.12), crimsonMat);
+      outerArm.position.set(side * 0.85, 0, -0.15);
+      outerArm.rotation.y = side * 0.18;
+      outerArm.castShadow = true;
+      outerPivot.add(outerArm);
+
+      // 翼骨支撐指條 (3 根龍翼骨指)
+      [-0.25, -0.65, -1.05].forEach((zOff, idx) => {
+        const strut = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.04, 1.5 - idx * 0.2, 5), darkRedMat);
+        strut.rotation.z = Math.PI / 2;
+        strut.rotation.y = side * (0.25 + idx * 0.22);
+        strut.position.set(side * (0.68 - idx * 0.08), -0.01, zOff);
+        outerPivot.add(strut);
+      });
+
+      // 外側巨型翼膜
+      const outerMembrane = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.035, 1.45), wingMembraneMat);
+      outerMembrane.position.set(side * 0.82, -0.02, -0.68);
+      outerMembrane.rotation.y = side * 0.14;
+      outerMembrane.castShadow = true;
+      outerPivot.add(outerMembrane);
+
+      return { wingPivot, outerPivot };
+    }
+
+    const leftWing = buildDragonWing(1);
+    const rightWing = buildDragonWing(-1);
+    bodyRoot.add(leftWing.wingPivot, rightWing.wingPivot);
+
+    // 4. 收起的四肢與利爪
+    [[-0.45, -0.42, 0.55], [0.45, -0.42, 0.55], [-0.48, -0.42, -0.55], [0.48, -0.42, -0.55]].forEach(([lx, ly, lz]) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.08, 0.52, 6), crimsonMat);
+      leg.position.set(lx, ly, lz);
+      leg.rotation.x = 0.55;
+      bodyRoot.add(leg);
+
+      const claw = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.22, 4), hornMat);
+      claw.position.set(lx, ly - 0.22, lz - 0.12);
+      claw.rotation.x = Math.PI * 0.75;
+      bodyRoot.add(claw);
+    });
+
+    // 5. 多節擺動長龍尾 (7 節漸細龍尾 + 火焰紅箭形尾鎚)
+    const tailSegments = [];
+    let parentTail = bodyRoot;
+    for (let t = 0; t < 7; t++) {
+      const segGroup = new THREE.Group();
+      segGroup.position.set(0, t === 0 ? 0.05 : 0, t === 0 ? -1.05 : -0.48);
+      parentTail.add(segGroup);
+
+      const r = Math.max(0.10, 0.36 - t * 0.042);
+      const segMesh = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.82, r, 0.52, 6), crimsonMat);
+      segMesh.rotation.x = Math.PI / 2;
+      segMesh.position.z = -0.24;
+      segMesh.castShadow = true;
+      segGroup.add(segMesh);
+
+      // 尾節背刺
+      if (t < 6) {
+        const tSpine = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.24, 4), spineGoldMat);
+        tSpine.position.set(0, r + 0.08, -0.24);
+        tSpine.rotation.x = -0.3;
+        segGroup.add(tSpine);
+      } else {
+        // 尾端紅金箭形龍尾翼
+        const tailBlade = new THREE.Mesh(new THREE.OctahedronGeometry(0.32, 0), goldBellyMat);
+        tailBlade.scale.set(1.35, 0.28, 1.65);
+        tailBlade.position.set(0, 0, -0.52);
+        segGroup.add(tailBlade);
+      }
+
+      tailSegments.push(segGroup);
+      parentTail = segGroup;
+    }
+
+    // 放大至巨龍氣勢尺寸 (翼展超過 6.5 單位，盤旋於雙群島上空清晰壯觀)
+    dragonGroup.scale.setScalar(1.45);
+    dragonGroup.position.set(0, 11.5, 0);
+
+    // 標記互動屬性，支援滑鼠懸停與點擊噴火
+    dragonGroup.userData = { isDragon: true, isWobbleable: true };
+    dragonGroup.traverse(c => {
+      c.userData.isDragon = true;
+      c.userData.parentDragon = dragonGroup;
+      c.userData.isWobbleable = true;
+      c.userData.parentWobble = bodyRoot;
+    });
+
+    // 頭頂專屬輕量級懸浮小徽章 (可跟隨標籤開關切換)
+    const dragonBadge = document.createElement('div');
+    dragonBadge.className = 'ferry-label';
+    dragonBadge.style.background = 'linear-gradient(135deg, rgba(185, 28, 28, 0.92), rgba(217, 119, 6, 0.92))';
+    dragonBadge.style.borderColor = '#fde047';
+    dragonBadge.style.cursor = 'pointer';
+    dragonBadge.style.pointerEvents = 'auto';
+    dragonBadge.textContent = '🐉 赤紅巨龍 (點擊噴火)';
+    dragonBadge.addEventListener('pointerdown', (e) => e.stopPropagation());
+    dragonBadge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerDragonInteraction();
+    });
+    const dragonLabelObj = new CSS2DObject(dragonBadge);
+    dragonLabelObj.position.set(0, 1.65, 0);
+    dragonGroup.add(dragonLabelObj);
+    badgeObjects.push(dragonBadge);
+
+    scene.add(dragonGroup);
+
+    dragonData = {
+      group: dragonGroup,
+      bodyRoot,
+      headGroup,
+      jawPivot,
+      fireEmitter,
+      fireLight,
+      leftWing,
+      rightWing,
+      tailSegments,
+      flightPhase: 0,
+      boostSpeed: 0,
+      fireUntil: 0,
+      barrelRollStart: 0
+    };
+  }
+
+  // 觸發赤紅巨龍噴火、翻滾加速與金句互動
+  function triggerDragonInteraction() {
+    if (!dragonData) return;
+    const now = Date.now();
+    dragonData.fireUntil = now + 2600;       // 連續噴火 2.6 秒
+    dragonData.boostSpeed = 1.65;            // 振翅加速衝刺
+    dragonData.barrelRollStart = now;        // 空中威武翻騰動作
+
+    const worldPos = new THREE.Vector3();
+    dragonData.group.getWorldPosition(worldPos);
+    const quote = DRAGON_QUOTES[Math.floor(Math.random() * DRAGON_QUOTES.length)];
+    showSpeechBubble(worldPos, quote);
+    showMiniToast('🔥 赤紅巨龍昂首咆哮，噴出熾熱黃金龍息！');
+  }
+
+  const dragonFireGeo = new THREE.DodecahedronGeometry(0.22, 0);
+  function spawnDragonFireParticle() {
+    if (!dragonData || dragonFireParticles.length > 55) return;
+
+    const emitterWorldPos = new THREE.Vector3();
+    dragonData.fireEmitter.getWorldPosition(emitterWorldPos);
+
+    // 取得巨龍當前飛行正前方方向
+    const forward = new THREE.Vector3(0, -0.18, 1).applyQuaternion(dragonData.group.quaternion).normalize();
+
+    // 隨機火焰色階：耀眼金黃 -> 熾熱橘紅 -> 深紅烈焰
+    const fireColors = [0xfef08a, 0xfbbf24, 0xf97316, 0xef4444, 0xdc2626];
+    const col = fireColors[Math.floor(Math.random() * fireColors.length)];
+    const mat = new THREE.MeshBasicMaterial({
+      color: col,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    const pMesh = new THREE.Mesh(dragonFireGeo, mat);
+    pMesh.position.copy(emitterWorldPos);
+    pMesh.scale.setScalar(0.55 + Math.random() * 0.45);
+    scene.add(pMesh);
+
+    // 加入擴散噴射锥角速度
+    const spread = new THREE.Vector3(
+      (Math.random() - 0.5) * 0.35,
+      (Math.random() - 0.5) * 0.28 - 0.06,
+      (Math.random() - 0.5) * 0.35
+    );
+    const vel = forward.multiplyScalar(0.45 + Math.random() * 0.25).add(spread);
+
+    dragonFireParticles.push({
+      mesh: pMesh,
+      vel,
+      startTime: Date.now(),
+      duration: 520 + Math.random() * 320
+    });
+  }
+
+  // 每幀更新赤紅巨龍：8 字形跨海峽巡航、雙翼拍動、長尾正弦擺動、噴火粒子
+  let _lastDragonTime = 0;
+  function updateRedDragon(elapsedTime) {
+    if (!dragonData) return;
+    const dt = _lastDragonTime ? Math.min(0.05, elapsedTime - _lastDragonTime) : 0.016;
+    _lastDragonTime = elapsedTime;
+
+    const now = Date.now();
+    const isBreathingFire = now < dragonData.fireUntil;
+
+    // 自然衰減衝刺速度並推進 8 字形巡航相位
+    dragonData.boostSpeed *= 0.97;
+    const baseOmega = 0.22 + dragonData.boostSpeed * 0.28;
+    dragonData.flightPhase += dt * baseOmega;
+    const u = dragonData.flightPhase;
+
+    // 橫跨「醫學筆島群」與「讀書筆記島群」的壯麗大 8 字形 (Lemniscate) 航線
+    const spanX = 24.5;
+    const spanZ = 14.5;
+    const x = Math.sin(u) * spanX;
+    const z = Math.sin(u * 2) * (spanZ * 0.65);
+    const y = 11.8 + Math.cos(u * 2) * 1.8 + Math.sin(elapsedTime * 3.8) * 0.28;
+
+    // 計算下一微小時間點以取得精準切線飛行朝向與過彎傾角 (Bank angle)
+    const uNext = u + 0.03;
+    const nx = Math.sin(uNext) * spanX;
+    const nz = Math.sin(uNext * 2) * (spanZ * 0.65);
+    const ny = 11.8 + Math.cos(uNext * 2) * 1.8;
+
+    dragonData.group.position.set(x, y, z);
+    dragonData.group.lookAt(nx, ny, nz);
+
+    // 過彎時身體自然側傾 (Roll Banking) + 點擊時空中威武側翻
+    const bankAngle = -Math.cos(u * 2) * 0.32;
+    let rollExtra = 0;
+    const rollElapsed = now - dragonData.barrelRollStart;
+    if (dragonData.barrelRollStart > 0 && rollElapsed < 1100) {
+      const rp = rollElapsed / 1100;
+      rollExtra = Math.sin(rp * Math.PI * 2) * 0.55 * (1 - rp);
+    }
+    dragonData.bodyRoot.rotation.z = bankAngle + rollExtra;
+
+    // 雙翼強勁拍動動畫 (內外翼段具相位差，呈現生物流體感)
+    const flapFreq = isBreathingFire ? 8.5 : 4.2;
+    const flapAngle = Math.sin(elapsedTime * flapFreq) * 0.58;
+    const outerFlap = Math.sin(elapsedTime * flapFreq - 0.65) * 0.45;
+
+    dragonData.leftWing.wingPivot.rotation.z = flapAngle;
+    dragonData.leftWing.outerPivot.rotation.z = outerFlap;
+    dragonData.rightWing.wingPivot.rotation.z = -flapAngle;
+    dragonData.rightWing.outerPivot.rotation.z = -outerFlap;
+
+    // 7 節長龍尾 S 型流暢擺動
+    dragonData.tailSegments.forEach((seg, idx) => {
+      seg.rotation.y = Math.sin(elapsedTime * 4.5 - idx * 0.55) * (0.12 + idx * 0.025);
+      seg.rotation.x = Math.cos(elapsedTime * 4.2 - idx * 0.45) * 0.06;
+    });
+
+    // 定期自動短暫噴出小龍息 (每 14 秒偶爾噴出一小口火)，或點擊時大噴火
+    const autoFirePulse = (elapsedTime % 14.0) < 1.1;
+    if (isBreathingFire || autoFirePulse) {
+      dragonData.jawPivot.rotation.x = 0.48 + Math.sin(elapsedTime * 24) * 0.08;
+      dragonData.fireLight.intensity = isBreathingFire ? 4.5 : 2.2;
+      const count = isBreathingFire ? 3 : 1;
+      for (let k = 0; k < count; k++) {
+        spawnDragonFireParticle();
+      }
+    } else {
+      dragonData.jawPivot.rotation.x = 0.05;
+      dragonData.fireLight.intensity = 0;
+    }
+
+    // 更新龍息火焰粒子運動與消散
+    for (let i = dragonFireParticles.length - 1; i >= 0; i--) {
+      const fp = dragonFireParticles[i];
+      const age = now - fp.startTime;
+      if (age >= fp.duration) {
+        scene.remove(fp.mesh);
+        fp.mesh.material.dispose();
+        dragonFireParticles.splice(i, 1);
+      } else {
+        const prog = age / fp.duration;
+        fp.mesh.position.add(fp.vel);
+        fp.mesh.rotation.x += 0.15;
+        fp.mesh.rotation.y += 0.18;
+        const scale = (0.6 + prog * 2.2) * (1 - prog * 0.3);
+        fp.mesh.scale.setScalar(scale);
+        fp.mesh.material.opacity = (1 - prog) * 0.9;
+      }
+    }
   }
 
   // ── (3) 3D 對話泡泡與健康/理財冷知識金句庫 ──
@@ -5903,6 +6439,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       raycaster.setFromCamera(mouse, camera);
 
       const checkList = [];
+      if (dragonGroup) checkList.push(dragonGroup);
       if (faunaGroup && faunaGroup.children.length > 0) checkList.push(faunaGroup);
       if (islandsGroup && islandsGroup.children.length > 0) checkList.push(islandsGroup);
       if (ferries && ferries.length > 0) checkList.push(...ferries);
@@ -5984,6 +6521,21 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         }
         if (isSunOrMoon) {
           toggleDayNight();
+          return;
+        }
+
+        // 1b. 中古世紀赤紅巨龍 ➔ 咆哮噴火 + 翻騰加速 + 巨龍專屬金句泡泡
+        let isDragonHit = false;
+        testNode = cur;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isDragon) {
+            isDragonHit = true;
+            break;
+          }
+          testNode = testNode.parent;
+        }
+        if (isDragonHit) {
+          triggerDragonInteraction();
           return;
         }
 
@@ -6187,6 +6739,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     if (dayNightQuickToggle) {
       dayNightQuickToggle.addEventListener('click', () => {
         toggleDayNight();
+      });
+    }
+
+    // 🐉 赤紅巨龍召喚按鈕
+    const summonDragonBtn = document.getElementById('summonDragonBtn');
+    if (summonDragonBtn) {
+      summonDragonBtn.addEventListener('click', () => {
+        triggerDragonInteraction();
       });
     }
 
@@ -6517,7 +7077,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       }
     });
 
-    // 5. 療癒微縮世界互動更新 (動物生機、果凍物理、彈跳縮放、水波紋、船尾水花)
+    // 5. 療癒微縮世界互動更新 (赤紅巨龍、動物生機、果凍物理、彈跳縮放、水波紋、船尾水花)
+    updateRedDragon(elapsedTime);
     updateFauna(elapsedTime);
     updateJellyAnims();
     updateSquashAnims();
