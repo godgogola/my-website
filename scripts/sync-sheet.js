@@ -56,7 +56,7 @@ for (const mdFile of mdFiles) {
 
   const category = categoryMatch ? categoryMatch[1].trim() : '';
 
-  // 排除非診所衛教分類（如指數投資、投資理財），不同步至診所 Google Sheet 與 LINE 官方帳號
+  // 排除非診所衛教分類（如指數投資、投資理財），不同步至診所 Google Sheet
   const EXCLUDED_CATEGORIES = new Set(['指數投資', '投資理財']);
   if (EXCLUDED_CATEGORIES.has(category)) {
     skipCount++;

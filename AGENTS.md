@@ -37,7 +37,7 @@ Cute 3D knitted crochet amigurumi plush doll style, hand-crafted yarn texture, s
 ### 生成與發布 SOP (自動化處理)
 1. **生圖 (地雷食物系列 16:9 規格)**：依主題生成符合上述「坐姿/半身、豐富桌面橫向陳列、四周充足留白」的 16:9 圖片。
 2. **原圖備份**：將 16:9 PNG 備份至 `G:\我的雲端硬碟\衛教文章圖片\<Title>.png`。
-3. **WebP 轉檔發布**：將 16:9 圖片轉檔為高品質 WebP，**同時存入 `public/images/<Title>.webp` 與 `public/og-images/<Title>.webp`**（確保 Google Sheet / LINE 官方帳號圖文選單之圖片自動無縫更新為最新版）。
+3. **WebP 轉檔發布**：將 16:9 圖片轉檔為高品質 WebP，**同時存入 `public/images/<Title>.webp` 與 `public/og-images/<Title>.webp`**（確保 Google Sheet 次分類工作表之圖片與網站自動無縫更新為最新版）。
 4. **綁定與驗證**：更新 Markdown 的 `coverImage` 欄位並執行 `npm run build` 驗證。
 
 ---
@@ -77,6 +77,41 @@ order: 1                  # 選填，排序序號
 
 ---
 
+## 🚀 全自動發布交班 SOP (Master Release Pipeline)
+
+> **Antigravity 2.0 最高發布守則**：當使用者指示「發布網站」、「同步更新」、「執行發布管線」或 Scheduled Tasks 定時排程觸發時，**必須嚴格依照以下 7 個步驟自主完成**。禁止半途終止，若遇錯誤必須自主診斷修復。
+
+### 📋 標準發布 7 步驟 (SOP Execution Order)
+
+1. **[1/7] 同步 Obsidian 文章與讀書筆記**：
+   - 執行 `node scripts/sync-obsidian.js`（同步衛教專欄筆記）
+   - 執行 `node scripts/sync-books-content.js`（同步人類大歷史等讀書筆記內文）
+2. **[2/7] 套用自訂封面對應**：
+   - 執行 `node scripts/apply-mapping.js`（套用已登記的手動封面對應表）
+3. **[3/7] 自動比對剩餘封面**：
+   - 執行 `node scripts/auto-cover-image-v2.js`（自動比對圖庫與未配對的文章）
+4. **[4/7] 雲端硬碟圖片同步（最終權威）**：
+   - 執行 `node scripts/sync-drive-images.js`（確保 `G:\我的雲端硬碟\衛教文章圖片\` 之最新圖片全數同步至 `public/images/` 與 `public/og-images/`）
+5. **[5/7] Astro 建置檢查與自癒**：
+   - 執行 `npm run build` 進行全站編譯驗證。
+   - **自癒協議**：若建置報錯（如 YAML frontmatter 缺少引號、冒號衝突或破圖），AI 必須讀取報錯日誌，主動定位並修復該 `.md` 檔案，修復後重新執行 `npm run build` 直到完全成功（Exit Code 0）。
+6. **[6/7] Google Sheet 次分類工作表同步**：
+   - 執行 `node scripts/sync-sheet.js`（更新最新文章 URL 與圖片 URL 至次分類工作表，自動排除指數投資）
+   - 執行 `node scripts/sync-books.js`（更新書籍工作表資料）
+7. **[7/7] Git 提交與 Vercel 生產部署**：
+   - 執行 `git add -A`
+   - 檢查是否有更動，若有變更則執行 `git commit -m "auto: release sync YYYY-MM-DD HH:mm"`
+   - 執行 `git push origin main`
+   - 執行 `npx vercel --prod --yes` 確保線上網站即時發布
+
+### 🛡️ 缺封面圖之應變機制 (Missing Cover Image Handling)
+在執行發布過程中，若偵測到有新文章缺少 `coverImage` 或本機無圖檔：
+1. **絕不破圖上線**。
+2. 依據上方【地雷食物系列 16:9 黃金規範】，分析文章醫療核心，調用生圖工具生成原生 16:9 毛線娃娃圖。
+3. 原圖存入 `G:\我的雲端硬碟\衛教文章圖片\<Title>.png`，轉 WebP 存入 `public/images/` 與 `public/og-images/`，並回填 frontmatter 後再繼續執行發布管線。
+
+---
+
 ## 🛡️ Obsidian 外掛安全規則 (Plugin Safety Rules)
 
 > **AI 必讀**：建議安裝 Obsidian 外掛前，必須確認該外掛是否會修改 `.md` 檔案內容，因為 `sync-obsidian.js` 會直接讀取這些檔案並推送至網站。
@@ -107,7 +142,7 @@ order: 1                  # 選填，排序序號
 
 - **情境說明**：院長在 Obsidian 會撰寫非醫學個人專欄（例如資料夾命名為「指數投資」或「投資理財」）。
 - **個人網站展示**：在個人網站 (`/health-column`) 正常展示，並自動排在分類標籤列最末端。
-- **診所官網與 LINE 隔離**：
+- **診所官網與 Google Sheet 隔離**：
   1. `src/pages/health-column/embed.astro` 與 `src/pages/column/embed.astro` 已設置 `CLINIC_EXCLUDED_CATEGORIES = ['指數投資', '投資理財']`，確保豐田診所官網嵌入專區絕不出現任何投資理財文章。
-  2. `scripts/sync-sheet.js` 已設置 `EXCLUDED_CATEGORIES`，確保投資理財文章不會同步至診所 Google Sheet 或 LINE 官方帳號圖文選單。
+  2. `scripts/sync-sheet.js` 已設置 `EXCLUDED_CATEGORIES`，確保投資理財文章不會同步至診所 Google Sheet。
   3. `src/pages/index.astro` 首頁「最新醫學筆記」區塊已設置排除過濾，確保首頁維持純粹醫學專業。
