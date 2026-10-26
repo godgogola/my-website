@@ -1048,36 +1048,34 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   .island-3d-badge-inner {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 3px 8px;
+    gap: 4px;
+    padding: 2px 7px;
     border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
     white-space: nowrap;
     user-select: none;
     color: #1e293b;
   }
 
   .island-3d-badge.health .island-3d-badge-inner {
-    border-color: rgba(251, 146, 60, 0.4);
+    border-color: rgba(251, 146, 60, 0.45);
   }
 
   .island-3d-badge.wisdom .island-3d-badge-inner {
-    border-color: rgba(167, 139, 250, 0.4);
+    border-color: rgba(167, 139, 250, 0.45);
   }
 
   .badge-icon {
-    font-size: 0.82rem;
-    line-height: 1;
-    filter: none;
+    display: none !important; /* 100% 徹底移除圖示，UI 標籤極簡化 */
   }
 
   .badge-title {
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.2px;
     color: #1e293b;
     text-shadow: none;
@@ -1108,11 +1106,75 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   .badge-arrow {
     width: 0;
     height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid rgba(255, 255, 255, 0.92);
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 3px solid rgba(255, 255, 255, 0.94);
     margin: 0 auto;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+  }
+
+  /* ════════════ 3D 浮動對話冷知識泡泡 ════════════ */
+  .speech-bubble-3d {
+    position: absolute;
+    pointer-events: none;
+    transform: translate(-50%, -100%) scale(0.85);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid #38bdf8;
+    color: #0f172a;
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1.4;
+    padding: 7px 13px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(56, 189, 248, 0.25);
+    white-space: nowrap;
+    z-index: 100;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+  }
+  .speech-bubble-3d.active {
+    opacity: 1;
+    transform: translate(-50%, -125%) scale(1);
+  }
+  .speech-bubble-3d::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 7px 6px 0;
+    border-style: solid;
+    border-color: #38bdf8 transparent transparent;
+    display: block;
+    width: 0;
+  }
+
+  /* ════════════ 跨海開船與時空切換 Mini Toast ════════════ */
+  .island-mini-toast {
+    position: fixed;
+    top: 76px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(15, 23, 42, 0.92);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .island-mini-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 
   /* 隱藏標籤狀態 */
@@ -1771,6 +1833,21 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   let animatedFlags = [];     // { mesh, baseRotY, speed, phase }
   let animatedCampfires = []; // { light, baseIntensity }
 
+  // ── 療癒微縮世界 5 大互動系統狀態變數 ──
+  const faunaGroup = new THREE.Group();
+  const faunaCreatures = []; // { mesh, type, islandId, basePos, baseRotY, phase, tailMesh }
+  const leapingFishList = []; // { mesh, startX, startZ, endX, endZ, period, offset, jumpDuration, jumpHeight, rippled }
+  const swimmingCreatures = []; // { mesh, type, centerX, centerZ, radiusX, radiusZ, speed, phase }
+  const floatingDucks = []; // { mesh, baseY, bobPhase }
+  const waterRipples = []; // { mesh, startTime, duration, maxScale }
+  const wakeParticles = []; // { mesh, startTime, duration }
+  const activeJellyAnims = []; // { mesh, startTime, duration, origRotX, origRotZ, amp }
+  const activeSquashAnims = []; // { mesh, startTime, duration, origScaleX, origScaleY, origScaleZ, origPosY, jumpH }
+  let speechBubbleObj = null;
+  let speechBubbleDiv = null;
+  let speechBubbleTimer = null;
+  let lighthouseBeam = null;
+
   // 動態相機飛行參數
   let cameraTarget = new THREE.Vector3(0, 0, 0);
   let cameraLookAt = new THREE.Vector3(0, 0, 0);
@@ -1826,6 +1903,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     scene.add(bridgesGroup);
     scene.add(walkersGroup);
     scene.add(flowsGroup);
+    scene.add(faunaGroup);
 
     createDayNightSystem();   // 1. 太陽月亮 180s 日夜循環
     createStarfieldAndMilkyWay(); // 2. 穹頂星空與銀河微粒
@@ -1841,6 +1919,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     buildFlowLines();         // 8. 跨界光流索
     spawnWalkers();           // 9. 漫步小人
     birdFlockData = createBirdFlock(); // 10. 飛鳥振翅盤旋
+    createMiniFauna();        // 11. 療癒 Q 版小動物與海洋魚群
+    initSpeechBubble();       // 12. 3D 對話氣泡系統
     setupRaycaster();
     setupUI();
 
@@ -1968,16 +2048,17 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     celestialPivot.rotation.x = -0.35; // 傾斜軸，讓太陽從左前天際升起，月亮從右後天際升起
     scene.add(celestialPivot);
 
-    // ── 太陽端 (Radius 28) ──
+    // ── 太陽端 (移至更高、更遠的天空背景處，縮小光暈，避免遮擋超音波島與高血壓島) ──
     const sunGroup = new THREE.Group();
-    sunGroup.position.set(-28, 0, 0);
+    sunGroup.position.set(-56, 32, -32);
 
-    const sunGeo = new THREE.SphereGeometry(2.0, 24, 24);
+    const sunGeo = new THREE.SphereGeometry(1.2, 24, 24);
     const sunMat = new THREE.MeshBasicMaterial({ color: 0xfff9db });
     sunMesh = new THREE.Mesh(sunGeo, sunMat);
+    sunMesh.userData.isSun = true;
     sunGroup.add(sunMesh);
 
-    // 太陽金色放射日冕 Sprite
+    // 太陽金色放射日冕 Sprite (精緻微型光暈)
     const sunCanvas = document.createElement('canvas');
     sunCanvas.width = 256;
     sunCanvas.height = 256;
@@ -1997,16 +2078,16 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       depthWrite: false
     });
     sunGlowSprite = new THREE.Sprite(sunGlowMat);
-    sunGlowSprite.scale.set(18, 18, 1);
+    sunGlowSprite.scale.set(7.5, 7.5, 1);
     sunGroup.add(sunGlowSprite);
 
-    sunLight = new THREE.DirectionalLight(0xfffdf2, 1.2);
+    sunLight = new THREE.DirectionalLight(0xfffdf2, 1.25);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
     sunLight.shadow.camera.near = 1;
-    sunLight.shadow.camera.far = 75;
-    const sd = 25;
+    sunLight.shadow.camera.far = 140;
+    const sd = 32;
     sunLight.shadow.camera.left = -sd;
     sunLight.shadow.camera.right = sd;
     sunLight.shadow.camera.top = sd;
@@ -2015,17 +2096,18 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     sunGroup.add(sunLight);
     celestialPivot.add(sunGroup);
 
-    // ── 月亮端 (對立面 180 度，Radius 28) ──
+    // ── 月亮端 (對立面 180 度，移至對稱遠景天空) ──
     const moonGroup = new THREE.Group();
-    moonGroup.position.set(28, 0, 0);
+    moonGroup.position.set(56, -32, 32);
 
-    const moonGeo = new THREE.SphereGeometry(1.5, 24, 24);
+    const moonGeo = new THREE.SphereGeometry(1.1, 24, 24);
     const moonMat = new THREE.MeshStandardMaterial({
       color: 0xf8fafc,
       roughness: 0.75,
       metalness: 0.1
     });
     moonMesh = new THREE.Mesh(moonGeo, moonMat);
+    moonMesh.userData.isMoon = true;
     moonGroup.add(moonMesh);
 
     // 月亮幽藍月暈 Sprite
@@ -2188,6 +2270,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
     oceanMesh.position.set(0, -0.05, 0); // 略低於島嶼基座 (y = 0)
     oceanMesh.receiveShadow = true;
+    oceanMesh.userData.isOcean = true;
     scene.add(oceanMesh);
     waterSphere = oceanMesh;
   }
@@ -2299,6 +2382,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     nightPointLights.forEach((pl) => {
       pl.intensity = isNightTime ? 3.0 : 0.0;
     });
+
+    // 燈塔旋轉光束更新 (夜間發亮並持續掃掠海面)
+    if (lighthouseBeam) {
+      lighthouseBeam.visible = isNightTime;
+      if (isNightTime) {
+        lighthouseBeam.rotation.y += 0.024;
+      }
+    }
 
     // 雲朵在夜晚調暗半透明度，襯托星空與銀河
     if (cloudsGroup) {
@@ -2475,7 +2566,6 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       badgeDiv.className = `island-3d-badge ${island.realm}`;
       badgeDiv.innerHTML = `
         <div class="island-3d-badge-inner">
-          <span class="badge-icon">${island.icon}</span>
           <span class="badge-title">${island.shortName}</span>
           <span class="badge-pins-count">${island.articles.length}篇</span>
         </div>
@@ -3570,6 +3660,23 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     // ── 隨機點綴 3~5 個微型小人偶 (熱鬧的中世紀小市民) ──
     const figureCount = 3 + (Math.abs(island.q * 2 + island.r) % 3);
     createMiniFigures(group, figureCount);
+
+    // ── 標記島上建築群與樹木為可撥動搖擺物件 (Jelly Wobble & Building Squash Click) ──
+    group.children.forEach(child => {
+      if (child.userData && child.userData.islandId) return;
+      if (!child.userData.isWobbleable) {
+        child.userData.isWobbleable = true;
+        child.userData.parentWobble = child;
+        child.userData.isBuilding = true;
+        child.userData.parentBuilding = child;
+        child.traverse(c => {
+          c.userData.isWobbleable = true;
+          c.userData.parentWobble = child;
+          c.userData.isBuilding = true;
+          c.userData.parentBuilding = child;
+        });
+      }
+    });
   }
 
   // ══════════════════════════════════════════════════════════════════════
@@ -3831,12 +3938,40 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       grass.position.y = 0.52;
       g.add(sand, grass);
       if (i === 2) {
-        // 紅白燈塔 (夜間點亮)
+        // 紅白燈塔 (夜間點亮 + 點擊切換日夜模式)
+        g.userData.isLighthouse = true;
         const base = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.44, 0.7, 8), whiteMat); base.position.y = 0.95;
         const mid = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.34, 0.6, 8), redMat); mid.position.y = 1.6;
         const top = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.27, 0.5, 8), whiteMat); top.position.y = 2.15;
         const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 10), nightGlowMaterial); lamp.position.y = 2.6;
         const cap = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.35, 8), redMat); cap.position.y = 2.95;
+
+        // 燈塔頂端雙向旋轉探照光束 (夜間亮起)
+        lighthouseBeam = new THREE.Group();
+        const beamGeo = new THREE.ConeGeometry(2.8, 16, 16, 1, true);
+        beamGeo.translate(0, 8, 0);
+        beamGeo.rotateX(Math.PI / 2);
+        const beamMat = new THREE.MeshBasicMaterial({
+          color: 0xfff08a,
+          transparent: true,
+          opacity: 0.35,
+          side: THREE.DoubleSide,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+        const b1 = new THREE.Mesh(beamGeo, beamMat);
+        const b2 = new THREE.Mesh(beamGeo, beamMat);
+        b2.rotation.y = Math.PI;
+        lighthouseBeam.add(b1, b2);
+        lighthouseBeam.position.y = 2.6;
+        lighthouseBeam.visible = false;
+        g.add(lighthouseBeam);
+
+        [base, mid, top, lamp, cap].forEach(m => {
+          m.userData.isLighthouse = true;
+          m.userData.parentWobble = g;
+          m.userData.isWobbleable = true;
+        });
         g.add(base, mid, top, lamp, cap);
       } else {
         const trees = 1 + Math.floor(rnd() * 3);
@@ -4525,14 +4660,28 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         pier.add(lampPole, lamp);
         scene.add(pier);
 
-        // 碼頭標示 (HTML 浮動標籤)
+        // 碼頭標示 (HTML 浮動標籤，極簡純文字)
         const label = document.createElement('div');
         label.className = 'ferry-label';
-        label.textContent = '⛴ 渡船碼頭';
+        label.textContent = '渡船碼頭';
+        label.style.cursor = 'pointer';
+        label.addEventListener('pointerdown', (e) => e.stopPropagation());
+        label.addEventListener('click', (e) => {
+          e.stopPropagation();
+          launchFerry(ri);
+        });
         const labelObj = new CSS2DObject(label);
         labelObj.position.set(0, 1.5, 0);
         pier.add(labelObj);
         badgeObjects.push(label);
+
+        pier.userData = { isPier: true, ferryIndex: ri, isWobbleable: true };
+        pier.traverse(c => {
+          c.userData.isPier = true;
+          c.userData.ferryIndex = ri;
+          c.userData.parentWobble = pier;
+          c.userData.isWobbleable = true;
+        });
 
         // 渡船停靠點 (碼頭末端再往海面 0.9)
         stops.push({ x: endX + dk.sx * 0.9, z: endZ + dk.sz * 0.9 });
@@ -4573,7 +4722,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         ferry.add(pass);
       });
       ferry.scale.setScalar(1.15);
-      ferry.userData = { stops, bob: ri * 2.1, offset: route.offset };
+      ferry.userData = { stops, bob: ri * 2.1, offset: route.offset, ri, isFerry: true, isWobbleable: true };
+      ferry.traverse(c => {
+        c.userData.isFerry = true;
+        c.userData.ferryIndex = ri;
+        c.userData.parentWobble = ferry;
+        c.userData.isWobbleable = true;
+      });
       scene.add(ferry);
       ferries.push(ferry);
     });
@@ -4585,12 +4740,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const CYCLE = 30, DWELL = 4, TRAVEL = 11; // DWELL*2 + TRAVEL*2 = 30
     ferries.forEach((f) => {
       const u = f.userData;
-      const ph = (((t / CYCLE) + u.offset) % 1) * CYCLE;
+      const effectiveT = t + (u.manualBoost || 0);
+      const ph = (((effectiveT / CYCLE) + u.offset) % 1) * CYCLE;
       let k, dirSign;
+      let isMoving = false;
       if (ph < DWELL) { k = 0; dirSign = 1; }
-      else if (ph < DWELL + TRAVEL) { k = hmSmooth(0, 1, (ph - DWELL) / TRAVEL); dirSign = 1; }
+      else if (ph < DWELL + TRAVEL) { k = hmSmooth(0, 1, (ph - DWELL) / TRAVEL); dirSign = 1; isMoving = true; }
       else if (ph < 2 * DWELL + TRAVEL) { k = 1; dirSign = -1; }
-      else { k = 1 - hmSmooth(0, 1, (ph - 2 * DWELL - TRAVEL) / TRAVEL); dirSign = -1; }
+      else { k = 1 - hmSmooth(0, 1, (ph - 2 * DWELL - TRAVEL) / TRAVEL); dirSign = -1; isMoving = true; }
 
       const a = u.stops[0], b = u.stops[1];
       const x = a.x + (b.x - a.x) * k, z = a.z + (b.z - a.z) * k;
@@ -4598,48 +4755,887 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       _fQn.setFromUnitVectors(HM_UP, planetNormal(f.position, _fN));
       const fx = (b.x - a.x) * dirSign, fz = (b.z - a.z) * dirSign;
       _fQy.setFromAxisAngle(HM_UP, Math.atan2(-fz, fx));
-      f.quaternion.copy(_fQn).multiply(_fQy);
+
+      // 航行時船身微微左右搖晃 (Roll sway)
+      const roll = isMoving ? Math.sin(t * 4.5 + u.bob) * 0.08 : 0;
+      const _fQr = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), roll);
+      f.quaternion.copy(_fQn).multiply(_fQy).multiply(_fQr);
+
+      // 航行時船尾冒出白色水花粒子
+      if (isMoving && Math.random() < 0.38) {
+        const sternX = f.position.x - (fx / Math.hypot(fx, fz)) * 1.1;
+        const sternZ = f.position.z - (fz / Math.hypot(fx, fz)) * 1.1;
+        spawnWakeParticle(new THREE.Vector3(sternX, 0.06, sternZ));
+      }
+    });
+  }
+
+  function launchFerry(ri) {
+    const ferry = ferries[ri];
+    if (!ferry) return;
+    const u = ferry.userData;
+    u.manualBoost = (u.manualBoost || 0) + 5.2; // 推進進度立即啟航
+    triggerSquash(ferry);
+    for (let k = 0; k < 6; k++) {
+      spawnWakeParticle(ferry.position);
+    }
+    showMiniToast('🚢 渡輪鳴笛啟航！正開往對岸碼頭～');
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // 10. 療癒微縮世界 5 大互動功能模組
+  // ══════════════════════════════════════════════════════════════════════
+
+  // ── (1) Q 版 Low-Poly 小動物模型產生器 ──
+  function createSheepModel() {
+    const g = new THREE.Group();
+    const woolMat = new THREE.MeshStandardMaterial({ color: 0xfcfbfa, roughness: 0.9, flatShading: true });
+    const faceMat = new THREE.MeshStandardMaterial({ color: 0xfbd0b7, roughness: 0.8 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x3d271d, roughness: 0.9 });
+
+    // 蓬鬆圓毛球身軀
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.34, 7, 6), woolMat);
+    body.position.y = 0.36;
+    body.scale.set(1.15, 0.95, 1.0);
+    g.add(body);
+
+    // 可愛小羊頭
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.19, 6, 6), faceMat);
+    head.position.set(0.32, 0.46, 0);
+    g.add(head);
+
+    // 下垂小耳朵
+    const earGeo = new THREE.ConeGeometry(0.06, 0.14, 4);
+    earGeo.rotateZ(-Math.PI / 3);
+    const ear1 = new THREE.Mesh(earGeo, darkMat); ear1.position.set(0.26, 0.52, 0.14);
+    const ear2 = new THREE.Mesh(earGeo, darkMat); ear2.position.set(0.26, 0.52, -0.14);
+    g.add(ear1, ear2);
+
+    // 四條小細腿
+    const legGeo = new THREE.CylinderGeometry(0.045, 0.04, 0.22, 5);
+    [[-0.15, -0.12], [-0.15, 0.12], [0.15, -0.12], [0.15, 0.12]].forEach(([lx, lz]) => {
+      const leg = new THREE.Mesh(legGeo, darkMat);
+      leg.position.set(lx, 0.11, lz);
+      g.add(leg);
+    });
+
+    g.userData = { isAnimal: true, animalType: 'sheep', isWobbleable: true };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; c.userData.isWobbleable = true; c.userData.parentWobble = g; });
+    return g;
+  }
+
+  function createPuppyModel() {
+    const g = new THREE.Group();
+    const coatMat = new THREE.MeshStandardMaterial({ color: 0xd98e48, roughness: 0.8, flatShading: true });
+    const snoutMat = new THREE.MeshStandardMaterial({ color: 0xfcf4e8, roughness: 0.8 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x221815, roughness: 0.9 });
+
+    // 身軀
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.24, 0.24), coatMat);
+    body.position.y = 0.28;
+    g.add(body);
+
+    // 頭部與小鼻子
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.2), coatMat);
+    head.position.set(0.26, 0.42, 0);
+    const snout = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 0.12), snoutMat);
+    snout.position.set(0.38, 0.38, 0);
+    const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 4, 4), darkMat);
+    nose.position.set(0.44, 0.4, 0);
+    g.add(head, snout, nose);
+
+    // 垂耳
+    const ear1 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.14, 0.06), darkMat); ear1.position.set(0.24, 0.44, 0.12);
+    const ear2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.14, 0.06), darkMat); ear2.position.set(0.24, 0.44, -0.12);
+    g.add(ear1, ear2);
+
+    // 四隻小腳
+    const legGeo = new THREE.CylinderGeometry(0.045, 0.04, 0.18, 5);
+    [[-0.14, -0.09], [-0.14, 0.09], [0.14, -0.09], [0.14, 0.09]].forEach(([lx, lz]) => {
+      const leg = new THREE.Mesh(legGeo, coatMat);
+      leg.position.set(lx, 0.09, lz);
+      g.add(leg);
+    });
+
+    // 翹尾巴
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.04, 0.2, 4), coatMat);
+    tail.rotation.z = -Math.PI / 4;
+    tail.position.set(-0.25, 0.38, 0);
+    g.add(tail);
+
+    g.userData = { isAnimal: true, animalType: 'puppy', tailMesh: tail, isWobbleable: true };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; c.userData.isWobbleable = true; c.userData.parentWobble = g; });
+    return g;
+  }
+
+  function createCockatooModel() {
+    const g = new THREE.Group();
+    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xfcfbfa, roughness: 0.7, flatShading: true });
+    const crestMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.6, flatShading: true });
+    const beakMat = new THREE.MeshStandardMaterial({ color: 0x4b5563, roughness: 0.8 });
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x7c4f2e, roughness: 0.9 });
+
+    // 棲木樁
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.6, 6), woodMat);
+    post.position.y = 0.3;
+    g.add(post);
+
+    // 身軀
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.18, 6, 6), whiteMat);
+    body.scale.set(0.9, 1.3, 0.9);
+    body.position.set(0, 0.68, 0);
+    g.add(body);
+
+    // 頭部
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 6, 6), whiteMat);
+    head.position.set(0.05, 0.92, 0);
+    g.add(head);
+
+    // 招牌黃色羽冠
+    const crest = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.24, 4), crestMat);
+    crest.rotation.z = -0.45;
+    crest.position.set(0.02, 1.08, 0);
+    g.add(crest);
+
+    // 灰彎喙
+    const beak = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12, 4), beakMat);
+    beak.rotation.z = Math.PI / 2 + 0.3;
+    beak.position.set(0.16, 0.91, 0);
+    g.add(beak);
+
+    g.userData = { isAnimal: true, animalType: 'cockatoo', isWobbleable: true };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; c.userData.isWobbleable = true; c.userData.parentWobble = g; });
+    return g;
+  }
+
+  function createTurtleModel() {
+    const g = new THREE.Group();
+    const shellMat = new THREE.MeshStandardMaterial({ color: 0x4a7c59, roughness: 0.7, flatShading: true });
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0x86bb71, roughness: 0.8, flatShading: true });
+
+    // 六角圓拱龜殼
+    const shell = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.44, 0.16, 6), shellMat);
+    shell.position.y = 0.12;
+    g.add(shell);
+
+    // 頭部
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 6), skinMat);
+    head.position.set(0.44, 0.12, 0);
+    g.add(head);
+
+    // 划水前鰭
+    const finGeo = new THREE.BoxGeometry(0.32, 0.04, 0.16);
+    const f1 = new THREE.Mesh(finGeo, skinMat); f1.rotation.y = 0.5; f1.position.set(0.24, 0.08, 0.35);
+    const f2 = new THREE.Mesh(finGeo, skinMat); f2.rotation.y = -0.5; f2.position.set(0.24, 0.08, -0.35);
+    g.add(f1, f2);
+
+    // 後鰭
+    const f3 = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.03, 0.1), skinMat); f3.position.set(-0.35, 0.06, 0.22);
+    const f4 = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.03, 0.1), skinMat); f4.position.set(-0.35, 0.06, -0.22);
+    g.add(f3, f4);
+
+    g.userData = { isAnimal: true, animalType: 'turtle', isWobbleable: true };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; c.userData.isWobbleable = true; c.userData.parentWobble = g; });
+    return g;
+  }
+
+  function createDolphinModel() {
+    const g = new THREE.Group();
+    const dMat = new THREE.MeshStandardMaterial({ color: 0x5b82a6, roughness: 0.4, flatShading: true });
+    const bMat = new THREE.MeshStandardMaterial({ color: 0xe6edf3, roughness: 0.6, flatShading: true });
+
+    // 流線身軀
+    const body = new THREE.Mesh(new THREE.ConeGeometry(0.26, 1.1, 7), dMat);
+    body.rotation.z = Math.PI / 2;
+    body.position.set(0, 0.16, 0);
+    g.add(body);
+
+    // 白肚皮
+    const belly = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.22), bMat);
+    belly.position.set(0, 0.06, 0);
+    g.add(belly);
+
+    // 背鰭
+    const fin = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.3, 4), dMat);
+    fin.rotation.z = -0.4;
+    fin.position.set(-0.08, 0.36, 0);
+    g.add(fin);
+
+    // 尾鰭
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.4), dMat);
+    tail.position.set(-0.6, 0.18, 0);
+    g.add(tail);
+
+    g.userData = { isAnimal: true, animalType: 'dolphin', isWobbleable: true };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; c.userData.isWobbleable = true; c.userData.parentWobble = g; });
+    return g;
+  }
+
+  function createDuckModel() {
+    const g = new THREE.Group();
+    const yellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5, flatShading: true });
+    const beakMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.6 });
+    const eyeMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.9 });
+
+    // 圓胖身軀
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.24, 7, 7), yellowMat);
+    body.position.y = 0.18;
+    body.scale.set(1.2, 0.9, 1.0);
+    g.add(body);
+
+    // 小翹尾巴
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.16, 4), yellowMat);
+    tail.rotation.z = 0.8;
+    tail.position.set(-0.25, 0.24, 0);
+    g.add(tail);
+
+    // 圓頭與鴨嘴
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 6, 6), yellowMat);
+    head.position.set(0.16, 0.36, 0);
+    const beak = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, 0.12), beakMat);
+    beak.position.set(0.29, 0.34, 0);
+    g.add(head, beak);
+
+    // 小黑眼
+    const e1 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 4, 4), eyeMat); e1.position.set(0.22, 0.4, 0.1);
+    const e2 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 4, 4), eyeMat); e2.position.set(0.22, 0.4, -0.1);
+    g.add(e1, e2);
+
+    g.userData = { isAnimal: true, animalType: 'duck', isWobbleable: true };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; c.userData.isWobbleable = true; c.userData.parentWobble = g; });
+    return g;
+  }
+
+  function createFishModel() {
+    const g = new THREE.Group();
+    const fishMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, roughness: 0.4, flatShading: true });
+    const body = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.6, 6), fishMat);
+    body.rotation.z = -Math.PI / 2;
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.2, 4), fishMat);
+    tail.position.x = -0.38;
+    tail.rotation.z = Math.PI / 2;
+    g.add(body, tail);
+    g.scale.setScalar(0.85);
+    g.userData = { isAnimal: true, animalType: 'fish' };
+    g.traverse(c => { c.userData.isAnimal = true; c.userData.parentCreature = g; });
+    return g;
+  }
+
+  // ── (2) 佈置島嶼生機小動物與海洋魚群 ──
+  function createMiniFauna() {
+    // 陸地動物：小白羊、小狗、巴丹鸚鵡
+    const FAUNA_DISTRIBUTION = [
+      { islandId: 'glucose', type: 'sheep', x: 1.1, z: 0.8 },
+      { islandId: 'diet', type: 'sheep', x: -1.0, z: 0.9 },
+      { islandId: 'respiratory', type: 'sheep', x: 0.9, z: -1.0 },
+      { islandId: 'die-with-zero', type: 'sheep', x: -0.9, z: -0.8 },
+      { islandId: 'exercise', type: 'puppy', x: 1.3, z: -0.7 },
+      { islandId: 'stomach', type: 'puppy', x: -1.2, z: 0.6 },
+      { islandId: 'wealth-ladder', type: 'puppy', x: 1.1, z: 0.7 },
+      { islandId: 'hypertension', type: 'cockatoo', x: -1.3, z: -0.8 },
+      { islandId: 'brain-neuro', type: 'cockatoo', x: 1.0, z: -0.9 },
+      { islandId: 'most-important', type: 'cockatoo', x: -1.1, z: 0.8 }
+    ];
+
+    FAUNA_DISTRIBUTION.forEach(item => {
+      const islandObj = islandObjectsMap.get(item.islandId);
+      if (!islandObj) return;
+
+      let creatureMesh;
+      if (item.type === 'sheep') creatureMesh = createSheepModel();
+      else if (item.type === 'puppy') creatureMesh = createPuppyModel();
+      else if (item.type === 'cockatoo') creatureMesh = createCockatooModel();
+
+      if (!creatureMesh) return;
+      creatureMesh.position.set(item.x, HEX_HEIGHT + 0.08, item.z);
+      creatureMesh.rotation.y = Math.random() * Math.PI * 2;
+      islandObj.add(creatureMesh);
+
+      faunaCreatures.push({
+        mesh: creatureMesh,
+        type: item.type,
+        islandId: item.islandId,
+        baseRotY: creatureMesh.rotation.y,
+        phase: Math.random() * Math.PI * 2,
+        tailMesh: creatureMesh.userData.tailMesh
+      });
+    });
+
+    // 水生生物：海龜、海豚、小黃鴨、跳跳魚
+    // (a) 海龜
+    const turtle1 = createTurtleModel();
+    faunaGroup.add(turtle1);
+    swimmingCreatures.push({
+      mesh: turtle1, type: 'turtle',
+      centerX: -2.5, centerZ: 2.0, radiusX: 9.5, radiusZ: 7.0, speed: 0.18, phase: 0.5
+    });
+
+    const turtle2 = createTurtleModel();
+    turtle2.scale.setScalar(0.85);
+    faunaGroup.add(turtle2);
+    swimmingCreatures.push({
+      mesh: turtle2, type: 'turtle',
+      centerX: 6.0, centerZ: -8.0, radiusX: 8.0, radiusZ: 6.5, speed: 0.22, phase: 2.8
+    });
+
+    // (b) 海豚
+    const dolphin1 = createDolphinModel();
+    faunaGroup.add(dolphin1);
+    swimmingCreatures.push({
+      mesh: dolphin1, type: 'dolphin',
+      centerX: 0.0, centerZ: -4.0, radiusX: 13.0, radiusZ: 10.0, speed: 0.38, phase: 1.2
+    });
+
+    const dolphin2 = createDolphinModel();
+    dolphin2.scale.setScalar(0.9);
+    faunaGroup.add(dolphin2);
+    swimmingCreatures.push({
+      mesh: dolphin2, type: 'dolphin',
+      centerX: -10.0, centerZ: 10.0, radiusX: 11.0, radiusZ: 8.5, speed: 0.35, phase: 4.1
+    });
+
+    // (c) 漂浮小黃鴨
+    const duckCoords = [
+      { x: -5.5, z: 6.8 },
+      { x: 3.8, z: 8.2 },
+      { x: -8.0, z: -10.5 }
+    ];
+    duckCoords.forEach((coord, i) => {
+      const duck = createDuckModel();
+      duck.position.set(coord.x, 0.06, coord.z);
+      duck.rotation.y = Math.random() * Math.PI * 2;
+      faunaGroup.add(duck);
+      floatingDucks.push({
+        mesh: duck, baseY: 0.06, bobPhase: i * 1.8
+      });
+    });
+
+    // (d) 躍出水面跳跳魚
+    const leapConfigs = [
+      { startX: -7.0, startZ: 3.0, endX: -4.5, endZ: 4.5, period: 5.5, offset: 0.0, jumpDuration: 1.2, jumpHeight: 1.6 },
+      { startX: 4.0, startZ: -5.0, endX: 6.5, endZ: -3.5, period: 6.2, offset: 2.3, jumpDuration: 1.3, jumpHeight: 1.8 },
+      { startX: -1.0, startZ: 12.0, endX: 1.5, endZ: 13.5, period: 7.0, offset: 4.5, jumpDuration: 1.25, jumpHeight: 1.5 }
+    ];
+    leapConfigs.forEach(cfg => {
+      const fish = createFishModel();
+      fish.visible = false;
+      faunaGroup.add(fish);
+      leapingFishList.push({
+        mesh: fish,
+        startX: cfg.startX, startZ: cfg.startZ,
+        endX: cfg.endX, endZ: cfg.endZ,
+        period: cfg.period,
+        offset: cfg.offset,
+        jumpDuration: cfg.jumpDuration,
+        jumpHeight: cfg.jumpHeight,
+        rippled: false
+      });
+    });
+  }
+
+  // ── (3) 3D 對話泡泡與健康/理財冷知識金句庫 ──
+  const HEALTH_WEALTH_QUOTES = [
+    '🐑 咩～定期做無痛胃鏡，守護腸胃一生健康！',
+    '🐶 汪！每天快走 30 分鐘，血壓血糖乖乖聽話！',
+    '🦜 嘎～多喝溫水少重鹹，腎臟天天笑瞇瞇！',
+    '🐢 慢慢存、穩穩賺，指數投資像烏龜一樣長青！',
+    '🐬 噗咻～定期腹部超音波，肝臟健康無死角！',
+    '🐟 噗通！多吃富含 Omega-3 的深海魚，血管通暢不卡關！',
+    '🐥 呱呱！做好資產配置，面對市場波動不慌張！',
+    '🏰 城堡衛兵：早睡早起身體好，今晚早點休息吧！',
+    '⛪ 教堂鐘聲：心平氣和、飲食定時，胃食道逆流不上門！',
+    '🩺 黃醫師小叮嚀：每年定期健康檢查，預防勝於治療！',
+    '📚 智慧小箴言：每天閱讀 15 分鐘，思想財富雙豐收！',
+    '🌾 稻香微風：高纖蔬果天天吃，腸道益生菌活力滿滿！'
+  ];
+
+  function initSpeechBubble() {
+    speechBubbleDiv = document.createElement('div');
+    speechBubbleDiv.className = 'speech-bubble-3d';
+    speechBubbleDiv.style.display = 'none';
+    speechBubbleObj = new CSS2DObject(speechBubbleDiv);
+    scene.add(speechBubbleObj);
+  }
+
+  function showSpeechBubble(worldPos, text) {
+    if (!speechBubbleObj || !speechBubbleDiv) return;
+    const msg = text || HEALTH_WEALTH_QUOTES[Math.floor(Math.random() * HEALTH_WEALTH_QUOTES.length)];
+    speechBubbleDiv.textContent = msg;
+    speechBubbleObj.position.copy(worldPos);
+    speechBubbleObj.position.y += 1.8;
+    speechBubbleDiv.style.display = 'block';
+    // 延遲微秒觸發 CSS transition 彈跳動畫
+    requestAnimationFrame(() => {
+      speechBubbleDiv.classList.add('active');
+    });
+
+    if (speechBubbleTimer) clearTimeout(speechBubbleTimer);
+    speechBubbleTimer = setTimeout(() => {
+      speechBubbleDiv.classList.remove('active');
+      setTimeout(() => {
+        speechBubbleDiv.style.display = 'none';
+      }, 350);
+    }, 3200);
+  }
+
+  function showMiniToast(msg) {
+    let toast = document.getElementById('islandMiniToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'islandMiniToast';
+      toast.className = 'island-mini-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toast._timer) clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2800);
+  }
+
+  // ── (4) 日夜點燈切換系統 ──
+  function toggleDayNight() {
+    isAutoDayNight = false;
+    manualTimeLock = true;
+    const isCurrentlyDay = (currentCycle >= 0.05 && currentCycle < 0.52);
+    targetCycle = isCurrentlyDay ? 0.75 : 0.25;
+
+    if (lighthouseBeam) {
+      lighthouseBeam.visible = isCurrentlyDay;
+    }
+
+    showMiniToast(isCurrentlyDay ? '🌙 夜幕降臨，星空與萬家燈火點亮！' : '☀️ 晨曦破曉，海島迎來明媚陽光！');
+
+    // 觸發燈塔彈跳
+    scene.traverse(node => {
+      if (node.userData && node.userData.isLighthouse) {
+        triggerSquash(node.userData.parentWobble || node);
+      }
+    });
+  }
+
+  // ── (5) 果凍 Q 彈物理搖晃動畫 (Jelly Wobble) ──
+  function triggerJellyWobble(mesh) {
+    if (!mesh) return;
+    if (activeJellyAnims.some(a => a.mesh === mesh)) return;
+    activeJellyAnims.push({
+      mesh,
+      startTime: Date.now(),
+      duration: 850,
+      origRotX: mesh.rotation.x,
+      origRotZ: mesh.rotation.z,
+      amp: 0.16
+    });
+  }
+
+  function updateJellyAnims() {
+    const now = Date.now();
+    for (let i = activeJellyAnims.length - 1; i >= 0; i--) {
+      const a = activeJellyAnims[i];
+      const elapsed = now - a.startTime;
+      if (elapsed >= a.duration) {
+        a.mesh.rotation.x = a.origRotX;
+        a.mesh.rotation.z = a.origRotZ;
+        activeJellyAnims.splice(i, 1);
+      } else {
+        const p = elapsed / a.duration;
+        const decay = Math.exp(-p * 4.5);
+        const wave = Math.sin(p * Math.PI * 7) * a.amp * decay;
+        a.mesh.rotation.z = a.origRotZ + wave;
+        a.mesh.rotation.x = a.origRotX + wave * 0.6;
+      }
+    }
+  }
+
+  // ── (6) 向上彈跳縮放動畫 (Squash & Jump) ──
+  function triggerSquash(mesh) {
+    if (!mesh) return;
+    if (activeSquashAnims.some(a => a.mesh === mesh)) return;
+    activeSquashAnims.push({
+      mesh,
+      startTime: Date.now(),
+      duration: 680,
+      origScaleX: mesh.scale.x,
+      origScaleY: mesh.scale.y,
+      origScaleZ: mesh.scale.z,
+      origPosY: mesh.position.y,
+      jumpH: 0.72
+    });
+  }
+
+  function updateSquashAnims() {
+    const now = Date.now();
+    for (let i = activeSquashAnims.length - 1; i >= 0; i--) {
+      const a = activeSquashAnims[i];
+      const elapsed = now - a.startTime;
+      if (elapsed >= a.duration) {
+        a.mesh.scale.set(a.origScaleX, a.origScaleY, a.origScaleZ);
+        a.mesh.position.y = a.origPosY;
+        activeSquashAnims.splice(i, 1);
+      } else {
+        const p = elapsed / a.duration;
+        let sy = 1, sxz = 1, dy = 0;
+        if (p < 0.2) {
+          const t = p / 0.2;
+          sy = 1 - 0.28 * Math.sin(t * Math.PI);
+          sxz = 1 + 0.14 * Math.sin(t * Math.PI);
+          dy = -0.08 * Math.sin(t * Math.PI);
+        } else if (p < 0.65) {
+          const t = (p - 0.2) / 0.45;
+          const jumpSin = Math.sin(t * Math.PI);
+          dy = a.jumpH * jumpSin;
+          sy = 1 + 0.22 * jumpSin;
+          sxz = 1 - 0.12 * jumpSin;
+        } else {
+          const t = (p - 0.65) / 0.35;
+          const bounce = Math.sin(t * Math.PI * 2) * Math.exp(-t * 3);
+          sy = 1 + 0.12 * bounce;
+          sxz = 1 - 0.06 * bounce;
+          dy = 0.08 * Math.max(0, bounce);
+        }
+        a.mesh.scale.y = a.origScaleY * sy;
+        a.mesh.scale.x = a.origScaleX * sxz;
+        a.mesh.scale.z = a.origScaleZ * sxz;
+        a.mesh.position.y = a.origPosY + dy;
+      }
+    }
+  }
+
+  // ── (7) 海面白色擴散水波紋 (Water Ripples) ──
+  const rippleGeo = new THREE.RingGeometry(0.12, 0.32, 32);
+  rippleGeo.rotateX(-Math.PI / 2);
+
+  function createWaterRipple(worldPos) {
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.85,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const mesh = new THREE.Mesh(rippleGeo, mat);
+    mesh.position.set(worldPos.x, 0.08, worldPos.z);
+    scene.add(mesh);
+    waterRipples.push({
+      mesh,
+      startTime: Date.now(),
+      duration: 1300,
+      maxScale: 4.8
+    });
+  }
+
+  function updateWaterRipples() {
+    const now = Date.now();
+    for (let i = waterRipples.length - 1; i >= 0; i--) {
+      const r = waterRipples[i];
+      const elapsed = now - r.startTime;
+      if (elapsed >= r.duration) {
+        scene.remove(r.mesh);
+        r.mesh.material.dispose();
+        waterRipples.splice(i, 1);
+      } else {
+        const p = elapsed / r.duration;
+        const scale = 1 + (r.maxScale - 1) * Math.sqrt(p);
+        r.mesh.scale.set(scale, 1, scale);
+        r.mesh.material.opacity = (1 - p) * 0.8;
+      }
+    }
+  }
+
+  // ── (8) 船尾水花粒子 (Wake Particles) ──
+  const wakeGeo = new THREE.BoxGeometry(0.12, 0.08, 0.12);
+  function spawnWakeParticle(pos) {
+    if (wakeParticles.length > 35) return;
+    const pMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.85
+    });
+    const pMesh = new THREE.Mesh(wakeGeo, pMat);
+    pMesh.position.set(
+      pos.x + (Math.random() - 0.5) * 0.45,
+      0.08,
+      pos.z + (Math.random() - 0.5) * 0.45
+    );
+    scene.add(pMesh);
+    wakeParticles.push({
+      mesh: pMesh,
+      startTime: Date.now(),
+      duration: 750 + Math.random() * 400
+    });
+  }
+
+  function updateWakeParticles() {
+    const now = Date.now();
+    for (let i = wakeParticles.length - 1; i >= 0; i--) {
+      const p = wakeParticles[i];
+      const elapsed = now - p.startTime;
+      if (elapsed >= p.duration) {
+        scene.remove(p.mesh);
+        p.mesh.material.dispose();
+        wakeParticles.splice(i, 1);
+      } else {
+        const prog = elapsed / p.duration;
+        p.mesh.scale.setScalar(1 + prog * 1.6);
+        p.mesh.material.opacity = (1 - prog) * 0.8;
+      }
+    }
+  }
+
+  // ── (9) 動物生機動畫即時更新 ──
+  function updateFauna(elapsedTime) {
+    // 陸地動物：小狗搖尾巴、小羊轉身、鸚鵡點頭
+    faunaCreatures.forEach(c => {
+      if (c.type === 'puppy' && c.tailMesh) {
+        c.tailMesh.rotation.y = Math.sin(elapsedTime * 12) * 0.45;
+      } else if (c.type === 'sheep') {
+        c.mesh.rotation.y = c.baseRotY + Math.sin(elapsedTime * 1.5 + c.phase) * 0.08;
+      } else if (c.type === 'cockatoo') {
+        c.mesh.rotation.z = Math.sin(elapsedTime * 2.0 + c.phase) * 0.06;
+      }
+    });
+
+    // 海龜與海豚環形游泳
+    swimmingCreatures.forEach(s => {
+      const angle = elapsedTime * s.speed + s.phase;
+      const x = s.centerX + Math.cos(angle) * s.radiusX;
+      const z = s.centerZ + Math.sin(angle) * s.radiusZ;
+      s.mesh.position.set(x, 0.05 + Math.sin(elapsedTime * 2.5 + s.phase) * 0.02, z);
+      s.mesh.rotation.y = -angle + Math.PI / 2;
+    });
+
+    // 小黃鴨隨浪漂浮
+    floatingDucks.forEach(d => {
+      d.mesh.position.y = d.baseY + Math.sin(elapsedTime * 2.2 + d.bobPhase) * 0.04;
+      d.mesh.rotation.z = Math.sin(elapsedTime * 1.8 + d.bobPhase) * 0.08;
+      d.mesh.rotation.x = Math.cos(elapsedTime * 1.5 + d.bobPhase) * 0.06;
+    });
+
+    // 跳跳魚拋物線躍出海面
+    leapingFishList.forEach(fish => {
+      const cycle = fish.period;
+      const t = (elapsedTime + fish.offset) % cycle;
+      if (t < fish.jumpDuration) {
+        fish.mesh.visible = true;
+        const p = t / fish.jumpDuration;
+        const curX = fish.startX + (fish.endX - fish.startX) * p;
+        const curZ = fish.startZ + (fish.endZ - fish.startZ) * p;
+        const curY = 0.02 + Math.sin(p * Math.PI) * fish.jumpHeight;
+        fish.mesh.position.set(curX, curY, curZ);
+
+        const pitch = (0.5 - p) * 1.4;
+        fish.mesh.rotation.z = pitch;
+
+        if (p > 0.95 && !fish.rippled) {
+          fish.rippled = true;
+          createWaterRipple(new THREE.Vector3(fish.endX, 0.05, fish.endZ));
+        }
+      } else {
+        fish.mesh.visible = false;
+        fish.rippled = false;
+      }
     });
   }
 
   // ══════════════════════════════════════════════════════════════════════
-  // 10. 點擊互動與射線選取
+  // 10. 點擊互動與防視角旋轉衝突之 Raycaster 系統
   // ══════════════════════════════════════════════════════════════════════
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
+  let lastHoverTime = 0;
 
   function setupRaycaster() {
+    // 記錄滑鼠按下起點與時間戳，用於嚴格區分「視角旋轉拖曳」與「短按點擊」
     container.addEventListener('pointerdown', (e) => {
       container._startX = e.clientX;
       container._startY = e.clientY;
+      container._startTime = Date.now();
     });
 
-    container.addEventListener('pointerup', (e) => {
-      const dx = Math.abs(e.clientX - container._startX);
-      const dy = Math.abs(e.clientY - container._startY);
-      if (dx > 6 || dy > 6) return;
+    // 滑鼠移動經過 (Hover Jelly Effect 撥動世界物理反饋)
+    // 嚴格節流 ~35ms 確保 60 FPS
+    container.addEventListener('pointermove', (e) => {
+      const now = Date.now();
+      if (now - lastHoverTime < 35) return;
+      lastHoverTime = now;
 
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(islandsGroup.children, true);
 
+      const checkList = [];
+      if (faunaGroup && faunaGroup.children.length > 0) checkList.push(faunaGroup);
+      if (islandsGroup && islandsGroup.children.length > 0) checkList.push(islandsGroup);
+      if (ferries && ferries.length > 0) checkList.push(...ferries);
+      if (celestialPivot) checkList.push(celestialPivot);
+
+      const intersects = raycaster.intersectObjects(checkList, true);
+
+      let isHoverInteractive = false;
       if (intersects.length > 0) {
-        let current = intersects[0].object;
-        let foundIslandId = null;
+        let cur = intersects[0].object;
+        let wobbleObj = null;
 
-        while (current && current !== scene) {
-          if (current.userData && current.userData.islandId) {
-            foundIslandId = current.userData.islandId;
-            break;
+        while (cur && cur !== scene) {
+          if (cur.userData) {
+            if (cur.userData.isAnimal) {
+              wobbleObj = cur.userData.parentCreature || cur;
+              isHoverInteractive = true;
+              break;
+            }
+            if (cur.userData.isLighthouse || cur.userData.isSun || cur.userData.isMoon || cur.userData.isFerry) {
+              isHoverInteractive = true;
+              break;
+            }
+            if (cur.userData.isWobbleable) {
+              wobbleObj = cur.userData.parentWobble || cur;
+              isHoverInteractive = true;
+              break;
+            }
+            if (cur.userData.islandId) {
+              isHoverInteractive = true;
+              break;
+            }
           }
-          current = current.parent;
+          cur = cur.parent;
         }
 
-        if (foundIslandId) {
-          focusIsland(foundIslandId);
+        if (wobbleObj) {
+          triggerJellyWobble(wobbleObj);
+        }
+      }
+
+      container.style.cursor = isHoverInteractive ? 'pointer' : 'default';
+    });
+
+    // 短按點擊 (pointerdown + pointerup 位移 <= 5px 且時間 < 500ms)
+    // 徹底避免與 OrbitControls 旋轉視角衝突！
+    container.addEventListener('pointerup', (e) => {
+      if (container._startX === undefined) return;
+      const dx = Math.abs(e.clientX - container._startX);
+      const dy = Math.abs(e.clientY - container._startY);
+      const elapsed = Date.now() - (container._startTime || 0);
+
+      // 位移超過 5px 或長按超過 500ms 均視為拖曳視角，嚴格不觸發點擊！
+      if (dx > 5 || dy > 5 || elapsed > 500) return;
+
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+
+      const allIntersects = raycaster.intersectObjects(scene.children, true);
+      if (allIntersects.length === 0) return;
+
+      // 依互動優先級尋找命中目標
+      for (let i = 0; i < allIntersects.length; i++) {
+        const hit = allIntersects[i];
+        const cur = hit.object;
+
+        // 1. 太陽或月亮 ➔ 切換日夜模式
+        let isSunOrMoon = false;
+        let testNode = cur;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && (testNode.userData.isSun || testNode.userData.isMoon)) {
+            isSunOrMoon = true;
+            break;
+          }
+          testNode = testNode.parent;
+        }
+        if (isSunOrMoon) {
+          toggleDayNight();
+          return;
+        }
+
+        // 2. 紅白小燈塔 ➔ 切換日夜模式
+        let isLighthouse = false;
+        testNode = cur;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isLighthouse) {
+            isLighthouse = true;
+            break;
+          }
+          testNode = testNode.parent;
+        }
+        if (isLighthouse) {
+          toggleDayNight();
+          return;
+        }
+
+        // 3. 渡船 ➔ 跨海開船啟航
+        let ferryIdx = -1;
+        testNode = cur;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isFerry) {
+            ferryIdx = testNode.userData.ferryIndex ?? 0;
+            break;
+          }
+          testNode = testNode.parent;
+        }
+        if (ferryIdx >= 0) {
+          launchFerry(ferryIdx);
+          return;
+        }
+
+        // 4. Q版小動物 ➔ 向上彈跳 (Squash & Jump) + 冷知識泡泡
+        let animalRoot = null;
+        testNode = cur;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isAnimal) {
+            animalRoot = testNode.userData.parentCreature || testNode;
+            break;
+          }
+          testNode = testNode.parent;
+        }
+        if (animalRoot) {
+          triggerSquash(animalRoot);
+          const worldPos = new THREE.Vector3();
+          animalRoot.getWorldPosition(worldPos);
+          showSpeechBubble(worldPos);
+          return;
+        }
+
+        // 5. 島上建築物 ➔ 向上彈跳 + 健康/理財泡泡
+        let buildingRoot = null;
+        testNode = cur;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isBuilding) {
+            buildingRoot = testNode.userData.parentBuilding || testNode;
+            break;
+          }
+          testNode = testNode.parent;
+        }
+        if (buildingRoot) {
+          triggerSquash(buildingRoot);
+          const worldPos = new THREE.Vector3();
+          buildingRoot.getWorldPosition(worldPos);
+          showSpeechBubble(worldPos);
+          return;
+        }
+
+        // 6. 島嶼本體 / 島嶼地面 ➔ 聚焦登陸開啟側邊抽屜
+        let islandId = null;
+        testNode = cur;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.islandId) {
+            islandId = testNode.userData.islandId;
+            break;
+          }
+          testNode = testNode.parent;
+        }
+        if (islandId) {
+          focusIsland(islandId);
+          return;
+        }
+
+        // 7. 海洋水面點擊 ➔ 生成向外擴散的水波紋
+        if (cur === oceanMesh || (cur.userData && cur.userData.isOcean)) {
+          createWaterRipple(hit.point);
+          return;
         }
       }
     });
@@ -5077,7 +6073,14 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       }
     });
 
-    // 5. 相機飛行補間更新
+    // 5. 療癒微縮世界互動更新 (動物生機、果凍物理、彈跳縮放、水波紋、船尾水花)
+    updateFauna(elapsedTime);
+    updateJellyAnims();
+    updateSquashAnims();
+    updateWaterRipples();
+    updateWakeParticles();
+
+    // 6. 相機飛行補間更新
     updateCameraFlight();
 
     controls.update();
