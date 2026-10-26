@@ -36,6 +36,20 @@ export const videoCategories = [
 ] as const;
 
 export const videos: VideoItem[] = [
+  // --- 2026 最新發布影音 (2026/10/26) ---
+  {
+    id: 'PENDING_ID',
+    title: '食道裂孔疝氣的原因',
+    description: '吃飽經常火燒心、胃藥總吃不好？小心是胃部悄悄滑進胸腔了！橫膈膜裂孔韌帶因老化鬆弛，加上長期腹壓推擠，使得胃頂端滑入胸口。無痛胃鏡精準診斷，搭配制酸與促動力藥物封閉逆流；生活中減輕腹重、吃飽別躺下，守護橫膈膜讓逆流不再來！',
+    category: '胃部疾病',
+    duration: '0:41',
+    url: 'https://drhuanggi.vercel.app/posts/食道裂孔疝氣的原因',
+    featured: true,
+    order: 1,
+    thumbnail: '/images/食道裂孔疝氣的原因_video_thumb.webp',
+    articleSlug: '食道裂孔疝氣的原因',
+    articleTitle: '食道裂孔疝氣的原因',
+  },
   // --- 2026 最新發布影音 (2026/10/25) ---
   {
     id: 'PENDING_ID',
@@ -46,7 +60,7 @@ export const videos: VideoItem[] = [
     url: 'https://drhuanggi.vercel.app/posts/咽喉異物感',
     featured: true,
     order: 1,
-    thumbnail: '/images/咽喉異物感.webp',
+    thumbnail: '/images/咽喉異物感_video_thumb.webp',
     articleSlug: '咽喉異物感',
     articleTitle: '咽喉異物感',
   },
@@ -60,7 +74,7 @@ export const videos: VideoItem[] = [
     url: 'https://drhuanggi.vercel.app/posts/高血壓藥物在一般族群及共病族群的選擇',
     featured: true,
     order: 1,
-    thumbnail: '/images/高血壓藥物在一般族群及共病族群的選擇.webp',
+    thumbnail: '/images/高血壓藥物在一般族群及共病族群的選擇_video_thumb.webp',
     articleSlug: '高血壓藥物在一般族群及共病族群的選擇',
     articleTitle: '高血壓藥物在一般族群及共病族群的選擇',
   },
@@ -74,7 +88,7 @@ export const videos: VideoItem[] = [
     url: 'https://www.youtube.com/watch?v=Dh9Jw6_vjeE',
     featured: true,
     order: 1,
-    thumbnail: '/images/112年臺灣癌症登記報告.webp',
+    thumbnail: '/images/112年臺灣癌症登記報告_video_thumb.webp',
     articleSlug: '112年臺灣癌症登記報告',
     articleTitle: '112年臺灣癌症登記報告',
   },
