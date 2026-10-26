@@ -86,18 +86,27 @@ const formatDate = (date: Date) => {
             以前習慣把臨床心得隨手寫在隨身筆記本上；後來整理成隨手可查的數位筆記。某個深夜突然閃過念頭：既然都花時間把艱澀的醫學文獻嚼碎消化了，何不放上網路？方便自己看診衛教指著圖解說明，病患回家也能隨時安心複習。
           </p>
           <p>
-            其實白天看診檢查填滿時間，晚上回家還要陪家人、弄小孩作業，根本無力去經營粉絲團。這個小站與診間日記，希望能為嚴肅的醫療增添一點真實的溫度，也讓大家多了解我一點。
+            其實白天看診檢查填滿時間，晚上回家還要陪家人、弄小孩作業，根本無力去經營粉絲團。這個小站與診間日記，希望能為嚴肅的醫療增添一點真實的溫度，也讓大家多了解我一點。我也把這幾百篇臨床與讀書筆記，蓋成了一座有燈塔、跨海渡輪、療癒小動物與守護赤紅飛龍的 <strong>3D 奇幻知識群島</strong>，歡迎來島上散步尋寶！
           </p>
         </div>
 
         <div class="story-card-footer">
-          <a
-            href="/posts/為什麼想建這個網站從一本臨床筆記到線上衛教小站"
-            class="btn-story-readmore"
-          >
-            <span>閱讀完整建站手記</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+          <div class="story-footer-actions">
+            <a
+              href="/posts/為什麼想建這個網站從一本臨床筆記到線上衛教小站"
+              class="btn-story-readmore"
+            >
+              <span>閱讀完整建站手記</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a
+              href="/island"
+              class="btn-story-island"
+            >
+              <span>🗺️ 進入 3D 衛教群島地圖</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
           <span class="story-sign">—— 黃冠智 醫師 / 筆</span>
         </div>
       </div>
@@ -174,6 +183,126 @@ const formatDate = (date: Date) => {
     
     <div class="schedule-tips">
       <p>💡 星期四下午於豐田仁愛診所看診，其餘時段均在豐田診所。「檢查診」為胃鏡與大腸鏡內視鏡預約檢查時段。</p>
+    </div>
+  </section>
+
+  <!-- 3D 奇幻知識群島 · 沉浸式任意門橫幅卡片 (方案一) -->
+  <section class="island-promo-section" aria-labelledby="island-promo-title">
+    <div class="island-promo-card">
+      <div class="island-promo-glow glow-1" aria-hidden="true"></div>
+      <div class="island-promo-glow glow-2" aria-hidden="true"></div>
+
+      <div class="island-promo-grid">
+        <!-- 左欄：主視覺文案與雙行動按鈕 -->
+        <div class="island-promo-content">
+          <div class="island-promo-badges">
+            <span class="island-badge-new">✨ 全新 3D 互動導覽</span>
+            <span class="island-badge-sub">🔊 內建巨龍咆哮、貓狗叫聲與金幣音效</span>
+          </div>
+
+          <h2 id="island-promo-title" class="island-promo-title">
+            不知道從哪篇看起？<br />
+            <span>登陸黃醫師的「3D 醫學與智慧群島」！</span>
+          </h2>
+
+          <p class="island-promo-desc">
+            我們將全站 <strong>{allPosts.filter(p => !p.data.draft).length}+ 篇實證醫學與經典讀書筆記</strong>，打造成 <strong>24 座中古世紀立體微縮島嶼</strong>。您可以自由旋轉視角、點擊散步的橘貓與柴犬聽衛教叮嚀、開啟深海黃金寶箱、切換飄雪與許願流星雨，甚至騎上赤紅巨龍俯瞰整座知識海洋！
+          </p>
+
+          <div class="island-promo-actions">
+            <a href="/island" class="btn-island-primary">
+              <span class="btn-dragon-icon">🏝️</span>
+              <span>立即登島探索 3D 世界</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="/island?dragon=1" class="btn-island-dragon">
+              <span>🐉 直接騎乘赤紅飛龍視角</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 右欄：熱門島嶼任意門 (點擊直飛指定島嶼) -->
+        <div class="island-portal-panel">
+          <div class="portal-panel-header">
+            <span class="portal-dot"></span>
+            <span class="portal-header-title">🧭 熱門島嶼任意門（點擊直飛該島）</span>
+          </div>
+
+          <div class="portal-pills-grid">
+            <a href="/island?focus=endoscopy" class="portal-island-pill health">
+              <span class="pill-emoji">🔬</span>
+              <div class="pill-info">
+                <span class="pill-name">內視鏡檢查島</span>
+                <span class="pill-meta">無痛胃腸鏡 · 息肉切除</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+
+            <a href="/island?focus=stomach" class="portal-island-pill health">
+              <span class="pill-emoji">🫄</span>
+              <div class="pill-info">
+                <span class="pill-name">胃部疾病島</span>
+                <span class="pill-meta">胃食道逆流 · 幽門桿菌</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+
+            <a href="/island?focus=intestine" class="portal-island-pill health">
+              <span class="pill-emoji">🧬</span>
+              <div class="pill-info">
+                <span class="pill-name">腸道疾病島</span>
+                <span class="pill-meta">腸躁症 · 便秘 · 益生菌</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+
+            <a href="/island?focus=liver-biliary" class="portal-island-pill health">
+              <span class="pill-emoji">🧪</span>
+              <div class="pill-info">
+                <span class="pill-name">肝膽胰與超音波島</span>
+                <span class="pill-meta">脂肪肝 · 膽結石 · B/C肝</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+
+            <a href="/island?focus=weight-loss" class="portal-island-pill health">
+              <span class="pill-emoji">⚖️</span>
+              <div class="pill-info">
+                <span class="pill-name">科學減重與控糖島</span>
+                <span class="pill-meta">猛健樂 · 週纖達 · 肌少症</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+
+            <a href="/island?focus=hypertension" class="portal-island-pill health">
+              <span class="pill-emoji">💓</span>
+              <div class="pill-info">
+                <span class="pill-name">三高與慢病管理島</span>
+                <span class="pill-meta">高血壓 · 高血脂 · 糖尿病</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+
+            <a href="/island?focus=health-red" class="portal-island-pill health">
+              <span class="pill-emoji">⚠️</span>
+              <div class="pill-info">
+                <span class="pill-name">健檢紅字判讀島</span>
+                <span class="pill-meta">肝腎指數 · 腫瘤標記解讀</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+
+            <a href="/island?focus=golden-rules" class="portal-island-pill wisdom">
+              <span class="pill-emoji">📚</span>
+              <div class="pill-info">
+                <span class="pill-name">讀書筆記與財富群島</span>
+                <span class="pill-meta">人類大歷史 · 指數投資名著</span>
+              </div>
+              <span class="pill-go">直飛 →</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -755,6 +884,13 @@ const formatDate = (date: Date) => {
     gap: 16px;
   }
 
+  .story-footer-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
   .btn-story-readmore {
     display: inline-flex;
     align-items: center;
@@ -775,6 +911,326 @@ const formatDate = (date: Date) => {
     box-shadow: 0 6px 18px rgba(74, 144, 164, 0.38);
     background: linear-gradient(135deg, #3d8093, #2d5f6e);
     color: #ffffff;
+  }
+
+  .btn-story-island {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #d97706, #ea580c);
+    color: #ffffff;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.28);
+    border: 1px solid rgba(254, 240, 138, 0.45);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-story-island:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 22px rgba(234, 88, 12, 0.42);
+    background: linear-gradient(135deg, #b45309, #c2410c);
+    color: #ffffff;
+  }
+
+  /* ═══════════════════════════════════════
+     3D 奇幻知識群島 · 沉浸式任意門橫幅卡片 (方案一)
+  ═══════════════════════════════════════ */
+  .island-promo-section {
+    margin-bottom: 48px;
+  }
+
+  .island-promo-card {
+    position: relative;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 48%, #134e4a 100%);
+    border-radius: 26px;
+    padding: 36px 38px;
+    color: #f8fafc;
+    border: 1.5px solid rgba(56, 189, 248, 0.28);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+  }
+
+  .island-promo-glow {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(55px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .island-promo-glow.glow-1 {
+    width: 320px;
+    height: 320px;
+    top: -110px;
+    left: -80px;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.28) 0%, transparent 70%);
+  }
+
+  .island-promo-glow.glow-2 {
+    width: 360px;
+    height: 360px;
+    bottom: -140px;
+    right: -60px;
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.24) 0%, transparent 70%);
+  }
+
+  .island-promo-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 1.15fr;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .island-promo-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .island-badge-new {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 13px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+  }
+
+  .island-badge-sub {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+    color: #bae6fd;
+    border: 1px solid rgba(186, 230, 253, 0.25);
+  }
+
+  .island-promo-title {
+    font-size: 1.65rem;
+    font-weight: 900;
+    line-height: 1.38;
+    color: #ffffff;
+    margin: 0 0 14px;
+    letter-spacing: -0.3px;
+  }
+
+  .island-promo-title span {
+    background: linear-gradient(90deg, #fde047, #5eead4, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .island-promo-desc {
+    font-size: 0.96rem;
+    line-height: 1.75;
+    color: #cbd5e1;
+    margin: 0 0 24px;
+  }
+
+  .island-promo-desc strong {
+    color: #fef08a;
+    font-weight: 800;
+  }
+
+  .island-promo-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-island-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 24px;
+    border-radius: 9999px;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #0f172a;
+    background: linear-gradient(135deg, #fde047 0%, #f59e0b 100%);
+    text-decoration: none;
+    box-shadow: 0 8px 22px rgba(245, 158, 11, 0.38);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-island-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(245, 158, 11, 0.52);
+    background: linear-gradient(135deg, #fef08a 0%, #fbbf24 100%);
+    color: #0f172a;
+  }
+
+  .btn-island-dragon {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #fecaca;
+    background: rgba(185, 28, 28, 0.38);
+    border: 1.5px solid rgba(248, 113, 113, 0.65);
+    text-decoration: none;
+    transition: all 0.22s ease;
+  }
+
+  .btn-island-dragon:hover {
+    transform: translateY(-2px);
+    background: rgba(220, 38, 38, 0.65);
+    border-color: #fde047;
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+  }
+
+  /* 右側：熱門島嶼任意門面板 */
+  .island-portal-panel {
+    background: rgba(15, 23, 42, 0.58);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 20px;
+    padding: 18px 20px;
+  }
+
+  .portal-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  }
+
+  .portal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #34d399;
+    box-shadow: 0 0 8px #34d399;
+  }
+
+  .portal-header-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #e2e8f0;
+    letter-spacing: 0.3px;
+  }
+
+  .portal-pills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .portal-island-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 14px;
+    background: rgba(30, 41, 59, 0.78);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .portal-island-pill:hover {
+    transform: translateY(-2px);
+    background: rgba(51, 65, 85, 0.92);
+    border-color: #38bdf8;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+  }
+
+  .portal-island-pill.wisdom:hover {
+    border-color: #c084fc;
+  }
+
+  .pill-emoji {
+    font-size: 1.35rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .pill-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pill-name {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #f8fafc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pill-meta {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pill-go {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #38bdf8;
+    flex-shrink: 0;
+    opacity: 0.85;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+
+  .portal-island-pill.wisdom .pill-go {
+    color: #c084fc;
+  }
+
+  .portal-island-pill:hover .pill-go {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+
+  @media (max-width: 960px) {
+    .island-promo-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .island-promo-card {
+      padding: 26px 22px;
+    }
+    .island-promo-title {
+      font-size: 1.4rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .portal-pills-grid {
+      grid-template-columns: 1fr;
+    }
+    .btn-island-primary,
+    .btn-island-dragon {
+      width: 100%;
+      justify-content: center;
+    }
   }
 
   .story-sign {

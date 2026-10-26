@@ -2056,6 +2056,16 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     }
 
     if (urlParams.get('view') === 'bird') setBirdView(true);
+    const focusParam = urlParams.get('focus');
+    if (focusParam) {
+      setTimeout(() => {
+        focusIsland(focusParam);
+      }, 520);
+    } else if (urlParams.get('dragon') === '1') {
+      setTimeout(() => {
+        setDragonRideMode(true);
+      }, 520);
+    }
 
     window.addEventListener('resize', onWindowResize);
 
