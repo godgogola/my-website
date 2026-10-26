@@ -1212,13 +1212,20 @@ const formatDate = (date: Date) => {
   @media (max-width: 960px) {
     .island-promo-grid {
       grid-template-columns: 1fr;
-      gap: 24px;
+      gap: 0;
+    }
+    .island-portal-panel {
+      display: none; /* 手機版隱藏冗長的 8 顆熱門島嶼任意門清單，保持畫面俐落精簡 */
     }
     .island-promo-card {
-      padding: 26px 22px;
+      padding: 24px 20px;
     }
     .island-promo-title {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
+    }
+    .island-promo-desc {
+      font-size: 0.9rem;
+      margin-bottom: 18px;
     }
   }
 

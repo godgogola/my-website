@@ -277,6 +277,18 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       </div>
     </aside>
 
+    <!-- 騎乘飛龍模式專屬：底部中央醒目「下龍 / 噴火」懸浮控制列 (手機與電腦皆一鍵可見) -->
+    <div class="dragon-ride-float-bar" id="dragonRideFloatBar" aria-hidden="true">
+      <button class="dragon-float-fire-btn" id="dragonFloatFireBtn" type="button">
+        <span>🔥</span>
+        <span>噴出龍息</span>
+      </button>
+      <button class="dragon-float-exit-btn" id="dragonFloatExitBtn" type="button">
+        <span>🐉</span>
+        <span>下龍 · 回到全景 ✕</span>
+      </button>
+    </div>
+
     <!-- 底部操作提示 -->
     <div class="island-floating-tips">
       <div class="tip-pill">
@@ -1263,30 +1275,93 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   .viewport-container.bird-mode .badge-pins-count,
   .viewport-container.bird-mode .badge-arrow { display: none; }
 
+  /* 騎乘飛龍模式專屬：底部中央醒目「下龍 / 噴火」懸浮控制列 */
+  .dragon-ride-float-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(90px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 950;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+  }
+  .dragon-ride-float-bar.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .dragon-float-fire-btn,
+  .dragon-float-exit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 20px;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.35);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .dragon-float-fire-btn {
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+    color: #ffffff;
+    border: 1.5px solid #fef08a;
+  }
+  .dragon-float-exit-btn {
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #fef08a;
+    border: 1.5px solid #facc15;
+  }
+  .dragon-float-fire-btn:hover,
+  .dragon-float-exit-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+  }
+
   /* 響應式調整 */
   @media (max-width: 900px) {
     .hud-realm-tabs {
       display: none;
     }
-    .hud-badge {
+    .hud-badge,
+    .time-presets,
+    .hud-divider,
+    #toggleWalkersBtn,
+    #toggleFlowsBtn {
       display: none;
     }
-    .hud-main-title {
-      font-size: 0.95rem;
+    .hud-titles {
+      display: none;
     }
     .island-hud {
       top: 10px;
-      left: 10px;
-      right: 10px;
-      padding: 6px 12px;
+      left: 8px;
+      right: 8px;
+      padding: 6px 10px;
       overflow-x: auto;
       scrollbar-width: none;
+      gap: 6px;
     }
     .island-hud::-webkit-scrollbar {
       display: none;
     }
+    .hud-controls {
+      gap: 5px;
+    }
+    .hud-action-btn {
+      padding: 5px 9px;
+      font-size: 0.74rem;
+    }
     .hud-action-btn .btn-text {
-      display: none;
+      display: inline;
+      font-size: 0.72rem;
     }
     .island-detail-drawer {
       width: calc(100vw - 24px);
@@ -6361,6 +6436,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       leftWing,
       rightWing,
       tailSegments,
+      dragonBadge,
       flightPhase: 0,
       boostSpeed: 0,
       fireUntil: 0,
@@ -6368,14 +6444,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     };
   }
 
-  // 觸發赤紅巨龍噴火、翻滾加速與金句互動
+  // 觸發赤紅巨龍噴火與金句互動 (平穩滑行不翻滾，避免鏡頭晃動頭暈)
   function triggerDragonInteraction() {
     if (!dragonData) return;
     playIslandSound('dragon');
     const now = Date.now();
     dragonData.fireUntil = now + 2600;       // 連續噴火 2.6 秒
-    dragonData.boostSpeed = 1.65;            // 振翅加速衝刺
-    dragonData.barrelRollStart = now;        // 空中威武翻騰動作
+    dragonData.boostSpeed = 0.35;            // 溫和推進，不劇烈晃動
 
     const worldPos = new THREE.Vector3();
     dragonData.group.getWorldPosition(worldPos);
@@ -6426,7 +6501,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     });
   }
 
-  // 每幀更新赤紅巨龍：8 字形跨海峽巡航、雙翼拍動、長尾正弦擺動、噴火粒子
+  // 每幀更新赤紅巨龍：平穩大橢圓環島御風滑行 (Gliding)、極致穩定不頭暈
   let _lastDragonTime = 0;
   function updateRedDragon(elapsedTime) {
     if (!dragonData) return;
@@ -6436,58 +6511,51 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const now = Date.now();
     const isBreathingFire = now < dragonData.fireUntil;
 
-    // 自然衰減衝刺速度並推進 8 字形巡航相位
-    dragonData.boostSpeed *= 0.97;
-    const baseOmega = 0.22 + dragonData.boostSpeed * 0.28;
+    // 1. 優雅慢速巡航角速度 (約 75 秒平穩環繞全群島一圈)
+    dragonData.boostSpeed *= 0.96;
+    const baseOmega = 0.082 + dragonData.boostSpeed * 0.06;
     dragonData.flightPhase += dt * baseOmega;
     const u = dragonData.flightPhase;
 
-    // 橫跨「醫學筆島群」與「讀書筆記島群」的壯麗大 8 字形 (Lemniscate) 航線
-    const spanX = 24.5;
+    // 2. 寬廣大橢圓等高滑行航線 (純水平恆定高度 y = 12.2，徹底消除上下顛簸與左右急轉)
+    const spanX = 24.0;
     const spanZ = 14.5;
-    const x = Math.sin(u) * spanX;
-    const z = Math.sin(u * 2) * (spanZ * 0.65);
-    const y = 11.8 + Math.cos(u * 2) * 1.8 + Math.sin(elapsedTime * 3.8) * 0.28;
+    const x = Math.cos(u) * spanX;
+    const z = Math.sin(u) * spanZ;
+    const y = 12.2;
 
-    // 計算下一微小時間點以取得精準切線飛行朝向與過彎傾角 (Bank angle)
     const uNext = u + 0.03;
-    const nx = Math.sin(uNext) * spanX;
-    const nz = Math.sin(uNext * 2) * (spanZ * 0.65);
-    const ny = 11.8 + Math.cos(uNext * 2) * 1.8;
+    const nx = Math.cos(uNext) * spanX;
+    const nz = Math.sin(uNext) * spanZ;
+    const ny = 12.2;
 
     dragonData.group.position.set(x, y, z);
     dragonData.group.lookAt(nx, ny, nz);
 
-    // 過彎時身體自然側傾 (Roll Banking) + 點擊時空中威武側翻
-    const bankAngle = -Math.cos(u * 2) * 0.32;
-    let rollExtra = 0;
-    const rollElapsed = now - dragonData.barrelRollStart;
-    if (dragonData.barrelRollStart > 0 && rollElapsed < 1100) {
-      const rp = rollElapsed / 1100;
-      rollExtra = Math.sin(rp * Math.PI * 2) * 0.55 * (1 - rp);
-    }
-    dragonData.bodyRoot.rotation.z = bankAngle + rollExtra;
+    // 3. 身體維持平穩微傾滑行姿態 (不翻滾、不劇烈搖晃)
+    dragonData.bodyRoot.rotation.z = -0.07;
 
-    // 雙翼強勁拍動動畫 (內外翼段具相位差，呈現生物流體感)
-    const flapFreq = isBreathingFire ? 8.5 : 4.2;
-    const flapAngle = Math.sin(elapsedTime * flapFreq) * 0.58;
-    const outerFlap = Math.sin(elapsedTime * flapFreq - 0.65) * 0.45;
+    // 4. 雙翼平展御風滑翔 (僅有極微幅的慢速呼吸感起伏，徹底告別劇烈拍動)
+    const flapFreq = isBreathingFire ? 2.2 : 0.9;
+    const flapAmp = isBreathingFire ? 0.14 : 0.06;
+    const flapAngle = 0.06 + Math.sin(elapsedTime * flapFreq) * flapAmp;
+    const outerFlap = -0.04 + Math.sin(elapsedTime * flapFreq - 0.6) * (flapAmp * 0.7);
 
     dragonData.leftWing.wingPivot.rotation.z = flapAngle;
     dragonData.leftWing.outerPivot.rotation.z = outerFlap;
     dragonData.rightWing.wingPivot.rotation.z = -flapAngle;
     dragonData.rightWing.outerPivot.rotation.z = -outerFlap;
 
-    // 7 節長龍尾 S 型流暢擺動
+    // 5. 長尾平順緩慢隨風擺動
     dragonData.tailSegments.forEach((seg, idx) => {
-      seg.rotation.y = Math.sin(elapsedTime * 4.5 - idx * 0.55) * (0.12 + idx * 0.025);
-      seg.rotation.x = Math.cos(elapsedTime * 4.2 - idx * 0.45) * 0.06;
+      seg.rotation.y = Math.sin(elapsedTime * 1.4 - idx * 0.45) * (0.04 + idx * 0.008);
+      seg.rotation.x = 0;
     });
 
     // 定期自動短暫噴出小龍息 (每 14 秒偶爾噴出一小口火)，或點擊時大噴火
     const autoFirePulse = (elapsedTime % 14.0) < 1.1;
     if (isBreathingFire || autoFirePulse) {
-      dragonData.jawPivot.rotation.x = 0.48 + Math.sin(elapsedTime * 24) * 0.08;
+      dragonData.jawPivot.rotation.x = 0.46 + Math.sin(elapsedTime * 16) * 0.05;
       dragonData.fireLight.intensity = isBreathingFire ? 4.5 : 2.2;
       const count = isBreathingFire ? 3 : 1;
       for (let k = 0; k < count; k++) {
@@ -6517,15 +6585,15 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       }
     }
 
-    // 🐉 若處於「騎乘飛龍視角 (Dragon Rider Mode)」，相機平滑跟隨在巨龍背脊斜後方俯瞰群島
+    // 🐉 若處於「騎乘飛龍視角 (Dragon Rider Mode)」，鏡頭拉高拉遠並穩定望向群島中央前方，絲滑平穩絕不頭暈
     if (isDragonRideMode) {
-      const rideCamOffset = new THREE.Vector3(0, 3.8, -8.5).applyQuaternion(dragonData.group.quaternion);
+      const rideCamOffset = new THREE.Vector3(0, 7.2, -16.0).applyQuaternion(dragonData.group.quaternion);
       const desiredCamPos = dragonData.group.position.clone().add(rideCamOffset);
-      const lookForwardOffset = new THREE.Vector3(0, -2.2, 16.0).applyQuaternion(dragonData.group.quaternion);
-      const desiredLookAt = dragonData.group.position.clone().add(lookForwardOffset);
+      const forwardVec = new THREE.Vector3(0, 0, 10.0).applyQuaternion(dragonData.group.quaternion);
+      const desiredLookAt = dragonData.group.position.clone().multiplyScalar(0.35).add(forwardVec).setY(1.2);
 
-      camera.position.lerp(desiredCamPos, 0.08);
-      controls.target.lerp(desiredLookAt, 0.10);
+      camera.position.lerp(desiredCamPos, 0.035);
+      controls.target.lerp(desiredLookAt, 0.04);
     }
   }
 
@@ -6538,15 +6606,23 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     isDragonRideMode = on;
     const btn = document.getElementById('summonDragonBtn');
     const txt = document.getElementById('dragonBtnText');
+    const floatBar = document.getElementById('dragonRideFloatBar');
     if (btn) btn.classList.toggle('active', on);
     if (txt) txt.textContent = on ? '下龍' : '騎龍';
+    if (floatBar) {
+      floatBar.classList.toggle('active', on);
+      floatBar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    if (dragonData && dragonData.dragonBadge) {
+      dragonData.dragonBadge.style.display = on ? 'none' : '';
+    }
 
     if (on) {
       exitBirdViewSilently();
       closeDetailCard();
       isFlightActive = false;
       triggerDragonInteraction();
-      showMiniToast('🐉 已登上赤紅巨龍背脊！正在翱翔巡視 24 座群島（再點一次「下龍」或「全景」可恢復視角）');
+      showMiniToast('🐉 已登上巨龍平穩滑翔！點擊畫面下方「🐉 下龍 · 回到全景」即可隨時返回');
     } else {
       resetView();
     }
@@ -6557,8 +6633,16 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     isDragonRideMode = false;
     const btn = document.getElementById('summonDragonBtn');
     const txt = document.getElementById('dragonBtnText');
+    const floatBar = document.getElementById('dragonRideFloatBar');
     if (btn) btn.classList.remove('active');
     if (txt) txt.textContent = '騎龍';
+    if (floatBar) {
+      floatBar.classList.remove('active');
+      floatBar.setAttribute('aria-hidden', 'true');
+    }
+    if (dragonData && dragonData.dragonBadge) {
+      dragonData.dragonBadge.style.display = '';
+    }
   }
 
   // ── (2c) 中古世紀深海黃金寶箱與噴金幣互動系統 (Golden Treasure Chests & Coin Fountain) ──
@@ -7719,11 +7803,23 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
     }
 
-    // 🐉 騎乘飛龍視角切換按鈕
+    // 🐉 騎乘飛龍視角切換按鈕與底部懸浮「下龍 / 噴火」控制列
     const summonDragonBtn = document.getElementById('summonDragonBtn');
     if (summonDragonBtn) {
       summonDragonBtn.addEventListener('click', () => {
         toggleDragonRideMode();
+      });
+    }
+    const dragonFloatExitBtn = document.getElementById('dragonFloatExitBtn');
+    if (dragonFloatExitBtn) {
+      dragonFloatExitBtn.addEventListener('click', () => {
+        setDragonRideMode(false);
+      });
+    }
+    const dragonFloatFireBtn = document.getElementById('dragonFloatFireBtn');
+    if (dragonFloatFireBtn) {
+      dragonFloatFireBtn.addEventListener('click', () => {
+        triggerDragonInteraction();
       });
     }
 
