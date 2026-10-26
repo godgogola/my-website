@@ -5552,20 +5552,82 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     return g;
   }
 
-  // ── (2) 佈置島嶼生機小動物與海洋魚群 ──
+  // ── (2) 佈置島嶼生機小動物 (貓、狗、小羊、鸚鵡) 與海洋生物 ──
+  const ANIMAL_BADGE_LABELS = {
+    cat: '🐱 小橘貓',
+    puppy: '🐶 小柴犬',
+    sheep: '🐑 小綿羊',
+    cockatoo: '🦜 巴丹鸚鵡'
+  };
+
+  function attachAnimalHitboxAndBadge(creatureMesh, type) {
+    // 1. 放大動物至清晰可見的療癒比例
+    creatureMesh.scale.setScalar(1.48);
+
+    // 2. 加上隱形大範圍點擊碰撞球，確保滑鼠點擊 100% 優先命中動物而非島嶼地面
+    const hitGeo = new THREE.SphereGeometry(0.55, 8, 8);
+    const hitMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+    const hitSphere = new THREE.Mesh(hitGeo, hitMat);
+    hitSphere.position.set(0, 0.35, 0);
+    hitSphere.userData = {
+      isAnimal: true,
+      animalType: type,
+      parentCreature: creatureMesh,
+      isWobbleable: true,
+      parentWobble: creatureMesh
+    };
+    creatureMesh.add(hitSphere);
+
+    // 3. 加上精緻可點擊浮動小標籤 (點擊標籤或 3D 動物模型皆會跳躍並彈出專屬衛教小語)
+    if (ANIMAL_BADGE_LABELS[type]) {
+      const pill = document.createElement('div');
+      pill.className = 'animal-mini-pill';
+      pill.textContent = ANIMAL_BADGE_LABELS[type];
+      pill.title = '點擊聽聽小動物的衛教與理財叮嚀！';
+      pill.addEventListener('pointerdown', (e) => e.stopPropagation());
+      pill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerAnimalInteraction(creatureMesh);
+      });
+      const pillObj = new CSS2DObject(pill);
+      pillObj.position.set(0, type === 'cockatoo' ? 1.25 : 0.85, 0);
+      creatureMesh.add(pillObj);
+      badgeObjects.push(pill);
+    }
+  }
+
   function createMiniFauna() {
-    // 陸地動物：小白羊、小狗、巴丹鸚鵡
+    // 陸地療癒動物：小橘貓 (cat)、小柴犬 (puppy)、小綿羊 (sheep)、巴丹鸚鵡 (cockatoo) 遍佈各座主題島嶼！
     const FAUNA_DISTRIBUTION = [
-      { islandId: 'glucose', type: 'sheep', x: 1.1, z: 0.8 },
-      { islandId: 'diet', type: 'sheep', x: -1.0, z: 0.9 },
-      { islandId: 'respiratory', type: 'sheep', x: 0.9, z: -1.0 },
-      { islandId: 'die-with-zero', type: 'sheep', x: -0.9, z: -0.8 },
-      { islandId: 'exercise', type: 'puppy', x: 1.3, z: -0.7 },
-      { islandId: 'stomach', type: 'puppy', x: -1.2, z: 0.6 },
-      { islandId: 'wealth-ladder', type: 'puppy', x: 1.1, z: 0.7 },
-      { islandId: 'hypertension', type: 'cockatoo', x: -1.3, z: -0.8 },
-      { islandId: 'brain-neuro', type: 'cockatoo', x: 1.0, z: -0.9 },
-      { islandId: 'most-important', type: 'cockatoo', x: -1.1, z: 0.8 }
+      // 🐱 小橘貓 (Cat)
+      { islandId: 'endoscopy', type: 'cat', x: 1.15, z: 0.85 },
+      { islandId: 'intestine', type: 'cat', x: -1.10, z: 0.85 },
+      { islandId: 'liver-biliary', type: 'cat', x: 1.05, z: 0.75 },
+      { islandId: 'medication', type: 'cat', x: -1.15, z: 0.80 },
+      { islandId: 'random-walk', type: 'cat', x: 1.10, z: 0.80 },
+      { islandId: 'golden-rules', type: 'cat', x: -1.05, z: 0.85 },
+
+      // 🐶 小柴犬 (Puppy)
+      { islandId: 'exercise', type: 'puppy', x: 1.25, z: -0.65 },
+      { islandId: 'stomach', type: 'puppy', x: -1.15, z: 0.65 },
+      { islandId: 'diabetes', type: 'puppy', x: 1.10, z: 0.80 },
+      { islandId: 'weight-loss', type: 'puppy', x: -1.05, z: 0.85 },
+      { islandId: 'wealth-ladder', type: 'puppy', x: 1.10, z: 0.75 },
+      { islandId: 'sapiens', type: 'puppy', x: -1.10, z: 0.75 },
+
+      // 🐑 小綿羊 (Sheep)
+      { islandId: 'glucose', type: 'sheep', x: 1.10, z: 0.80 },
+      { islandId: 'diet', type: 'sheep', x: -1.05, z: 0.90 },
+      { islandId: 'chronic', type: 'sheep', x: 1.05, z: 0.80 },
+      { islandId: 'lipids', type: 'sheep', x: -1.10, z: 0.75 },
+      { islandId: 'die-with-zero', type: 'sheep', x: -0.95, z: 0.80 },
+
+      // 🦜 巴丹鸚鵡 (Cockatoo)
+      { islandId: 'hypertension', type: 'cockatoo', x: -1.25, z: 0.75 },
+      { islandId: 'ultrasound', type: 'cockatoo', x: 1.10, z: 0.80 },
+      { islandId: 'hepatitis', type: 'cockatoo', x: 1.05, z: 0.75 },
+      { islandId: 'brain-neuro', type: 'cockatoo', x: 1.05, z: -0.85 },
+      { islandId: 'most-important', type: 'cockatoo', x: -1.10, z: 0.80 }
     ];
 
     FAUNA_DISTRIBUTION.forEach(item => {
@@ -5573,11 +5635,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       if (!islandObj) return;
 
       let creatureMesh;
-      if (item.type === 'sheep') creatureMesh = createSheepModel();
+      if (item.type === 'cat') creatureMesh = createCatModel();
+      else if (item.type === 'sheep') creatureMesh = createSheepModel();
       else if (item.type === 'puppy') creatureMesh = createPuppyModel();
       else if (item.type === 'cockatoo') creatureMesh = createCockatooModel();
 
       if (!creatureMesh) return;
+      attachAnimalHitboxAndBadge(creatureMesh, item.type);
       creatureMesh.position.set(item.x, HEX_HEIGHT + 0.08, item.z);
       creatureMesh.rotation.y = Math.random() * Math.PI * 2;
       islandObj.add(creatureMesh);
