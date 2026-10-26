@@ -6618,6 +6618,31 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       const allIntersects = raycaster.intersectObjects(scene.children, true);
       if (allIntersects.length === 0) return;
 
+      // 【最高優先級 1】若點擊射線穿過赤紅巨龍，100% 優先觸發巨龍咆哮噴火
+      for (let i = 0; i < allIntersects.length; i++) {
+        let testNode = allIntersects[i].object;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isDragon) {
+            triggerDragonInteraction();
+            return;
+          }
+          testNode = testNode.parent;
+        }
+      }
+
+      // 【最高優先級 2】若點擊射線穿過 Q 版小動物 (小貓、小狗、小羊、鸚鵡、海龜、海豚、小黃鴨)，優先彈出動物專屬衛教金句
+      for (let i = 0; i < allIntersects.length; i++) {
+        let testNode = allIntersects[i].object;
+        while (testNode && testNode !== scene) {
+          if (testNode.userData && testNode.userData.isAnimal) {
+            const animalRoot = testNode.userData.parentCreature || testNode;
+            triggerAnimalInteraction(animalRoot);
+            return;
+          }
+          testNode = testNode.parent;
+        }
+      }
+
       // 依互動優先級尋找命中目標
       for (let i = 0; i < allIntersects.length; i++) {
         const hit = allIntersects[i];
