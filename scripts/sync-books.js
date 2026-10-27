@@ -60,13 +60,21 @@ function parseChapterOrder(filename) {
 // 檢查章節專屬封面圖是否存在（嚴格比對章節標題，不抓整本書共用圖，確保新文章在 Sheet 保持 E/F 欄空白）
 function findCoverImage(chapterTitle, bookTitle) {
   const cleanTitle = chapterTitle.replace(/^\d+[、.\s]+/, '');
+  const noPunctTitle = chapterTitle.replace(/[：:？?！「」『』]/g, '');
+  const cleanNoPunct = cleanTitle.replace(/[：:？?！「」『』]/g, '');
   const candidates = [
     `${chapterTitle}.webp`,
     `${chapterTitle}.png`,
+    `${noPunctTitle}.webp`,
+    `${noPunctTitle}.png`,
     `${cleanTitle}.webp`,
     `${cleanTitle}.png`,
+    `${cleanNoPunct}.webp`,
+    `${cleanNoPunct}.png`,
     `${bookTitle}-${chapterTitle}.webp`,
-    `${bookTitle}-${chapterTitle}.png`
+    `${bookTitle}-${chapterTitle}.png`,
+    `${bookTitle}-${noPunctTitle}.webp`,
+    `${bookTitle}-${noPunctTitle}.png`
   ];
 
   for (const name of candidates) {

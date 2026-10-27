@@ -63,13 +63,21 @@ function parseChapterOrder(filename) {
 
 function findCoverImage(chapterTitle, bookTitle) {
   const cleanTitle = chapterTitle.replace(/^\d+[、.\s]+/, '');
+  const noPunctTitle = chapterTitle.replace(/[：:？?！「」『』]/g, '');
+  const cleanNoPunct = cleanTitle.replace(/[：:？?！「」『』]/g, '');
   const candidates = [
     `${chapterTitle}.webp`,
     `${chapterTitle}.png`,
+    `${noPunctTitle}.webp`,
+    `${noPunctTitle}.png`,
     `${cleanTitle}.webp`,
     `${cleanTitle}.png`,
+    `${cleanNoPunct}.webp`,
+    `${cleanNoPunct}.png`,
     `${bookTitle}-${chapterTitle}.webp`,
-    `${bookTitle}-${chapterTitle}.png`
+    `${bookTitle}-${chapterTitle}.png`,
+    `${bookTitle}-${noPunctTitle}.webp`,
+    `${bookTitle}-${noPunctTitle}.png`
   ];
 
   for (const name of candidates) {
