@@ -16,7 +16,7 @@ import EndoscopyPageContent from '../../components/EndoscopyPageContent.astro';
 </Layout>
 
 <style is:global>
-  /* 專門為 Wix 嵌入環境設計的極限防切邊與 100% 自適應重設 */
+  /* 專門為 Wix 嵌入環境設計的極限防切邊與 100% 自適應重設（對齊個人網站大字級標準） */
   html, body {
     width: 100% !important;
     max-width: 100vw !important;
@@ -24,15 +24,17 @@ import EndoscopyPageContent from '../../components/EndoscopyPageContent.astro';
     padding: 0 !important;
     overflow-x: hidden !important;
     background: transparent !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
   }
   @media (max-width: 640px) {
     html {
-      font-size: 15px !important; /* 手機嵌入模式使用 15px 基礎字級，釋放約 20% 橫向空間 */
+      font-size: 18px !important; /* 對齊個人網站手機版 18px 大字級標準，提升長輩與病患閱讀清晰度 */
     }
   }
   @media (max-width: 360px) {
     html {
-      font-size: 14px !important; /* 極窄螢幕（如 320px Wix 編輯器邊界）微調為 14px，保證完全不貼邊 */
+      font-size: 16px !important; /* 極窄螢幕（如 320px Wix 邊界）微調為 16px，維持舒適可讀且防貼邊 */
     }
   }
 </style>

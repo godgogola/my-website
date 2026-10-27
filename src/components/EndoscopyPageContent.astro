@@ -144,7 +144,10 @@ const extraVideos = [
     <div class="features-grid">
       <!-- 特色 1 -->
       <div class="feature-card">
-        <h3 class="card-title">安全靜脈舒眠麻醉</h3>
+        <div class="feature-card-top">
+          <span class="feature-icon-badge" aria-hidden="true">💤</span>
+          <h3 class="card-title">安全靜脈舒眠麻醉</h3>
+        </div>
         <p class="card-desc">
           並非插管全身麻醉，而是使用安全短效的靜脈鎮靜藥物。檢查過程如同小睡片刻，全程由受過專業急救與鎮靜訓練的醫護團隊密集監測血壓、心跳與血氧，無痛、無嘔吐反射、無恐懼。
         </p>
@@ -153,7 +156,10 @@ const extraVideos = [
       <!-- 特色 2 -->
       <div class="feature-card highlight">
         <div class="popular-tag">大幅減脹</div>
-        <h3 class="card-title">醫療級 CO2 充氣系統</h3>
+        <div class="feature-card-top">
+          <span class="feature-icon-badge highlight-icon" aria-hidden="true">🫧</span>
+          <h3 class="card-title">醫療級 CO2 充氣系統</h3>
+        </div>
         <p class="card-desc">
           大腸鏡需充氣撐開腸道皺褶以利觀察。傳統灌入空氣難以吸收，術後常腹脹劇痛數小時；我們全面採用<strong>醫療級二氧化碳 (CO2)</strong>，人體吸收速度比空氣快 150 倍，檢查後迅速自然消脹、極速舒緩。
         </p>
@@ -161,15 +167,28 @@ const extraVideos = [
 
       <!-- 特色 3 -->
       <div class="feature-card">
-        <h3 class="card-title">高解析光學影像系統</h3>
+        <div class="optical-tag">Fujifilm 6000</div>
+        <div class="feature-card-top">
+          <span class="feature-icon-badge" aria-hidden="true">🔬</span>
+          <h3 class="card-title">高解析 LCI / BLI 光學影像系統</h3>
+        </div>
         <p class="card-desc">
-          引進先進數位高解析內視鏡，搭載窄頻光 (NBI) 與光學放大技術。可清晰顯現微細黏膜表層毛細血管與腺管微結構（Pit Pattern），及時揪出早期平坦型微小腺瘤，防患大腸癌於未然。
+          引進日本 <strong>Fujifilm ELUXEO™ 數位高解析內視鏡</strong>，搭載<strong>連結色彩影像 (LCI)</strong> 與<strong>藍光影像 (BLI)</strong> 光學技術。可強化黏膜微差色澤、清晰顯現表層微血管與腺管結構，及時揪出早期平坦型微小腺瘤，防患大腸癌於未然。
+          <a
+            href={isEmbed ? 'https://drhuanggi.vercel.app/posts/豐田診所內視鏡介紹' : '/posts/豐田診所內視鏡介紹'}
+            target={isEmbed ? '_blank' : undefined}
+            rel={isEmbed ? 'noopener noreferrer' : undefined}
+            class="feature-inline-link"
+          >了解 LCI / BLI 技術 ➔</a>
         </p>
       </div>
 
       <!-- 特色 4 -->
       <div class="feature-card">
-        <h3 class="card-title">當日瘜肉評估與微創切除</h3>
+        <div class="feature-card-top">
+          <span class="feature-icon-badge" aria-hidden="true">⚕️</span>
+          <h3 class="card-title">當日瘜肉評估與微創切除</h3>
+        </div>
         <p class="card-desc">
           檢查中若發現大腸瘜肉，經醫師專業評估符合適應症者，即可採<strong>微創冷切除／熱切除技術</strong>當場切除並送病理化驗。免除二次回診奔波與重新清腸服藥的痛苦。
         </p>
@@ -408,8 +427,8 @@ const extraVideos = [
             <span>若有服用伯基 (Bokey)、保栓通 (Plavix) 等，請於門診事先告知醫師評估是否需暫停 3~7 天（以利瘜肉切除）。</span>
           </div>
           <div class="reminder-item highlight-glp1">
-            <strong>💉 瘦瘦針 (GLP-1 腸泌素)：</strong>
-            <span>週效型（如 Ozempic、Wegovy）建議於<strong>檢查前停用一週</strong>；日效型（如 Saxenda）建議<strong>檢查當日停用</strong>，以防胃排空延緩造成麻醉嘔吐。</span>
+            <strong>💉 瘦瘦針 (GLP-1 / GIP 腸泌素)：</strong>
+            <span>週效型（如<strong>猛健樂 Mounjaro、週纖達 Wegovy、胰妥讚 Ozempic</strong>）建議於<strong>檢查前停用一週</strong>；日效型（如善纖達 Saxenda）建議<strong>檢查當日停用</strong>，以防胃排空延緩造成麻醉嘔吐。</span>
           </div>
         </div>
       </div>
@@ -705,11 +724,47 @@ const extraVideos = [
     padding: 3px 10px;
     border-radius: 9999px;
   }
+  .optical-tag {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: #eef7f9;
+    color: #2b677b;
+    border: 1px solid #cae2e9;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+  }
+  .feature-card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-right: 84px;
+  }
+  .feature-icon-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f0f8fa;
+    border: 1px solid #d5e9ef;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .feature-icon-badge.highlight-icon {
+    background: #fff2ed;
+    border-color: #fad5c8;
+  }
   .card-title {
     font-size: 1.35rem;
     font-weight: 800;
     color: #1e3a47;
-    margin-bottom: 12px;
+    margin-bottom: 0;
     line-height: 1.35;
     text-wrap: balance;
   }
@@ -721,6 +776,28 @@ const extraVideos = [
   .card-desc strong {
     color: #0f172a;
     font-weight: 800;
+  }
+  .feature-inline-link {
+    display: inline-block;
+    margin-left: 6px;
+    color: #2b7a91;
+    font-size: 0.94rem;
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 1.5px solid rgba(43, 122, 145, 0.35);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .feature-inline-link:hover {
+    color: #1e3a47;
+    border-color: #1e3a47;
+  }
+
+  /* 錨點區塊滾動緩衝，避免被頂部導覽列遮擋 */
+  #video-showcase,
+  #prep-calculator,
+  #diet-guide,
+  #flow-steps {
+    scroll-margin-top: 96px;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -1559,111 +1636,111 @@ const extraVideos = [
 
   @media (max-width: 640px) {
     .endoscopy-special-container {
-      padding: 6px 2px 32px !important;
+      padding: 8px 4px 36px !important;
       width: 100% !important;
       max-width: 100% !important;
       box-sizing: border-box !important;
       overflow-x: hidden !important;
     }
     .endo-hero {
-      padding: 16px 12px !important;
-      border-radius: 12px !important;
-      margin-bottom: 16px !important;
+      padding: 20px 14px !important;
+      border-radius: 14px !important;
+      margin-bottom: 20px !important;
     }
     .endo-hero-title {
-      font-size: 1.45rem !important;
+      font-size: 1.65rem !important;
       line-height: 1.35 !important;
-      margin-bottom: 14px !important;
+      margin-bottom: 16px !important;
       text-wrap: balance !important;
       word-break: keep-all !important;
       overflow-wrap: break-word !important;
     }
     .anchor-btn {
-      padding: 6px 10px !important;
-      font-size: 0.78rem !important;
+      padding: 7px 13px !important;
+      font-size: 0.92rem !important;
     }
     .features-grid {
       grid-template-columns: minmax(0, 1fr) !important;
-      gap: 12px !important;
+      gap: 14px !important;
     }
     .feature-card {
-      padding: 16px 14px !important;
+      padding: 18px 16px !important;
     }
     .card-title {
-      font-size: 1.15rem !important;
-      margin-bottom: 6px !important;
+      font-size: 1.3rem !important;
+      margin-bottom: 8px !important;
     }
     .card-desc {
-      font-size: 0.9rem !important;
-      line-height: 1.55 !important;
+      font-size: 1.02rem !important;
+      line-height: 1.68 !important;
     }
     .drug-tabs {
       grid-template-columns: minmax(0, 1fr) !important;
-      gap: 10px !important;
+      gap: 12px !important;
     }
     .calc-control-card, .schedule-result-card {
-      padding: 12px 8px !important;
-      border-radius: 12px !important;
+      padding: 16px 12px !important;
+      border-radius: 14px !important;
       width: 100% !important;
       max-width: 100% !important;
       box-sizing: border-box !important;
       overflow: hidden !important;
     }
     .main-heading {
-      font-size: 1.28rem !important;
+      font-size: 1.45rem !important;
       line-height: 1.35 !important;
       text-wrap: balance !important;
       word-break: keep-all !important;
       overflow-wrap: break-word !important;
     }
     .desc-heading {
-      font-size: 0.88rem !important;
-      line-height: 1.5 !important;
+      font-size: 1.0rem !important;
+      line-height: 1.65 !important;
       text-wrap: balance !important;
       word-break: keep-all !important;
       overflow-wrap: break-word !important;
     }
     .showcase-container {
-      padding: 8px 6px !important;
-      border-radius: 12px !important;
+      padding: 12px 10px !important;
+      border-radius: 14px !important;
       margin-left: 0 !important;
       margin-right: 0 !important;
     }
     .video-responsive-wrap {
-      border-radius: 8px !important;
+      border-radius: 10px !important;
     }
     .player-info-bar {
-      padding: 6px 0 !important;
+      padding: 10px 0 !important;
       word-break: break-word !important;
     }
     .player-active-title {
-      font-size: 1.1rem !important;
-      line-height: 1.3 !important;
+      font-size: 1.25rem !important;
+      line-height: 1.35 !important;
       word-break: break-word !important;
     }
     .player-active-desc {
-      font-size: 0.82rem !important;
-      line-height: 1.45 !important;
+      font-size: 0.98rem !important;
+      line-height: 1.6 !important;
       word-break: break-word !important;
     }
     .playlist-header h4 {
-      font-size: 0.82rem !important;
+      font-size: 0.98rem !important;
       word-break: break-word !important;
       white-space: normal !important;
     }
     .playlist-item {
-      padding: 6px 6px !important;
-      gap: 6px !important;
-      border-radius: 8px !important;
+      padding: 8px 8px !important;
+      gap: 8px !important;
+      border-radius: 10px !important;
       width: 100% !important;
       box-sizing: border-box !important;
       overflow: hidden !important;
     }
     .item-thumb-wrap {
-      width: 68px !important;
-      height: 38px !important;
+      width: 80px !important;
+      height: 45px !important;
       flex-shrink: 0 !important;
-      border-radius: 4px !important;
+      border-radius: 6px !important;
     }
     .item-meta {
       min-width: 0 !important;
@@ -1671,15 +1748,15 @@ const extraVideos = [
       overflow: hidden !important;
     }
     .item-title {
-      font-size: 0.8rem !important;
-      line-height: 1.25 !important;
+      font-size: 0.95rem !important;
+      line-height: 1.35 !important;
       white-space: nowrap !important;
       overflow: hidden !important;
       text-overflow: ellipsis !important;
     }
     .item-desc {
-      font-size: 0.7rem !important;
-      line-height: 1.25 !important;
+      font-size: 0.85rem !important;
+      line-height: 1.35 !important;
       display: -webkit-box !important;
       -webkit-line-clamp: 1 !important;
       -webkit-box-orient: vertical !important;
@@ -1687,48 +1764,48 @@ const extraVideos = [
     }
     .steps-chain-grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-      gap: 6px !important;
+      gap: 8px !important;
     }
     .chain-step-card {
-      padding: 8px 8px !important;
-      gap: 4px !important;
+      padding: 12px 10px !important;
+      gap: 6px !important;
     }
     .step-card-header {
-      gap: 5px !important;
+      gap: 6px !important;
     }
     .step-badge-num {
-      width: 20px !important;
-      height: 20px !important;
-      font-size: 0.68rem !important;
-      border-radius: 4px !important;
+      width: 22px !important;
+      height: 22px !important;
+      font-size: 0.78rem !important;
+      border-radius: 5px !important;
     }
     .chain-step-title {
-      font-size: 0.82rem !important;
-      line-height: 1.25 !important;
+      font-size: 0.98rem !important;
+      line-height: 1.3 !important;
     }
     .chain-step-desc {
-      font-size: 0.72rem !important;
-      line-height: 1.35 !important;
+      font-size: 0.88rem !important;
+      line-height: 1.5 !important;
     }
     .extra-videos-grid {
       grid-template-columns: minmax(0, 1fr) !important;
-      gap: 10px !important;
+      gap: 12px !important;
     }
     .timeline-nodes-wrap {
-      padding-left: 16px !important;
-      gap: 10px !important;
+      padding-left: 18px !important;
+      gap: 12px !important;
     }
     .timeline-nodes-wrap::before {
       left: 4px !important;
     }
     :global(.endo-timeline-item) {
-      padding: 10px 10px !important;
+      padding: 12px 12px !important;
     }
     :global(.endo-timeline-item::before) {
-      left: -18px !important;
-      width: 10px !important;
-      height: 10px !important;
-      border-width: 2px !important;
+      left: -20px !important;
+      width: 12px !important;
+      height: 12px !important;
+      border-width: 2.5px !important;
     }
   }
 
@@ -2068,7 +2145,17 @@ const extraVideos = [
 更多詳情：${window.location.href}`;
 
       navigator.clipboard.writeText(text).then(() => {
-        alert('已成功複製大腸鏡清腸提醒文字！可直接貼上至 LINE 傳給家人或受檢者。');
+        const originalHtml = btnCopy.innerHTML;
+        btnCopy.innerHTML = '<span>✓ 已複製 LINE 提醒文字！</span>';
+        btnCopy.style.background = '#059669';
+        btnCopy.style.borderColor = '#059669';
+        btnCopy.style.color = '#ffffff';
+        setTimeout(() => {
+          btnCopy.innerHTML = originalHtml;
+          btnCopy.style.background = '';
+          btnCopy.style.borderColor = '';
+          btnCopy.style.color = '';
+        }, 2600);
       }).catch(() => {
         prompt('請複製以下提醒文字：', text);
       });

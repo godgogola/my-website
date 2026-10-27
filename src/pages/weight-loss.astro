@@ -454,12 +454,7 @@ const solutions: WeightLossSolution[] = [
 
                   <!-- 右側內容主卡片 -->
                   <div class="timeline-content-col">
-                    <article
-                      class="step-card"
-                      data-video-id={video.id}
-                      data-video-title={video.title}
-                      data-video-category={video.category}
-                    >
+                    <article class="step-card">
                       <!-- 頂部資訊列：階段序號與重點標籤 -->
                       <div class="step-card-meta-bar">
                         <div class="step-tags-left">
@@ -475,7 +470,9 @@ const solutions: WeightLossSolution[] = [
                           role="button"
                           tabindex="0"
                           aria-label={`播放影片：${video.title}`}
-                          data-trigger-play={video.id}
+                          data-video-id={video.id}
+                          data-video-title={video.title}
+                          data-video-category={video.category}
                         >
                           <img
                             src={thumbnail}
@@ -525,9 +522,21 @@ const solutions: WeightLossSolution[] = [
                             </ul>
                           </div>
 
-                          <!-- 閱讀專文連結 -->
-                          {articleUrl && (
-                            <div class="step-card-footer-buttons">
+                          <!-- 觀看短片與閱讀專文雙按鈕 -->
+                          <div class="step-card-footer-buttons">
+                            <button
+                              type="button"
+                              class="btn-step-play"
+                              data-video-id={video.id}
+                              data-video-title={video.title}
+                              data-video-category={video.category}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <polygon points="6 3 20 12 6 21 6 3" />
+                              </svg>
+                              <span>觀看衛教短片</span>
+                            </button>
+                            {articleUrl && (
                               <a
                                 href={articleUrl}
                                 target="_blank"
@@ -546,8 +555,8 @@ const solutions: WeightLossSolution[] = [
                                   <line x1="10" y1="14" x2="21" y2="3"></line>
                                 </svg>
                               </a>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       </div>
                     </article>
@@ -728,19 +737,14 @@ const solutions: WeightLossSolution[] = [
 </Layout>
 
 <script>
-  // ── 播放影片觸發 ──
+  // ── 鍵盤無障礙播放觸發 (Enter / Space) ──
   function initPlayTriggers() {
-    const playTriggers = document.querySelectorAll<HTMLElement>('[data-trigger-play]');
-    playTriggers.forEach((el) => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const card = el.closest<HTMLElement>('.step-card');
-        if (!card) return;
-
-        // 觸發全域 VideoModal
-        const videoId = card.dataset.videoId;
-        if (videoId) {
-          card.click();
+    const playBoxes = document.querySelectorAll<HTMLElement>('.step-video-thumbnail-box[data-video-id]');
+    playBoxes.forEach((box) => {
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          box.click();
         }
       });
     });
@@ -1022,90 +1026,6 @@ const solutions: WeightLossSolution[] = [
     color: #10667e;
   }
 
-  /* 互動進度看板 */
-  .interactive-tracker-card {
-    position: relative;
-    z-index: 1;
-    max-width: 760px;
-    margin: 0 auto 32px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1.5px solid rgba(16, 185, 129, 0.25);
-    border-radius: 18px;
-    padding: 18px 24px;
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.07);
-    text-align: left;
-  }
-
-  .tracker-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .tracker-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 800;
-    font-size: 1.05rem;
-    color: #1e3a4c;
-  }
-  .tracker-icon {
-    font-size: 1.25rem;
-  }
-  .tracker-badge {
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #047857;
-    font-size: 0.92rem;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 9999px;
-  }
-
-  .tracker-progress-bg {
-    width: 100%;
-    height: 10px;
-    background: #e2e8f0;
-    border-radius: 9999px;
-    overflow: hidden;
-    position: relative;
-    margin-bottom: 10px;
-  }
-  .tracker-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
-    border-radius: 9999px;
-    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .tracker-footer-hint {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.92rem;
-    line-height: 1.6;
-    color: #475569;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .btn-reset-tracker {
-    background: none;
-    border: none;
-    color: #94a3b8;
-    text-decoration: underline;
-    font-size: 0.88rem;
-    cursor: pointer;
-    padding: 2px 6px;
-    transition: color 0.2s;
-  }
-  .btn-reset-tracker:hover {
-    color: #ef4444;
-  }
-
   /* 錨點跳轉膠囊 */
   .stage-nav-anchors {
     position: relative;
@@ -1138,13 +1058,21 @@ const solutions: WeightLossSolution[] = [
     box-shadow: 0 6px 16px rgba(16, 185, 129, 0.16);
   }
   .anchor-stage {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 900;
-    padding: 3px 8px;
-    border-radius: 6px;
+    padding: 3px 9px;
+    border-radius: 9999px;
     background: #f1f5f9;
     color: #475569;
+    letter-spacing: 0.03em;
   }
+  .anchor-pill.stage-blue .anchor-stage { background: #e0f2fe; color: #0284c7; }
+  .anchor-pill.stage-emerald .anchor-stage { background: #d1fae5; color: #059669; }
+  .anchor-pill.stage-amber .anchor-stage { background: #fef3c7; color: #d97706; }
+  .anchor-pill.stage-teal .anchor-stage { background: #ccfbf1; color: #0d9488; }
+  .anchor-pill.stage-blue:hover { border-color: #0284c7; color: #0369a1; box-shadow: 0 6px 16px rgba(2, 132, 199, 0.16); }
+  .anchor-pill.stage-amber:hover { border-color: #f59e0b; color: #b45309; box-shadow: 0 6px 16px rgba(245, 158, 11, 0.18); }
+  .anchor-pill.stage-teal:hover { border-color: #0d9488; color: #0f766e; box-shadow: 0 6px 16px rgba(13, 148, 136, 0.18); }
 
   /* ══════════════════════════════════════════════
      ACT SECTION: 四大章節
@@ -1383,55 +1311,14 @@ const solutions: WeightLossSolution[] = [
     padding: 4px 10px;
     border-radius: 9999px;
   }
-
-  /* 打勾解鎖按鈕 */
-  .btn-toggle-unlocked {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #ffffff;
-    border: 1.5px solid #cbd5e1;
-    color: #64748b;
-    padding: 4px 12px;
-    border-radius: 9999px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .btn-toggle-unlocked:hover {
-    border-color: #10b981;
-    color: #059669;
-  }
-  .check-box-square {
-    width: 14px;
-    height: 14px;
-    border-radius: 4px;
-    border: 1.5px solid #94a3b8;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-  .btn-toggle-unlocked.active {
-    background: #ecfdf5;
-    border-color: #10b981;
-    color: #047857;
-  }
-  .btn-toggle-unlocked.active .check-box-square {
-    background: #10b981;
-    border-color: #10b981;
-    position: relative;
-  }
-  .btn-toggle-unlocked.active .check-box-square::after {
-    content: '';
-    width: 4px;
-    height: 7px;
-    border: solid #ffffff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    margin-bottom: 2px;
-  }
+  .stage-blue .timeline-node-circle { border-color: #7dd3fc; color: #0284c7; }
+  .stage-emerald .timeline-node-circle { border-color: #6ee7b7; color: #059669; }
+  .stage-amber .timeline-node-circle { border-color: #fcd34d; color: #d97706; }
+  .stage-teal .timeline-node-circle { border-color: #5eead4; color: #0d9488; }
+  .stage-blue .step-index-badge { background: #0284c7; }
+  .stage-emerald .step-index-badge { background: #059669; }
+  .stage-amber .step-index-badge { background: #d97706; }
+  .stage-teal .step-index-badge { background: #0d9488; }
 
   /* 節點卡片兩欄排版 (左縮圖，右重點) */
   .step-card-grid {
@@ -1582,9 +1469,32 @@ const solutions: WeightLossSolution[] = [
   .step-card-footer-buttons {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-top: 6px;
     flex-wrap: wrap;
+  }
+
+  .btn-step-play {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0f766e;
+    border: 1.5px solid #0f766e;
+    color: #ffffff;
+    font-size: 0.94rem;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(15, 118, 110, 0.18);
+  }
+  .btn-step-play:hover {
+    background: #0d9488;
+    border-color: #0d9488;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(13, 148, 136, 0.28);
   }
 
   .btn-step-article {
