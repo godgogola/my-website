@@ -1089,35 +1089,37 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     pointer-events: auto;
     cursor: pointer;
     transform: translate(-50%, -100%);
-    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    line-height: 1.15;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.22s ease;
   }
 
   .island-3d-badge:hover {
-    transform: translate(-50%, -115%) scale(1.08);
+    transform: translate(-50%, -115%) scale(1.06);
   }
 
   .island-3d-badge-inner {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 11px;
+    gap: 3.5px;
+    padding: 2.5px 7.5px;
     border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(203, 213, 225, 0.95);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14), 0 1px 3px rgba(15, 23, 42, 0.08);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(203, 213, 225, 0.9);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12), 0 1px 2px rgba(15, 23, 42, 0.06);
     white-space: nowrap;
     user-select: none;
     color: #0f172a;
+    line-height: 1.15;
   }
 
   .island-3d-badge.health .island-3d-badge-inner {
-    border-color: rgba(249, 115, 22, 0.65);
+    border-color: rgba(249, 115, 22, 0.6);
   }
 
   .island-3d-badge.wisdom .island-3d-badge-inner {
-    border-color: rgba(139, 92, 246, 0.65);
+    border-color: rgba(139, 92, 246, 0.6);
   }
 
   .badge-icon {
@@ -1125,17 +1127,19 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   .badge-title {
-    font-size: 0.78rem;
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: 0.3px;
+    line-height: 1.15;
+    letter-spacing: 0.15px;
     color: #0f172a;
     text-shadow: none;
   }
 
   .badge-pins-count {
-    font-size: 0.65rem;
+    font-size: 9.5px;
     font-weight: 800;
-    padding: 1.5px 6px;
+    line-height: 1.1;
+    padding: 1px 4.5px;
     border-radius: 9999px;
     background: #f1f5f9;
     color: #475569;
@@ -1228,60 +1232,65 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     transform: translateX(-50%) translateY(0);
   }
 
-  /* 隱藏標籤狀態 */
-  .island-3d-badge.labels-hidden {
-    opacity: 0;
-    pointer-events: none;
+  /* 隱藏標籤狀態與巨龍防遮擋透明狀態 */
+  .island-3d-badge.labels-hidden,
+  .island-3d-badge.dragon-occluded,
+  .ferry-label.labels-hidden,
+  .ferry-label.dragon-occluded,
+  .ferry-label.ride-hidden,
+  .animal-mini-pill.labels-hidden,
+  .animal-mini-pill.dragon-occluded,
+  .animal-mini-pill.ride-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   /* 渡船碼頭標籤 */
   .ferry-label {
-    padding: 3px 10px;
-    font-size: 0.7rem;
+    padding: 2px 7px;
+    font-size: 10px;
+    line-height: 1.15;
     font-weight: 700;
     color: #fff7ea;
-    background: rgba(37, 99, 135, 0.88);
-    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(37, 99, 135, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.52);
     border-radius: 999px;
     white-space: nowrap;
     pointer-events: none;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.2s ease;
   }
-  .ferry-label.labels-hidden { opacity: 0; pointer-events: none; }
 
   /* 療癒小動物點擊小氣泡標籤：深翠綠森林半透明迷你膠囊，與純白大型島嶼名牌徹底區隔 */
   .animal-mini-pill {
-    padding: 1px 5.5px;
-    font-size: 0.54rem;
+    padding: 1.5px 5px;
+    font-size: 9.5px;
+    line-height: 1.1;
     font-weight: 700;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.15px;
     color: #ecfdf5;
-    background: rgba(6, 78, 59, 0.86);
+    background: rgba(6, 78, 59, 0.84);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    border: 1px solid rgba(52, 211, 153, 0.82);
+    border: 1px solid rgba(52, 211, 153, 0.78);
     border-radius: 999px;
     white-space: nowrap;
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
-    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease, background 0.18s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, background 0.18s ease;
   }
   .animal-mini-pill:hover {
-    transform: scale(1.18) translateY(-2px);
+    transform: scale(1.14) translateY(-2px);
     background: rgba(4, 120, 87, 0.96);
     border-color: #6ee7b7;
     color: #ffffff;
   }
-  .animal-mini-pill.labels-hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
 
   /* 鳥瞰模式：標籤縮為精簡小膠囊，避免俯視時互相堆疊 */
-  .viewport-container.bird-mode .island-3d-badge-inner { padding: 3px 9px; gap: 4px; }
-  .viewport-container.bird-mode .badge-icon { font-size: 0.8rem; }
-  .viewport-container.bird-mode .badge-title { font-size: 0.64rem; }
+  .viewport-container.bird-mode .island-3d-badge-inner { padding: 2px 6.5px; gap: 3px; }
+  .viewport-container.bird-mode .badge-icon { font-size: 10px; }
+  .viewport-container.bird-mode .badge-title { font-size: 10px; }
   .viewport-container.bird-mode .badge-pins-count,
   .viewport-container.bird-mode .badge-arrow { display: none; }
 
@@ -2960,9 +2969,11 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         focusIsland(island.id);
       });
 
-      const staggerY = HEX_HEIGHT + 2.05 + (Math.abs(island.q * 3 + island.r) % 3) * 0.35;
+      const staggerY = HEX_HEIGHT + 1.95 + (Math.abs(island.q * 3 + island.r) % 3) * 0.28;
       const badgeObj = new CSS2DObject(badgeDiv);
       badgeObj.position.set(0, staggerY, 0);
+      badgeDiv._css2dObj = badgeObj;
+      badgeDiv._badgeKind = 'island';
       group.add(badgeObj);
       badgeObjects.push(badgeDiv);
 
@@ -5313,6 +5324,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         });
         const labelObj = new CSS2DObject(label);
         labelObj.position.set(0, 1.5, 0);
+        label._css2dObj = labelObj;
+        label._badgeKind = 'pier';
         pier.add(labelObj);
         badgeObjects.push(label);
 
@@ -6088,6 +6101,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
       const pillObj = new CSS2DObject(pill);
       pillObj.position.set(0, 0.52, 0);
+      pill._css2dObj = pillObj;
+      pill._badgeKind = 'animal';
       creatureMesh.add(pillObj);
       badgeObjects.push(pill);
     }
@@ -6513,7 +6528,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       triggerDragonInteraction();
     });
     const dragonLabelObj = new CSS2DObject(dragonBadge);
-    dragonLabelObj.position.set(0, 1.65, 0);
+    dragonLabelObj.position.set(0, 2.35, 0);
+    dragonBadge._css2dObj = dragonLabelObj;
+    dragonBadge._badgeKind = 'dragon';
     dragonGroup.add(dragonLabelObj);
     badgeObjects.push(dragonBadge);
 
@@ -6530,6 +6547,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       rightWing,
       tailSegments,
       dragonBadge,
+      dragonLabelObj,
       flightPhase: 0,
       boostSpeed: 0,
       fireUntil: 0,
@@ -6979,7 +6997,9 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       triggerGiantTurtleInteraction();
     });
     const turtleLabelObj = new CSS2DObject(turtleBadge);
-    turtleLabelObj.position.set(0, 1.55, 0);
+    turtleLabelObj.position.set(0, 1.75, 0);
+    turtleBadge._css2dObj = turtleLabelObj;
+    turtleBadge._badgeKind = 'turtle';
     giantTurtleGroup.add(turtleLabelObj);
     badgeObjects.push(turtleBadge);
 
@@ -6996,6 +7016,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       tailPivot,
       turtleFlag,
       turtleBadge,
+      turtleLabelObj,
       swimPhase: 0,
       boostSpeed: 0,
       waveUntil: 0
@@ -7319,6 +7340,8 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
       const badgeObj = new CSS2DObject(badge);
       badgeObj.position.set(0, 1.05, 0);
+      badge._css2dObj = badgeObj;
+      badge._badgeKind = 'chest';
       chestGroup.add(badgeObj);
       badgeObjects.push(badge);
 
@@ -8702,6 +8725,146 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     cssRenderer.setSize(width, height);
   }
 
+  // ── 巨龍與坐騎螢幕空間防遮擋系統 (防止島名膠囊蓋住 3D 赤紅巨龍與大海龜) ──
+  const _occVec = new THREE.Vector3();
+  function _projectLocalToScreen(group, lx, ly, lz, W, H) {
+    _occVec.set(lx, ly, lz).applyMatrix4(group.matrixWorld).project(camera);
+    return {
+      x: (_occVec.x * 0.5 + 0.5) * W,
+      y: (-_occVec.y * 0.5 + 0.5) * H,
+      z: _occVec.z
+    };
+  }
+
+  function _distToSegmentSq(px, py, x1, y1, x2, y2) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const lenSq = dx * dx + dy * dy;
+    let t = 0;
+    if (lenSq > 0.0001) {
+      t = ((px - x1) * dx + (py - y1) * dy) / lenSq;
+      if (t < 0) t = 0;
+      else if (t > 1) t = 1;
+    }
+    const cx = x1 + t * dx - px;
+    const cy = y1 + t * dy - py;
+    return cx * cx + cy * cy;
+  }
+
+  function updateBadgeOcclusion() {
+    const W = container.clientWidth || window.innerWidth;
+    const H = container.clientHeight || window.innerHeight;
+    const inRide = isDragonRideMode || isTurtleRideMode;
+
+    // 1. 騎乘飛龍或大海龜時，徹底隱藏坐騎自身頭頂名牌與次要小標籤
+    if (dragonData && dragonData.dragonBadge) {
+      dragonData.dragonBadge.classList.toggle('ride-hidden', inRide);
+      if (dragonData.dragonLabelObj) {
+        dragonData.dragonLabelObj.visible = !inRide && showLabels;
+      }
+    }
+    if (giantTurtleData && giantTurtleData.turtleBadge) {
+      giantTurtleData.turtleBadge.classList.toggle('ride-hidden', inRide);
+      if (giantTurtleData.turtleLabelObj) {
+        giantTurtleData.turtleLabelObj.visible = !inRide && showLabels;
+      }
+    }
+
+    // 2. 計算赤紅巨龍在 2D 螢幕上的軀幹軸線 (龍吻↔龍尾) 與雙翼軸線 (左翼尖↔右翼尖)
+    let hasDragon = false;
+    let snout2D, tail2D, wingL2D, wingR2D, crest2D, spineRad = 0, wingRad = 0;
+    if (dragonData && dragonData.group) {
+      snout2D = _projectLocalToScreen(dragonData.group, 0, 0.45, 2.95, W, H);
+      tail2D = _projectLocalToScreen(dragonData.group, 0, 0.0, -4.55, W, H);
+      wingL2D = _projectLocalToScreen(dragonData.group, -3.85, 0.25, -0.25, W, H);
+      wingR2D = _projectLocalToScreen(dragonData.group, 3.85, 0.25, -0.25, W, H);
+      crest2D = _projectLocalToScreen(dragonData.group, 0, 2.35, 0, W, H);
+      if (snout2D.z < 1 && tail2D.z < 1) {
+        hasDragon = true;
+        const wingSpanPx = Math.hypot(wingR2D.x - wingL2D.x, wingR2D.y - wingL2D.y);
+        const spineLenPx = Math.hypot(snout2D.x - tail2D.x, snout2D.y - tail2D.y);
+        const scalePx = Math.max(wingSpanPx, spineLenPx);
+        spineRad = Math.max(26, scalePx * (isDragonRideMode ? 0.19 : 0.15));
+        wingRad = Math.max(30, scalePx * (isDragonRideMode ? 0.23 : 0.19));
+      }
+    }
+
+    // 3. 若在騎龜模式，計算大海龜螢幕中心安全區
+    let hasTurtleRide = false;
+    let turtle2D;
+    if (isTurtleRideMode && giantTurtleData && giantTurtleData.group) {
+      turtle2D = _projectLocalToScreen(giantTurtleData.group, 0, 0.5, 0, W, H);
+      if (turtle2D.z < 1) hasTurtleRide = true;
+    }
+
+    // 4. 逐一檢查所有 3D 標籤是否與巨龍 / 坐騎重疊
+    for (let i = 0; i < badgeObjects.length; i++) {
+      const el = badgeObjects[i];
+      const kind = el._badgeKind;
+      if (!el._css2dObj || kind === 'dragon') continue;
+
+      // 騎乘模式下自動隱藏動物與碼頭次要小標籤，保持視野純淨
+      if (kind === 'animal' || kind === 'pier') {
+        el.classList.toggle('ride-hidden', inRide);
+        if (inRide) continue;
+      }
+
+      // 檢查標籤所在島嶼或父節點是否可見
+      let p = el._css2dObj.parent;
+      let parentVisible = true;
+      while (p) {
+        if (p.visible === false) { parentVisible = false; break; }
+        p = p.parent;
+      }
+      if (!parentVisible) continue;
+
+      el._css2dObj.getWorldPosition(_occVec);
+      _occVec.project(camera);
+      if (_occVec.z > 1 || _occVec.z < -1) {
+        el.classList.remove('dragon-occluded');
+        continue;
+      }
+
+      const bx = (_occVec.x * 0.5 + 0.5) * W;
+      const by = (-_occVec.y * 0.5 + 0.5) * H - 10;
+      const bw = kind === 'island' ? 38 : 22;
+      const bh = kind === 'island' ? 11 : 8;
+
+      let occluded = false;
+      if (hasDragon) {
+        const sThreshSq = (spineRad + bh) * (spineRad + bh);
+        const wThreshSq = (wingRad + bh) * (wingRad + bh);
+        // 檢測膠囊左、中、右三點是否觸碰巨龍軀幹或雙翼
+        for (let k = -1; k <= 1; k++) {
+          const px = bx + k * bw;
+          if (
+            _distToSegmentSq(px, by, snout2D.x, snout2D.y, tail2D.x, tail2D.y) < sThreshSq ||
+            _distToSegmentSq(px, by, wingL2D.x, wingL2D.y, wingR2D.x, wingR2D.y) < wThreshSq
+          ) {
+            occluded = true;
+            break;
+          }
+        }
+        // 一般視角下，若島名膠囊與巨龍頭頂名牌重疊，亦優先讓位給巨龍名牌
+        if (!occluded && !inRide && crest2D && showLabels) {
+          if (Math.abs(bx - crest2D.x) < 56 + bw && Math.abs(by - crest2D.y) < 18 + bh) {
+            occluded = true;
+          }
+        }
+      }
+
+      if (!occluded && hasTurtleRide && kind !== 'turtle') {
+        const dx = Math.abs(bx - turtle2D.x);
+        const dy = Math.abs(by - turtle2D.y);
+        if (dx < 85 + bw && dy < 65 + bh) {
+          occluded = true;
+        }
+      }
+
+      el.classList.toggle('dragon-occluded', occluded);
+    }
+  }
+
   // ══════════════════════════════════════════════════════════════════════
   // 13. 主渲染迴圈
   // ══════════════════════════════════════════════════════════════════════
@@ -8777,6 +8940,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
     controls.update();
     renderer.render(scene, camera);
+    updateBadgeOcclusion();
     cssRenderer.render(scene, camera);
   }
 
