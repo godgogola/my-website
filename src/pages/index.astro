@@ -70,7 +70,6 @@ const formatDate = (date: Date) => {
           <span class="story-badge-icon">✍️</span>
           <span>診間手帳 · 建站初心</span>
         </div>
-        <span class="story-journal-tag">Doctor's Note</span>
       </div>
 
       <div class="story-card-body">
@@ -116,11 +115,7 @@ const formatDate = (date: Date) => {
   <!-- Schedule Section (門診時間表) -->
   <section class="schedule-section" id="schedule-table-wrap">
     <div class="section-header">
-      <div>
-        <div class="badge badge-primary mb-2">門診資訊</div>
-        <h2>個人門診時間表</h2>
-        <p class="section-desc">以下為黃冠智醫師的常態門診時間，如遇休診或調整，請以診所當日公告為準。</p>
-      </div>
+      <h2>個人門診時間表</h2>
       <div class="schedule-today-indicator" id="schedule-today-badge" aria-live="polite" hidden>
         <span class="today-pulse-dot"></span>
         <span id="schedule-today-text">今日門診</span>
@@ -200,17 +195,15 @@ const formatDate = (date: Date) => {
         <!-- 左欄：主視覺文案與雙行動按鈕 -->
         <div class="island-promo-content">
           <div class="island-promo-badges">
-            <span class="island-badge-new">✨ 全新 3D 互動導覽</span>
-            <span class="island-badge-sub">🔊 內建巨龍咆哮、貓狗叫聲與金幣音效</span>
+            <span class="island-badge-new">✨ 3D 互動世界</span>
           </div>
 
           <h2 id="island-promo-title" class="island-promo-title">
-            不知道從哪篇看起？<br />
-            <span>登陸黃醫師的「3D 醫學與智慧群島」！</span>
+            3D 醫學與智慧群島
           </h2>
 
           <p class="island-promo-desc">
-            我們將全站 <strong>{allPosts.filter(p => !p.data.draft).length}+ 篇實證醫學與經典讀書筆記</strong>，打造成 <strong>24 座中古世紀立體微縮島嶼</strong>。您可以自由旋轉視角、點擊散步的橘貓與柴犬聽衛教叮嚀、開啟深海黃金寶箱、切換飄雪與許願流星雨，甚至騎上赤紅巨龍俯瞰整座知識海洋！
+            全站 <strong>{allPosts.filter(p => !p.data.draft).length}+ 篇實證醫學與經典讀書筆記</strong>，化為 24 座立體微縮島嶼。自由探索主題專欄、聆聽衛教叮嚀，或乘巨龍俯瞰知識海洋。
           </p>
 
           <div class="island-promo-actions">
@@ -220,10 +213,10 @@ const formatDate = (date: Date) => {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
             <a href="/island?dragon=1" class="btn-island-dragon">
-              <span>🐉 騎飛龍高空俯瞰</span>
+              <span>🐉 騎飛龍俯瞰</span>
             </a>
             <a href="/island?turtle=1" class="btn-island-turtle">
-              <span>🐢 乘大海龜海上巡航</span>
+              <span>🐢 乘海龜巡航</span>
             </a>
           </div>
         </div>
@@ -232,7 +225,7 @@ const formatDate = (date: Date) => {
         <div class="island-portal-panel">
           <div class="portal-panel-header">
             <span class="portal-dot"></span>
-            <span class="portal-header-title">🧭 熱門島嶼任意門（點擊直飛該島）</span>
+            <span class="portal-header-title">熱門島嶼推薦</span>
           </div>
 
           <div class="portal-pills-grid">
@@ -242,7 +235,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">內視鏡檢查島</span>
                 <span class="pill-meta">無痛胃腸鏡 · 息肉切除</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
 
             <a href="/island?focus=stomach" class="portal-island-pill health">
@@ -251,7 +244,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">胃部疾病島</span>
                 <span class="pill-meta">胃食道逆流 · 幽門桿菌</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
 
             <a href="/island?focus=intestine" class="portal-island-pill health">
@@ -260,7 +253,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">腸道疾病島</span>
                 <span class="pill-meta">腸躁症 · 便秘 · 益生菌</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
 
             <a href="/island?focus=liver-biliary" class="portal-island-pill health">
@@ -269,7 +262,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">肝膽胰與超音波島</span>
                 <span class="pill-meta">脂肪肝 · 膽結石 · B/C肝</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
 
             <a href="/island?focus=weight-loss" class="portal-island-pill health">
@@ -278,7 +271,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">科學減重與控糖島</span>
                 <span class="pill-meta">猛健樂 · 週纖達 · 肌少症</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
 
             <a href="/island?focus=hypertension" class="portal-island-pill health">
@@ -287,7 +280,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">三高與慢病管理島</span>
                 <span class="pill-meta">高血壓 · 高血脂 · 糖尿病</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
 
             <a href="/island?focus=health-red" class="portal-island-pill health">
@@ -296,7 +289,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">健檢紅字判讀島</span>
                 <span class="pill-meta">肝腎指數 · 腫瘤標記解讀</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
 
             <a href="/island?focus=golden-rules" class="portal-island-pill wisdom">
@@ -305,7 +298,7 @@ const formatDate = (date: Date) => {
                 <span class="pill-name">讀書筆記與財富群島</span>
                 <span class="pill-meta">人類大歷史 · 指數投資名著</span>
               </div>
-              <span class="pill-go">直飛 →</span>
+              <span class="pill-go">→</span>
             </a>
           </div>
         </div>
@@ -316,11 +309,8 @@ const formatDate = (date: Date) => {
   <!-- Latest Articles Section (最新醫學筆記) -->
   <section class="latest-articles">
     <div class="section-header">
-      <div>
-        <div class="badge badge-primary mb-2">實證專欄</div>
-        <h2>最新醫學筆記</h2>
-      </div>
-      <a href="/health-column" class="view-all-link">查看全部文章 ({allPosts.filter(p => !p.data.draft).length} 篇) →</a>
+      <h2>最新醫學筆記</h2>
+      <a href="/health-column" class="view-all-link">全部文章 ({allPosts.filter(p => !p.data.draft).length} 篇) →</a>
     </div>
 
     <div class="articles-grid">
@@ -345,11 +335,8 @@ const formatDate = (date: Date) => {
   <!-- Featured Videos Section (精選衛教短影音) -->
   <section class="featured-videos-section">
     <div class="section-header">
-      <div>
-        <div class="badge badge-coral mb-2">影音專欄</div>
-        <h2>精選衛教短影音</h2>
-      </div>
-      <a href="/videos" class="view-all-link">查看全部影音 ({videos.length} 部) →</a>
+      <h2>精選衛教短影音</h2>
+      <a href="/videos" class="view-all-link">全部影音 ({videos.length} 部) →</a>
     </div>
 
     <div class="videos-grid-home">
@@ -362,9 +349,7 @@ const formatDate = (date: Date) => {
   <!-- 豐田診所 · 門診資訊與就醫指引專區 -->
   <section class="clinic-info-section" aria-labelledby="clinic-section-title">
     <div class="clinic-section-header">
-      <span class="badge badge-primary clinic-section-badge">就醫指引</span>
-      <h2 id="clinic-section-title" class="clinic-section-title">豐田診所 · 門診資訊</h2>
-      <p class="clinic-section-desc">歡迎來電或透過 LINE 官方帳號預約掛號，我們將竭誠為您服務</p>
+      <h2 id="clinic-section-title" class="clinic-section-title">豐田診所 · 門診與交通</h2>
     </div>
 
     <div class="clinic-cards-row">
@@ -404,14 +389,7 @@ const formatDate = (date: Date) => {
         
         <div class="clinic-card-body">
           <div class="clinic-schedule-box">
-            <div class="schedule-icon-pill">
-              <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="4" width="16" height="12" rx="2"/>
-                <path d="M2 8l8 5 8-5"/>
-              </svg>
-              <span>醫師門診時間</span>
-            </div>
-            <p class="schedule-time-text">週一至週六 · 詳細看診時段請參閱上方時間表</p>
+            <p class="schedule-time-text">週一至週六常態看診 · 胃腸鏡預約檢查</p>
           </div>
 
           <div class="clinic-action-group">
@@ -446,9 +424,9 @@ const formatDate = (date: Date) => {
               <path d="M30 18.5c0-4.7-4.5-8.5-10-8.5S10 13.8 10 18.5c0 4.2 3.7 7.7 8.7 8.3.3.1.8.2.9.6.1.3.1.8 0 1.1l-.3 1.8c-.1.5-.4 1.8 1.6 1 2-.8 5.4-3.2 7.4-5.5 1.1-1.3 1.7-2.6 1.7-4.3z" fill="white"/>
             </svg>
           </div>
-          <h3 class="line-card-title">立即預約掛號</h3>
+          <h3 class="line-card-title">LINE 預約掛號</h3>
           <p class="line-card-desc">
-            透過 LINE 官方帳號預約，隨時隨地輕鬆安排就診，不需現場久候。
+            輕鬆安排就診時段，減少現場久候。
           </p>
           <a
             href="https://lin.ee/1Yx9bWq"
@@ -461,7 +439,7 @@ const formatDate = (date: Date) => {
               <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
-          <p class="line-notice">※ 點擊後將開啟豐田診所 LINE 官方帳號，加入好友後即可開始預約</p>
+          <p class="line-notice">點擊加入官方好友即可開始預約</p>
         </div>
       </div>
     </div>
@@ -1146,15 +1124,16 @@ const formatDate = (date: Date) => {
   .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     margin-bottom: 24px;
+    gap: 16px;
   }
 
   .section-header h2 {
     font-size: 1.6rem;
     font-weight: 900;
     color: var(--color-text-title);
-    margin-bottom: 6px;
+    margin: 0;
   }
 
   .section-desc {
@@ -1307,7 +1286,7 @@ const formatDate = (date: Date) => {
 
   .clinic-section-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .clinic-section-badge {
@@ -1315,10 +1294,10 @@ const formatDate = (date: Date) => {
   }
 
   .clinic-section-title {
-    font-size: 1.9rem;
+    font-size: 1.85rem;
     font-weight: 900;
     color: var(--color-text-title);
-    margin-bottom: 8px;
+    margin: 0;
   }
 
   .clinic-section-desc {
