@@ -88,22 +88,29 @@ function findCoverImage(chapterTitle, bookTitle) {
   return '';
 }
 
-async function postToGAS(payload) {
-  try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      redirect: 'follow',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    const text = await res.text();
+async function postToGAS(payload, retries = 2) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      return JSON.parse(text);
-    } catch {
-      return { success: res.ok, raw: text };
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(12000)
+      });
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { success: res.ok, raw: text };
+      }
+    } catch (err) {
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+      return { success: false, error: err.message };
     }
-  } catch (err) {
-    return { success: false, error: err.message };
   }
 }
 
