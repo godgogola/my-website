@@ -151,9 +151,10 @@ for (const filePath of allMdFiles) {
     '哪些食物會讓三酸甘油脂升高': '三酸甘油脂食物地雷',
     '台灣合法減重藥物':           '合法減重藥',
     '難治性幽門桿菌治療_二次治療失敗': '難治性幽門桿菌治療',
+    '【幽門桿菌】【實證】2026NEJM幽門螺旋桿菌回顧與臨床前沿': '幽門螺旋桿菌 (h. pylori) 第二線治療處方',
   };
-  if (!matchedImage && SPECIAL_MAP[title] && realImagesMap.has(SPECIAL_MAP[title])) {
-    matchedImage = realImagesMap.get(SPECIAL_MAP[title]);
+  if (!matchedImage && SPECIAL_MAP[title] && realImagesMap.has(SPECIAL_MAP[title].toLowerCase())) {
+    matchedImage = realImagesMap.get(SPECIAL_MAP[title].toLowerCase());
   }
 
 

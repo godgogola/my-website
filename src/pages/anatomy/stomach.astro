@@ -169,6 +169,7 @@ import Layout from '../../layouts/Layout.astro';
         <!-- Preset View Angles Floating Bar -->
         <div class="view-angles-toolbar">
           <button class="view-btn active" onclick="setPresetView('anterior')" id="view-btn-anterior">正面剖切</button>
+          <button class="view-btn flythrough-btn" id="btn-flythrough" onclick="toggleGastricFlythrough()" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #ffffff; border-color: #38bdf8; font-weight: 800;">🚀 胃鏡腔內巡航 (含 J-turn)</button>
           <button class="view-btn" onclick="setPresetView('jturn')" id="view-btn-jturn">胃底 J-turn</button>
           <button class="view-btn" onclick="setPresetView('pylorus')" id="view-btn-pylorus">胃竇幽門</button>
           <button class="view-btn" onclick="setPresetView('layers')" id="view-btn-layers">大彎層次</button>
@@ -183,8 +184,78 @@ import Layout from '../../layouts/Layout.astro';
           <span>滑鼠左鍵拖曳：360° 空間旋轉 ｜ 滾輪：拉近縮放 ｜ 下方滑桿：胃鏡巡航</span>
         </div>
 
+        <!-- Mode Tabs: Scope Navigation vs Mucosa Progression -->
+        <div class="canvas-mode-tabs">
+          <button class="mode-tab-btn active" id="tab-btn-scope" onclick="switchStomachControlTab('scope')">🔭 胃鏡推進標記</button>
+          <button class="mode-tab-btn" id="tab-btn-progression" onclick="switchStomachControlTab('progression')">🩺 胃黏膜病變時序演變</button>
+        </div>
+
+        <!-- 胃黏膜病變 4 階段控制卡片 (Disease Progression Slider) -->
+        <div class="canvas-progression-bar" id="canvas-gastric-progression-bar" style="display: none;">
+          <div class="prog-header">
+            <div class="prog-title-group">
+              <span class="prog-badge">臨床時序</span>
+              <span class="prog-main-title">胃黏膜病變演變時序 (Correa 多步驟致癌機轉)</span>
+            </div>
+            <button class="prog-autoplay-btn" id="btn-gastric-autoplay" onclick="toggleGastricAutoplay()" title="自動播放病情演變過程">
+              <span id="gastric-play-icon">▶</span>
+              <span id="gastric-play-text">自動演變</span>
+            </button>
+          </div>
+
+          <!-- 4 階段快捷切換按鈕 -->
+          <div class="steatosis-stage-pills">
+            <button class="stage-pill active" data-stage="0" onclick="setGastricProgressionStage(0)">
+              <span class="pill-dot stage-0"></span>正常胃黏膜
+            </button>
+            <button class="stage-pill" data-stage="1" onclick="setGastricProgressionStage(1)">
+              <span class="pill-dot stage-1"></span>表淺性胃炎
+            </button>
+            <button class="stage-pill" data-stage="2" onclick="setGastricProgressionStage(2)">
+              <span class="pill-dot stage-2"></span>萎縮性胃炎/腸化生
+            </button>
+            <button class="stage-pill" data-stage="3" onclick="setGastricProgressionStage(3)">
+              <span class="pill-dot stage-3"></span>早期胃癌 (Paris 0-IIc)
+            </button>
+          </div>
+
+          <!-- 進展滑桿 -->
+          <div class="prog-slider-wrapper">
+            <input type="range" id="slider-gastric-prog" min="0" max="3" step="1" value="0" oninput="setGastricProgressionStage(parseInt(this.value))">
+            <div class="prog-slider-milestones">
+              <span>正常健康粉紅</span>
+              <span>潮紅充血斑塊</span>
+              <span>蒼白變薄化生</span>
+              <span>惡性潰瘍糜爛</span>
+            </div>
+          </div>
+
+          <!-- 臨床衛教與處置建議卡 -->
+          <div class="prog-clinical-card" id="gastric-clinical-card">
+            <!-- 動態填入 -->
+          </div>
+        </div>
+
+        <!-- 第一人稱胃鏡腔內飛行巡航 HUD 懸浮視窗 -->
+        <div class="flythrough-hud-overlay" id="gastric-flythrough-hud" style="display: none;">
+          <div class="fly-top-badge">
+            <div class="fly-indicator-pulse"></div>
+            <span id="fly-status-text">胃鏡腔內飛行巡航進行中 · 食道段 (25cm)</span>
+          </div>
+          <div class="fly-retroflexion-alert" id="fly-retroflexion-alert" style="display: none;">
+            🔄 胃鏡 J-turn 倒轉檢查 (Inversion View) · 仰望檢視賁門與胃底黏膜
+          </div>
+          <div class="fly-bottom-controls">
+            <button class="fly-ctrl-btn" id="btn-fly-pause" onclick="toggleFlyPause()">⏸ 暫停</button>
+            <div class="fly-progress-bar-wrap">
+              <div class="fly-progress-fill" id="fly-progress-fill" style="width: 10%;"></div>
+            </div>
+            <button class="fly-exit-btn" onclick="exitGastricFlythrough()">⏹ 退出巡航 (回到 3D)</button>
+          </div>
+        </div>
+
         <!-- Scope Slider Control Bar (Embedded at Bottom of Center 3D Stage on Desktop & Mobile) -->
-        <div class="canvas-scope-bar">
+        <div class="canvas-scope-bar" id="canvas-scope-bar">
           <div class="control-row scope-card" style="margin-bottom: 0;">
             <div class="control-label-group">
               <span style="color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
@@ -528,6 +599,8 @@ import Layout from '../../layouts/Layout.astro';
 
       // 8. Build 3D Pathologies (GERD, Ulcers, Polyps, Metaplasia)
       build3DPathologies();
+      buildEarlyGastricCancerModel();
+      setTimeout(() => setGastricProgressionStage(0), 100);
 
       // 9. Build Glowing Focus Halo Beacon
       buildFocusBeacon();
@@ -647,11 +720,294 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     // Build Textbook-Exact 3D Stomach Anatomy Model (Argon 4.0 Standard)
+  // ── 胃黏膜病變時序演變 (Correa Sequence) 資料與渲染 ──
+  const GASTRIC_PROGRESSION_STAGES = [
+    {
+      stage: 0,
+      name: '正常健康胃黏膜 (Normal Gastric Mucosa)',
+      reversibility: 'reversible',
+      reversibilityText: '🟢 健康無恙',
+      mucosaColor: 0xba3f36,
+      rugaeColor: 0xc2463c,
+      roughness: 0.30,
+      clearcoat: 0.88,
+      pathology: '黏膜呈玫瑰淡橙粉紅，分泌正常保護性前列腺素黏液層，黏膜皺襞（Rugae）走向規律且豐厚充盈。',
+      clinical: '無幽門桿菌感染，胃酸與胃黏膜屏障平衡。無萎縮或腸化生。',
+      advice: '維持健康飲食、避免長期空腹或暴飲暴食，定期健康檢查即可。'
+    },
+    {
+      stage: 1,
+      name: '慢性表淺性胃炎 (Chronic Superficial Gastritis)',
+      reversibility: 'reversible',
+      reversibilityText: '💡 100% 可完全逆轉',
+      mucosaColor: 0xd9382e, // 充血潮紅
+      rugaeColor: 0xef4444,
+      roughness: 0.22,
+      clearcoat: 0.94,
+      pathology: '黏膜微血管充血水腫，表面出現線狀或點狀紅斑（Erythema），黏膜固有層有淋巴球及漿細胞浸潤。',
+      clinical: '常見於飲食刺激、壓力大或幽門螺旋桿菌感染初期。常有上腹脹痛、泛酸、打嗝症狀。',
+      advice: '【逆轉黃金期】檢驗並根除幽門螺旋桿菌、避免甜食油炸刺激物，黏膜炎症可 100% 康復！'
+    },
+    {
+      stage: 2,
+      name: '慢性萎縮性胃炎與腸化生 (Atrophic Gastritis & Metaplasia)',
+      reversibility: 'warning',
+      reversibilityText: '⚠️ 癌前病變警戒 · 積極追蹤',
+      mucosaColor: 0xb57872, // 蒼白萎縮灰白斑駁
+      rugaeColor: 0xa0655f,
+      roughness: 0.45,
+      clearcoat: 0.45,
+      pathology: '胃固有腺體數量顯著減少萎縮，胃壁變薄、皺襞平坦甚至消失，黏膜下微細血管透見，出現島狀不規則腸上皮化生（Intestinal Metaplasia）。',
+      clinical: '胃酸分泌顯著減少（低胃酸），維生素 B12 吸收受阻，屬胃癌多步驟演變的重要癌前狀態。',
+      advice: '務必根除幽門桿菌阻斷惡化！每年或每 2 年定期內視鏡窄頻光學影像（NBI / LCI）高階監測！'
+    },
+    {
+      stage: 3,
+      name: '早期胃癌 (Early Gastric Cancer, Paris 0-IIc)',
+      reversibility: 'irreversible',
+      reversibilityText: '🚨 早期癌變 · 把握微創切除',
+      mucosaColor: 0x8a3830, // 暗沉病變
+      rugaeColor: 0x7a2820,
+      roughness: 0.65,
+      clearcoat: 0.15,
+      pathology: '黏膜層或黏膜下層出現局限性不規則凹陷糜爛癌病灶（Paris 0-IIc 淺凹型），微血管網中斷增生紊亂，伴隨黏膜腺管結構異型性破壞。',
+      clinical: '早期胃癌多無特異性症狀，極易被當成一般胃炎忽視，全仰賴高階放大胃鏡精準診斷。',
+      advice: '【把握黃金切除期】若尚未深入黏膜下深層且無淋巴轉移，可採內視鏡黏膜下剝離術 (ESD) 完整切除，免開腹切胃！'
+    }
+  ];
+
+  let currentGastricProgStage = 0;
+  let isGastricAutoplaying = false;
+  let gastricTimer = null;
+  let stomachMucosaMat = null;
+  let stomachRugaeMat = null;
+  let egcCancerMesh = null;
+
+  // 虛擬第一人稱胃鏡巡航參數
+  let isFlythroughMode = false;
+  let flythroughT = 0.05;
+  let isFlyPaused = false;
+  let flySavedCamPos = new THREE.Vector3();
+  let flySavedLookAt = new THREE.Vector3();
+  let flyEndoLight = null;
+
+  function switchStomachControlTab(tab) {
+    const scopeBar = document.getElementById('canvas-scope-bar');
+    const progBar = document.getElementById('canvas-gastric-progression-bar');
+    const tabScope = document.getElementById('tab-btn-scope');
+    const tabProg = document.getElementById('tab-btn-progression');
+
+    if (tab === 'scope') {
+      if (scopeBar) scopeBar.style.display = 'block';
+      if (progBar) progBar.style.display = 'none';
+      if (tabScope) tabScope.classList.add('active');
+      if (tabProg) tabProg.classList.remove('active');
+      stopGastricAutoplay();
+    } else {
+      if (scopeBar) scopeBar.style.display = 'none';
+      if (progBar) progBar.style.display = 'flex';
+      if (tabScope) tabScope.classList.remove('active');
+      if (tabProg) tabProg.classList.add('active');
+      setGastricProgressionStage(currentGastricProgStage);
+    }
+  }
+
+  function setGastricProgressionStage(stageIdx) {
+    currentGastricProgStage = Math.max(0, Math.min(3, stageIdx));
+    const data = GASTRIC_PROGRESSION_STAGES[currentGastricProgStage];
+
+    // 更新 UI 滑桿與 Pill 按鈕
+    const slider = document.getElementById('slider-gastric-prog');
+    if (slider) slider.value = currentGastricProgStage;
+
+    document.querySelectorAll('#canvas-gastric-progression-bar .stage-pill').forEach(pill => {
+      pill.classList.toggle('active', parseInt(pill.dataset.stage) === currentGastricProgStage);
+    });
+
+    // 更新衛教卡
+    const card = document.getElementById('gastric-clinical-card');
+    if (card) {
+      card.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+          <strong style="color: #f8fafc; font-size: 0.85rem;">${data.name}</strong>
+          <span class="reversibility-tag ${data.reversibility}">${data.reversibilityText}</span>
+        </div>
+        <div style="color: #cbd5e1; margin-bottom: 3px;"><strong>【病理變化】</strong>${data.pathology}</div>
+        <div style="color: #94a3b8; margin-bottom: 3px;"><strong>【臨床特點】</strong>${data.clinical}</div>
+        <div style="color: #38bdf8; font-weight: 600;"><strong>【處置建議】</strong>${data.advice}</div>
+      `;
+    }
+
+    // 更新胃黏膜材質
+    if (stomachMucosaMat) {
+      stomachMucosaMat.color.setHex(data.mucosaColor);
+      stomachMucosaMat.roughness = data.roughness;
+      stomachMucosaMat.clearcoat = data.clearcoat;
+    }
+    if (stomachRugaeMat) {
+      stomachRugaeMat.color.setHex(data.rugaeColor);
+      stomachRugaeMat.roughness = data.roughness;
+      stomachRugaeMat.clearcoat = data.clearcoat;
+    }
+
+    // 控制病灶顯示
+    if (pathologyGroup) {
+      pathologyGroup.children.forEach(child => {
+        const type = child.userData.type;
+        if (type === 'gerd') child.visible = (currentGastricProgStage === 1);
+        if (type === 'metaplasia') child.visible = (currentGastricProgStage === 2);
+        if (type === 'ulcer') child.visible = (currentGastricProgStage === 1 || currentGastricProgStage === 2);
+      });
+    }
+
+    if (egcCancerMesh) {
+      egcCancerMesh.visible = (currentGastricProgStage === 3);
+    }
+  }
+
+  function toggleGastricAutoplay() {
+    if (isGastricAutoplaying) stopGastricAutoplay();
+    else startGastricAutoplay();
+  }
+
+  function startGastricAutoplay() {
+    isGastricAutoplaying = true;
+    const btn = document.getElementById('btn-gastric-autoplay');
+    const icon = document.getElementById('gastric-play-icon');
+    const text = document.getElementById('gastric-play-text');
+    if (btn) btn.classList.add('active');
+    if (icon) icon.textContent = '⏸';
+    if (text) text.textContent = '暫停';
+
+    gastricTimer = setInterval(() => {
+      const nextStage = (currentGastricProgStage + 1) % 4;
+      setGastricProgressionStage(nextStage);
+    }, 2800);
+  }
+
+  function stopGastricAutoplay() {
+    isGastricAutoplaying = false;
+    if (gastricTimer) {
+      clearInterval(gastricTimer);
+      gastricTimer = null;
+    }
+    const btn = document.getElementById('btn-gastric-autoplay');
+    const icon = document.getElementById('gastric-play-icon');
+    const text = document.getElementById('gastric-play-text');
+    if (btn) btn.classList.remove('active');
+    if (icon) icon.textContent = '▶';
+    if (text) text.textContent = '自動演變';
+  }
+
+  // ── 建立早期胃癌 3D 惡性凹陷病灶 (Early Gastric Cancer Paris 0-IIc) ──
+  function buildEarlyGastricCancerModel() {
+    const cancerGroup = new THREE.Group();
+    cancerGroup.visible = false;
+
+    // 凹陷糜爛中心
+    const centerGeo = new THREE.CylinderGeometry(0.18, 0.16, 0.05, 16);
+    const centerMat = new THREE.MeshStandardMaterial({
+      color: 0x7f1d1d,
+      roughness: 0.6,
+      emissive: 0x991b1b,
+      emissiveIntensity: 0.5
+    });
+    const centerMesh = new THREE.Mesh(centerGeo, centerMat);
+
+    // 不規則結節隆起邊緣
+    const rimGeo = new THREE.TorusGeometry(0.20, 0.045, 8, 16);
+    const rimMat = new THREE.MeshStandardMaterial({
+      color: 0xb91c1c,
+      roughness: 0.35,
+      metalness: 0.05
+    });
+    const rimMesh = new THREE.Mesh(rimGeo, rimMat);
+    centerMesh.add(rimMesh);
+
+    // 位於胃角前壁 (Incisura / Pre-pyloric antrum)
+    centerMesh.position.set(-0.25, -0.95, 0.12);
+    centerMesh.rotation.x = Math.PI / 4;
+    cancerGroup.add(centerMesh);
+
+    egcCancerMesh = cancerGroup;
+    scene.add(cancerGroup);
+  }
+
+  // ── 虛擬胃鏡第一人稱「腔內飛行巡航 (Fly-through Mode)」──
+  function toggleGastricFlythrough() {
+    if (isFlythroughMode) {
+      exitGastricFlythrough();
+    } else {
+      startGastricFlythrough();
+    }
+  }
+
+  function startGastricFlythrough() {
+    if (!gastroscopySplineCurve) return;
+    isFlythroughMode = true;
+    controls.enabled = false;
+    flythroughT = 0.05;
+    isFlyPaused = false;
+
+    // 保存預設相機視角以便退出時還原
+    flySavedCamPos.copy(camera.position);
+    flySavedLookAt.copy(controls.target);
+
+    // 建立腔內探照強效 LED 燈
+    if (!flyEndoLight) {
+      flyEndoLight = new THREE.PointLight(0xfff8ed, 1.4, 4.0);
+      scene.add(flyEndoLight);
+    }
+    flyEndoLight.visible = true;
+
+    // 顯示 HUD
+    const hud = document.getElementById('gastric-flythrough-hud');
+    if (hud) hud.style.display = 'flex';
+
+    const btn = document.getElementById('btn-flythrough');
+    if (btn) btn.classList.add('active');
+
+    camera.fov = 68; // 胃鏡超廣角魚眼鏡頭感
+    camera.updateProjectionMatrix();
+
+    showToast('🚀 進入胃鏡腔內飛行巡航：體會真實無痛胃鏡微創視角！');
+  }
+
+  function exitGastricFlythrough() {
+    isFlythroughMode = false;
+    controls.enabled = true;
+
+    if (flyEndoLight) flyEndoLight.visible = false;
+
+    const hud = document.getElementById('gastric-flythrough-hud');
+    if (hud) hud.style.display = 'none';
+
+    const alertEl = document.getElementById('fly-retroflexion-alert');
+    if (alertEl) alertEl.style.display = 'none';
+
+    const btn = document.getElementById('btn-flythrough');
+    if (btn) btn.classList.remove('active');
+
+    // 還原相機視角與 FOV
+    camera.fov = 45;
+    camera.updateProjectionMatrix();
+    camera.position.copy(flySavedCamPos);
+    controls.target.copy(flySavedLookAt);
+
+    showToast('⏹ 已退出巡航，返回 3D 自由解剖視角');
+  }
+
+  function toggleFlyPause() {
+    isFlyPaused = !isFlyPaused;
+    const btn = document.getElementById('btn-fly-pause');
+    if (btn) btn.textContent = isFlyPaused ? '▶ 繼續' : '⏸ 暫停';
+  }
+
     function buildTextbookStomachModel() {
       stomachMasterGroup = new THREE.Group();
 
       // Argon 4.0 Subsurface Scattering Materials
-      const mucosaMat = createArgonGastricMaterial({
+      const mucosaMat = stomachMucosaMat = createArgonGastricMaterial({
         color: 0xba3f36,
         roughness: 0.30,
         clearcoat: 0.88,
@@ -671,7 +1027,7 @@ import Layout from '../../layouts/Layout.astro';
         sssIntensity: 0.65
       });
 
-      const rugaeMat = createArgonGastricMaterial({
+      const rugaeMat = stomachRugaeMat = createArgonGastricMaterial({
         color: 0xc2463c,
         roughness: 0.28,
         clearcoat: 0.90,
@@ -1545,7 +1901,56 @@ import Layout from '../../layouts/Layout.astro';
     function animate(time) {
       requestAnimationFrame(animate);
       TWEEN.update();
-      if (controls) controls.update();
+
+      // 虛擬胃鏡第一人稱「腔內飛行巡航 (Fly-through)」
+      if (isFlythroughMode && gastroscopySplineCurve) {
+        if (!isFlyPaused) {
+          flythroughT += 0.0016; // 平滑前進
+          if (flythroughT >= 0.94) {
+            flythroughT = 0.05; // 循環巡航
+          }
+        }
+
+        const t = flythroughT;
+        const pt = gastroscopySplineCurve.getPoint(t);
+        const tan = gastroscopySplineCurve.getTangent(t).normalize();
+
+        camera.position.copy(pt);
+        if (flyEndoLight) flyEndoLight.position.copy(pt);
+
+        // 更新進度條
+        const fillEl = document.getElementById('fly-progress-fill');
+        if (fillEl) fillEl.style.width = `${Math.round(t * 100)}%`;
+
+        // 臨床深度估算 (0~65cm)
+        const cmEst = Math.round(t * 65);
+        const statusText = document.getElementById('fly-status-text');
+        const alertEl = document.getElementById('fly-retroflexion-alert');
+
+        // 🔄 標誌性 J-turn 倒轉檢查 (Inversion Maneuver)：位於胃體中下段 (t 在 0.44 ~ 0.58 之間)
+        if (t >= 0.44 && t <= 0.58) {
+          if (alertEl) alertEl.style.display = 'block';
+          if (statusText) statusText.textContent = `胃鏡 J-turn 倒轉檢查進行中 (深度約 48-52cm) · 回看賁門胃底`;
+
+          // 鏡頭大迴旋 180 度，抬頭仰視賁門 EGJ (-0.58, 1.4, 0)
+          const retroProg = Math.sin(((t - 0.44) / 0.14) * Math.PI);
+          const toCardia = new THREE.Vector3(-0.58, 1.4, 0.0).sub(pt).normalize();
+          const lookDir = tan.clone().lerp(toCardia, retroProg * 0.94).normalize();
+          camera.lookAt(pt.clone().add(lookDir));
+        } else {
+          if (alertEl) alertEl.style.display = 'none';
+          let locName = '食道段 (Esophagus)';
+          if (cmEst >= 38 && cmEst < 44) locName = '賁門部 (Cardia / EGJ)';
+          else if (cmEst >= 44 && cmEst < 54) locName = '胃體部 (Gastric Body)';
+          else if (cmEst >= 54 && cmEst < 58) locName = '胃角與胃竇部 (Angulus & Antrum)';
+          else if (cmEst >= 58) locName = '幽門門環與十二指腸 (Pylorus & Duodenum)';
+
+          if (statusText) statusText.textContent = `胃鏡腔內飛行巡航 · ${locName} (${cmEst}cm)`;
+          camera.lookAt(pt.clone().add(tan.clone().multiplyScalar(1.5)));
+        }
+      } else {
+        if (controls) controls.update();
+      }
 
       const t = (time || performance.now()) * 0.005;
 
@@ -1819,6 +2224,251 @@ import Layout from '../../layouts/Layout.astro';
     color: #ffffff;
     box-shadow: 0 0 14px rgba(0, 229, 255, 0.35);
   }
+
+    /* 畫布控制分頁切換按鈕 */
+  .canvas-mode-tabs {
+    position: absolute;
+    bottom: 96px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 4px;
+    border-radius: 9999px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    z-index: 50;
+    gap: 4px;
+  }
+  .mode-tab-btn {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .mode-tab-btn:hover { color: #f8fafc; }
+  .mode-tab-btn.active {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+  }
+
+  /* 胃黏膜病變時序控制面板 */
+  .canvas-progression-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 16px;
+    padding: 12px 16px;
+    z-index: 45;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .prog-header { display: flex; justify-content: space-between; align-items: center; }
+  .prog-title-group { display: flex; align-items: center; gap: 8px; }
+  .prog-badge {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+  .prog-main-title { color: #f8fafc; font-size: 0.88rem; font-weight: 800; }
+  .prog-autoplay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10b981;
+    color: #34d399;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .prog-autoplay-btn:hover, .prog-autoplay-btn.active {
+    background: #10b981;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  }
+  .steatosis-stage-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+  .stage-pill {
+    flex: 1;
+    min-width: 90px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+  }
+  .stage-pill:hover { color: #f1f5f9; background: rgba(51, 65, 85, 0.8); }
+  .stage-pill.active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+  }
+  .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .pill-dot.stage-0 { background: #10b981; box-shadow: 0 0 6px #10b981; }
+  .pill-dot.stage-1 { background: #facc15; box-shadow: 0 0 6px #facc15; }
+  .pill-dot.stage-2 { background: #fb923c; box-shadow: 0 0 6px #fb923c; }
+  .pill-dot.stage-3 { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+  .prog-slider-wrapper { display: flex; flex-direction: column; gap: 4px; }
+  .prog-slider-milestones { display: flex; justify-content: space-between; font-size: 0.72rem; color: #64748b; }
+  .prog-clinical-card {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  .reversibility-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    margin-right: 6px;
+  }
+  .reversibility-tag.reversible { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+  .reversibility-tag.warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+  .reversibility-tag.irreversible { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+
+  /* 腔內巡航 HUD Overlay */
+  .flythrough-hud-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px;
+  }
+  .fly-top-badge {
+    align-self: center;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 9999px;
+    padding: 8px 18px;
+    color: #f8fafc;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  .fly-indicator-pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #00e5ff;
+    box-shadow: 0 0 10px #00e5ff;
+    animation: pulseGlow 1.4s infinite;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+  }
+  .fly-retroflexion-alert {
+    align-self: center;
+    background: linear-gradient(135deg, rgba(234, 88, 12, 0.9), rgba(194, 65, 12, 0.95));
+    border: 1.5px solid #fef08a;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 10px 20px;
+    box-shadow: 0 10px 28px rgba(234, 88, 12, 0.45);
+    animation: bounceAlert 1s infinite alternate;
+  }
+  @keyframes bounceAlert {
+    from { transform: translateY(0); }
+    to { transform: translateY(-4px); }
+  }
+  .fly-bottom-controls {
+    pointer-events: auto;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 9999px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    align-self: center;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+  .fly-ctrl-btn {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 9999px;
+    color: #f8fafc;
+    font-weight: 700;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .fly-ctrl-btn:hover { background: #334155; }
+  .fly-progress-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: rgba(51, 65, 85, 0.7);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .fly-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #00e5ff);
+    transition: width 0.1s linear;
+  }
+  .fly-exit-btn {
+    background: #ef4444;
+    border: none;
+    border-radius: 9999px;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .fly-exit-btn:hover { background: #dc2626; }
 
   .canvas-scope-bar {
     flex-shrink: 0;

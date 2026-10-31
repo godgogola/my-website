@@ -197,8 +197,60 @@ import Layout from '../../layouts/Layout.astro';
           <span><strong>滑鼠左鍵拖曳</strong>：360° 真 3D 空間旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>點擊 3D 塊體</strong>：高亮解剖</span>
         </div>
 
+        <!-- Disease Progression & Explode Bar Switcher -->
+        <div class="canvas-mode-tabs">
+          <button class="mode-tab-btn active" id="tab-btn-explode" onclick="switchCanvasControlTab('explode')">💥 3D 區段炸開</button>
+          <button class="mode-tab-btn" id="tab-btn-progression" onclick="switchCanvasControlTab('progression')">🩺 脂肪肝 4 階段時序演變</button>
+        </div>
+
+        <!-- 脂肪肝 4 階段病理進展控制卡片 (Disease Progression Slider) -->
+        <div class="canvas-progression-bar" id="canvas-progression-bar" style="display: none;">
+          <div class="prog-header">
+            <div class="prog-title-group">
+              <span class="prog-badge">臨床病理時序</span>
+              <span class="prog-main-title">代謝性脂肪性肝病 (MASLD) 4 階段演變</span>
+            </div>
+            <button class="prog-autoplay-btn" id="btn-steatosis-autoplay" onclick="toggleSteatosisAutoplay()" title="自動播放病情演變過程">
+              <span id="steatosis-play-icon">▶</span>
+              <span id="steatosis-play-text">自動演變</span>
+            </button>
+          </div>
+
+          <!-- 4 階段快捷切換按鈕 -->
+          <div class="steatosis-stage-pills">
+            <button class="stage-pill active" data-stage="0" onclick="setSteatosisStage(0)">
+              <span class="pill-dot stage-0"></span>正常肝臟
+            </button>
+            <button class="stage-pill" data-stage="1" onclick="setSteatosisStage(1)">
+              <span class="pill-dot stage-1"></span>單純脂肪肝
+            </button>
+            <button class="stage-pill" data-stage="2" onclick="setSteatosisStage(2)">
+              <span class="pill-dot stage-2"></span>脂肪肝炎 MASH
+            </button>
+            <button class="stage-pill" data-stage="3" onclick="setSteatosisStage(3)">
+              <span class="pill-dot stage-3"></span>肝纖維化/硬化
+            </button>
+          </div>
+
+          <!-- 進展滑桿 -->
+          <div class="prog-slider-wrapper">
+            <input type="range" id="slider-steatosis" min="0" max="3" step="1" value="0" oninput="setSteatosisStage(parseInt(this.value))">
+            <div class="prog-slider-milestones">
+              <span>正常健康 (0%)</span>
+              <span>油潤腫脹 (5-33%)</span>
+              <span>發炎壞死 (MASH)</span>
+              <span>纖維硬化 (不可逆)</span>
+            </div>
+          </div>
+
+          <!-- 臨床衛教與可逆性提示盒 -->
+          <div class="prog-clinical-card" id="steatosis-clinical-card">
+            <!-- 動態填入 -->
+          </div>
+        </div>
+
         <!-- Explode Control Bar (Embedded at Bottom of Center 3D Stage on Desktop & Mobile) -->
-        <div class="canvas-explode-bar">
+        <div class="canvas-explode-bar" id="canvas-explode-bar">
           <div class="control-row" style="margin-bottom: 0;">
             <div class="control-label-group">
               <span style="color: #38bdf8; font-weight: 800;">3D 炸開程度 (Explosion)</span>
@@ -691,6 +743,8 @@ import Layout from '../../layouts/Layout.astro';
 
       // 5. Build Meshes & Vessels
       build3DSolidSegments();
+      buildCirrhosisNodules();
+      setTimeout(() => setSteatosisStage(0), 100);
       build3DVessels();
       buildFalciformLigament();
 
@@ -886,6 +940,223 @@ import Layout from '../../layouts/Layout.astro';
 
       return mat;
     }
+
+  // ── 脂肪肝 4 階段臨床病理進展資料與 3D 渲染控制 ──
+  const STEATOSIS_STAGES = [
+    {
+      stage: 0,
+      name: '正常健康肝臟 (Normal Liver)',
+      reversibility: 'reversible',
+      reversibilityText: '🟢 100% 理想狀態',
+      color: 0xa83828,
+      roughness: 0.26,
+      clearcoat: 0.88,
+      metalness: 0.02,
+      sssColor: 0xe63926,
+      deepColor: 0x52100c,
+      scale: 1.0,
+      pathology: '肝細胞排列整齊呈放射狀肝索，三酸甘油脂累積 < 5%，無發炎或纖維化。',
+      clinical: 'ALT / AST 肝功能正常，超音波影像穿透良好、深部無衰減、腎實質對比清晰。',
+      advice: '維持規律運動、地中海飲食，每 1~2 年定期超音波常規健檢。'
+    },
+    {
+      stage: 1,
+      name: '單純性脂肪肝 (NAFL / Simple Steatosis)',
+      reversibility: 'reversible',
+      reversibilityText: '💡 100% 可完全逆轉黃金期',
+      color: 0xd49b38, // 油潤淡金黃
+      roughness: 0.16,
+      clearcoat: 0.96, // 被膜緊繃油潤
+      metalness: 0.04,
+      sssColor: 0xf5c065,
+      deepColor: 0x8a5a1e,
+      scale: 1.05,     // 肝臟腫大
+      pathology: '肝細胞質堆積大量大型三酸甘油脂空泡（大囊泡性脂肪變性 > 5%），肝臟微幅腫大增重，被膜緊繃。',
+      clinical: '通常無自覺症狀，超音波呈現典型「明亮肝 (Bright Liver)」，肝腎對比增加。',
+      advice: '【逆轉黃金期】減輕體重 5%~7%，減少精緻碳水化合物與果糖手搖飲，肝細胞脂肪可 100% 乾淨代謝！'
+    },
+    {
+      stage: 2,
+      name: '代謝性脂肪肝炎 (MASH / Steatohepatitis)',
+      reversibility: 'warning',
+      reversibilityText: '⚠️ 發炎進行期 · 抓緊逆轉時機',
+      color: 0xb46430, // 黃棕斑駁暗沉
+      roughness: 0.42,
+      clearcoat: 0.42,
+      metalness: 0.02,
+      sssColor: 0xcc5030,
+      deepColor: 0x5a1810,
+      scale: 1.03,
+      pathology: '脂肪毒性引發肝細胞氣球樣變性（Ballooning）、多核巨噬細胞與中性球浸潤、局灶壞死與早期竇周纖維化（Perisinusoidal fibrosis）。',
+      clinical: 'ALT / AST 常呈輕中度升高，可能感到疲憊或右上腹悶脹。FIB-4 纖維化指數開始警戒。',
+      advice: '需積極減重 7%~10%（或評估 GLP-1 腸泌素藥物治療），抗發炎並阻斷纖維化進行！'
+    },
+    {
+      stage: 3,
+      name: '早期纖維化 / 肝硬化 (Cirrhosis)',
+      reversibility: 'irreversible',
+      reversibilityText: '⛔ 結構硬化 · 積極護肝防癌',
+      color: 0x6e5040, // 枯萎暗褐
+      roughness: 0.75,
+      clearcoat: 0.08,
+      metalness: 0.0,
+      sssColor: 0x583424,
+      deepColor: 0x361e14,
+      scale: 0.92,     // 肝臟萎縮縮小
+      pathology: '膠原蛋白大量沉積形成廣泛纖維間隔與假小葉，肝細胞瀰漫性結節再生，外觀萎縮堅硬、表面布滿粗糙凹凸顆粒結節。',
+      clinical: '門脈血流阻力增加、脾臟腫大、血小板低下。需嚴格防範食道靜脈曲張與腹水併發症。',
+      advice: '不可逆轉但可穩定控制！務必每 3~6 個月定期超音波與甲型胎兒蛋白 (AFP) 篩檢，滴酒不沾、預防惡化。'
+    }
+  ];
+
+  let currentSteatosisStage = 0;
+  let isSteatosisAutoplaying = false;
+  let steatosisTimer = null;
+  let cirrhosisNodulesGroup = null;
+
+  function switchCanvasControlTab(tab) {
+    const explodeBar = document.getElementById('canvas-explode-bar');
+    const progBar = document.getElementById('canvas-progression-bar');
+    const tabExplode = document.getElementById('tab-btn-explode');
+    const tabProg = document.getElementById('tab-btn-progression');
+
+    if (tab === 'explode') {
+      if (explodeBar) explodeBar.style.display = 'block';
+      if (progBar) progBar.style.display = 'none';
+      if (tabExplode) tabExplode.classList.add('active');
+      if (tabProg) tabProg.classList.remove('active');
+      stopSteatosisAutoplay();
+    } else {
+      if (explodeBar) explodeBar.style.display = 'none';
+      if (progBar) progBar.style.display = 'flex';
+      if (tabExplode) tabExplode.classList.remove('active');
+      if (tabProg) tabProg.classList.add('active');
+      setSteatosisStage(currentSteatosisStage);
+    }
+  }
+
+  function setSteatosisStage(stageIdx) {
+    currentSteatosisStage = Math.max(0, Math.min(3, stageIdx));
+    const data = STEATOSIS_STAGES[currentSteatosisStage];
+
+    // 1. 更新滑桿與 Pill 按鈕
+    const slider = document.getElementById('slider-steatosis');
+    if (slider) slider.value = currentSteatosisStage;
+
+    document.querySelectorAll('.stage-pill').forEach(pill => {
+      pill.classList.toggle('active', parseInt(pill.dataset.stage) === currentSteatosisStage);
+    });
+
+    // 2. 更新臨床衛教卡
+    const card = document.getElementById('steatosis-clinical-card');
+    if (card) {
+      card.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+          <strong style="color: #f8fafc; font-size: 0.85rem;">${data.name}</strong>
+          <span class="reversibility-tag ${data.reversibility}">${data.reversibilityText}</span>
+        </div>
+        <div style="color: #cbd5e1; margin-bottom: 3px;"><strong>【病理變化】</strong>${data.pathology}</div>
+        <div style="color: #94a3b8; margin-bottom: 3px;"><strong>【臨床表現】</strong>${data.clinical}</div>
+        <div style="color: #38bdf8; font-weight: 600;"><strong>【處置建議】</strong>${data.advice}</div>
+      `;
+    }
+
+    // 3. 更新 8 大肝段 3D 材質與縮放
+    if (typeof segmentMeshes !== 'undefined') {
+      Object.keys(segmentMeshes).forEach(key => {
+        const mesh = segmentMeshes[key];
+        if (mesh && mesh.material) {
+          mesh.material.color.setHex(data.color);
+          mesh.material.roughness = data.roughness;
+          mesh.material.clearcoat = data.clearcoat;
+          mesh.material.metalness = data.metalness;
+
+          if (mesh.material.userData && mesh.material.userData.sssUniforms) {
+            mesh.material.userData.sssUniforms.uSSSColor.value.setHex(data.sssColor);
+            mesh.material.userData.sssUniforms.uDeepParenchyma.value.setHex(data.deepColor);
+          }
+
+          mesh.scale.set(data.scale, data.scale, data.scale);
+        }
+      });
+    }
+
+    // 4. 硬化表面顆粒結節顯示控制
+    if (cirrhosisNodulesGroup) {
+      cirrhosisNodulesGroup.visible = (currentSteatosisStage === 3);
+      if (currentSteatosisStage === 3) {
+        cirrhosisNodulesGroup.scale.set(data.scale, data.scale, data.scale);
+      }
+    }
+  }
+
+  function toggleSteatosisAutoplay() {
+    if (isSteatosisAutoplaying) {
+      stopSteatosisAutoplay();
+    } else {
+      startSteatosisAutoplay();
+    }
+  }
+
+  function startSteatosisAutoplay() {
+    isSteatosisAutoplaying = true;
+    const btn = document.getElementById('btn-steatosis-autoplay');
+    const icon = document.getElementById('steatosis-play-icon');
+    const text = document.getElementById('steatosis-play-text');
+    if (btn) btn.classList.add('active');
+    if (icon) icon.textContent = '⏸';
+    if (text) text.textContent = '暫停';
+
+    steatosisTimer = setInterval(() => {
+      const nextStage = (currentSteatosisStage + 1) % 4;
+      setSteatosisStage(nextStage);
+    }, 2800);
+  }
+
+  function stopSteatosisAutoplay() {
+    isSteatosisAutoplaying = false;
+    if (steatosisTimer) {
+      clearInterval(steatosisTimer);
+      steatosisTimer = null;
+    }
+    const btn = document.getElementById('btn-steatosis-autoplay');
+    const icon = document.getElementById('steatosis-play-icon');
+    const text = document.getElementById('steatosis-play-text');
+    if (btn) btn.classList.remove('active');
+    if (icon) icon.textContent = '▶';
+    if (text) text.textContent = '自動演變';
+  }
+
+  function buildCirrhosisNodules() {
+    cirrhosisNodulesGroup = new THREE.Group();
+    cirrhosisNodulesGroup.visible = false;
+
+    const noduleGeo = new THREE.DodecahedronGeometry(0.08, 1);
+    const noduleMat = new THREE.MeshStandardMaterial({
+      color: 0x785640,
+      roughness: 0.82,
+      metalness: 0.05,
+      flatShading: true
+    });
+
+    // 沿肝臟表面散布 ~160 個微結節
+    for (let i = 0; i < 160; i++) {
+      const u = Math.random() * Math.PI * 2;
+      const v = (Math.random() - 0.5) * Math.PI;
+      const r = 2.4 + (Math.random() - 0.5) * 0.4;
+
+      const x = Math.cos(v) * Math.cos(u) * r * 1.1;
+      const y = Math.sin(v) * r * 0.75;
+      const z = Math.cos(v) * Math.sin(u) * r * 0.65;
+
+      const nodule = new THREE.Mesh(noduleGeo, noduleMat);
+      nodule.position.set(x, y, z);
+      nodule.scale.setScalar(0.7 + Math.random() * 0.9);
+      nodule.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+      cirrhosisNodulesGroup.add(nodule);
+    }
+    scene.add(cirrhosisNodulesGroup);
+  }
 
     function build3DSolidSegments() {
       const initOpacity = typeof currentOpacity !== 'undefined' ? currentOpacity : 1.0;
@@ -1644,6 +1915,192 @@ import Layout from '../../layouts/Layout.astro';
     border-color: #38bdf8;
     color: #38bdf8;
     box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+  }
+
+    /* 畫布控制分頁切換按鈕 */
+  .canvas-mode-tabs {
+    position: absolute;
+    bottom: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 4px;
+    border-radius: 9999px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    z-index: 50;
+    gap: 4px;
+  }
+  .mode-tab-btn {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .mode-tab-btn:hover {
+    color: #f8fafc;
+  }
+  .mode-tab-btn.active {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+  }
+
+  /* 脂肪肝 4 階段演變控制面板 */
+  .canvas-progression-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 16px;
+    padding: 12px 16px;
+    z-index: 45;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .prog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .prog-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .prog-badge {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+  .prog-main-title {
+    color: #f8fafc;
+    font-size: 0.88rem;
+    font-weight: 800;
+  }
+  .prog-autoplay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10b981;
+    color: #34d399;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .prog-autoplay-btn:hover,
+  .prog-autoplay-btn.active {
+    background: #10b981;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  }
+  .steatosis-stage-pills {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .stage-pill {
+    flex: 1;
+    min-width: 90px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+  }
+  .stage-pill:hover {
+    color: #f1f5f9;
+    background: rgba(51, 65, 85, 0.8);
+  }
+  .stage-pill.active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+  }
+  .pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .pill-dot.stage-0 { background: #10b981; box-shadow: 0 0 6px #10b981; }
+  .pill-dot.stage-1 { background: #facc15; box-shadow: 0 0 6px #facc15; }
+  .pill-dot.stage-2 { background: #fb923c; box-shadow: 0 0 6px #fb923c; }
+  .pill-dot.stage-3 { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+  .prog-slider-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .prog-slider-milestones {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: #64748b;
+  }
+  .prog-clinical-card {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  .reversibility-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    margin-right: 6px;
+  }
+  .reversibility-tag.reversible {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid #10b981;
+  }
+  .reversibility-tag.warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid #f59e0b;
+  }
+  .reversibility-tag.irreversible {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid #ef4444;
   }
 
   .canvas-explode-bar {

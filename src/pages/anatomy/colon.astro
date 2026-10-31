@@ -178,6 +178,7 @@ import Layout from '../../layouts/Layout.astro';
         <!-- Preset View Angles Toolbar -->
         <div class="view-angles-toolbar">
           <button class="view-btn active" id="view-btn-anterior" onclick="setPresetView('anterior')">正面全覽</button>
+          <button class="view-btn flythrough-btn" id="btn-colon-flythrough" onclick="toggleColonFlythrough()" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border-color: #34d399; font-weight: 800;">🚀 大腸鏡腔內巡航 (直腸至盲腸)</button>
           <button class="view-btn" id="view-btn-left-colon" onclick="setPresetView('left_colon')">左側大腸觀</button>
           <button class="view-btn" id="view-btn-right-colon" onclick="setPresetView('right_colon')">右側盲腸觀</button>
           <button class="view-btn" id="view-btn-splenic" onclick="setPresetView('splenic')">脾曲視角</button>
@@ -193,8 +194,95 @@ import Layout from '../../layouts/Layout.astro';
           <span><strong>滑鼠左鍵拖曳</strong>：360° 空間旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>下方滑桿</strong>：內視鏡深度</span>
         </div>
 
+        <!-- Mode Tabs: Scope Navigation vs Polyp Progression -->
+        <div class="canvas-mode-tabs">
+          <button class="mode-tab-btn active" id="tab-btn-scope" onclick="switchColonControlTab('scope')">🔭 大腸鏡進鏡深度</button>
+          <button class="mode-tab-btn" id="tab-btn-progression" onclick="switchColonControlTab('progression')">🩺 大腸息肉癌變時序演變</button>
+        </div>
+
+        <!-- 大腸息肉生成 4 階段控制卡片 (Disease Progression Slider) -->
+        <div class="canvas-progression-bar" id="canvas-colon-progression-bar" style="display: none;">
+          <div class="prog-header">
+            <div class="prog-title-group">
+              <span class="prog-badge">臨床時序</span>
+              <span class="prog-main-title">大腸腺瘤至腺癌演變時序 (Adenoma-Carcinoma Sequence)</span>
+            </div>
+            <button class="prog-autoplay-btn" id="btn-colon-autoplay" onclick="toggleColonAutoplay()" title="自動播放病情演變過程">
+              <span id="colon-play-icon">▶</span>
+              <span id="colon-play-text">自動演變</span>
+            </button>
+          </div>
+
+          <!-- 4 階段快捷切換按鈕 -->
+          <div class="steatosis-stage-pills">
+            <button class="stage-pill active" data-stage="0" onclick="setColonProgressionStage(0)">
+              <span class="pill-dot stage-0"></span>正常腸黏膜
+            </button>
+            <button class="stage-pill" data-stage="1" onclick="setColonProgressionStage(1)">
+              <span class="pill-dot stage-1"></span>小型管狀腺瘤 (&lt;5mm)
+            </button>
+            <button class="stage-pill" data-stage="2" onclick="setColonProgressionStage(2)">
+              <span class="pill-dot stage-2"></span>進行性腺瘤 (有莖 &gt;10mm)
+            </button>
+            <button class="stage-pill" data-stage="3" onclick="setColonProgressionStage(3)">
+              <span class="pill-dot stage-3"></span>浸潤性大腸癌 (潰瘍狹窄)
+            </button>
+          </div>
+
+          <!-- 進展滑桿 -->
+          <div class="prog-slider-wrapper">
+            <input type="range" id="slider-colon-prog" min="0" max="3" step="1" value="0" oninput="setColonProgressionStage(parseInt(this.value))">
+            <div class="prog-slider-milestones">
+              <span>正常健康粉紅</span>
+              <span>微小息肉丘疹</span>
+              <span>巨大有莖異型增生</span>
+              <span>菜花浸潤火山口</span>
+            </div>
+          </div>
+
+          <!-- 臨床衛教與處置建議卡 -->
+          <div class="prog-clinical-card" id="colon-clinical-card">
+            <!-- 動態填入 -->
+          </div>
+        </div>
+
+        <!-- 第一人稱大腸鏡腔內飛行巡航 HUD 懸浮視窗 -->
+        <div class="flythrough-hud-overlay" id="colon-flythrough-hud" style="display: none;">
+          <div class="fly-top-badge">
+            <div class="fly-indicator-pulse"></div>
+            <span id="fly-colon-status-text">大腸鏡腔內飛行巡航進行中 · 直腸段 (5cm)</span>
+          </div>
+
+          <!-- AI 輔助息肉偵測綠色科技提示框 (CADe / CADx Alert) -->
+          <div class="fly-ai-alert" id="fly-ai-alert" style="display: none;">
+            <div class="ai-box-header">
+              <span class="ai-box-badge">🟢 內視鏡 AI 即時辨識 (CADe / CADx)</span>
+              <span class="ai-box-confidence">信心度 98.6%</span>
+            </div>
+            <div class="ai-box-body">
+              <strong>發現病灶：</strong>乙狀結腸 0.8cm 腺瘤性息肉 (Paris 0-Ip 有蒂型)
+            </div>
+            <div class="ai-box-footer">
+              <span>處置指引：建議進行<strong>冷息肉圈切術 (CSP)</strong>，100% 阻斷癌變途徑！</span>
+            </div>
+          </div>
+
+          <!-- 盲腸達標 (Cecal Intubation) 提示框 -->
+          <div class="fly-cecum-alert" id="fly-cecum-alert" style="display: none;">
+            🎯 抵達全大腸檢查終點 (Cecal Intubation 100cm) · 目視闌尾開口與迴盲瓣
+          </div>
+
+          <div class="fly-bottom-controls">
+            <button class="fly-ctrl-btn" id="btn-colon-fly-pause" onclick="toggleColonFlyPause()">⏸ 暫停</button>
+            <div class="fly-progress-bar-wrap">
+              <div class="fly-progress-fill" id="fly-colon-progress-fill" style="width: 5%;"></div>
+            </div>
+            <button class="fly-exit-btn" onclick="exitColonFlythrough()">⏹ 退出巡航 (回到 3D)</button>
+          </div>
+        </div>
+
         <!-- Scope Slider Control Bar (Embedded at Bottom of Center 3D Stage on Desktop & Mobile) -->
-        <div class="canvas-scope-bar">
+        <div class="canvas-scope-bar" id="canvas-scope-bar">
           <div class="control-row scope-card" style="margin-bottom: 0;">
             <div class="control-label-group">
               <span style="color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
@@ -542,6 +630,8 @@ import Layout from '../../layouts/Layout.astro';
 
       // 8. Build 3D Pathologies (Polyps, Diverticula, Hemorrhoids)
       build3DPathologies();
+      buildColonProgressionModels();
+      setTimeout(() => setColonProgressionStage(0), 100);
 
       // 9. Build Glowing Focus Halo Beacon
       buildFocusBeacon();
@@ -1582,10 +1672,417 @@ import Layout from '../../layouts/Layout.astro';
       }
     }
 
+    // 大腸腺瘤至腺癌演變時序資料庫 (Adenoma-Carcinoma Sequence)
+    const COLON_PROGRESSION_STAGES = [
+      {
+        stage: 0,
+        name: '正常大腸黏膜 (Normal Colonic Mucosa)',
+        reversibility: 'reversible',
+        reversibilityText: '🛡️ 健康腸道 · 高纖多水運動',
+        colonColor: 0xb84238,
+        roughness: 0.30,
+        clearcoat: 0.88,
+        pathology: '結腸上皮細胞排列緊密整齊，腺窩開口（Pit pattern）呈現規則圓形（Type I），黏膜皺襞與半月襞結構對稱完整，無異常增生。',
+        clinical: '腸道排便順暢無異常出血，排便頻率規律，無腹痛或裡急後重。',
+        advice: '維持地中海型高纖飲食，避免高溫油炸與加工紅肉。國健署提供 50-74 歲民眾每 2 年一次免費定量免疫法糞便潛血檢查 (FIT)！'
+      },
+      {
+        stage: 1,
+        name: '早期小型腺瘤 / 增生性息肉 (Small Tubular Adenoma, <5mm)',
+        reversibility: 'reversible',
+        reversibilityText: '🟢 微小息肉 · 100% 阻斷癌變黃金期',
+        colonColor: 0xb4443a,
+        roughness: 0.32,
+        clearcoat: 0.85,
+        pathology: 'APC 抑癌基因突變初期，上皮細胞局部過度增殖形成微小突起（Paris 0-Is 廣基型），伴隨輕度細胞異型性（Low-grade dysplasia），但尚未突破基底膜。',
+        clinical: '通常完全無任何自覺症狀，糞便潛血檢查多呈陰性，常於常規大腸鏡檢查中被敏銳檢出。',
+        advice: '【黃金處置期】於內視鏡檢查當下直接進行「冷瘜肉切除術 (Cold Snare Polypectomy, CSP)」，免電燒、免住院，5 秒內俐落移除，杜絕惡化為大腸癌的可能！'
+      },
+      {
+        stage: 2,
+        name: '進行性腺瘤 / 大型有莖息肉 (Advanced Pedunculated Adenoma, >10mm)',
+        reversibility: 'warning',
+        reversibilityText: '⚠️ 進行性腺瘤 · 癌前病變警戒',
+        colonColor: 0xaa3e35,
+        roughness: 0.38,
+        clearcoat: 0.70,
+        pathology: '累積 KRAS 活化突變與染色體不穩定，腺瘤顯著長大並由黏膜牽引形成長莖（Paris 0-Ip 有莖型，頭部可達 1.2-1.5cm）。頭部絨毛狀結構增生並出現高度異型增生（High-grade dysplasia），癌變風險大幅提升。',
+        clinical: '糞便通過時反覆摩擦息肉頭部，可能出現間歇性肉眼微量便血、潛血強陽性或排便習慣輕微改變。',
+        advice: '必須完整執行內視鏡黏膜切除術 (EMR) 或電燒圈切切除，病理組織切片確認莖部邊緣乾淨無癌細胞殘留，並安排 1~3 年內密切追蹤大腸鏡！'
+      },
+      {
+        stage: 3,
+        name: '浸潤性大腸癌 (Invasive Colorectal Carcinoma, 潰瘍火山口與狹窄)',
+        reversibility: 'irreversible',
+        reversibilityText: '🚨 浸潤性惡性腫瘤 · 積極醫療介入',
+        colonColor: 0x822a22,
+        roughness: 0.58,
+        clearcoat: 0.18,
+        pathology: 'p53 突變累積導致惡性轉化，癌細胞穿透黏膜下層並深層浸潤固有肌層。腫瘤呈現菜花狀向管腔環狀突起，中心缺血壞死形成深陷火山口潰瘍（Borrmann II/III 型），導致腸腔顯著狹窄。',
+        clinical: '大便變細如鉛筆、頑固性便秘與腹瀉交替、裡急後重、持續性暗紅血便、不明原因缺鐵性貧血與顯著體重減輕。',
+        advice: '立即進行胸腹部電腦斷層與腫瘤標記 (CEA) 完整分期！早期可行內視鏡黏膜下剝離術 (ESD)，中晚期需接受微創腹腔鏡/達文西大腸切除術 + 淋巴結廣泛廓清，術後輔以標靶化療。'
+      }
+    ];
+
+    let currentColonProgStage = 0;
+    let isColonAutoplaying = false;
+    let colonTimer = null;
+    let colonProgressionMeshGroup = null;
+
+    // 虛擬第一人稱大腸鏡巡航參數
+    let isColonFlythroughMode = false;
+    let colonFlythroughT = 0.04;
+    let isColonFlyPaused = false;
+    let flySavedCamPos = new THREE.Vector3();
+    let flySavedLookAt = new THREE.Vector3();
+    let flyColonEndoLight = null;
+
+    function switchColonControlTab(tab) {
+      const scopeBar = document.getElementById('canvas-scope-bar');
+      const progBar = document.getElementById('canvas-colon-progression-bar');
+      const tabScope = document.getElementById('tab-btn-scope');
+      const tabProg = document.getElementById('tab-btn-progression');
+
+      if (tab === 'scope') {
+        if (scopeBar) scopeBar.style.display = 'block';
+        if (progBar) progBar.style.display = 'none';
+        if (tabScope) tabScope.classList.add('active');
+        if (tabProg) tabProg.classList.remove('active');
+        stopColonAutoplay();
+      } else {
+        if (scopeBar) scopeBar.style.display = 'none';
+        if (progBar) progBar.style.display = 'flex';
+        if (tabScope) tabScope.classList.remove('active');
+        if (tabProg) tabProg.classList.add('active');
+        setColonProgressionStage(currentColonProgStage);
+      }
+    }
+
+    function setColonProgressionStage(stageIdx) {
+      currentColonProgStage = Math.max(0, Math.min(3, stageIdx));
+      const data = COLON_PROGRESSION_STAGES[currentColonProgStage];
+
+      // 更新 UI 滑桿與 Pill 按鈕
+      const slider = document.getElementById('slider-colon-prog');
+      if (slider) slider.value = currentColonProgStage;
+
+      document.querySelectorAll('#canvas-colon-progression-bar .stage-pill').forEach(pill => {
+        pill.classList.toggle('active', parseInt(pill.dataset.stage) === currentColonProgStage);
+      });
+
+      // 更新衛教卡
+      const card = document.getElementById('colon-clinical-card');
+      if (card) {
+        card.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+            <strong style="color: #f8fafc; font-size: 0.85rem;">${data.name}</strong>
+            <span class="reversibility-tag ${data.reversibility}">${data.reversibilityText}</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px;"><strong>【病理變化】</strong>${data.pathology}</div>
+          <div style="color: #94a3b8; margin-bottom: 3px;"><strong>【臨床特點】</strong>${data.clinical}</div>
+          <div style="color: #34d399; font-weight: 600;"><strong>【處置建議】</strong>${data.advice}</div>
+        `;
+      }
+
+      // 更新大腸材質
+      if (colonMaterial) {
+        colonMaterial.color.setHex(data.colonColor);
+        colonMaterial.roughness = data.roughness;
+        colonMaterial.clearcoat = data.clearcoat;
+      }
+
+      // 切換 3D 息肉演進模型顯示
+      if (colonProgressionMeshGroup) {
+        colonProgressionMeshGroup.children.forEach(child => {
+          child.visible = (child.userData.stage === currentColonProgStage);
+        });
+      }
+    }
+
+    function toggleColonAutoplay() {
+      if (isColonAutoplaying) stopColonAutoplay();
+      else startColonAutoplay();
+    }
+
+    function startColonAutoplay() {
+      isColonAutoplaying = true;
+      const btn = document.getElementById('btn-colon-autoplay');
+      const icon = document.getElementById('colon-play-icon');
+      const text = document.getElementById('colon-play-text');
+      if (btn) btn.classList.add('active');
+      if (icon) icon.textContent = '⏸';
+      if (text) text.textContent = '暫停';
+
+      colonTimer = setInterval(() => {
+        const nextStage = (currentColonProgStage + 1) % 4;
+        setColonProgressionStage(nextStage);
+      }, 2800);
+    }
+
+    function stopColonAutoplay() {
+      isColonAutoplaying = false;
+      if (colonTimer) {
+        clearInterval(colonTimer);
+        colonTimer = null;
+      }
+      const btn = document.getElementById('btn-colon-autoplay');
+      const icon = document.getElementById('colon-play-icon');
+      const text = document.getElementById('colon-play-text');
+      if (btn) btn.classList.remove('active');
+      if (icon) icon.textContent = '▶';
+      if (text) text.textContent = '自動演變';
+    }
+
+    // 建立大腸息肉生成時序 3D 模型組 (Stage 1 小型, Stage 2 有莖進行性, Stage 3 浸潤性大腸癌)
+    function buildColonProgressionModels() {
+      colonProgressionMeshGroup = new THREE.Group();
+      // 位於乙狀結腸黏膜腔壁內側 (1.48, -1.82, 0.42)
+      const basePos = new THREE.Vector3(1.48, -1.82, 0.42);
+
+      // --- Stage 1: 小型管狀腺瘤 (<5mm, 0-Is 廣基隆起型) ---
+      const s1Mat = new THREE.MeshPhysicalMaterial({
+        color: 0xf43f5e,
+        roughness: 0.28,
+        clearcoat: 0.82,
+        emissive: 0xe11d48,
+        emissiveIntensity: 0.4
+      });
+      const s1Geom = new THREE.SphereGeometry(0.08, 14, 14);
+      s1Geom.scale(1.0, 0.6, 1.0);
+      const s1Mesh = new THREE.Mesh(s1Geom, s1Mat);
+      s1Mesh.position.copy(basePos);
+      s1Mesh.userData = { stage: 1 };
+      colonProgressionMeshGroup.add(s1Mesh);
+
+      // --- Stage 2: 進行性腺瘤 (>10mm, 0-Ip 有莖型，分葉菜花頭) ---
+      const s2Group = new THREE.Group();
+      const stalkGeom = new THREE.CylinderGeometry(0.04, 0.05, 0.26, 8);
+      const stalkMat = new THREE.MeshStandardMaterial({ color: 0x9e352b, roughness: 0.35 });
+      const stalkMesh = new THREE.Mesh(stalkGeom, stalkMat);
+      stalkMesh.position.set(0, 0.12, 0);
+
+      const headMat = new THREE.MeshPhysicalMaterial({
+        color: 0xbe123c,
+        roughness: 0.22,
+        clearcoat: 0.88,
+        emissive: 0x9f1239,
+        emissiveIntensity: 0.6
+      });
+      const headGeom = new THREE.SphereGeometry(0.16, 16, 16);
+      headGeom.scale(1.2, 1.0, 1.1);
+      headGeom.translate(0, 0.26, 0);
+      const headMesh = new THREE.Mesh(headGeom, headMat);
+
+      // 菜花狀小突起
+      for (let i = 0; i < 4; i++) {
+        const nodule = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), headMat);
+        nodule.position.set(
+          Math.cos(i * 1.57) * 0.11,
+          0.26 + Math.sin(i * 1.57) * 0.05,
+          Math.sin(i * 1.57) * 0.11
+        );
+        headMesh.add(nodule);
+      }
+
+      s2Group.add(stalkMesh);
+      s2Group.add(headMesh);
+      s2Group.position.copy(basePos);
+      s2Group.rotation.z = -Math.PI / 4;
+      s2Group.rotation.x = Math.PI / 6;
+      s2Group.userData = { stage: 2 };
+      colonProgressionMeshGroup.add(s2Group);
+
+      // --- Stage 3: 浸潤性大腸癌 (菜花狀腫瘤隆起、中心深陷壞死潰瘍火山口、管壁浸潤) ---
+      const s3Group = new THREE.Group();
+      const cancerBaseGeom = new THREE.CylinderGeometry(0.28, 0.32, 0.12, 16);
+      const cancerBaseMat = new THREE.MeshStandardMaterial({
+        color: 0x661812,
+        roughness: 0.65,
+        emissive: 0x4a0e08,
+        emissiveIntensity: 0.4
+      });
+      const cancerBaseMesh = new THREE.Mesh(cancerBaseGeom, cancerBaseMat);
+
+      // 火山口中心凹陷與壞死白苔
+      const craterGeom = new THREE.CylinderGeometry(0.14, 0.10, 0.06, 16);
+      const craterMat = new THREE.MeshStandardMaterial({
+        color: 0xf1f5f9,
+        roughness: 0.7,
+        emissive: 0x94a3b8,
+        emissiveIntensity: 0.35
+      });
+      const craterMesh = new THREE.Mesh(craterGeom, craterMat);
+      craterMesh.position.set(0, 0.04, 0);
+      cancerBaseMesh.add(craterMesh);
+
+      // 周圍隆起浸潤外翻邊緣 (Everted nodular margin)
+      const rimGeom = new THREE.TorusGeometry(0.24, 0.06, 8, 16);
+      const rimMat = new THREE.MeshPhysicalMaterial({
+        color: 0x991b1b,
+        roughness: 0.35,
+        clearcoat: 0.4,
+        emissive: 0x7f1d1d,
+        emissiveIntensity: 0.5
+      });
+      const rimMesh = new THREE.Mesh(rimGeom, rimMat);
+      rimMesh.position.set(0, 0.06, 0);
+      rimMesh.rotation.x = Math.PI / 2;
+      cancerBaseMesh.add(rimMesh);
+
+      s3Group.add(cancerBaseMesh);
+      s3Group.position.copy(basePos);
+      s3Group.rotation.z = -Math.PI / 4;
+      s3Group.rotation.x = Math.PI / 6;
+      s3Group.userData = { stage: 3 };
+      colonProgressionMeshGroup.add(s3Group);
+
+      // 預設全隱藏
+      colonProgressionMeshGroup.children.forEach(c => c.visible = false);
+      scene.add(colonProgressionMeshGroup);
+    }
+
+    // ── 虛擬大腸鏡第一人稱「腔內飛行巡航 (Colonoscopy Fly-through)」──
+    function toggleColonFlythrough() {
+      if (isColonFlythroughMode) {
+        exitColonFlythrough();
+      } else {
+        startColonFlythrough();
+      }
+    }
+
+    function startColonFlythrough() {
+      if (!colonSplineCurve) return;
+      isColonFlythroughMode = true;
+      controls.enabled = false;
+      colonFlythroughT = 0.04;
+      isColonFlyPaused = false;
+
+      // 備份相機狀態
+      flySavedCamPos.copy(camera.position);
+      flySavedLookAt.copy(controls.target);
+
+      // 建立腔內探照燈
+      if (!flyColonEndoLight) {
+        flyColonEndoLight = new THREE.PointLight(0xffffff, 2.8, 5.0);
+        scene.add(flyColonEndoLight);
+      }
+      flyColonEndoLight.visible = true;
+
+      // 顯示 HUD
+      const hud = document.getElementById('colon-flythrough-hud');
+      if (hud) hud.style.display = 'flex';
+
+      // 隱藏一般控制欄
+      const scopeBar = document.getElementById('canvas-scope-bar');
+      const progBar = document.getElementById('canvas-colon-progression-bar');
+      const tabs = document.querySelector('.canvas-mode-tabs');
+      if (scopeBar) scopeBar.style.display = 'none';
+      if (progBar) progBar.style.display = 'none';
+      if (tabs) tabs.style.display = 'none';
+
+      // 確保息肉模型可見以供 AI 偵測辨識
+      if (pathologyGroup) {
+        pathologyGroup.children.forEach(c => {
+          if (c.userData.type === 'polyp') c.visible = true;
+        });
+      }
+
+      showToast('🚀 已啟動虛擬大腸鏡腔內飛行巡航！');
+    }
+
+    function exitColonFlythrough() {
+      isColonFlythroughMode = false;
+      isColonFlyPaused = false;
+
+      // 隱藏 HUD
+      const hud = document.getElementById('colon-flythrough-hud');
+      if (hud) hud.style.display = 'none';
+
+      if (flyColonEndoLight) flyColonEndoLight.visible = false;
+
+      // 還原一般控制欄
+      const tabs = document.querySelector('.canvas-mode-tabs');
+      if (tabs) tabs.style.display = 'inline-flex';
+      switchColonControlTab('scope');
+
+      // 平滑歸還攝影機給 OrbitControls
+      controls.enabled = true;
+      new TWEEN.Tween(camera.position)
+        .to(flySavedCamPos, 900)
+        .easing(TWEEN.Easing.Cubic.Out)
+        .start();
+
+      new TWEEN.Tween(controls.target)
+        .to(flySavedLookAt, 900)
+        .easing(TWEEN.Easing.Cubic.Out)
+        .start();
+
+      showToast('已結束大腸鏡巡航，回歸 3D 解剖視角');
+    }
+
+    function toggleColonFlyPause() {
+      isColonFlyPaused = !isColonFlyPaused;
+      const btn = document.getElementById('btn-colon-fly-pause');
+      if (btn) btn.textContent = isColonFlyPaused ? '▶ 繼續' : '⏸ 暫停';
+    }
+
     function animate(time) {
       requestAnimationFrame(animate);
       TWEEN.update();
-      if (controls) controls.update();
+
+      // 虛擬大腸鏡第一人稱「腔內飛行巡航 (Fly-through)」
+      if (isColonFlythroughMode && colonSplineCurve) {
+        if (!isColonFlyPaused) {
+          colonFlythroughT += 0.0014; // 平滑前進
+          if (colonFlythroughT >= 0.96) {
+            colonFlythroughT = 0.04; // 循環巡航
+          }
+        }
+
+        const t = colonFlythroughT;
+        // 沿大腸曲線前進 (直腸 0cm 到盲腸 100cm)
+        const tCurve = t * 0.92;
+        const pt = colonSplineCurve.getPoint(tCurve);
+        const tan = colonSplineCurve.getTangent(tCurve).normalize();
+
+        camera.position.copy(pt);
+        if (flyColonEndoLight) flyColonEndoLight.position.copy(pt);
+
+        // 更新進度條
+        const fillEl = document.getElementById('fly-colon-progress-fill');
+        if (fillEl) fillEl.style.width = `${Math.round(t * 100)}%`;
+
+        const cmEst = Math.round(t * 100);
+        const statusText = document.getElementById('fly-colon-status-text');
+        const aiAlert = document.getElementById('fly-ai-alert');
+        const cecumAlert = document.getElementById('fly-cecum-alert');
+
+        // AI 息肉即時辨識 (CADe / CADx)：在乙狀結腸 (t 在 0.22 ~ 0.35 之間)
+        if (t >= 0.22 && t <= 0.35) {
+          if (aiAlert) aiAlert.style.display = 'block';
+        } else {
+          if (aiAlert) aiAlert.style.display = 'none';
+        }
+
+        // 盲腸達標 (Cecal Intubation)：t >= 0.88
+        if (t >= 0.88) {
+          if (cecumAlert) cecumAlert.style.display = 'block';
+        } else {
+          if (cecumAlert) cecumAlert.style.display = 'none';
+        }
+
+        let locName = '直腸段 (Rectum)';
+        if (cmEst >= 15 && cmEst < 40) locName = '乙狀結腸 (Sigmoid Colon)';
+        else if (cmEst >= 40 && cmEst < 55) locName = '降結腸與脾曲 (Descending Colon)';
+        else if (cmEst >= 55 && cmEst < 80) locName = '橫結腸 (Transverse Colon)';
+        else if (cmEst >= 80 && cmEst < 95) locName = '升結腸與肝曲 (Ascending Colon)';
+        else if (cmEst >= 95) locName = '盲腸底與闌尾口 (Cecal Pole & ICV)';
+
+        if (statusText) statusText.textContent = `大腸鏡腔內飛行巡航 · ${locName} (${cmEst}cm)`;
+        camera.lookAt(pt.clone().add(tan.clone().multiplyScalar(1.5)));
+      } else {
+        if (controls) controls.update();
+      }
 
       const t = (time || performance.now()) * 0.005;
 
@@ -2607,4 +3104,297 @@ import Layout from '../../layouts/Layout.astro';
       grid-template-columns: 1fr !important;
     }
   }
+  /* 模式切換按鈕組 */
+  .canvas-mode-tabs {
+    position: absolute;
+    bottom: 96px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 4px;
+    border-radius: 9999px;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    z-index: 50;
+    gap: 4px;
+  }
+  .mode-tab-btn {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .mode-tab-btn:hover { color: #f8fafc; }
+  .mode-tab-btn.active {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+  }
+
+  /* 大腸息肉病變時序控制面板 */
+  .canvas-progression-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 16px;
+    padding: 12px 16px;
+    z-index: 45;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .prog-header { display: flex; justify-content: space-between; align-items: center; }
+  .prog-title-group { display: flex; align-items: center; gap: 8px; }
+  .prog-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+  .prog-main-title { color: #f8fafc; font-size: 0.88rem; font-weight: 800; }
+  .prog-autoplay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10b981;
+    color: #34d399;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .prog-autoplay-btn:hover, .prog-autoplay-btn.active {
+    background: #10b981;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  }
+  .steatosis-stage-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+  .stage-pill {
+    flex: 1;
+    min-width: 90px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+  }
+  .stage-pill:hover { color: #f1f5f9; background: rgba(51, 65, 85, 0.8); }
+  .stage-pill.active {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+  }
+  .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .pill-dot.stage-0 { background: #10b981; box-shadow: 0 0 6px #10b981; }
+  .pill-dot.stage-1 { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+  .pill-dot.stage-2 { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+  .pill-dot.stage-3 { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+  .prog-slider-wrapper { display: flex; flex-direction: column; gap: 4px; }
+  .prog-slider-milestones { display: flex; justify-content: space-between; font-size: 0.72rem; color: #64748b; }
+  .prog-clinical-card {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  .reversibility-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    margin-right: 6px;
+  }
+  .reversibility-tag.reversible { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+  .reversibility-tag.warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+  .reversibility-tag.irreversible { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+
+  /* 腔內巡航 HUD Overlay */
+  .flythrough-hud-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px;
+  }
+  .fly-top-badge {
+    align-self: center;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 9999px;
+    padding: 8px 18px;
+    color: #f8fafc;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  .fly-indicator-pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+    animation: pulseGlow 1.4s infinite;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+  }
+
+  /* AI 息肉偵測綠色科技邊框提示 */
+  .fly-ai-alert {
+    align-self: center;
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.95), rgba(4, 120, 87, 0.92));
+    border: 2px solid #34d399;
+    border-radius: 14px;
+    color: #ffffff;
+    padding: 12px 20px;
+    box-shadow: 0 10px 32px rgba(16, 185, 129, 0.5), inset 0 0 16px rgba(52, 211, 153, 0.2);
+    animation: bounceAiAlert 1.2s infinite alternate ease-in-out;
+    max-width: 480px;
+    width: 90%;
+  }
+  @keyframes bounceAiAlert {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
+  }
+  .ai-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .ai-box-badge {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #a7f3d0;
+  }
+  .ai-box-confidence {
+    font-size: 0.72rem;
+    background: rgba(16, 185, 129, 0.3);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid #34d399;
+    color: #ffffff;
+    font-weight: 700;
+  }
+  .ai-box-body {
+    font-size: 0.86rem;
+    color: #f0fdf4;
+    margin-bottom: 4px;
+  }
+  .ai-box-footer {
+    font-size: 0.78rem;
+    color: #d1fae5;
+  }
+
+  .fly-cecum-alert {
+    align-self: center;
+    background: linear-gradient(135deg, rgba(14, 116, 144, 0.95), rgba(3, 105, 161, 0.92));
+    border: 2px solid #38bdf8;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 10px 20px;
+    box-shadow: 0 10px 28px rgba(14, 116, 144, 0.45);
+    animation: bounceCecum 1s infinite alternate;
+  }
+  @keyframes bounceCecum {
+    from { transform: translateY(0); }
+    to { transform: translateY(-4px); }
+  }
+
+  .fly-bottom-controls {
+    pointer-events: auto;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 9999px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    align-self: center;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+  .fly-ctrl-btn {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 9999px;
+    color: #f8fafc;
+    font-weight: 700;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .fly-ctrl-btn:hover { background: #334155; }
+  .fly-progress-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: rgba(51, 65, 85, 0.7);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .fly-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transition: width 0.1s linear;
+  }
+  .fly-exit-btn {
+    background: #ef4444;
+    border: none;
+    border-radius: 9999px;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .fly-exit-btn:hover { background: #dc2626; }
 </style>

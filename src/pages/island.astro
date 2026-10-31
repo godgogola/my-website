@@ -179,10 +179,22 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
           <span class="btn-text" id="turtleBtnText">騎龜</span>
         </button>
 
-        <button class="hud-action-btn" id="weatherMagicBtn" title="切換中古世紀天氣魔法：晴空 / ❄️ 飄雪 / 🍁 黃金落葉 / 🌠 流星雨" style="border-color: #c4b5fd; background: #f5f3ff; color: #5b21b6;">
-          <span id="weatherBtnIcon">✨</span>
-          <span class="btn-text" id="weatherBtnText">天氣</span>
-        </button>
+        <!-- 奇幻天氣按鈕與快捷選單 -->
+        <div class="weather-btn-wrapper" id="weatherBtnWrapper">
+          <button class="hud-action-btn" id="weatherMagicBtn" title="奇幻天氣切換：晴朗 · 櫻花 · 夕陽 · 秋楓 · 飄雪 · 極光 · 流星" style="border-color: #c4b5fd; background: #f5f3ff; color: #5b21b6;">
+            <span id="weatherBtnIcon">✨</span>
+            <span class="btn-text" id="weatherBtnText">天氣</span>
+          </button>
+          <div class="weather-dropdown-menu" id="weatherDropdownMenu">
+            <button class="weather-opt-btn active" data-weather="clear"><span>☀️</span> 晴朗清爽</button>
+            <button class="weather-opt-btn" data-weather="sakura"><span>🌸</span> 春日櫻花雨</button>
+            <button class="weather-opt-btn" data-weather="sunset"><span>🌅</span> 魔幻黃金夕陽</button>
+            <button class="weather-opt-btn" data-weather="leaves"><span>🍁</span> 秋楓落下</button>
+            <button class="weather-opt-btn" data-weather="snow"><span>❄️</span> 冬日初雪</button>
+            <button class="weather-opt-btn" data-weather="aurora"><span>🌌</span> 極光螢火</button>
+            <button class="weather-opt-btn" data-weather="meteor"><span>🌠</span> 許願流星雨</button>
+          </div>
+        </div>
 
         <button class="hud-action-btn active" id="toggleSoundBtn" title="開啟/關閉 3D 小島互動音效 (巨龍咆哮、貓狗叫聲、寶箱金幣、渡輪汽笛)">
           <span id="soundBtnIcon">🔊</span>
@@ -283,21 +295,28 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     </aside>
 
     <!-- 騎乘飛龍 / 大海龜模式專屬：底部中央醒目「下坐騎 / 互動」懸浮控制列 (手機與電腦皆一鍵可見) -->
+    <!-- 頂部沉浸電影級提示條 (騎乘時顯示) -->
+    <div class="ride-cinematic-banner" id="rideCinematicBanner" aria-hidden="true">
+      <span class="ride-banner-icon" id="rideBannerIcon">🔥</span>
+      <span class="ride-banner-text" id="rideBannerText">點擊畫面噴火 · 俯瞰 3D 衛教群島</span>
+    </div>
+
+    <!-- 騎龍 / 騎龜沉浸浮動控制列：噴火/加速游泳 + 降噪退出鈕 (點擊畫面亦可) -->
     <div class="dragon-ride-float-bar" id="dragonRideFloatBar" aria-hidden="true">
       <button class="dragon-float-fire-btn" id="dragonFloatFireBtn" type="button">
         <span id="floatActionIcon">🔥</span>
-        <span id="floatActionText">噴出龍息</span>
+        <span id="floatActionText">點擊噴火</span>
       </button>
       <button class="dragon-float-exit-btn" id="dragonFloatExitBtn" type="button">
-        <span id="floatExitIcon">🐉</span>
-        <span id="floatExitText">下龍 · 回到全景 ✕</span>
+        <span id="floatExitIcon">⏬</span>
+        <span id="floatExitText">結束騎乘</span>
       </button>
     </div>
 
     <!-- 底部操作提示 -->
     <div class="island-floating-tips">
       <div class="tip-pill">
-        <span class="tip-mouse">🌍 拖曳旋轉 · 滾輪縮放 · 點擊島嶼登陸</span>
+        <span class="tip-mouse">🖱️ 拖曳旋轉 · 滾輪縮放 · 點擊探索島嶼</span>
       </div>
     </div>
   </div>
@@ -1294,7 +1313,122 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   .viewport-container.bird-mode .badge-pins-count,
   .viewport-container.bird-mode .badge-arrow { display: none; }
 
-  /* 騎乘飛龍模式專屬：底部中央醒目「下龍 / 噴火」懸浮控制列 */
+  /* 騎乘飛龍模式專屬：底部中央醒目「下龍 / 噴火」懸浮控制列 */  /* 天氣切換快捷選單 */
+  .weather-btn-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+  .weather-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 165px;
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(196, 181, 253, 0.4);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px) scale(0.96);
+    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .weather-btn-wrapper:hover .weather-dropdown-menu,
+  .weather-dropdown-menu.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+  .weather-opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.16s ease;
+  }
+  .weather-opt-btn:hover {
+    background: rgba(139, 92, 246, 0.25);
+    color: #f8fafc;
+  }
+  .weather-opt-btn.active {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(99, 102, 241, 0.35));
+    color: #fef08a;
+    font-weight: 800;
+  }
+
+  /* 頂部沉浸電影級提示條 */
+  .ride-cinematic-banner {
+    position: fixed;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-65px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.84);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(254, 240, 138, 0.4);
+    color: #fef08a;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    z-index: 960;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    transition: transform 0.36s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  }
+  .ride-cinematic-banner.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* 騎乘降噪（電影級無邊框體驗）：將非必要 HUD 與 3D 標籤淡出 */
+  .is-riding-mount .island-hud {
+    opacity: 0.22;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  .is-riding-mount .island-hud:hover {
+    opacity: 0.95;
+    pointer-events: auto;
+  }
+  .is-riding-mount .island-nav-sidebar,
+  .is-riding-mount .island-detail-drawer,
+  .is-riding-mount .island-floating-tips {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .is-riding-mount .island-3d-badge-inner,
+  .is-riding-mount .animal-click-badge,
+  .is-riding-mount .animal-speech-bubble,
+  .is-riding-mount .badge-pin-bubble {
+    opacity: 0.20 !important;
+    transform: scale(0.85);
+    filter: blur(0.5px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
   .dragon-ride-float-bar {
     position: fixed;
     bottom: 24px;
@@ -2112,9 +2246,12 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   const giantTurtleSplashParticles = [];
   const treasureChests = [];
   const treasureCoins = [];
-  let currentWeatherMode = 'clear'; // 'clear' | 'snow' | 'leaves' | 'meteor'
+  let currentWeatherMode = 'clear'; // 'clear' | 'sakura' | 'sunset' | 'leaves' | 'snow' | 'aurora' | 'meteor'
   let snowParticlesGroup = null;
   let leavesParticlesGroup = null;
+  let sakuraParticlesGroup = null;
+  let auroraGroup = null;
+  let firefliesGroup = null;
   const shootingStars = [];
 
   // 動態相機飛行參數
@@ -2725,6 +2862,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       curSky.lerpColors(duskCol, nightCol, (cycle - 0.5) / 0.25);
     } else {
       curSky.lerpColors(nightCol, dawnCol, (cycle - 0.75) / 0.25);
+    }
+
+    // 奇幻天氣特定天色強化：
+    if (currentWeatherMode === 'sunset') {
+      // 🌅 魔幻黃金夕陽：濃郁紫橘漸層晚霞色，主光源角度壓低
+      curSky.setHex(0xb45309);
+      if (sunLight) {
+        sunLight.color.setHex(0xff7b00);
+        sunLight.intensity = 1.75;
+      }
+      if (hemiLight) {
+        hemiLight.color.setHex(0xfb923c);
+        hemiLight.groundColor.setHex(0x581c87);
+        hemiLight.intensity = 1.0;
+      }
+    } else if (currentWeatherMode === 'sakura') {
+      // 🌸 春日櫻花雨：天空與環境光帶淡粉暖白光暈
+      curSky.lerp(new THREE.Color(0xfce7f3), 0.35);
+      if (hemiLight) hemiLight.color.setHex(0xfff1f2);
+    } else if (currentWeatherMode === 'aurora') {
+      curSky.setHex(0x090d16);
     }
 
     scene.background.copy(curSky);
@@ -6644,38 +6802,36 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
     // 🐉 若處於「騎乘飛龍視角 (聖劍傳說3 芙拉米高空置中俯瞰視角)」：
     // 讓巨龍朝向群島內側前方滑翔，並將相機鎖定在巨龍正後方高處、視線 100% 穿過巨龍正中央俯瞰整片群島！
+    // 巨龍沿飛行航道前進，帶自然側傾轉向（banking）
+    dragonData.group.lookAt(nx, ny, nz);
+    dragonData.bodyRoot.rotation.z = Math.sin(u) * 0.12;
+
+    // 🐉 騎乘赤紅巨龍：鎖定「看著龍背」的沉浸式第三人稱追尾視角（Third-Person Chase Camera）
     if (isDragonRideMode) {
-      // 切線方向 + 朝向群島中心方向混合，確保畫面正前方永遠是壯麗的 24 座群島
-      const tang = new THREE.Vector3(nx - x, 0, nz - z).normalize();
-      const inward = new THREE.Vector3(-x, 0, -z).normalize();
-      const viewDir = tang.multiplyScalar(0.62).add(inward.multiplyScalar(0.78)).normalize();
-
-      // 巨龍水平朝向視野正前方滑翔
-      dragonData.group.lookAt(x + viewDir.x * 10, y - 0.8, z + viewDir.z * 10);
-      dragonData.bodyRoot.rotation.z = -0.05;
-
-      // 聖劍傳說3 高空第三人稱置中構圖：
-      // controls.target 直接對準巨龍軀幹正中央，確保不論手機直立或電腦寬螢幕，巨龍 100% 穩居畫面正中央！
       const isMobile = window.innerWidth <= 768;
-      const backDist = isMobile ? 21.5 : 17.5;
-      const upHeight = isMobile ? 9.8 : 8.2;
+      // 局部偏移量：鏡頭在龍尾後方 10 單位、龍背上方 4.5 單位處
+      const relativeCameraOffset = new THREE.Vector3(0, isMobile ? 4.8 : 4.5, isMobile ? -11.0 : -10.0);
 
-      const desiredCamPos = new THREE.Vector3(
-        x - viewDir.x * backDist,
-        y + upHeight,
-        z - viewDir.z * backDist
-      );
-      const desiredLookAt = new THREE.Vector3(
-        x + viewDir.x * 1.2,
-        y - 0.55,
-        z + viewDir.z * 1.2
-      );
+      // 將局部偏移乘上巨龍的旋轉四元數，轉為世界座標
+      const targetCamPos = relativeCameraOffset.clone()
+        .applyQuaternion(dragonData.group.quaternion)
+        .add(dragonData.group.position);
 
-      camera.position.lerp(desiredCamPos, 0.22);
-      controls.target.lerp(desiredLookAt, 0.25);
-    } else {
-      dragonData.group.lookAt(nx, ny, nz);
-      dragonData.bodyRoot.rotation.z = -0.07;
+      // 隨著翅膀拍動，加上輕微的呼吸起伏 Math.sin(time * 4) * 0.3
+      targetCamPos.y += Math.sin(elapsedTime * 4.0) * 0.3;
+
+      // 平滑跟隨（產生自然的飛行慣性延遲感）
+      camera.position.lerp(targetCamPos, 0.1);
+
+      // 視線中心（LookAt）：看向龍頭正前方偏下一點的位置，
+      // 確保畫面下半部 1/3 剛好是巨龍的背部脊刺、脖頸與兩側上下拍動的巨大紅翅膀，上半部則是前方的天空與島嶼！
+      const dragonForward = new THREE.Vector3(0, 0, 1).applyQuaternion(dragonData.group.quaternion);
+      const lookTarget = dragonData.group.position.clone()
+        .add(dragonForward.clone().multiplyScalar(15.0))
+        .add(new THREE.Vector3(0, 0.2, 0));
+
+      camera.lookAt(lookTarget);
+      controls.target.copy(lookTarget);
     }
 
     // 4. 雙翼平展御風滑翔 (僅有極微幅的慢速呼吸感起伏，徹底告別劇烈拍動)
@@ -6740,22 +6896,36 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const btn = document.getElementById('summonDragonBtn');
     const txt = document.getElementById('dragonBtnText');
     const floatBar = document.getElementById('dragonRideFloatBar');
+    const banner = document.getElementById('rideCinematicBanner');
+    const bIcon = document.getElementById('rideBannerIcon');
+    const bText = document.getElementById('rideBannerText');
     const tipsEl = document.querySelector('.island-floating-tips');
     const fActIcon = document.getElementById('floatActionIcon');
     const fActText = document.getElementById('floatActionText');
     const fExitIcon = document.getElementById('floatExitIcon');
     const fExitText = document.getElementById('floatExitText');
+    const appEl = document.getElementById('islandApp');
+
     if (btn) btn.classList.toggle('active', on);
-    if (txt) txt.textContent = on ? '下龍' : '騎龍';
+    if (txt) txt.textContent = on ? '降落' : '騎龍';
     if (on) {
       if (fActIcon) fActIcon.textContent = '🔥';
-      if (fActText) fActText.textContent = '噴出龍息';
-      if (fExitIcon) fExitIcon.textContent = '🐉';
-      if (fExitText) fExitText.textContent = '下龍 · 回到全景 ✕';
+      if (fActText) fActText.textContent = '點擊噴火';
+      if (fExitIcon) fExitIcon.textContent = '⏬';
+      if (fExitText) fExitText.textContent = '結束騎乘';
+      if (bIcon) bIcon.textContent = '🔥';
+      if (bText) bText.textContent = '點擊畫面噴火 · 俯瞰 3D 衛教群島';
     }
     if (floatBar) {
       floatBar.classList.toggle('active', on);
       floatBar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    if (banner) {
+      banner.classList.toggle('active', on);
+      banner.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    if (appEl) {
+      appEl.classList.toggle('is-riding-mount', on);
     }
     if (tipsEl) {
       tipsEl.style.opacity = on ? '0' : '';
@@ -6765,20 +6935,23 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       if (dragonData.dragonBadge) {
         dragonData.dragonBadge.style.display = on ? 'none' : '';
       }
-      // 騎龍時縮放為精緻《聖劍傳說3》芙拉米比例，確保手機直向螢幕也能完整看見全身雙翼與長尾！
-      dragonData.group.scale.setScalar(on ? 1.32 : 2.35);
+      dragonData.group.scale.setScalar(on ? 1.55 : 2.35);
     }
 
     if (on) {
+      // 騎乘時停用 OrbitControls 旋轉，改由 requestAnimationFrame 計算追尾攝影機
+      controls.enabled = false;
+      controls.autoRotate = false;
       exitBirdViewSilently();
       closeDetailCard();
       isFlightActive = false;
-      // 切換為開闊高空廣角視野 (如同聖劍傳說3 飛行全景)
-      camera.fov = window.innerWidth <= 768 ? 54 : 45;
+      camera.fov = window.innerWidth <= 768 ? 56 : 48;
       camera.updateProjectionMatrix();
       triggerDragonInteraction();
-      showMiniToast('🐉 已展開高空飛龍視角！可環視整座群島，點擊下方「🐉 下龍」即可返回');
+      showMiniToast('🐉 鎖定龍背追尾視角：俯瞰 3D 衛教群島！');
     } else {
+      // 結束騎乘時平滑將鏡頭歸還 OrbitControls
+      controls.enabled = true;
       camera.fov = 32;
       camera.updateProjectionMatrix();
       resetView();
@@ -6788,17 +6961,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function exitDragonRideSilently() {
     if (!isDragonRideMode) return;
     isDragonRideMode = false;
+    controls.enabled = true;
     camera.fov = 32;
     camera.updateProjectionMatrix();
     const btn = document.getElementById('summonDragonBtn');
     const txt = document.getElementById('dragonBtnText');
     const floatBar = document.getElementById('dragonRideFloatBar');
+    const banner = document.getElementById('rideCinematicBanner');
+    const appEl = document.getElementById('islandApp');
     const tipsEl = document.querySelector('.island-floating-tips');
     if (btn) btn.classList.remove('active');
     if (txt) txt.textContent = '騎龍';
     if (floatBar) {
       floatBar.classList.remove('active');
       floatBar.setAttribute('aria-hidden', 'true');
+    }
+    if (banner) {
+      banner.classList.remove('active');
+      banner.setAttribute('aria-hidden', 'true');
+    }
+    if (appEl) {
+      appEl.classList.remove('is-riding-mount');
     }
     if (tipsEl) {
       tipsEl.style.opacity = '';
@@ -7135,26 +7318,28 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
 
     // 🐢 若處於「騎乘聖劍大海龜視角 (Trials of Mana 3 Vuscav Sea-Level Camera)」：
     // 鏡頭貼近海平面，從海龜正後方望過龜殼與紅色小旗，仰望兩側壯麗的六角島嶼、燈塔與跨海渡輪！
+    // 🐢 騎乘靈動大海龜：鎖定「看著龜背」的沉浸式第三人稱追尾視角（Third-Person Chase Camera）
     if (isTurtleRideMode) {
-      const forwardDir = new THREE.Vector3(nx - x, 0, nz - z).normalize();
       const isMobile = window.innerWidth <= 768;
-      const backDist = isMobile ? 10.2 : 8.2;
-      const upHeight = isMobile ? 3.2 : 2.55;
+      // 局部座標鎖定在海龜正後方與龜殼上方（距離龜背上方 2.5 單位、後方 6 單位）
+      const relativeTurtleOffset = new THREE.Vector3(0, isMobile ? 2.8 : 2.5, isMobile ? -6.8 : -6.0);
+      const targetCamPos = relativeTurtleOffset.clone()
+        .applyQuaternion(giantTurtleData.group.quaternion)
+        .add(giantTurtleData.group.position);
 
-      const desiredCamPos = new THREE.Vector3(
-        x - forwardDir.x * backDist,
-        y + upHeight,
-        z - forwardDir.z * backDist
-      );
-      // 視線直接穿過大海龜龜殼上方望向海峽前方，確保手機與電腦螢幕皆 100% 置中看見大海龜！
-      const desiredLookAt = new THREE.Vector3(
-        x + forwardDir.x * 2.2,
-        y + 0.95,
-        z + forwardDir.z * 2.2
-      );
+      // 隨海浪微幅起伏
+      targetCamPos.y += Math.sin(elapsedTime * 2.6) * 0.08;
 
-      camera.position.lerp(desiredCamPos, 0.20);
-      controls.target.lerp(desiredLookAt, 0.24);
+      camera.position.lerp(targetCamPos, 0.1);
+
+      // 視角壓低，讓畫面下方清楚呈現海龜的立體龜殼紋路與划動的前肢，前方則是貼近海面的超低仰角風景
+      const turtleForward = new THREE.Vector3(0, 0, 1).applyQuaternion(giantTurtleData.group.quaternion);
+      const turtleLookTarget = giantTurtleData.group.position.clone()
+        .add(turtleForward.clone().multiplyScalar(12.0))
+        .add(new THREE.Vector3(0, 1.1, 0));
+
+      camera.lookAt(turtleLookTarget);
+      controls.target.copy(turtleLookTarget);
     }
   }
 
@@ -7168,23 +7353,36 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const btn = document.getElementById('summonTurtleBtn');
     const txt = document.getElementById('turtleBtnText');
     const floatBar = document.getElementById('dragonRideFloatBar');
+    const banner = document.getElementById('rideCinematicBanner');
+    const bIcon = document.getElementById('rideBannerIcon');
+    const bText = document.getElementById('rideBannerText');
     const tipsEl = document.querySelector('.island-floating-tips');
     const fActIcon = document.getElementById('floatActionIcon');
     const fActText = document.getElementById('floatActionText');
     const fExitIcon = document.getElementById('floatExitIcon');
     const fExitText = document.getElementById('floatExitText');
+    const appEl = document.getElementById('islandApp');
 
     if (btn) btn.classList.toggle('active', on);
-    if (txt) txt.textContent = on ? '下龜' : '騎龜';
+    if (txt) txt.textContent = on ? '靠岸' : '騎龜';
     if (on) {
-      if (fActIcon) fActIcon.textContent = '💦';
-      if (fActText) fActText.textContent = '龜龜歡呼噴水';
-      if (fExitIcon) fExitIcon.textContent = '🐢';
-      if (fExitText) fExitText.textContent = '下龜 · 回到全景 ✕';
+      if (fActIcon) fActIcon.textContent = '🌊';
+      if (fActText) fActText.textContent = '加速游動';
+      if (fExitIcon) fExitIcon.textContent = '⏬';
+      if (fExitText) fExitText.textContent = '結束騎乘';
+      if (bIcon) bIcon.textContent = '🌊';
+      if (bText) bText.textContent = '點擊畫面加速游動 · 仰望海島古堡';
     }
     if (floatBar) {
       floatBar.classList.toggle('active', on);
       floatBar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    if (banner) {
+      banner.classList.toggle('active', on);
+      banner.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    if (appEl) {
+      appEl.classList.toggle('is-riding-mount', on);
     }
     if (tipsEl) {
       tipsEl.style.opacity = on ? '0' : '';
@@ -7195,14 +7393,19 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     }
 
     if (on) {
+      // 騎乘時停用 OrbitControls 旋轉，改由 requestAnimationFrame 計算追尾攝影機
+      controls.enabled = false;
+      controls.autoRotate = false;
       exitBirdViewSilently();
       closeDetailCard();
       isFlightActive = false;
-      camera.fov = window.innerWidth <= 768 ? 54 : 46;
+      camera.fov = window.innerWidth <= 768 ? 56 : 48;
       camera.updateProjectionMatrix();
       triggerGiantTurtleInteraction();
-      showMiniToast('🐢 已乘上《聖劍傳說》布斯卡布大海龜！正在海峽乘風破浪（點擊下方「🐢 下龜」可返回）');
+      showMiniToast('🐢 鎖定龜背追尾視角：貼近海面仰望奇幻群島！');
     } else {
+      // 結束騎乘時平滑將鏡頭歸還 OrbitControls
+      controls.enabled = true;
       camera.fov = 32;
       camera.updateProjectionMatrix();
       resetView();
@@ -7212,17 +7415,27 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   function exitTurtleRideSilently() {
     if (!isTurtleRideMode) return;
     isTurtleRideMode = false;
+    controls.enabled = true;
     camera.fov = 32;
     camera.updateProjectionMatrix();
     const btn = document.getElementById('summonTurtleBtn');
     const txt = document.getElementById('turtleBtnText');
     const floatBar = document.getElementById('dragonRideFloatBar');
+    const banner = document.getElementById('rideCinematicBanner');
+    const appEl = document.getElementById('islandApp');
     const tipsEl = document.querySelector('.island-floating-tips');
     if (btn) btn.classList.remove('active');
     if (txt) txt.textContent = '騎龜';
     if (floatBar) {
       floatBar.classList.remove('active');
       floatBar.setAttribute('aria-hidden', 'true');
+    }
+    if (banner) {
+      banner.classList.remove('active');
+      banner.setAttribute('aria-hidden', 'true');
+    }
+    if (appEl) {
+      appEl.classList.remove('is-riding-mount');
     }
     if (tipsEl) {
       tipsEl.style.opacity = '';
@@ -7445,7 +7658,18 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     }
   }
 
-  // ── (2d) 中古世紀天氣魔法與許願流星雨系統 (Snow / Golden Leaves / Meteor Shower) ──
+  // ── (2d) 中古世紀奇幻天氣魔法系統（保留流星、飄雪、秋楓，新增櫻花、黃金夕陽、極光螢火）──
+  const WEATHER_CONFIGS = {
+    clear: { icon: '☀️', name: '晴朗', toast: '☀️ 天氣切換：群島晴朗，萬里無雲' },
+    sakura: { icon: '🌸', name: '櫻花', toast: '🌸 天氣切換：春日櫻花雨，暖粉花瓣微風飄落' },
+    sunset: { icon: '🌅', name: '夕陽', toast: '🌅 天氣切換：魔幻黃金夕陽，斜陽灑落金色海面' },
+    leaves: { icon: '🍁', name: '秋楓', toast: '🍁 天氣切換：秋風漸起，楓葉隨風優雅旋轉' },
+    snow: { icon: '❄️', name: '飄雪', toast: '❄️ 天氣切換：冬日初雪，純白雪花靜靜飄落' },
+    aurora: { icon: '🌌', name: '極光', toast: '🌌 天氣切換：極光星夜與螢火蟲之森，奇幻光芒流轉' },
+    meteor: { icon: '🌠', name: '流星', toast: '🌠 天氣切換：流星雨降臨，向劃破夜空的繁星許願' }
+  };
+  const WEATHER_MODES_LIST = ['clear', 'sakura', 'sunset', 'leaves', 'snow', 'aurora', 'meteor'];
+
   function initWeatherMagicSystem() {
     // 1. ❄️ 奇幻飄雪粒子群 (320 朵立體六角雪花)
     snowParticlesGroup = new THREE.Group();
@@ -7492,54 +7716,159 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       leavesParticlesGroup.add(leaf);
     }
     scene.add(leavesParticlesGroup);
+
+    // 3. 🌸 春日櫻花雨粒子群 (260 片粉紅與淡白櫻花花瓣，帶水平風向偏移與旋轉飄落)
+    sakuraParticlesGroup = new THREE.Group();
+    sakuraParticlesGroup.visible = false;
+    const petalGeo = new THREE.ConeGeometry(0.15, 0.03, 5);
+    const petalColors = [0xfbcfe8, 0xf472b6, 0xffccd5, 0xffe4e6, 0xfce7f3];
+    const petalMats = petalColors.map(col => new THREE.MeshBasicMaterial({ color: col, side: THREE.DoubleSide, transparent: true, opacity: 0.92 }));
+    for (let i = 0; i < 260; i++) {
+      const petal = new THREE.Mesh(petalGeo, petalMats[i % petalMats.length]);
+      petal.position.set(
+        (Math.random() - 0.5) * 80,
+        Math.random() * 28,
+        (Math.random() - 0.5) * 56
+      );
+      petal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      petal.userData = {
+        fallSpeed: 0.032 + Math.random() * 0.04,
+        swaySpeed: 1.4 + Math.random() * 1.6,
+        phase: Math.random() * Math.PI * 2,
+        rotSpeed: 0.02 + Math.random() * 0.04,
+        windDrift: 0.022 + Math.random() * 0.025
+      };
+      sakuraParticlesGroup.add(petal);
+    }
+    scene.add(sakuraParticlesGroup);
+
+    // 4. 🌌 極光星夜（夜空高處半透明波浪發光幾何帶 AdditiveBlending）
+    auroraGroup = new THREE.Group();
+    auroraGroup.visible = false;
+
+    // 極光帶 1：青綠色流光
+    const ribbonGeo1 = new THREE.PlaneGeometry(84, 16, 42, 6);
+    const ribbonMat1 = new THREE.MeshBasicMaterial({
+      color: 0x00ffcc,
+      transparent: true,
+      opacity: 0.55,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const ribbon1 = new THREE.Mesh(ribbonGeo1, ribbonMat1);
+    ribbon1.position.set(0, 33, -30);
+    ribbon1.rotation.x = Math.PI * 0.38;
+    const posArr1 = ribbonGeo1.attributes.position.array;
+    ribbon1.userData = { origPos: new Float32Array(posArr1) };
+    auroraGroup.add(ribbon1);
+
+    // 極光帶 2：紫粉色流光
+    const ribbonGeo2 = new THREE.PlaneGeometry(84, 14, 42, 6);
+    const ribbonMat2 = new THREE.MeshBasicMaterial({
+      color: 0xd946ef,
+      transparent: true,
+      opacity: 0.48,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const ribbon2 = new THREE.Mesh(ribbonGeo2, ribbonMat2);
+    ribbon2.position.set(0, 36, -34);
+    ribbon2.rotation.x = Math.PI * 0.40;
+    const posArr2 = ribbonGeo2.attributes.position.array;
+    ribbon2.userData = { origPos: new Float32Array(posArr2) };
+    auroraGroup.add(ribbon2);
+    scene.add(auroraGroup);
+
+    // 5. ✨ 螢火蟲之森（島嶼地面與樹林間飄飛暖黃色螢火蟲光點）
+    firefliesGroup = new THREE.Group();
+    firefliesGroup.visible = false;
+    const ffGeo = new THREE.SphereGeometry(0.09, 6, 6);
+    const ffMat = new THREE.MeshBasicMaterial({
+      color: 0xfef08a,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+    for (let i = 0; i < 95; i++) {
+      const ff = new THREE.Mesh(ffGeo, ffMat.clone());
+      ff.position.set(
+        (Math.random() - 0.5) * 62,
+        1.2 + Math.random() * 4.2,
+        (Math.random() - 0.5) * 46
+      );
+      ff.userData = {
+        baseX: ff.position.x,
+        baseY: ff.position.y,
+        baseZ: ff.position.z,
+        speed: 0.8 + Math.random() * 1.2,
+        phase: Math.random() * Math.PI * 2
+      };
+      firefliesGroup.add(ff);
+    }
+    scene.add(firefliesGroup);
   }
 
-  function cycleWeatherMagic() {
+  function setWeatherMode(mode) {
+    if (!WEATHER_CONFIGS[mode]) return;
+    currentWeatherMode = mode;
     playIslandSound('magic');
-    const modes = ['clear', 'snow', 'leaves', 'meteor'];
-    const nextIdx = (modes.indexOf(currentWeatherMode) + 1) % modes.length;
-    currentWeatherMode = modes[nextIdx];
 
     const btn = document.getElementById('weatherMagicBtn');
     const icon = document.getElementById('weatherBtnIcon');
     const text = document.getElementById('weatherBtnText');
+    const cfg = WEATHER_CONFIGS[mode];
 
-    if (snowParticlesGroup) snowParticlesGroup.visible = (currentWeatherMode === 'snow');
-    if (leavesParticlesGroup) leavesParticlesGroup.visible = (currentWeatherMode === 'leaves');
+    // 更新可見度
+    if (snowParticlesGroup) snowParticlesGroup.visible = (mode === 'snow');
+    if (leavesParticlesGroup) leavesParticlesGroup.visible = (mode === 'leaves');
+    if (sakuraParticlesGroup) sakuraParticlesGroup.visible = (mode === 'sakura');
+    if (auroraGroup) auroraGroup.visible = (mode === 'aurora');
+    if (firefliesGroup) firefliesGroup.visible = (mode === 'aurora');
 
-    if (currentWeatherMode === 'clear') {
-      if (btn) btn.classList.remove('active');
-      if (icon) icon.textContent = '✨';
-      if (text) text.textContent = '天氣';
-      showMiniToast('☀️ 天氣魔法：恢復晴朗清澈天際！');
-    } else if (currentWeatherMode === 'snow') {
-      if (btn) btn.classList.add('active');
-      if (icon) icon.textContent = '❄️';
-      if (text) text.textContent = '飄雪';
-      showMiniToast('❄️ 天氣魔法：中古世紀奇幻瑞雪紛飛！');
-    } else if (currentWeatherMode === 'leaves') {
-      if (btn) btn.classList.add('active');
-      if (icon) icon.textContent = '🍁';
-      if (text) text.textContent = '楓葉';
-      showMiniToast('🍁 天氣魔法：黃金秋楓隨風飄舞！');
-    } else if (currentWeatherMode === 'meteor') {
-      if (btn) btn.classList.add('active');
-      if (icon) icon.textContent = '🌠';
-      if (text) text.textContent = '流星';
-      // 自動切換至璀璨星夜，讓流星雨在銀河下閃耀
+    // 下拉選單 active 狀態
+    document.querySelectorAll('.weather-opt-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.weather === mode);
+    });
+
+    if (btn) btn.classList.toggle('active', mode !== 'clear');
+    if (icon) icon.textContent = cfg.icon;
+    if (text) text.textContent = cfg.name;
+
+    // 天氣模式環境光與日夜聯動
+    if (mode === 'sunset') {
+      isAutoDayNight = false;
+      manualTimeLock = true;
+      targetCycle = 0.49;
+    } else if (mode === 'aurora') {
+      isAutoDayNight = false;
+      manualTimeLock = true;
+      targetCycle = 0.75;
+    } else if (mode === 'meteor') {
       isAutoDayNight = false;
       manualTimeLock = true;
       targetCycle = 0.75;
       for (let k = 0; k < 5; k++) spawnShootingStar();
-      showMiniToast('🌠 天氣魔法：夜空降下璀璨許願流星雨！快許下健康與財富心願！');
+    } else if (mode === 'clear') {
+      isAutoDayNight = true;
+      manualTimeLock = false;
+      targetCycle = 0.25;
     }
+
+    showMiniToast(cfg.toast);
+  }
+
+  function cycleWeatherMagic() {
+    const nextIdx = (WEATHER_MODES_LIST.indexOf(currentWeatherMode) + 1) % WEATHER_MODES_LIST.length;
+    setWeatherMode(WEATHER_MODES_LIST[nextIdx]);
   }
 
   function spawnShootingStar() {
     if (shootingStars.length > 14) return;
     const group = new THREE.Group();
 
-    // 耀眼流星頭 + 漸細長光尾
+    // 流星頭 + 漸層長尾
     const headMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
     const head = new THREE.Mesh(new THREE.OctahedronGeometry(0.32, 0), headMat);
     group.add(head);
@@ -7557,7 +7886,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     const tail = new THREE.Mesh(tailGeo, tailMat);
     group.add(tail);
 
-    // 從天際高處斜掠而下
+    // 隨機起點與速度
     const startX = -38 + Math.random() * 55;
     const startY = 22 + Math.random() * 16;
     const startZ = -18 - Math.random() * 28;
@@ -7581,7 +7910,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
   }
 
   function updateWeatherMagic(elapsedTime) {
-    // 1. ❄️ 飄雪更新
+    // 1. ❄️ 雪花飄落
     if (currentWeatherMode === 'snow' && snowParticlesGroup) {
       snowParticlesGroup.children.forEach(flake => {
         const u = flake.userData;
@@ -7594,7 +7923,7 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
     }
 
-    // 2. 🍁 黃金落葉更新
+    // 2. 🍁 楓葉旋轉飄落
     if (currentWeatherMode === 'leaves' && leavesParticlesGroup) {
       leavesParticlesGroup.children.forEach(leaf => {
         const u = leaf.userData;
@@ -7609,7 +7938,54 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
       });
     }
 
-    // 3. 🌠 流星雨更新
+    // 3. 🌸 春日櫻花雨（微風水平漂移 + 旋轉）
+    if (currentWeatherMode === 'sakura' && sakuraParticlesGroup) {
+      sakuraParticlesGroup.children.forEach(petal => {
+        const u = petal.userData;
+        petal.position.y -= u.fallSpeed;
+        petal.position.x += Math.sin(elapsedTime * u.swaySpeed + u.phase) * 0.03 + u.windDrift;
+        petal.position.z += Math.cos(elapsedTime * (u.swaySpeed * 0.8) + u.phase) * 0.02;
+        petal.rotation.x += u.rotSpeed;
+        petal.rotation.y += u.rotSpeed * 1.3;
+        petal.rotation.z += u.rotSpeed * 0.7;
+        if (petal.position.y < 0.02) {
+          petal.position.y = 26 + Math.random() * 4;
+          petal.position.x = (Math.random() - 0.5) * 80;
+        }
+      });
+    }
+
+    // 4. 🌌 極光波動（頂點波浪位移）
+    if (currentWeatherMode === 'aurora' && auroraGroup) {
+      auroraGroup.children.forEach((ribbon, rIdx) => {
+        const posAttr = ribbon.geometry.attributes.position;
+        const origArr = ribbon.userData.origPos;
+        if (!origArr) return;
+        const count = posAttr.count;
+        const waveSpeed = elapsedTime * 1.6 + rIdx * 1.2;
+        for (let i = 0; i < count; i++) {
+          const ox = origArr[i * 3];
+          const oy = origArr[i * 3 + 1];
+          const wave = Math.sin(waveSpeed + ox * 0.12) * 1.8 + Math.cos(elapsedTime * 0.9 + ox * 0.06) * 1.1;
+          posAttr.setY(i, oy + wave);
+        }
+        posAttr.needsUpdate = true;
+      });
+
+      // 螢火蟲微浮動與呼吸閃爍
+      if (firefliesGroup) {
+        firefliesGroup.children.forEach(ff => {
+          const u = ff.userData;
+          const t = elapsedTime * u.speed + u.phase;
+          ff.position.x = u.baseX + Math.sin(t * 1.2) * 0.8;
+          ff.position.y = u.baseY + Math.sin(t * 2.0) * 0.45;
+          ff.position.z = u.baseZ + Math.cos(t * 1.0) * 0.8;
+          ff.material.opacity = 0.25 + 0.65 * (0.5 + 0.5 * Math.sin(elapsedTime * 4.0 + u.phase));
+        });
+      }
+    }
+
+    // 5. 🌠 流星雨
     if (currentWeatherMode === 'meteor' && Math.random() < 0.14) {
       spawnShootingStar();
     }
@@ -8435,6 +8811,13 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
         cycleWeatherMagic();
       });
     }
+    document.querySelectorAll('.weather-opt-btn').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode = opt.dataset.weather;
+        if (mode) setWeatherMode(mode);
+      });
+    });
 
     // 🔊 音效開關切換按鈕
     const toggleSoundBtn = document.getElementById('toggleSoundBtn');
@@ -8938,7 +9321,10 @@ const ISLAND_ARTICLES_MAP: Record<string, any[]> = {
     // 6. 相機飛行補間更新
     updateCameraFlight();
 
-    controls.update();
+    // 騎乘赤紅巨龍或大海龜時暫時停用 controls.update，由 requestAnimationFrame 動態更新追尾攝影機
+    if (!isDragonRideMode && !isTurtleRideMode) {
+      controls.update();
+    }
     renderer.render(scene, camera);
     updateBadgeOcclusion();
     cssRenderer.render(scene, camera);

@@ -1,11 +1,11 @@
 ---
 title: "【大腸息肉】【實證】鋸齒狀腺瘤 Serrated Adenoma"
-coverImage: "【大腸息肉】【實證】鋸齒狀腺瘤 Serrated Adenoma.webp"
 category: "內視鏡檢查"
 publishDate: "2026-10-28"
 draft: false
 slug: "大腸息肉實證鋸齒狀腺瘤-serrated-adenoma"
 order: 30
+coverImage: "【大腸息肉】【實證】鋸齒狀腺瘤 Serrated Adenoma.webp"
 ---
 ## 📖 一、整體導讀：大腸鏡防癌盲區的「隱形殺手」
 
