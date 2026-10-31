@@ -191,116 +191,85 @@ import Layout from '../../layouts/Layout.astro';
         <!-- Orbit Controls Guidance Hint (Top Right) -->
         <div class="orbit-hint hide-mobile">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-          <span><strong>滑鼠左鍵拖曳</strong>：360° 空間旋轉 ｜ <strong>滾輪</strong>：拉近縮放 ｜ <strong>下方滑桿</strong>：內視鏡深度</span>
+          <span><strong>360° 空間旋轉</strong> · <strong>滾輪縮放</strong></span>
         </div>
 
-        <!-- Mode Tabs: Scope Navigation vs Polyp Progression -->
-        <div class="canvas-mode-tabs">
-          <button class="mode-tab-btn active" id="tab-btn-scope" onclick="switchColonControlTab('scope')">🔭 大腸鏡進鏡深度</button>
-          <button class="mode-tab-btn" id="tab-btn-progression" onclick="switchColonControlTab('progression')">🩺 大腸息肉癌變時序演變</button>
-        </div>
-
-        <!-- 大腸息肉生成 4 階段控制卡片 (Disease Progression Slider) -->
-        <div class="canvas-progression-bar" id="canvas-colon-progression-bar" style="display: none;">
-          <div class="prog-header">
-            <div class="prog-title-group">
-              <span class="prog-badge">臨床時序</span>
-              <span class="prog-main-title">大腸腺瘤至腺癌演變時序 (Adenoma-Carcinoma Sequence)</span>
-            </div>
-            <button class="prog-autoplay-btn" id="btn-colon-autoplay" onclick="toggleColonAutoplay()" title="自動播放病情演變過程">
-              <span id="colon-play-icon">▶</span>
-              <span id="colon-play-text">自動演變</span>
-            </button>
-          </div>
-
-          <!-- 4 階段快捷切換按鈕 -->
-          <div class="steatosis-stage-pills">
-            <button class="stage-pill active" data-stage="0" onclick="setColonProgressionStage(0)">
-              <span class="pill-dot stage-0"></span>正常腸黏膜
-            </button>
-            <button class="stage-pill" data-stage="1" onclick="setColonProgressionStage(1)">
-              <span class="pill-dot stage-1"></span>小型管狀腺瘤 (&lt;5mm)
-            </button>
-            <button class="stage-pill" data-stage="2" onclick="setColonProgressionStage(2)">
-              <span class="pill-dot stage-2"></span>進行性腺瘤 (有莖 &gt;10mm)
-            </button>
-            <button class="stage-pill" data-stage="3" onclick="setColonProgressionStage(3)">
-              <span class="pill-dot stage-3"></span>浸潤性大腸癌 (潰瘍狹窄)
-            </button>
-          </div>
-
-          <!-- 進展滑桿 -->
-          <div class="prog-slider-wrapper">
-            <input type="range" id="slider-colon-prog" min="0" max="3" step="1" value="0" oninput="setColonProgressionStage(parseInt(this.value))">
-            <div class="prog-slider-milestones">
-              <span>正常健康粉紅</span>
-              <span>微小息肉丘疹</span>
-              <span>巨大有莖異型增生</span>
-              <span>菜花浸潤火山口</span>
+        <!-- 整合式底部控制容器：Mode Tabs 位於頂端自然流式排列，絕對不遮擋滑桿 -->
+        <div class="canvas-controls-container" id="canvas-controls-container">
+          <div class="canvas-mode-tabs-bar">
+            <div class="canvas-mode-tabs">
+              <button class="mode-tab-btn active" id="tab-btn-scope" onclick="switchColonControlTab('scope')">🔭 大腸鏡進鏡深度</button>
+              <button class="mode-tab-btn" id="tab-btn-progression" onclick="switchColonControlTab('progression')">🩺 大腸息肉時序演變</button>
             </div>
           </div>
 
-          <!-- 臨床衛教與處置建議卡 -->
-          <div class="prog-clinical-card" id="colon-clinical-card">
-            <!-- 動態填入 -->
-          </div>
-        </div>
-
-        <!-- 第一人稱大腸鏡腔內飛行巡航 HUD 懸浮視窗 -->
-        <div class="flythrough-hud-overlay" id="colon-flythrough-hud" style="display: none;">
-          <div class="fly-top-badge">
-            <div class="fly-indicator-pulse"></div>
-            <span id="fly-colon-status-text">大腸鏡腔內飛行巡航進行中 · 直腸段 (5cm)</span>
-          </div>
-
-          <!-- AI 輔助息肉偵測綠色科技提示框 (CADe / CADx Alert) -->
-          <div class="fly-ai-alert" id="fly-ai-alert" style="display: none;">
-            <div class="ai-box-header">
-              <span class="ai-box-badge">🟢 內視鏡 AI 即時辨識 (CADe / CADx)</span>
-              <span class="ai-box-confidence">信心度 98.6%</span>
-            </div>
-            <div class="ai-box-body">
-              <strong>發現病灶：</strong>乙狀結腸 0.8cm 腺瘤性息肉 (Paris 0-Ip 有蒂型)
-            </div>
-            <div class="ai-box-footer">
-              <span>處置指引：建議進行<strong>冷息肉圈切術 (CSP)</strong>，100% 阻斷癌變途徑！</span>
+          <!-- Scope Slider Control Bar (0 ~ 100cm) -->
+          <div class="canvas-scope-bar" id="canvas-scope-bar">
+            <div class="control-row scope-card" style="margin-bottom: 0;">
+              <div class="control-label-group">
+                <span style="color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                  大腸鏡進鏡深度 (Scope Depth)
+                </span>
+                <span id="txt-scope-cm" class="scope-cm-badge">0 cm</span>
+              </div>
+              <input type="range" id="slider-scope" min="0" max="100" value="0" step="1" oninput="onScopeSlider(this.value)">
+              <div class="scope-milestones">
+                <span>肛門 (0cm)</span>
+                <span>乙狀結腸 (35cm)</span>
+                <span>脾曲 (55cm)</span>
+                <span>盲腸 (100cm)</span>
+              </div>
+              <div class="scope-status-box" id="scope-status-box">
+                <span class="scope-status-icon">📍</span>
+                <span id="scope-status-text">內視鏡位於肛門口，準備進入直腸。</span>
+              </div>
             </div>
           </div>
 
-          <!-- 盲腸達標 (Cecal Intubation) 提示框 -->
-          <div class="fly-cecum-alert" id="fly-cecum-alert" style="display: none;">
-            🎯 抵達全大腸檢查終點 (Cecal Intubation 100cm) · 目視闌尾開口與迴盲瓣
-          </div>
+          <!-- 大腸息肉生成 4 階段控制卡片 (Disease Progression Slider) -->
+          <div class="canvas-progression-bar" id="canvas-colon-progression-bar" style="display: none;">
+            <div class="prog-header">
+              <div class="prog-title-group">
+                <span class="prog-badge">臨床時序</span>
+                <span class="prog-main-title">大腸腺瘤至腺癌演變時序 (Adenoma-Carcinoma Sequence)</span>
+              </div>
+              <button class="prog-autoplay-btn" id="btn-colon-autoplay" onclick="toggleColonAutoplay()" title="自動播放病情演變過程">
+                <span id="colon-play-icon">▶</span>
+                <span id="colon-play-text">自動演變</span>
+              </button>
+            </div>
 
-          <div class="fly-bottom-controls">
-            <button class="fly-ctrl-btn" id="btn-colon-fly-pause" onclick="toggleColonFlyPause()">⏸ 暫停</button>
-            <div class="fly-progress-bar-wrap">
-              <div class="fly-progress-fill" id="fly-colon-progress-fill" style="width: 5%;"></div>
+            <!-- 4 階段快捷切換按鈕 -->
+            <div class="steatosis-stage-pills">
+              <button class="stage-pill active" data-stage="0" onclick="setColonProgressionStage(0)">
+                <span class="pill-dot stage-0"></span>正常腸黏膜
+              </button>
+              <button class="stage-pill" data-stage="1" onclick="setColonProgressionStage(1)">
+                <span class="pill-dot stage-1"></span>小型管狀腺瘤 (<5mm)
+              </button>
+              <button class="stage-pill" data-stage="2" onclick="setColonProgressionStage(2)">
+                <span class="pill-dot stage-2"></span>進行性腺瘤 (有莖 >10mm)
+              </button>
+              <button class="stage-pill" data-stage="3" onclick="setColonProgressionStage(3)">
+                <span class="pill-dot stage-3"></span>浸潤性大腸癌 (潰瘍狹窄)
+              </button>
             </div>
-            <button class="fly-exit-btn" onclick="exitColonFlythrough()">⏹ 退出巡航 (回到 3D)</button>
-          </div>
-        </div>
 
-        <!-- Scope Slider Control Bar (Embedded at Bottom of Center 3D Stage on Desktop & Mobile) -->
-        <div class="canvas-scope-bar" id="canvas-scope-bar">
-          <div class="control-row scope-card" style="margin-bottom: 0;">
-            <div class="control-label-group">
-              <span style="color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-                大腸鏡進鏡深度 (Scope Depth)
-              </span>
-              <span id="txt-scope-cm" class="scope-cm-badge">0 cm</span>
+            <!-- 進展滑桿 -->
+            <div class="prog-slider-wrapper">
+              <input type="range" id="slider-colon-prog" min="0" max="3" step="1" value="0" oninput="setColonProgressionStage(parseInt(this.value))">
+              <div class="prog-slider-milestones">
+                <span>正常健康粉紅</span>
+                <span>微小息肉丘疹</span>
+                <span>巨大有莖異型增生</span>
+                <span>菜花浸潤火山口</span>
+              </div>
             </div>
-            <input type="range" id="slider-scope" min="0" max="100" value="0" step="1" oninput="onScopeSlider(this.value)">
-            <div class="scope-milestones">
-              <span>肛門 (0cm)</span>
-              <span>乙狀結腸 (35cm)</span>
-              <span>脾曲 (55cm)</span>
-              <span>盲腸 (100cm)</span>
-            </div>
-            <div class="scope-status-box" id="scope-status-box">
-              <span class="scope-status-icon">📍</span>
-              <span id="scope-status-text">內視鏡位於肛門口，準備進入直腸。</span>
+
+            <!-- 臨床衛教與處置建議卡 -->
+            <div class="prog-clinical-card" id="colon-clinical-card">
+              <!-- 動態填入 -->
             </div>
           </div>
         </div>
@@ -917,29 +886,109 @@ import Layout from '../../layouts/Layout.astro';
       const serosaMesh = new THREE.Mesh(serosaGeom, serosaMat);
       colonMasterGroup.add(serosaMesh);
 
-      // --- B. Multi-Layered Wall Cut Border Rims ---
+      // --- B. Multi-Layered Wall Cut Border Rims (Wrapped in group for toggling) ---
+      colonCutRimsGroup = new THREE.Group();
+
       const leftCurve = new THREE.CatmullRomCurve3(leftLipPoints);
       const leftRimGeom = new THREE.TubeGeometry(leftCurve, 140, 0.052, 10, false);
       const leftRimMesh = new THREE.Mesh(leftRimGeom, wallCutMat);
       leftRimMesh.scale.set(1.0, 1.0, 0.42);
-      colonMasterGroup.add(leftRimMesh);
+      colonCutRimsGroup.add(leftRimMesh);
 
       const rightCurve = new THREE.CatmullRomCurve3(rightLipPoints);
       const rightRimGeom = new THREE.TubeGeometry(rightCurve, 140, 0.052, 10, false);
       const rightRimMesh = new THREE.Mesh(rightRimGeom, wallCutMat);
       rightRimMesh.scale.set(1.0, 1.0, 0.42);
-      colonMasterGroup.add(rightRimMesh);
+      colonCutRimsGroup.add(rightRimMesh);
 
       // Submucosal Glistening Stripe on Cut Border
       const leftSubGeom = new THREE.TubeGeometry(leftCurve, 140, 0.026, 8, false);
       const leftSubMesh = new THREE.Mesh(leftSubGeom, submucosaStripeMat);
       leftSubMesh.position.set(0, 0, -0.012);
-      colonMasterGroup.add(leftSubMesh);
+      colonCutRimsGroup.add(leftSubMesh);
 
       const rightSubGeom = new THREE.TubeGeometry(rightCurve, 140, 0.026, 8, false);
       const rightSubMesh = new THREE.Mesh(rightSubGeom, submucosaStripeMat);
       rightSubMesh.position.set(0, 0, -0.012);
-      colonMasterGroup.add(rightSubMesh);
+      colonCutRimsGroup.add(rightSubMesh);
+
+      colonMasterGroup.add(colonCutRimsGroup);
+
+      // --- Anterior Closed Tubular Half (Visible ONLY in Flythrough Mode for 360° Insufflated Lumen) ---
+      const antPositions = [];
+      const antUvs = [];
+      const antIndices = [];
+      const antStartTheta = 0.0 - 0.08;
+      const antEndTheta = Math.PI + 0.08;
+
+      for (let i = 0; i <= numRings; i++) {
+        const u = (i / numRings) * 0.92;
+        const pt = colonSplineCurve.getPoint(u);
+        const tangent = colonSplineCurve.getTangent(u).normalize();
+
+        let normalVec = new THREE.Vector3(0, 0, 1).cross(tangent).normalize();
+        if (normalVec.lengthSq() < 0.01) normalVec = new THREE.Vector3(1, 0, 0).cross(tangent).normalize();
+        const binormalVec = new THREE.Vector3().crossVectors(tangent, normalVec).normalize();
+
+        let baseR = 0.35;
+        if (u < 0.12) baseR = 0.40;
+        else if (u < 0.35) baseR = 0.31;
+        else if (u < 0.74) baseR = 0.36;
+        else baseR = 0.39 + (u - 0.74) * 0.14;
+
+        let haustraFactor = 0.0;
+        if (u >= 0.14) {
+          const haustraPeriod = 22.0;
+          const haustraWave = Math.sin(u * Math.PI * 2 * haustraPeriod);
+          haustraFactor = Math.pow(Math.max(0.0, haustraWave), 1.5) * 0.24;
+        }
+
+        for (let j = 0; j <= radialSegs; j++) {
+          const v = j / radialSegs;
+          const theta = antStartTheta + v * (antEndTheta - antStartTheta);
+
+          const taeniaIndent = Math.pow(Math.cos(1.5 * theta), 4.0);
+          const haustraPouch = haustraFactor * (1.0 - 0.65 * taeniaIndent);
+
+          let shapeMod = 1.0;
+          if (u > 0.55 && u < 0.78) {
+            shapeMod = 1.0 + 0.08 * Math.cos(3 * theta);
+          }
+
+          const r = baseR * (1.0 + haustraPouch) * shapeMod;
+          const cx = Math.cos(theta) * r;
+          const cy = Math.sin(theta) * r;
+
+          const vx = pt.x + normalVec.x * cx + binormalVec.x * cy;
+          const vy = pt.y + normalVec.y * cx + binormalVec.y * cy;
+          const vz = pt.z + normalVec.z * cx + binormalVec.z * cy;
+
+          antPositions.push(vx, vy, vz);
+          antUvs.push(u, v);
+        }
+      }
+
+      for (let i = 0; i < numRings; i++) {
+        for (let j = 0; j < radialSegs; j++) {
+          const a = i * (radialSegs + 1) + j;
+          const b = (i + 1) * (radialSegs + 1) + j;
+          const c = (i + 1) * (radialSegs + 1) + (j + 1);
+          const d = i * (radialSegs + 1) + (j + 1);
+
+          antIndices.push(a, d, b);
+          antIndices.push(b, d, c);
+        }
+      }
+
+      const antGeom = new THREE.BufferGeometry();
+      antGeom.setAttribute('position', new THREE.Float32BufferAttribute(antPositions, 3));
+      antGeom.setAttribute('uv', new THREE.Float32BufferAttribute(antUvs, 2));
+      antGeom.setIndex(antIndices);
+      antGeom.computeVertexNormals();
+
+      anteriorColonMesh = new THREE.Mesh(antGeom, colonMaterial);
+      anteriorColonMesh.visible = false;
+      colonMasterGroup.add(anteriorColonMesh);
 
       // --- C. Crescent Semilunar Folds (結腸半月襞, Plicae Semilunares) ---
       // Sharp crescentic inward shelves between haustra chambers
@@ -1035,6 +1084,13 @@ import Layout from '../../layouts/Layout.astro';
       cecumBowlMesh.rotation.x = -Math.PI / 2;
       cecumBowlMesh.rotation.z = Math.PI / 3;
       cecumSubGroup.add(cecumBowlMesh);
+
+      // Anterior Cecal Dome (Visible only in flythrough)
+      const antCecumGeom = new THREE.SphereGeometry(0.48, 24, 18, Math.PI * 0.9, Math.PI * 1.15, 0, Math.PI * 0.58);
+      anteriorCecumMesh = new THREE.Mesh(antCecumGeom, colonMaterial);
+      anteriorCecumMesh.rotation.copy(cecumBowlMesh.rotation);
+      anteriorCecumMesh.visible = false;
+      cecumSubGroup.add(anteriorCecumMesh);
 
       // Outer Serosa Shell for Cecum
       const cecumSerosaGeom = new THREE.SphereGeometry(0.495, 24, 18, 0, Math.PI * 1.15, 0, Math.PI * 0.58);
@@ -1729,13 +1785,32 @@ import Layout from '../../layouts/Layout.astro';
     let colonTimer = null;
     let colonProgressionMeshGroup = null;
 
-    // 虛擬第一人稱大腸鏡巡航參數
+    // 虛擬第一人稱大腸鏡巡航參數 (平穩防眩暈與 360° 封閉充氣管腔)
     let isColonFlythroughMode = false;
     let colonFlythroughT = 0.04;
     let isColonFlyPaused = false;
+    let colonFlySpeed = 0.00042; // ~3.5x slower (舒適平穩)
+    let colonSpeedMultiplier = 1.0;
+    let colonCurrentLookTarget = new THREE.Vector3();
+    let colonLookInitialized = false;
+    let anteriorColonMesh = null;
+    let anteriorCecumMesh = null;
+    let colonCutRimsGroup = null;
     let flySavedCamPos = new THREE.Vector3();
     let flySavedLookAt = new THREE.Vector3();
     let flyColonEndoLight = null;
+
+    function cycleColonFlySpeed() {
+      if (colonSpeedMultiplier === 1.0) {
+        colonSpeedMultiplier = 0.5;
+      } else if (colonSpeedMultiplier === 0.5) {
+        colonSpeedMultiplier = 2.0;
+      } else {
+        colonSpeedMultiplier = 1.0;
+      }
+      const btn = document.getElementById('btn-colon-fly-speed');
+      if (btn) btn.textContent = `速度: ${colonSpeedMultiplier}x`;
+    }
 
     function switchColonControlTab(tab) {
       const scopeBar = document.getElementById('canvas-scope-bar');
@@ -1956,6 +2031,12 @@ import Layout from '../../layouts/Layout.astro';
       controls.enabled = false;
       colonFlythroughT = 0.04;
       isColonFlyPaused = false;
+      colonLookInitialized = false;
+
+      // 啟動 360° 完整充氣管腔 (顯示前壁半管與前盲腸，隱藏剖切邊緣)
+      if (anteriorColonMesh) anteriorColonMesh.visible = true;
+      if (anteriorCecumMesh) anteriorCecumMesh.visible = true;
+      if (colonCutRimsGroup) colonCutRimsGroup.visible = false;
 
       // 備份相機狀態
       flySavedCamPos.copy(camera.position);
@@ -1987,12 +2068,18 @@ import Layout from '../../layouts/Layout.astro';
         });
       }
 
-      showToast('🚀 已啟動虛擬大腸鏡腔內飛行巡航！');
+      showToast('🚀 已啟動平穩大腸鏡腔內飛行巡航 (360° 充氣管腔)！');
     }
 
     function exitColonFlythrough() {
       isColonFlythroughMode = false;
       isColonFlyPaused = false;
+      colonLookInitialized = false;
+
+      // 恢復 3D 正面剖切觀 (隱藏前壁半管，還原剖切邊緣)
+      if (anteriorColonMesh) anteriorColonMesh.visible = false;
+      if (anteriorCecumMesh) anteriorCecumMesh.visible = false;
+      if (colonCutRimsGroup) colonCutRimsGroup.visible = true;
 
       // 隱藏 HUD
       const hud = document.getElementById('colon-flythrough-hud');
@@ -2033,9 +2120,10 @@ import Layout from '../../layouts/Layout.astro';
       // 虛擬大腸鏡第一人稱「腔內飛行巡航 (Fly-through)」
       if (isColonFlythroughMode && colonSplineCurve) {
         if (!isColonFlyPaused) {
-          colonFlythroughT += 0.0014; // 平滑前進
+          colonFlythroughT += colonFlySpeed * colonSpeedMultiplier; // 平緩放慢 3.5 倍
           if (colonFlythroughT >= 0.96) {
             colonFlythroughT = 0.04; // 循環巡航
+            colonLookInitialized = false;
           }
         }
 
@@ -2043,10 +2131,22 @@ import Layout from '../../layouts/Layout.astro';
         // 沿大腸曲線前進 (直腸 0cm 到盲腸 100cm)
         const tCurve = t * 0.92;
         const pt = colonSplineCurve.getPoint(tCurve);
-        const tan = colonSplineCurve.getTangent(tCurve).normalize();
 
         camera.position.copy(pt);
+        camera.up.set(0, 1, 0); // 嚴格鎖定水平軸，嚴禁翻滾傾斜
         if (flyColonEndoLight) flyColonEndoLight.position.copy(pt);
+
+        // 前瞻目標點 (t + 0.035) 搭配雲台平滑濾波 (Lerp 0.048)
+        const forwardT = Math.min(0.999, (t + 0.035) * 0.92);
+        const aheadPt = colonSplineCurve.getPoint(forwardT);
+
+        if (!colonLookInitialized) {
+          colonCurrentLookTarget.copy(aheadPt);
+          colonLookInitialized = true;
+        } else {
+          colonCurrentLookTarget.lerp(aheadPt, 0.048); // 電影級雲台防晃平滑
+        }
+        camera.lookAt(colonCurrentLookTarget);
 
         // 更新進度條
         const fillEl = document.getElementById('fly-colon-progress-fill');
@@ -2079,7 +2179,6 @@ import Layout from '../../layouts/Layout.astro';
         else if (cmEst >= 95) locName = '盲腸底與闌尾口 (Cecal Pole & ICV)';
 
         if (statusText) statusText.textContent = `大腸鏡腔內飛行巡航 · ${locName} (${cmEst}cm)`;
-        camera.lookAt(pt.clone().add(tan.clone().multiplyScalar(1.5)));
       } else {
         if (controls) controls.update();
       }

@@ -79,88 +79,58 @@ import Layout from '../../layouts/Layout.astro';
         </div>
         
         <div class="panel-body">
-          <!-- 4 Major Pathology Marker Toggles -->
+          <!-- 4 Major Pathology Marker Toggles (Decluttered) -->
           <div class="control-row pathology-section-box">
-            <div class="section-label" style="margin-bottom: 0.45rem;">
-              常見上消化道病灶 (點擊在 3D 胃壁呈現)
-            </div>
+            <div class="section-label">常見病灶標記</div>
             <div class="pathology-btn-grid">
               <button class="btn btn-pathology" id="btn-path-gerd" onclick="togglePathology('gerd')">
-                <span class="path-dot dot-gerd"></span>
-                胃食道逆流 (GERD)
+                <span class="path-dot dot-gerd"></span>胃食道逆流 (GERD)
               </button>
               <button class="btn btn-pathology" id="btn-path-ulcer" onclick="togglePathology('ulcer')">
-                <span class="path-dot dot-ulcer"></span>
-                消化性潰瘍 (GU / DU)
+                <span class="path-dot dot-ulcer"></span>消化性潰瘍 (GU/DU)
               </button>
               <button class="btn btn-pathology" id="btn-path-polyp" onclick="togglePathology('polyp')">
-                <span class="path-dot dot-polyp"></span>
-                胃息肉 (FGPs / 增生)
+                <span class="path-dot dot-polyp"></span>胃息肉 (FGPs/增生)
               </button>
               <button class="btn btn-pathology" id="btn-path-metaplasia" onclick="togglePathology('metaplasia')">
-                <span class="path-dot dot-metaplasia"></span>
-                萎縮性胃炎與腸化生
+                <span class="path-dot dot-metaplasia"></span>萎縮性胃炎/腸化生
               </button>
-            </div>
-            <div class="pathology-info-text" id="pathology-info-text">
-              點選上方按鈕可即時切換病灶位置與臨床處置說明。
             </div>
           </div>
 
-          <!-- Segment List -->
-          <div class="section-label">
-            點選解剖部位 (GASTRIC REGIONS)
-          </div>
+          <!-- Segment List (Clean, Layout does the explaining) -->
+          <div class="section-label" style="margin-top: 0.6rem;">解剖分段檢視</div>
           <div class="segment-grid-list">
             <div class="seg-card-btn" onclick="selectSegment('esophagus')" id="btn-seg-esophagus">
-              <div class="seg-card-top">
-                <span class="seg-num-pill">15~40cm</span>
-                <span class="seg-loc-tag">胸腔管腔</span>
-              </div>
-              <div class="seg-card-name">食道與下食道括約肌 (LES)</div>
+              <span class="seg-num-pill">15~40cm</span>
+              <div class="seg-card-name">食道與下食道括約肌</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('cardia')" id="btn-seg-cardia">
-              <div class="seg-card-top">
-                <span class="seg-num-pill">40cm (EGJ)</span>
-                <span class="seg-loc-tag">胃入口/Z-line</span>
-              </div>
+              <span class="seg-num-pill">40cm (EGJ)</span>
               <div class="seg-card-name">賁門 (Cardia)</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('fundus')" id="btn-seg-fundus">
-              <div class="seg-card-top">
-                <span class="seg-num-pill">J-turn 視角</span>
-                <span class="seg-loc-tag">左穹隆圓頂</span>
-              </div>
-              <div class="seg-card-name">胃底 (Fundus)</div>
+              <span class="seg-num-pill">J-turn 視角</span>
+              <div class="seg-card-name">胃底穹隆 (Fundus)</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('body')" id="btn-seg-body">
-              <div class="seg-card-top">
-                <span class="seg-num-pill">40~52cm</span>
-                <span class="seg-loc-tag">大彎、小彎與胃皺襞</span>
-              </div>
-              <div class="seg-card-name">胃體與胃皺襞 (Body & Rugae)</div>
+              <span class="seg-num-pill">40~52cm</span>
+              <div class="seg-card-name">胃體與胃皺襞 (Body)</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('antrum')" id="btn-seg-antrum">
-              <div class="seg-card-top">
-                <span class="seg-num-pill">52~58cm</span>
-                <span class="seg-loc-tag">胃角/幽門前區</span>
-              </div>
+              <span class="seg-num-pill">52~58cm</span>
               <div class="seg-card-name">胃竇與胃角 (Antrum)</div>
             </div>
 
             <div class="seg-card-btn" onclick="selectSegment('pylorus')" id="btn-seg-pylorus">
-              <div class="seg-card-top">
-                <span class="seg-num-pill">58~65cm</span>
-                <span class="seg-loc-tag">幽門括約肌/球部</span>
-              </div>
-              <div class="seg-card-name">幽門與十二指腸 (Pylorus)</div>
+              <span class="seg-num-pill">58~65cm</span>
+              <div class="seg-card-name">幽門與十二指腸</div>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -181,59 +151,7 @@ import Layout from '../../layouts/Layout.astro';
         <!-- 3D Orbit Interaction Hint (Top Right) -->
         <div class="orbit-hint hide-mobile">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-          <span>滑鼠左鍵拖曳：360° 空間旋轉 ｜ 滾輪：拉近縮放 ｜ 下方滑桿：胃鏡巡航</span>
-        </div>
-
-        <!-- Mode Tabs: Scope Navigation vs Mucosa Progression -->
-        <div class="canvas-mode-tabs">
-          <button class="mode-tab-btn active" id="tab-btn-scope" onclick="switchStomachControlTab('scope')">🔭 胃鏡推進標記</button>
-          <button class="mode-tab-btn" id="tab-btn-progression" onclick="switchStomachControlTab('progression')">🩺 胃黏膜病變時序演變</button>
-        </div>
-
-        <!-- 胃黏膜病變 4 階段控制卡片 (Disease Progression Slider) -->
-        <div class="canvas-progression-bar" id="canvas-gastric-progression-bar" style="display: none;">
-          <div class="prog-header">
-            <div class="prog-title-group">
-              <span class="prog-badge">臨床時序</span>
-              <span class="prog-main-title">胃黏膜病變演變時序 (Correa 多步驟致癌機轉)</span>
-            </div>
-            <button class="prog-autoplay-btn" id="btn-gastric-autoplay" onclick="toggleGastricAutoplay()" title="自動播放病情演變過程">
-              <span id="gastric-play-icon">▶</span>
-              <span id="gastric-play-text">自動演變</span>
-            </button>
-          </div>
-
-          <!-- 4 階段快捷切換按鈕 -->
-          <div class="steatosis-stage-pills">
-            <button class="stage-pill active" data-stage="0" onclick="setGastricProgressionStage(0)">
-              <span class="pill-dot stage-0"></span>正常胃黏膜
-            </button>
-            <button class="stage-pill" data-stage="1" onclick="setGastricProgressionStage(1)">
-              <span class="pill-dot stage-1"></span>表淺性胃炎
-            </button>
-            <button class="stage-pill" data-stage="2" onclick="setGastricProgressionStage(2)">
-              <span class="pill-dot stage-2"></span>萎縮性胃炎/腸化生
-            </button>
-            <button class="stage-pill" data-stage="3" onclick="setGastricProgressionStage(3)">
-              <span class="pill-dot stage-3"></span>早期胃癌 (Paris 0-IIc)
-            </button>
-          </div>
-
-          <!-- 進展滑桿 -->
-          <div class="prog-slider-wrapper">
-            <input type="range" id="slider-gastric-prog" min="0" max="3" step="1" value="0" oninput="setGastricProgressionStage(parseInt(this.value))">
-            <div class="prog-slider-milestones">
-              <span>正常健康粉紅</span>
-              <span>潮紅充血斑塊</span>
-              <span>蒼白變薄化生</span>
-              <span>惡性潰瘍糜爛</span>
-            </div>
-          </div>
-
-          <!-- 臨床衛教與處置建議卡 -->
-          <div class="prog-clinical-card" id="gastric-clinical-card">
-            <!-- 動態填入 -->
-          </div>
+          <span>360° 空間旋轉 · 滾輪縮放</span>
         </div>
 
         <!-- 第一人稱胃鏡腔內飛行巡航 HUD 懸浮視窗 -->
@@ -243,10 +161,11 @@ import Layout from '../../layouts/Layout.astro';
             <span id="fly-status-text">胃鏡腔內飛行巡航進行中 · 食道段 (25cm)</span>
           </div>
           <div class="fly-retroflexion-alert" id="fly-retroflexion-alert" style="display: none;">
-            🔄 胃鏡 J-turn 倒轉檢查 (Inversion View) · 仰望檢視賁門與胃底黏膜
+            🔄 胃鏡 J-turn 倒轉迴旋檢查 (Inversion View) · 仰望檢視胃底穹隆與賁門黏膜
           </div>
           <div class="fly-bottom-controls">
             <button class="fly-ctrl-btn" id="btn-fly-pause" onclick="toggleFlyPause()">⏸ 暫停</button>
+            <button class="fly-ctrl-btn" id="btn-gastric-fly-speed" onclick="cycleGastricFlySpeed()" title="切換巡航速度">速度: 1.0x</button>
             <div class="fly-progress-bar-wrap">
               <div class="fly-progress-fill" id="fly-progress-fill" style="width: 10%;"></div>
             </div>
@@ -254,26 +173,83 @@ import Layout from '../../layouts/Layout.astro';
           </div>
         </div>
 
-        <!-- Scope Slider Control Bar (Embedded at Bottom of Center 3D Stage on Desktop & Mobile) -->
-        <div class="canvas-scope-bar" id="canvas-scope-bar">
-          <div class="control-row scope-card" style="margin-bottom: 0;">
-            <div class="control-label-group">
-              <span style="color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-                胃鏡進鏡深度 (Scope Depth)
-              </span>
-              <span id="txt-scope-cm" class="scope-cm-badge">0 cm</span>
+        <!-- 整合式底部控制容器：Mode Tabs 位於頂端自然流式排列，絕對不壓在滑桿上 -->
+        <div class="canvas-controls-container" id="canvas-controls-container">
+          <div class="canvas-mode-tabs-bar">
+            <div class="canvas-mode-tabs">
+              <button class="mode-tab-btn active" id="tab-btn-scope" onclick="switchStomachControlTab('scope')">🔭 胃鏡推進深度</button>
+              <button class="mode-tab-btn" id="tab-btn-progression" onclick="switchStomachControlTab('progression')">🩺 胃黏膜時序演變</button>
             </div>
-            <input type="range" id="slider-scope" min="0" max="65" value="0" step="1" oninput="onScopeSlider(this.value)">
-            <div class="scope-milestones">
-              <span>門齒 (0cm)</span>
-              <span>賁門 (40cm)</span>
-              <span>胃竇 (55cm)</span>
-              <span>十二指腸 (65cm)</span>
+          </div>
+
+          <!-- Scope Slider Control Bar (0 ~ 70cm, 含 J-turn 倒轉刻度) -->
+          <div class="canvas-scope-bar" id="canvas-scope-bar">
+            <div class="control-row scope-card" style="margin-bottom: 0;">
+              <div class="control-label-group">
+                <span style="color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                  胃鏡進鏡深度 (Scope Depth)
+                </span>
+                <span id="txt-scope-cm" class="scope-cm-badge">0 cm</span>
+              </div>
+              <input type="range" id="slider-scope" min="0" max="70" value="0" step="1" oninput="onScopeSlider(this.value)">
+              <div class="scope-milestones">
+                <span>門齒 (0cm)</span>
+                <span>賁門 (40cm)</span>
+                <span>胃竇 (55cm)</span>
+                <span>十二指腸 (65cm)</span>
+                <span style="color: #f43f5e; font-weight: 800;">🔄 J-turn (70cm)</span>
+              </div>
+              <div class="scope-status-box" id="scope-status-box">
+                <span class="scope-status-icon">📍</span>
+                <span id="scope-status-text">內視鏡位於門齒口外，準備進入食道。</span>
+              </div>
             </div>
-            <div class="scope-status-box" id="scope-status-box">
-              <span class="scope-status-icon">📍</span>
-              <span id="scope-status-text">內視鏡位於門齒口外，準備進入食道。</span>
+          </div>
+
+          <!-- 胃黏膜病變 4 階段控制卡片 (Disease Progression Slider) -->
+          <div class="canvas-progression-bar" id="canvas-gastric-progression-bar" style="display: none;">
+            <div class="prog-header">
+              <div class="prog-title-group">
+                <span class="prog-badge">臨床時序</span>
+                <span class="prog-main-title">胃黏膜病變演變時序 (Correa 多步驟致癌機轉)</span>
+              </div>
+              <button class="prog-autoplay-btn" id="btn-gastric-autoplay" onclick="toggleGastricAutoplay()" title="自動播放病情演變過程">
+                <span id="gastric-play-icon">▶</span>
+                <span id="gastric-play-text">自動演變</span>
+              </button>
+            </div>
+
+            <!-- 4 階段快捷切換按鈕 -->
+            <div class="steatosis-stage-pills">
+              <button class="stage-pill active" data-stage="0" onclick="setGastricProgressionStage(0)">
+                <span class="pill-dot stage-0"></span>正常胃黏膜
+              </button>
+              <button class="stage-pill" data-stage="1" onclick="setGastricProgressionStage(1)">
+                <span class="pill-dot stage-1"></span>表淺性胃炎
+              </button>
+              <button class="stage-pill" data-stage="2" onclick="setGastricProgressionStage(2)">
+                <span class="pill-dot stage-2"></span>萎縮性胃炎/腸化生
+              </button>
+              <button class="stage-pill" data-stage="3" onclick="setGastricProgressionStage(3)">
+                <span class="pill-dot stage-3"></span>早期胃癌 (Paris 0-IIc)
+              </button>
+            </div>
+
+            <!-- 進展滑桿 -->
+            <div class="prog-slider-wrapper">
+              <input type="range" id="slider-gastric-prog" min="0" max="3" step="1" value="0" oninput="setGastricProgressionStage(parseInt(this.value))">
+              <div class="prog-slider-milestones">
+                <span>正常健康粉紅</span>
+                <span>潮紅充血斑塊</span>
+                <span>蒼白變薄化生</span>
+                <span>惡性潰瘍糜爛</span>
+              </div>
+            </div>
+
+            <!-- 臨床衛教與處置建議卡 -->
+            <div class="prog-clinical-card" id="gastric-clinical-card">
+              <!-- 動態填入 -->
             </div>
           </div>
         </div>
@@ -783,13 +759,31 @@ import Layout from '../../layouts/Layout.astro';
   let stomachRugaeMat = null;
   let egcCancerMesh = null;
 
-  // 虛擬第一人稱胃鏡巡航參數
+  // 虛擬第一人稱胃鏡巡航參數 (平穩防眩暈與 360° 封閉充氣管腔)
   let isFlythroughMode = false;
   let flythroughT = 0.05;
   let isFlyPaused = false;
+  let gastricFlySpeed = 0.00045; // ~3.5x slower (平緩舒適)
+  let gastricSpeedMultiplier = 1.0;
+  let gastricCurrentLookTarget = new THREE.Vector3();
+  let gastricLookInitialized = false;
+  let anteriorStomachMesh = null;
+  let stomachWallBorderGroup = null;
   let flySavedCamPos = new THREE.Vector3();
   let flySavedLookAt = new THREE.Vector3();
   let flyEndoLight = null;
+
+  function cycleGastricFlySpeed() {
+    if (gastricSpeedMultiplier === 1.0) {
+      gastricSpeedMultiplier = 0.5;
+    } else if (gastricSpeedMultiplier === 0.5) {
+      gastricSpeedMultiplier = 2.0;
+    } else {
+      gastricSpeedMultiplier = 1.0;
+    }
+    const btn = document.getElementById('btn-gastric-fly-speed');
+    if (btn) btn.textContent = `速度: ${gastricSpeedMultiplier}x`;
+  }
 
   function switchStomachControlTab(tab) {
     const scopeBar = document.getElementById('canvas-scope-bar');
@@ -948,6 +942,22 @@ import Layout from '../../layouts/Layout.astro';
     controls.enabled = false;
     flythroughT = 0.05;
     isFlyPaused = false;
+    gastricLookInitialized = false;
+
+    // 啟動 360° 完整充氣胃腔 (顯示前壁穹頂，隱藏剖切邊緣)
+    if (anteriorStomachMesh) anteriorStomachMesh.visible = true;
+    if (stomachWallBorderGroup) stomachWallBorderGroup.visible = false;
+
+    // 隱藏一般底部控制欄 (專注於巡航 HUD)
+    const controlsContainer = document.getElementById('canvas-controls-container');
+    if (controlsContainer) controlsContainer.style.display = 'none';
+
+    // 徹底隱藏胃鏡軟管、頭部與 3D 浮動標籤 (徹底消除圖二穿模高光白條與阻擋視線之文字)
+    if (scopeGroup) scopeGroup.visible = false;
+    if (scopeTubeMesh) scopeTubeMesh.visible = false;
+    Object.values(segmentLabelSprites).forEach(sprite => {
+      if (sprite) sprite.visible = false;
+    });
 
     // 保存預設相機視角以便退出時還原
     flySavedCamPos.copy(camera.position);
@@ -955,7 +965,7 @@ import Layout from '../../layouts/Layout.astro';
 
     // 建立腔內探照強效 LED 燈
     if (!flyEndoLight) {
-      flyEndoLight = new THREE.PointLight(0xfff8ed, 1.4, 4.0);
+      flyEndoLight = new THREE.PointLight(0xffffff, 2.8, 5.5);
       scene.add(flyEndoLight);
     }
     flyEndoLight.visible = true;
@@ -967,14 +977,33 @@ import Layout from '../../layouts/Layout.astro';
     const btn = document.getElementById('btn-flythrough');
     if (btn) btn.classList.add('active');
 
-    camera.fov = 68; // 胃鏡超廣角魚眼鏡頭感
+    camera.fov = 65; // 胃鏡超廣角鏡頭感
     camera.updateProjectionMatrix();
 
-    showToast('🚀 進入胃鏡腔內飛行巡航：體會真實無痛胃鏡微創視角！');
+    showToast('🚀 已啟動平穩胃鏡腔內飛行巡航 (360° 充氣胃腔)！');
   }
 
   function exitGastricFlythrough() {
     isFlythroughMode = false;
+    isFlyPaused = false;
+    gastricLookInitialized = false;
+
+    // 恢復 3D 正面剖切觀 (隱藏前壁穹頂，還原剖切邊緣)
+    if (anteriorStomachMesh) anteriorStomachMesh.visible = false;
+    if (stomachWallBorderGroup) stomachWallBorderGroup.visible = true;
+
+    // 還原一般底部控制欄
+    const controlsContainer = document.getElementById('canvas-controls-container');
+    if (controlsContainer) controlsContainer.style.display = 'flex';
+    switchStomachControlTab('scope');
+
+    // 還原胃鏡軟管、頭部與 3D 浮動標籤
+    if (scopeGroup) scopeGroup.visible = true;
+    if (scopeTubeMesh) scopeTubeMesh.visible = true;
+    Object.values(segmentLabelSprites).forEach(sprite => {
+      if (sprite) sprite.visible = true;
+    });
+
     controls.enabled = true;
 
     if (flyEndoLight) flyEndoLight.visible = false;
@@ -991,10 +1020,18 @@ import Layout from '../../layouts/Layout.astro';
     // 還原相機視角與 FOV
     camera.fov = 45;
     camera.updateProjectionMatrix();
-    camera.position.copy(flySavedCamPos);
-    controls.target.copy(flySavedLookAt);
 
-    showToast('⏹ 已退出巡航，返回 3D 自由解剖視角');
+    new TWEEN.Tween(camera.position)
+      .to(flySavedCamPos, 900)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .start();
+
+    new TWEEN.Tween(controls.target)
+      .to(flySavedLookAt, 900)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .start();
+
+    showToast('⏹ 已退出巡航，返回 3D 正面剖切視角');
   }
 
   function toggleFlyPause() {
@@ -1148,6 +1185,55 @@ import Layout from '../../layouts/Layout.astro';
       const backWallMesh = new THREE.Mesh(backWallGeom, mucosaMat);
       stomachMasterGroup.add(backWallMesh);
 
+      // --- Anterior Gastric Vault Dome (Visible ONLY in Flythrough Mode for 360° Insufflated Lumen) ---
+      const antPosArray = [];
+      const antUvsArray = [];
+      const antIdxArray = [];
+
+      for (let i = 0; i <= uSteps; i++) {
+        const u = i / uSteps;
+        const ptG = greaterCurve.getPoint(u);
+        const ptL = lesserCurve.getPoint(u);
+
+        for (let j = 0; j <= vSteps; j++) {
+          const v = j / vSteps;
+          const basePt = new THREE.Vector3().lerpVectors(ptL, ptG, v);
+          const spanDist = ptL.distanceTo(ptG);
+          const arch = Math.sin(v * Math.PI);
+          const uProfile = Math.sin(u * Math.PI);
+
+          let depthFactor = 0.58 + 0.52 * uProfile;
+          if (u < 0.25) depthFactor = 0.75 + (0.25 - u) * 0.8;
+          if (u > 0.75) depthFactor = 0.58 * (1.0 - (u - 0.75) * 1.5);
+
+          const depthZFront = +Math.pow(arch, 0.82) * (spanDist * 0.44 + 0.38) * depthFactor * 0.95;
+          antPosArray.push(basePt.x, basePt.y, depthZFront);
+          antUvsArray.push(u, v);
+        }
+      }
+
+      for (let i = 0; i < uSteps; i++) {
+        for (let j = 0; j < vSteps; j++) {
+          const a = i * (vSteps + 1) + j;
+          const b = (i + 1) * (vSteps + 1) + j;
+          const c = (i + 1) * (vSteps + 1) + (j + 1);
+          const d = i * (vSteps + 1) + (j + 1);
+
+          antIdxArray.push(a, d, b);
+          antIdxArray.push(b, d, c);
+        }
+      }
+
+      const frontWallGeom = new THREE.BufferGeometry();
+      frontWallGeom.setAttribute('position', new THREE.Float32BufferAttribute(antPosArray, 3));
+      frontWallGeom.setAttribute('uv', new THREE.Float32BufferAttribute(antUvsArray, 2));
+      frontWallGeom.setIndex(antIdxArray);
+      frontWallGeom.computeVertexNormals();
+
+      anteriorStomachMesh = new THREE.Mesh(frontWallGeom, mucosaMat);
+      anteriorStomachMesh.visible = false;
+      stomachMasterGroup.add(anteriorStomachMesh);
+
       // Outer Serosal Shell (Posterior exterior coat)
       const serosaPosArray = [];
       for (let k = 0; k < posArray.length; k += 3) {
@@ -1162,7 +1248,7 @@ import Layout from '../../layouts/Layout.astro';
       stomachMasterGroup.add(serosaMesh);
 
       // --- C. Multi-Layered Anatomical Wall Cut Border Rims ---
-      const wallBorderGroup = new THREE.Group();
+      const wallBorderGroup = stomachWallBorderGroup = new THREE.Group();
 
       // Muscularis Layer (Thick deep red muscular core)
       const greaterMuscGeom = new THREE.TubeGeometry(greaterCurve, 70, 0.082, 12, false);
@@ -1436,9 +1522,9 @@ import Layout from '../../layouts/Layout.astro';
         const subCurve = new THREE.CatmullRomCurve3(subPoints);
         const tubeGeom = new THREE.TubeGeometry(subCurve, numPoints * 2, 0.075, 10, false);
         const tubeMat = new THREE.MeshStandardMaterial({
-          color: 0x111827,
-          roughness: 0.2,
-          metalness: 0.8
+          color: 0x18181b,
+          roughness: 0.8,
+          metalness: 0.05
         });
         scopeTubeMesh = new THREE.Mesh(tubeGeom, tubeMat);
         scene.add(scopeTubeMesh);
@@ -1903,50 +1989,91 @@ import Layout from '../../layouts/Layout.astro';
       TWEEN.update();
 
       // 虛擬胃鏡第一人稱「腔內飛行巡航 (Fly-through)」
+      // 臨床真實順序：先一路進鏡抵達十二指腸 (65cm) ➔ 退鏡拉回至胃體 (50cm) ➔ 執行 J-turn 倒轉仰望賁門與胃底！
       if (isFlythroughMode && gastroscopySplineCurve) {
         if (!isFlyPaused) {
-          flythroughT += 0.0016; // 平滑前進
-          if (flythroughT >= 0.94) {
-            flythroughT = 0.05; // 循環巡航
+          flythroughT += gastricFlySpeed * gastricSpeedMultiplier; // 平緩舒適放慢
+          if (flythroughT >= 1.0) {
+            flythroughT = 0.02; // 重新循環巡航
+            gastricLookInitialized = false;
           }
         }
 
         const t = flythroughT;
-        const pt = gastroscopySplineCurve.getPoint(t);
-        const tan = gastroscopySplineCurve.getTangent(t).normalize();
-
-        camera.position.copy(pt);
-        if (flyEndoLight) flyEndoLight.position.copy(pt);
-
-        // 更新進度條
+        const statusText = document.getElementById('fly-status-text');
+        const alertEl = document.getElementById('fly-retroflexion-alert');
         const fillEl = document.getElementById('fly-progress-fill');
         if (fillEl) fillEl.style.width = `${Math.round(t * 100)}%`;
 
-        // 臨床深度估算 (0~65cm)
-        const cmEst = Math.round(t * 65);
-        const statusText = document.getElementById('fly-status-text');
-        const alertEl = document.getElementById('fly-retroflexion-alert');
-
-        // 🔄 標誌性 J-turn 倒轉檢查 (Inversion Maneuver)：位於胃體中下段 (t 在 0.44 ~ 0.58 之間)
-        if (t >= 0.44 && t <= 0.58) {
-          if (alertEl) alertEl.style.display = 'block';
-          if (statusText) statusText.textContent = `胃鏡 J-turn 倒轉檢查進行中 (深度約 48-52cm) · 回看賁門胃底`;
-
-          // 鏡頭大迴旋 180 度，抬頭仰視賁門 EGJ (-0.58, 1.4, 0)
-          const retroProg = Math.sin(((t - 0.44) / 0.14) * Math.PI);
-          const toCardia = new THREE.Vector3(-0.58, 1.4, 0.0).sub(pt).normalize();
-          const lookDir = tan.clone().lerp(toCardia, retroProg * 0.94).normalize();
-          camera.lookAt(pt.clone().add(lookDir));
-        } else {
+        // 階段 1：進鏡巡航 (0.00 ~ 0.68) -> 從門齒一路深入至十二指腸降段 (65cm)
+        if (t <= 0.68) {
           if (alertEl) alertEl.style.display = 'none';
+          const scopeCurveT = Math.min(0.999, (t / 0.68) * 0.98);
+          const pt = gastroscopySplineCurve.getPoint(scopeCurveT);
+          camera.position.copy(pt);
+          camera.up.set(0, 1, 0);
+          if (flyEndoLight) flyEndoLight.position.copy(pt);
+
+          const forwardCurveT = Math.min(0.999, scopeCurveT + 0.04);
+          const aheadPt = gastroscopySplineCurve.getPoint(forwardCurveT);
+
+          const cmEst = Math.round(scopeCurveT * 65);
           let locName = '食道段 (Esophagus)';
           if (cmEst >= 38 && cmEst < 44) locName = '賁門部 (Cardia / EGJ)';
           else if (cmEst >= 44 && cmEst < 54) locName = '胃體部 (Gastric Body)';
           else if (cmEst >= 54 && cmEst < 58) locName = '胃角與胃竇部 (Angulus & Antrum)';
-          else if (cmEst >= 58) locName = '幽門門環與十二指腸 (Pylorus & Duodenum)';
+          else if (cmEst >= 58) locName = '幽門與十二指腸 (Pylorus & Duodenum 65cm)';
 
-          if (statusText) statusText.textContent = `胃鏡腔內飛行巡航 · ${locName} (${cmEst}cm)`;
-          camera.lookAt(pt.clone().add(tan.clone().multiplyScalar(1.5)));
+          if (statusText) statusText.textContent = `胃鏡進鏡巡航 · ${locName} (${cmEst}cm)`;
+
+          if (!gastricLookInitialized) {
+            gastricCurrentLookTarget.copy(aheadPt);
+            gastricLookInitialized = true;
+          } else {
+            gastricCurrentLookTarget.lerp(aheadPt, 0.048); // 三軸防晃濾波
+          }
+          camera.lookAt(gastricCurrentLookTarget);
+        }
+        // 階段 2：退鏡拉回胃體 (0.68 ~ 0.80) -> 從十二指腸穩步退鏡回胃體下段 (約 50cm, T=0.52)
+        else if (t > 0.68 && t <= 0.80) {
+          if (alertEl) alertEl.style.display = 'none';
+          const pullBackRatio = (t - 0.68) / 0.12;
+          const currentT = 0.98 - pullBackRatio * (0.98 - 0.52);
+          const pt = gastroscopySplineCurve.getPoint(currentT);
+          camera.position.copy(pt);
+          camera.up.set(0, 1, 0);
+          if (flyEndoLight) flyEndoLight.position.copy(pt);
+
+          const lookPt = gastroscopySplineCurve.getPoint(Math.max(0.01, currentT - 0.03));
+          if (statusText) statusText.textContent = `胃鏡退鏡中 · 拉回胃體部 (50cm) 準備執行 J-turn 倒轉`;
+
+          gastricCurrentLookTarget.lerp(lookPt, 0.04);
+          camera.lookAt(gastricCurrentLookTarget);
+        }
+        // 階段 3：J-turn 倒轉迴旋檢查 (0.80 ~ 0.95) -> 於胃體下段向上仰望檢視胃底穹隆 (Fundus) 與賁門 (Cardia)
+        else if (t > 0.80 && t <= 0.95) {
+          if (alertEl) alertEl.style.display = 'block';
+          if (statusText) statusText.textContent = `🔄 胃鏡 J-turn 倒轉檢查：仰望檢視胃底穹隆 (Fundus) 與賁門 (Cardia)`;
+
+          const jTurnBasePt = gastroscopySplineCurve.getPoint(0.52);
+          camera.position.copy(jTurnBasePt);
+          camera.up.set(0, 1, 0);
+          if (flyEndoLight) flyEndoLight.position.copy(jTurnBasePt);
+
+          const cardiaPos = new THREE.Vector3(-0.58, 1.38, 0.0);
+          const fundusPos = new THREE.Vector3(0.55, 2.2, -0.1);
+          const targetInversion = cardiaPos.clone().lerp(fundusPos, 0.35);
+
+          gastricCurrentLookTarget.lerp(targetInversion, 0.035);
+          camera.lookAt(gastricCurrentLookTarget);
+        }
+        // 階段 4：J-turn 完成平滑回正 (0.95 ~ 1.00)
+        else {
+          if (alertEl) alertEl.style.display = 'none';
+          if (statusText) statusText.textContent = `J-turn 檢查完成 · 即將重新開始進鏡巡航...`;
+          const returnAhead = gastroscopySplineCurve.getPoint(0.55);
+          gastricCurrentLookTarget.lerp(returnAhead, 0.04);
+          camera.lookAt(gastricCurrentLookTarget);
         }
       } else {
         if (controls) controls.update();
