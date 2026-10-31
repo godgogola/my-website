@@ -202,20 +202,27 @@ export function syncBooks() {
           publishDate = fDate.toISOString().split('T')[0];
         } catch (e) {}
 
-        let title = chapterTitle;
+        let title = chapterTitle; // 統一以檔名為準（與 sync-obsidian.js 一致，避免 Obsidian 改名後 frontmatter 殘留舊標題）
         let coverImage = findCoverImage(chapterTitle, bookTitle);
         let draft = false;
 
         if (frontmatter) {
-          const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
           const dateMatch = frontmatter.match(/^publishDate:\s*(.+)$/m);
           const draftMatch = frontmatter.match(/^draft:\s*(.+)$/m);
           const coverMatch = frontmatter.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
 
-          if (titleMatch) title = titleMatch[1].replace(/['"]/g, '').trim();
           if (dateMatch) publishDate = dateMatch[1].replace(/['"]/g, '').trim();
           if (draftMatch) draft = draftMatch[1].trim() === 'true';
-          if (coverMatch) coverImage = coverMatch[1].trim();
+          if (coverMatch) {
+            const rawCover = coverMatch[1].trim();
+            // 若該封面圖在圖庫中存在，則沿用；若不存在（例如文章改名），則由 findCoverImage 接手
+            if (fs.existsSync(path.join(publicImagesDir, rawCover)) || fs.existsSync(path.join(gdriveImagesDir, rawCover))) {
+              coverImage = rawCover;
+            }
+          }
+        }
+        if (!coverImage) {
+          coverImage = findCoverImage(chapterTitle, bookTitle);
         }
 
         // 處理圖片嵌入 ![[...]]
