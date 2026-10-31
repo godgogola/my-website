@@ -946,15 +946,23 @@ import Layout from '../../layouts/Layout.astro';
 
     // 啟動 360° 完整充氣胃腔 (顯示前壁穹頂，隱藏剖切邊緣)
     if (anteriorStomachMesh) anteriorStomachMesh.visible = true;
-    if (stomachWallBorderGroup) stomachWallBorderGroup.visible = false;
+    if (stomachWallBorderGroup) {
+      stomachWallBorderGroup.visible = false;
+      stomachWallBorderGroup.traverse(child => { if (child.isMesh) child.visible = false; });
+    }
 
     // 隱藏一般底部控制欄 (專注於巡航 HUD)
     const controlsContainer = document.getElementById('canvas-controls-container');
     if (controlsContainer) controlsContainer.style.display = 'none';
 
-    // 徹底隱藏胃鏡軟管、頭部與 3D 浮動標籤 (徹底消除圖二穿模高光白條與阻擋視線之文字)
+    // 徹底隱藏與移除胃鏡軟管、頭部、聚焦光環與 3D 浮動標籤 (徹底消除圖二穿模高光白條與阻擋視線之文字)
+    if (scopeTubeMesh) {
+      scene.remove(scopeTubeMesh);
+      scopeTubeMesh.geometry?.dispose();
+      scopeTubeMesh = null;
+    }
     if (scopeGroup) scopeGroup.visible = false;
-    if (scopeTubeMesh) scopeTubeMesh.visible = false;
+    if (focusBeaconGroup) focusBeaconGroup.visible = false;
     Object.values(segmentLabelSprites).forEach(sprite => {
       if (sprite) sprite.visible = false;
     });
@@ -990,19 +998,24 @@ import Layout from '../../layouts/Layout.astro';
 
     // 恢復 3D 正面剖切觀 (隱藏前壁穹頂，還原剖切邊緣)
     if (anteriorStomachMesh) anteriorStomachMesh.visible = false;
-    if (stomachWallBorderGroup) stomachWallBorderGroup.visible = true;
+    if (stomachWallBorderGroup) {
+      stomachWallBorderGroup.visible = true;
+      stomachWallBorderGroup.traverse(child => { if (child.isMesh) child.visible = true; });
+    }
 
     // 還原一般底部控制欄
     const controlsContainer = document.getElementById('canvas-controls-container');
     if (controlsContainer) controlsContainer.style.display = 'flex';
     switchStomachControlTab('scope');
 
-    // 還原胃鏡軟管、頭部與 3D 浮動標籤
+    // 還原胃鏡軟管、頭部、聚焦光環與 3D 浮動標籤
     if (scopeGroup) scopeGroup.visible = true;
-    if (scopeTubeMesh) scopeTubeMesh.visible = true;
+    if (focusBeaconGroup) focusBeaconGroup.visible = true;
     Object.values(segmentLabelSprites).forEach(sprite => {
       if (sprite) sprite.visible = true;
     });
+    const curScopeCm = parseInt(document.getElementById('slider-scope')?.value || '0', 10);
+    updateGastroscopePosition(cmToProgressT(curScopeCm));
 
     controls.enabled = true;
 
@@ -1501,6 +1514,15 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     function updateGastroscopePosition(progressT) {
+      if (isFlythroughMode) {
+        if (scopeTubeMesh) {
+          scene.remove(scopeTubeMesh);
+          scopeTubeMesh.geometry?.dispose();
+          scopeTubeMesh = null;
+        }
+        if (scopeGroup) scopeGroup.visible = false;
+        return;
+      }
       if (!gastroscopySplineCurve || !scopeGroup) return;
 
       const tClamped = Math.max(0.001, Math.min(0.999, progressT));
@@ -1991,6 +2013,17 @@ import Layout from '../../layouts/Layout.astro';
       // 虛擬胃鏡第一人稱「腔內飛行巡航 (Fly-through)」
       // 臨床真實順序：先一路進鏡抵達十二指腸 (65cm) ➔ 退鏡拉回至胃體 (50cm) ➔ 執行 J-turn 倒轉仰望賁門與胃底！
       if (isFlythroughMode && gastroscopySplineCurve) {
+        if (scopeTubeMesh && scopeTubeMesh.parent) {
+          scene.remove(scopeTubeMesh);
+          scopeTubeMesh.geometry?.dispose();
+          scopeTubeMesh = null;
+        }
+        if (scopeGroup && scopeGroup.visible) scopeGroup.visible = false;
+        if (focusBeaconGroup && focusBeaconGroup.visible) focusBeaconGroup.visible = false;
+        Object.values(segmentLabelSprites).forEach(sprite => {
+          if (sprite && sprite.visible) sprite.visible = false;
+        });
+
         if (!isFlyPaused) {
           flythroughT += gastricFlySpeed * gastricSpeedMultiplier; // 平緩舒適放慢
           if (flythroughT >= 1.0) {
@@ -2352,21 +2385,45 @@ import Layout from '../../layouts/Layout.astro';
     box-shadow: 0 0 14px rgba(0, 229, 255, 0.35);
   }
 
-    /* 畫布控制分頁切換按鈕 */
+    /* 整合式底部控制容器：Mode Tabs 位於頂端自然流式排列，絕對不壓在滑桿上 */
+  .canvas-controls-container {
+    position: relative;
+    width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(8, 16, 32, 0.95);
+    border-top: 1px solid var(--border-color);
+    z-index: 30;
+    box-sizing: border-box;
+  }
+
+  .canvas-mode-tabs-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.65rem 1rem 0.25rem 1rem;
+    box-sizing: border-box;
+    background: transparent;
+  }
+
   .canvas-mode-tabs {
-    position: absolute;
-    bottom: 96px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
     display: inline-flex;
-    background: rgba(15, 23, 42, 0.88);
+    background: rgba(15, 23, 42, 0.9);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    padding: 4px;
+    padding: 3px 4px;
     border-radius: 9999px;
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    z-index: 50;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    z-index: 35;
     gap: 4px;
+    margin: 0 auto;
   }
   .mode-tab-btn {
     padding: 6px 14px;
@@ -2389,21 +2446,23 @@ import Layout from '../../layouts/Layout.astro';
 
   /* 胃黏膜病變時序控制面板 */
   .canvas-progression-bar {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    background: rgba(15, 23, 42, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(56, 189, 248, 0.35);
-    border-radius: 16px;
-    padding: 12px 16px;
-    z-index: 45;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0.25rem 1rem 0.65rem 1rem !important;
+    box-shadow: none !important;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .prog-header { display: flex; justify-content: space-between; align-items: center; }
   .prog-title-group { display: flex; align-items: center; gap: 8px; }
@@ -2599,10 +2658,12 @@ import Layout from '../../layouts/Layout.astro';
 
   .canvas-scope-bar {
     flex-shrink: 0;
-    padding: 0.75rem 1rem;
-    background: rgba(8, 16, 32, 0.95);
-    border-top: 1px solid var(--border-color);
+    padding: 0.25rem 1rem 0.65rem 1rem;
+    background: transparent;
+    border-top: none;
     z-index: 10;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   @media (min-width: 1151px) {
