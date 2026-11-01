@@ -122,6 +122,23 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
           <div class="header-divider"></div>
         </header>
 
+        {post.data.videoId && (
+          <div class="book-video-card">
+            <div class="video-container">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${post.data.videoId}?rel=0`}
+                title={`${post.data.title} - 3D 精華說書短影音`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="video-badge-bar">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>《{post.data.book}》3D 羊毛針氈定格導讀短影音</span>
+            </div>
+          </div>
+        )}
+
         <div class="article-content">
           <Content />
         </div>
@@ -247,6 +264,44 @@ const sortedBooks = Object.keys(bookGroups).sort((a, b) => a.localeCompare(b, 'z
 </script>
 
 <style>
+  /* ── 3D 羊毛針氈短影音嵌入播放器 ── */
+  .book-video-card {
+    margin: 1.5rem 0 2.2rem 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #073642;
+    border: 1px solid #D6D0BF;
+    box-shadow: 0 10px 30px rgba(7, 54, 66, 0.12), 0 2px 6px rgba(7, 54, 66, 0.06);
+  }
+  .book-video-card .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: #000;
+  }
+  .book-video-card .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .book-video-card .video-badge-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #FDF6E3;
+    background: #073642;
+  }
+  .book-video-card .video-badge-bar svg {
+    color: #2AA198;
+  }
+
   /* ── 全域背景：Antigravity 經典溫暖米色底 ── */
   :global(body) {
     background-color: #EEE8D5 !important;

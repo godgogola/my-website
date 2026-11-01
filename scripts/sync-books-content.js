@@ -204,12 +204,15 @@ export function syncBooks() {
 
         let title = chapterTitle; // 統一以檔名為準（與 sync-obsidian.js 一致，避免 Obsidian 改名後 frontmatter 殘留舊標題）
         let coverImage = findCoverImage(chapterTitle, bookTitle);
+        let videoId = '';
         let draft = false;
 
         if (frontmatter) {
           const dateMatch = frontmatter.match(/^publishDate:\s*(.+)$/m);
           const draftMatch = frontmatter.match(/^draft:\s*(.+)$/m);
           const coverMatch = frontmatter.match(/^coverImage:\s*["']?(.+?)["']?\s*$/m);
+          const videoMatch = frontmatter.match(/^videoId:\s*["']?(.+?)["']?\s*$/m);
+          if (videoMatch) videoId = videoMatch[1].trim();
 
           if (dateMatch) publishDate = dateMatch[1].replace(/['"]/g, '').trim();
           if (draftMatch) draft = draftMatch[1].trim() === 'true';
@@ -252,7 +255,8 @@ export function syncBooks() {
         });
 
         const coverLine = coverImage ? `\ncoverImage: "${coverImage}"` : '';
-        const finalFrontmatter = `---\ntitle: "${title}"\nbook: "${bookTitle}"\nbookSlug: "${bookSlug}"\ncategory: "${bookTitle}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slug}"\norder: ${order}${coverLine}\n---\n`;
+        const videoLine = videoId ? `\nvideoId: "${videoId}"` : '';
+        const finalFrontmatter = `---\ntitle: "${title}"\nbook: "${bookTitle}"\nbookSlug: "${bookSlug}"\ncategory: "${bookTitle}"\npublishDate: "${publishDate}"\ndraft: ${draft}\nslug: "${slug}"\norder: ${order}${coverLine}${videoLine}\n---\n`;
 
         fs.writeFileSync(outputPath, finalFrontmatter + processedBody, 'utf8');
         totalSynced++;
@@ -294,6 +298,6 @@ export function syncBooks() {
 }
 
 // 直接執行時執行 syncBooks
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (!process.argv[1] || path.resolve(process.argv[1]).toLowerCase() === fileURLToPath(import.meta.url).toLowerCase() || process.argv[1].endsWith('sync-books-content.js')) {
   syncBooks();
 }

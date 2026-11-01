@@ -16,6 +16,7 @@ const postsCollection = defineCollection({
     // SEO 專用欄位（覆蓋預設 title/description）
     meta_title: z.string().optional(),
     meta_description: z.string().optional(),
+    videoId: z.string().optional(),
   }),
 });
 

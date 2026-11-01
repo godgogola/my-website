@@ -28,3 +28,20 @@ pnpm-debug.log*
 
 # Backup orphaned images
 backup_orphaned_images/
+
+# Temporary media test files
+*.wav
+*.mp3
+*.aac
+bot_test_*
+check_*
+frame_*
+mouth_*
+orig_ckm_*
+sub1_*
+sub2_*
+t_*
+temp*
+test_*
+thumb_*
+vest_*
