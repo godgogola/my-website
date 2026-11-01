@@ -1,14 +1,16 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import VideoCard from '../../components/VideoCard.astro';
-import { videos, videoCategories } from '../../data/videos';
+import { videos, medicalCategories, getVideoSectionType } from '../../data/videos';
+
+const clinicVideos = videos.filter((v) => getVideoSectionType(v.category) === 'medical');
 
 // 計算各分類數量
-const categoryCounts = videoCategories.reduce((acc, cat) => {
+const categoryCounts = medicalCategories.reduce((acc, cat) => {
   if (cat === '全部') {
-    acc[cat] = videos.length;
+    acc[cat] = clinicVideos.length;
   } else {
-    acc[cat] = videos.filter((v) => v.category === cat).length;
+    acc[cat] = clinicVideos.filter((v) => v.category === cat).length;
   }
   return acc;
 }, {} as Record<string, number>);
@@ -42,7 +44,7 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     <!-- 分類過濾篩選器 (Tabs) -->
     <section class="video-filter-section" aria-label="影片分類篩選">
       <div class="filter-pills-wrap">
-        {videoCategories.map((cat, index) => (
+        {medicalCategories.map((cat, index) => (
           <button
             type="button"
             class:list={['filter-pill', { active: index === 0 }]}
@@ -58,7 +60,7 @@ const categoryCounts = videoCategories.reduce((acc, cat) => {
     <!-- 影片網格列表 (模式 A：預設隨機展示 4 部) -->
     <section class="videos-grid-section">
       <div class="videos-grid" id="videos-grid">
-        {videos.map((video) => (
+        {clinicVideos.map((video) => (
           <div class="video-grid-item" data-category={video.category} data-video-id={video.id} style="display: none;">
             <VideoCard video={video} isEmbed={true} />
           </div>

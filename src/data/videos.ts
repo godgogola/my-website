@@ -17,6 +17,29 @@ export interface VideoItem {
   articleTitle?: string;  // 【雙態卡片】對應衛教文章標題（選填）
 }
 
+export const medicalCategories = [
+  '全部',
+  '內視鏡檢查',
+  '肝膽胰疾病',
+  '胃部疾病',
+  '腸道疾病',
+  '慢性病',
+  '高血壓',
+  '高血脂',
+  '糖尿病',
+  '減重',
+  '健康飲食',
+  '要活就要動',
+  '健檢項目介紹',
+  '消化道癌症專區',
+] as const;
+
+export const bookCategories = [
+  '全部',
+  '漫步華爾街',
+  '你的人生，他們六個說了算!',
+] as const;
+
 export const videoCategories = [
   '全部',
   '內視鏡檢查',
@@ -36,7 +59,89 @@ export const videoCategories = [
   '漫步華爾街',
 ] as const;
 
+export function getVideoSectionType(category: string): 'medical' | 'book' {
+  if (category === '漫步華爾街' || category === '你的人生，他們六個說了算!') {
+    return 'book';
+  }
+  return 'medical';
+}
+
 export const videos: VideoItem[] = [
+  // --- 2026 最新讀書筆記影音 ---
+  {
+    id: '61lID7N8FoE',
+    title: '連天才牛頓都慘賠破產？鬱金香狂熱與南海泡沫的群眾盲從陷阱！｜《漫步華爾街》Ep.02',
+    description: '連發現萬有引力的物理學天才牛頓，都在股市泡沫中慘賠破產，事後懊悔感嘆：「我能計算天體的運行，卻無法計算人類的瘋狂！」墨基爾揭密荷蘭鬱金香狂熱、南海泡沫與更大傻瓜理論，揭示唯有克制投機貪婪、堅定擁抱指數，才能立於不敗！',
+    category: '漫步華爾街',
+    duration: '0:40',
+    url: 'https://www.youtube.com/watch?v=61lID7N8FoE',
+    featured: true,
+    order: 2,
+    thumbnail: '/images/02、瘋狂的群眾.webp',
+    articleSlug: '/books/漫步華爾街/02-瘋狂的群眾',
+    articleTitle: '02、瘋狂的群眾',
+  },
+  // --- 2026 最新醫學衛教短影音 (2026/11/01 瘦瘦針與 2026 ADA 最新指引系列) ---
+  {
+    id: '_HUpicLz4QI',
+    title: '別只盯著血糖看！2026 ADA 權威指引：心腎代謝 CKM 全面護航攻略｜黃冠智醫師',
+    description: '別再以為控糖只要盯著糖化血色素（A1C）看！2026 年美國糖尿病學會（ADA）最新照護標準已全面轉型為「心血管-腎臟-代謝（CKM）綜合風險管理」。不需等待血糖失控才換藥，及早啟動心腎保護齒輪、搭配地中海飲食與體重管理，才能真正阻斷併發症！',
+    category: '糖尿病',
+    duration: '0:40',
+    url: 'https://www.youtube.com/watch?v=_HUpicLz4QI',
+    featured: true,
+    order: 1,
+    articleSlug: '2026-ada-糖尿病照護_心血管-腎臟-代謝ckm綜合風險管理',
+    articleTitle: '【2026 ADA】糖尿病照護：心血管-腎臟-代謝（CKM）綜合風險管理',
+  },
+  {
+    id: 'dAs0r8vuxGM',
+    title: '少吃多動總是反彈？2026 ADA 權威指引：三大合法科學減重途徑全攻略｜黃冠智醫師',
+    description: '減重總是溜溜球式反彈？2026 美國糖尿病學會（ADA）提出最具醫學實證的「三大合法減重途徑」：從生活行為介入（地中海飲食＋每週200分鐘運動＋蛋白質保肌）、FDA 核准減重藥物（GLP-1 類腸泌素），到正規代謝手術。拒絕傷身偏方，交給科學醫療為您把關！',
+    category: '減重',
+    duration: '0:40',
+    url: 'https://www.youtube.com/watch?v=dAs0r8vuxGM',
+    featured: true,
+    order: 2,
+    articleSlug: '2026-ada合法且具實證基礎的減重方法',
+    articleTitle: '【2026 ADA】合法且具實證基礎的減重方法',
+  },
+  {
+    id: 'L5K_BmeQhdk',
+    title: '打瘦瘦針總是噁心脹氣？專科醫師教你 5 招輕鬆破解常見副作用｜黃冠智醫師',
+    description: '打瘦瘦針（GLP-1 腸泌素）常常感到胃脹、噁心、便秘？別慌張！約 50%～60% 初用者都會經歷腸胃過渡期。掌握「七分飽停口、細嚼慢嚥、喝足2000cc水、補足蛋白質抗肌少、按部就班調劑量」五大日常實踐對策，輕鬆度過適應期！',
+    category: '減重',
+    duration: '0:40',
+    url: 'https://www.youtube.com/watch?v=L5K_BmeQhdk',
+    featured: true,
+    order: 3,
+    articleSlug: '瘦瘦針使用瘦瘦針的副作用',
+    articleTitle: '【瘦瘦針】使用瘦瘦針的副作用',
+  },
+  {
+    id: 'mh6heUd_KL8',
+    title: '瘦瘦針減掉的是油還是肌肉？打針前必做「這項檢測」守護基礎代謝率！｜黃冠智醫師',
+    description: '打瘦瘦針體重雖然下降，但減掉的是脂肪還是寶貴的肌肉？如果肌肉流失過多，基礎代謝率將雪崩式下滑，日後極易復胖！施打前務必定期檢測身體組成（InBody），掌握肌肉與脂肪比例，並落實高蛋白質攝取與阻力訓練，才是健康享瘦！',
+    category: '減重',
+    duration: '0:40',
+    url: 'https://www.youtube.com/watch?v=mh6heUd_KL8',
+    featured: true,
+    order: 4,
+    articleSlug: '瘦瘦針打瘦瘦針前要先測身體組成',
+    articleTitle: '【瘦瘦針】打瘦瘦針前要先測身體組成',
+  },
+  {
+    id: 'iiiWL3Cym5c',
+    title: '瘦瘦針停藥後一定會復胖？專科醫師揭密 3 大關鍵：這樣做打破復胖魔咒！｜黃冠智醫師',
+    description: '打瘦瘦針瘦下來，一停藥卻火速反彈復胖？根本原因在於身體的「體重防禦機制」甦醒：飢餓素激增、食慾開關猛烈反撲。掌握「階梯式減量停藥、拉長間隔、高纖優質蛋白滋養腸道、肌力運動固樁」四大實證策略，讓成果穩健長存！',
+    category: '減重',
+    duration: '0:40',
+    url: 'https://www.youtube.com/watch?v=iiiWL3Cym5c',
+    featured: true,
+    order: 5,
+    articleSlug: '瘦瘦針瘦瘦針停藥後復胖的原因',
+    articleTitle: '【瘦瘦針】瘦瘦針停藥後復胖的原因',
+  },
   // --- 2026 最新讀書筆記影音 ---
   {
     id: 'hlq0SK8saI0',
@@ -190,7 +295,7 @@ export const videos: VideoItem[] = [
     id: 'jyOxM3nfrso',
     title: '【大腦的天使特調】睪固酮 自信心與行為傾向的增幅器',
     description: '談到「睪固酮（Testosterone）」，許多人腦中浮現的往往是肌肉猛男、侵略性或路怒症的代名詞。但在神經科學與行為學中，這其實是極大的誤解！睪固酮絕非男性的專屬激素，女性同樣維持著關鍵基線；它是兩性體內最重要的「增幅與勝利荷爾蒙」，能強化認知注意力與抗壓適應力。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=jyOxM3nfrso',
     featured: true,
@@ -203,7 +308,7 @@ export const videos: VideoItem[] = [
     id: 'qy6YD2DZots',
     title: '【大腦的天使特調】皮質醇 應變挑戰與警覺的雙面刃',
     description: '皮質醇不是純毒素，而是體內的生存危機管理者！適量能提供警覺與專注，但長期慢性暴雨會摧毀身心花園、燒毀血清素原料。學會壓力地圖劃分控制圈，運用生理性嘆息秒速重啟副交感神經。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=qy6YD2DZots',
     featured: true,
@@ -215,7 +320,7 @@ export const videos: VideoItem[] = [
     id: 'TJ5mJQRNY3Y',
     title: '【大腦的天使特調】腦內啡 天然止痛劑與極致愉悅感',
     description: '大腦自帶的嗎啡！痛苦之後才是至福，演化機制用以阻斷疼痛並帶來宛如登頂的極致愉悅。解析對痛苦成癮的化學陷阱，掌握刻意微笑、大笑、吃辣痛覺代償、規律運動與冷水浴等 9 大安全爆發協議。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=TJ5mJQRNY3Y',
     featured: true,
@@ -227,7 +332,7 @@ export const videos: VideoItem[] = [
     id: 'HF5rHh3Df4I',
     title: '【大腦的天使特調】催產素 信任與歸屬感的愛的荷爾蒙',
     description: '不只是愛情荷爾蒙，更是大腦感知安全與歸屬感的核心！直接抑制杏仁核警報，切換至放鬆修復模式，是皮質醇最強效的拮抗劑。解鎖 20 秒擁抱、重力毯、親人照片與敬畏感等 10 大催產素噴發協議。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=HF5rHh3Df4I',
     featured: true,
@@ -240,7 +345,7 @@ export const videos: VideoItem[] = [
     id: 'Mq6Ndlq3G7E',
     title: '【大腦的天使特調】血清素：滿足感與穩定情緒的基石',
     description: '血清素不只是快樂分子，更是穩定情緒與自尊的煞車！高達九成血清素由腸道製造，解析腦腸軸、色胺酸原料與日照快走機制，遠離虛擬地位焦慮，建立內在踏實的幸福感。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '0:41',
     url: 'https://www.youtube.com/watch?v=Mq6Ndlq3G7E',
     featured: true,
@@ -253,7 +358,7 @@ export const videos: VideoItem[] = [
     id: 'IwFh90jcMvg',
     title: '【大腦的天使特調】多巴胺：動機與渴望的動力引擎',
     description: '多巴胺不是「快樂分子」，而是負責在大腦中喊著「我想要」的動力引擎！解析期待與落差的生理機制，破除速效多巴胺帶來的耐受與宿醉，建立健康持久的緩效微習慣。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '0:40',
     url: 'https://www.youtube.com/watch?v=IwFh90jcMvg',
     featured: true,
@@ -266,7 +371,7 @@ export const videos: VideoItem[] = [
     id: 'G0PAfeJwS4w',
     title: '大腦的天使特調：六大神經傳導物質',
     description: '在大腦的調酒櫃中，有六款最核心的神經傳導物質與激素！瑞典勵志演說家大衛·JP·菲利浦斯將它們比喻為調製人生雞尾酒的素材，只要微調多巴胺、催產素、血清素、皮質醇、腦內啡與睪固酮的生化比例，就能有效化解焦慮與疲憊，激發行動力與幸福感。',
-    category: '你的人生，他們六個說了!',
+    category: '你的人生，他們六個說了算!',
     duration: '1:01',
     url: 'https://www.youtube.com/watch?v=G0PAfeJwS4w',
     featured: true,

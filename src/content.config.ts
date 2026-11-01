@@ -34,6 +34,7 @@ const booksCollection = defineCollection({
     order: z.number().default(999),
     meta_title: z.string().optional(),
     meta_description: z.string().optional(),
+    videoId: z.string().optional(),
   }),
 });
 
