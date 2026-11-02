@@ -50,7 +50,10 @@ const bookCategoryCounts = bookCategories.reduce((acc, cat) => {
           aria-selected="true"
         >
           <span class="track-tab-icon">🩺</span>
-          <span class="track-tab-text">動物農莊 · 醫學短影音</span>
+          <span class="track-tab-text">
+            <span class="text-desktop">動物農莊 · 醫學短影音</span>
+            <span class="text-mobile">醫學短影音</span>
+          </span>
           <span class="track-tab-count">{medicalVideos.length}</span>
         </button>
 
@@ -63,7 +66,10 @@ const bookCategoryCounts = bookCategories.reduce((acc, cat) => {
           aria-selected="false"
         >
           <span class="track-tab-icon">📚</span>
-          <span class="track-tab-text">說書人講堂 · 讀書短影音</span>
+          <span class="track-tab-text">
+            <span class="text-desktop">說書人講堂 · 讀書短影音</span>
+            <span class="text-mobile">讀書短影音</span>
+          </span>
           <span class="track-tab-count">{bookVideos.length}</span>
         </button>
       </div>
@@ -382,6 +388,16 @@ const bookCategoryCounts = bookCategories.reduce((acc, cat) => {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1.5rem 5rem 1.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .text-desktop {
+    display: inline;
+  }
+  .text-mobile {
+    display: none;
   }
 
   /* 頂部雙軌切換 Segmented Control (Capsule Nav) */
@@ -838,40 +854,77 @@ const bookCategoryCounts = bookCategories.reduce((acc, cat) => {
 
   /* ════════════ RWD 行動版適應 ════════════ */
   @media (max-width: 768px) {
+    .text-desktop {
+      display: none !important;
+    }
+    .text-mobile {
+      display: inline !important;
+    }
+
     .videos-page-container {
-      padding: 1rem 0.5rem 3.5rem 0.5rem;
+      padding: 0.75rem 0.5rem 3.5rem 0.5rem !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      overflow-x: hidden !important;
     }
 
     .dual-track-wrapper {
       margin-bottom: 1.25rem;
+      padding: 0 4px;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
     }
 
     .dual-track-nav {
-      width: 100%;
-      border-radius: 16px;
-      padding: 4px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 9999px !important;
+      padding: 4px !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 4px !important;
+      box-sizing: border-box !important;
     }
 
     .track-tab {
-      padding: 8px 6px;
-      font-size: 0.82rem;
-      justify-content: center;
-      gap: 4px;
-      border-radius: 12px;
+      width: 100% !important;
+      min-width: 0 !important;
+      padding: 8px 6px !important;
+      font-size: 0.85rem !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      border-radius: 9999px !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+    }
+
+    .track-tab-icon {
+      font-size: 1rem !important;
+      flex-shrink: 0;
+    }
+
+    .track-tab-text {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 800;
     }
 
     .track-tab-count {
-      font-size: 0.72rem;
-      padding: 1px 5px;
+      font-size: 0.72rem !important;
+      padding: 1px 6px !important;
+      flex-shrink: 0;
     }
 
     .videos-hero {
       padding: 24px 14px 22px !important;
-      border-radius: 18px !important;
-      margin-bottom: 1.5rem !important;
+      border-radius: 20px !important;
+      margin-bottom: 1.25rem !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
     }
 
     .header-eyebrow {
@@ -881,45 +934,98 @@ const bookCategoryCounts = bookCategories.reduce((acc, cat) => {
     }
 
     .videos-hero-title {
-      font-size: 1.85rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.65rem !important;
+      margin-bottom: 0.6rem !important;
+      line-height: 1.28 !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .text-steel {
+      margin-right: 0 !important;
     }
 
     .videos-hero-desc {
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 1rem;
+      font-size: 0.9rem !important;
+      line-height: 1.6 !important;
+      margin-bottom: 1rem !important;
+      padding: 0 4px;
     }
 
+    .hero-stats {
+      gap: 0.5rem !important;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .stat-pill {
+      padding: 0.35rem 0.75rem !important;
+      font-size: 0.8rem !important;
+    }
+
+    .stat-pill strong {
+      font-size: 0.95rem !important;
+    }
+
+    /* 次分類在手機版採用標準流暢橫向滑動 (Horizontal Touch Scroll Strip) */
     .video-filter-section {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.5rem !important;
+      width: 100% !important;
+      overflow: hidden !important;
     }
 
     .filter-pills-wrap {
-      border-radius: 16px !important;
-      gap: 0.4rem;
-      padding: 6px;
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      border-radius: 9999px !important;
+      gap: 0.45rem !important;
+      padding: 6px 8px !important;
+      justify-content: flex-start !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .filter-pills-wrap::-webkit-scrollbar {
+      display: none !important;
     }
 
     .filter-pill {
-      padding: 0.35rem 0.75rem;
-      font-size: 0.85rem;
-      gap: 0.35rem;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      padding: 0.38rem 0.8rem !important;
+      font-size: 0.82rem !important;
+      gap: 0.35rem !important;
+      border-radius: 9999px !important;
     }
 
     .count-bubble {
-      font-size: 0.7rem;
-      padding: 0.05rem 0.4rem;
+      font-size: 0.7rem !important;
+      padding: 0.05rem 0.4rem !important;
     }
 
     .videos-grid {
-      grid-template-columns: 1fr;
-      gap: 14px;
+      grid-template-columns: 100% !important;
+      gap: 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .video-grid-item {
+      width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
     }
 
     .channel-callout-card {
       padding: 20px 16px !important;
       border-radius: 18px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
     }
 
     .callout-inner {
@@ -944,6 +1050,20 @@ const bookCategoryCounts = bookCategories.reduce((acc, cat) => {
     .btn-primary {
       width: 100%;
       justify-content: center;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .track-tab {
+      padding: 7px 4px !important;
+      font-size: 0.78rem !important;
+      gap: 3px !important;
+    }
+    .track-tab-count {
+      display: none;
+    }
+    .videos-hero-title {
+      font-size: 1.45rem !important;
     }
   }
 </style>

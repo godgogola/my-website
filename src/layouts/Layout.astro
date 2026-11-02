@@ -349,10 +349,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    overflow-x: hidden;
   }
 
   body {
     min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
