@@ -1,0 +1,136 @@
+import json
+import os
+
+items = [
+    {
+        "chapter": "01",
+        "title": "01、幻滅：歷史的終結延後了",
+        "file": "01、幻滅：歷史的終結延後了.md",
+        "imageName": "21lessons_01_disillusionment",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, a miniature philosophical crossroads scene exploring the crisis of modern narratives. "
+            "In the center, a cute chibi crocheted philosopher explorer doll wearing round wooden glasses and a cozy knit scarf stands thoughtfully beside a wise little wool owl companion. "
+            "They stand at a gentle cobblestone yarn fork where three whimsical woven paths diverge, each leading to miniature stylized wool architectural symbols: "
+            "a small classical marble-like yarn temple pillar, a tiny red mechanical cogwheel tower, and a glowing miniature golden torch of liberty. "
+            "Soft pastel morning light illuminates the scene with floating warm light motes, illustrating humanity searching for new meaning at the crossroads of history."
+        )
+    },
+    {
+        "chapter": "02",
+        "title": "02、工作：當你長大，可能沒有工作",
+        "file": "02、工作：當你長大，可能沒有工作.md",
+        "imageName": "21lessons_02_work_ai",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, a charming and harmonious miniature futuristic workshop exploring the future of human labor and AI. "
+            "In the center, a tiny cute crocheted artisan doll wearing denim dungarees works side by side with a friendly, adorable pastel-blue miniature yarn robot doll with softly glowing eyes. "
+            "The gentle robot doll is carefully knitting a sparkling golden fiber-optic circuit ribbon with tiny wool needles, while the human artisan inspects a delicate handcrafted clockwork gear with a plush magnifying glass. "
+            "Surrounded by miniature wool easels, tiny floating music notes, paint palettes, and woven toolboxes, symbolizing creativity and human-AI collaboration."
+        )
+    },
+    {
+        "chapter": "03",
+        "title": "03、自由：大數據正在看著你",
+        "file": "03、自由：大數據正在看著你.md",
+        "imageName": "21lessons_03_liberty_big_data",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, an intriguing miniature scene examining human free will and big data algorithms. "
+            "In the center stands an ornate miniature brass-and-wood balance scale: on one scale pan rests a beautifully crocheted glowing red-and-gold human heart-brain plush doll radiating warm organic light, "
+            "while on the other pan sits a miniature neat stack of glowing translucent cyan yarn data cubes and microchip patterns. "
+            "A tiny cute crocheted explorer doll wearing round glasses stands in the middle holding a golden quill pen, contemplating the balance between human inner intuition and external algorithmic wisdom."
+        )
+    },
+    {
+        "chapter": "04",
+        "title": "04、平等：掌握數據者掌握未來",
+        "file": "04、平等：掌握數據者掌握未來.md",
+        "imageName": "21lessons_04_equality_data",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, an inspiring miniature vision of data equality and shared human destiny. "
+            "At the center rises a magnificent, crystal-clear glowing yarn data lighthouse tower woven from soft iridescent wool threads. "
+            "Radiating outward from the tower are luminous golden and azure yarn ribbons connecting to a diverse circle of cute miniature crocheted community figures "
+            "(a little farmer, a teacher, a young artist, and an engineer) holding hands around the book stage in joyful harmony, "
+            "illustrating the democratization of data and shared technological abundance for all humanity."
+        )
+    },
+    {
+        "chapter": "05",
+        "title": "05、社群：人類有身體",
+        "file": "05、社群：人類有身體.md",
+        "imageName": "21lessons_05_community_bodies",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, a heartwarming and tender scene celebrating real physical human connection. "
+            "In the center, two cute chibi crocheted best friends sit together on a thick cozy braided wool rug beside a warm glowing miniature brick fireplace. "
+            "They are happily holding hands and sharing a warm steaming mug of marshmallow hot cocoa with genuine smiling embroidered faces. "
+            "In the soft-focus background, a tiny vintage smartphone made of dark felt lies gently turned face-down on a small wooden stool, surrounded by blooming miniature yarn house plants, "
+            "symbolizing the return from virtual screens to tactile, physical presence and genuine community warmth."
+        )
+    },
+    {
+        "chapter": "06",
+        "title": "06、文明：世界上只有一種文明",
+        "file": "06、文明：世界上只有一種文明.md",
+        "imageName": "21lessons_06_civilisation_one_world",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, a breathtaking miniature celebration of unified human global civilization. "
+            "In the center stands a large, beautifully handcrafted spherical globe plushie with colorful patchwork continents woven from rich textured wool. "
+            "Gathered peacefully around the globe are several adorable chibi crocheted dolls representing diverse cultural traditions from around the world, "
+            "cooperatively weaving together a vibrant, seamless circular tapestry carpet made of shimmering rainbow yarn threads under warm, radiant sunrise lighting, "
+            "demonstrating that humanity shares a single interconnected global civilization."
+        )
+    },
+    {
+        "chapter": "07",
+        "title": "07、民族主義：全球性問題需要全球性解答",
+        "file": "07、民族主義：全球性問題需要全球性解答.md",
+        "imageName": "21lessons_07_nationalism_global_answers",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, a noble miniature international summit diorama for planetary stewardship. "
+            "Around a warm polished round wooden table, four cute chibi crocheted delegate dolls from different continents gather together. "
+            "At the center of the table rests a delicate miniature blue-and-green yarn Earth doll, lovingly sheltered under a tiny protective transparent wool canopy and surrounded by green olive branch plushies. "
+            "The cute delegates gently place their woven hands together on a shared parchment agreement, symbolizing global solidarity to solve climate and technological challenges."
+        )
+    },
+    {
+        "chapter": "08",
+        "title": "08、宗教：上帝現在為國家服務",
+        "file": "08、宗教：上帝現在為國家服務.md",
+        "imageName": "21lessons_08_religion_science_state",
+        "subject": (
+            "On top of a giant open knitted book with blank cream wool pages, an elegant and contemplative miniature dialogue between scientific truth and spiritual meaning. "
+            "At the center of the open book stage stands a graceful dual-arched wooden pavilion: on the left side sits a tiny brass telescope, a miniature wool microscope, and geometric measuring compasses, "
+            "while on the right side rests a tranquil glowing golden yarn candle lantern and a gentle white dove plushie carrying a small green sprout. "
+            "A cute chibi crocheted philosopher doll stands in the center with a thoughtful, serene expression, holding an open notebook, reflecting on the distinct roles of empirical science and human moral compassion."
+        )
+    }
+]
+
+base_template = (
+    "Generate a blog post cover image with an aspect ratio of 16:9 (landscape). "
+    "Subject: {subject} "
+    "Art Style: Rendered in a realistic, cute, handcrafted amigurumi knitted style (crochet wool texture) miniature book-world diorama. "
+    "Texture: High-quality soft yarn texture, visible knit stitches, fuzzy wool and felt details. "
+    "Characters: Cute, miniature chibi-style knitted explorer dolls and wise animal dolls, button-like eyes, warm and curious expressions (NO doctors, NO white coats, NO stethoscopes). "
+    "Colors: Rich, warm, and inviting harmonious palette (cream wool, warm amber, glowing golds, soft pastels, cozy earth tones). "
+    "Composition: Central focus on the giant open knitted book stage with generous breathing margins on all 4 sides (top, bottom, left, right). 100% completely intact diorama. "
+    "Background: Cozy blurred library study with soft stacked wool books and warm reading lamp bokeh. "
+    "Technical: High quality, 3D render, macro photography, tilt-shift miniature effect, photorealistic warm lighting, soft depth of field, wide shot. "
+    "Constraints: ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS, NO WATERMARKS, NO LABELS, NO TYPOGRAPHY, NO CHARTS, NO INFOGRAPHICS, NO UI ELEMENTS, NO MEDICAL ATTIRE. Full bleed framing."
+)
+
+output = []
+for item in items:
+    full_prompt = base_template.format(subject=item["subject"])
+    output.append({
+        "chapter": item["chapter"],
+        "title": item["title"],
+        "file": item["file"],
+        "imageName": item["imageName"],
+        "prompt": full_prompt
+    })
+
+output_path = 'scripts/21lessons_prompts.json'
+with open(output_path, 'w', encoding='utf-8') as f:
+    json.dump(output, f, ensure_ascii=False, indent=2)
+
+print(f"Generated {len(output)} prompts to {output_path}")
+
