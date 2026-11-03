@@ -50,3 +50,4 @@ no_thumb = [it for it in items if not it['thumb']]
 print(f"Total videos without thumbnail field: {len(no_thumb)}")
 for it in no_thumb:
     print(f"  ID: {it['id']} | Slug: {it['slug']} | Title: {it['title']}")
+

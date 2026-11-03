@@ -15,3 +15,4 @@ with open('src/data/videos.ts', 'w', encoding='utf-8') as f:
     f.write(text)
 
 print("Cleaned up remaining duplicate old items.")
+

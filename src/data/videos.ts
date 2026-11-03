@@ -748,12 +748,12 @@ export const videos: VideoItem[] = [
   },
   // --- 2026 最新讀書筆記影音 ---
   {
-    id: 'hlq0SK8saI0',
+    id: 'll_paSBryWo',
     title: '蒙眼猴子射飛鏢贏過九成經理人？磐石理論 vs 空中樓閣！｜《漫步華爾街》Ep.01',
     description: '讓一隻蒙著雙眼的猴子隨機射飛鏢，選出來的股票組合，績效居然能痛宰華爾街九成的頂尖專業經理人？！普林斯頓傳奇經濟學大師墨基爾揭開百年來「磐石理論」與「空中樓閣」的世紀對決。',
     category: '漫步華爾街',
     duration: '0:40',
-    url: 'https://www.youtube.com/watch?v=hlq0SK8saI0',
+    url: 'https://www.youtube.com/watch?v=ll_paSBryWo',
     featured: true,
     order: 1,
     thumbnail: '/images/01、磐石與空中樓閣.webp',

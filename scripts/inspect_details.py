@@ -22,3 +22,4 @@ for m in matches:
     # Let's inspect anything related to ADA, 癌症, or duplicates
     if any(k in title for k in ['112年', '十大癌症', 'ADA', 'CKM', '減重途徑', '糖尿病及肥胖', '心腎代謝']):
         print(f"ID: {vid} | Cat: {cat}\n  Title: {title}\n  Thumb: {thumb}\n  Slug: {slug}\n")
+
