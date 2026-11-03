@@ -49,6 +49,7 @@ const categoryClass = categoryColorMap[video.category] || 'badge-default';
       alt={video.title}
       class="thumbnail-img"
       loading="lazy"
+      onerror={`this.onerror=null; this.src='https://i.ytimg.com/vi/${video.id}/hqdefault.jpg';`}
     />
     
     <!-- 縮圖上方遮罩光影 (底層漸層讓標籤更清晰) -->
