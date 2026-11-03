@@ -97,7 +97,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://drhuangg
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.site || 'https://drhuanggi.vercel.app')} />
     <meta property="og:locale" content="zh_TW" />
-    <meta property="og:site_name" content="黃冠智醫師｜健康衛教指南" />
+    <meta property="og:site_name" content="黃冠智醫師" />
+
+    <!-- Google 官方指定網站名稱結構化標籤 (WebSite Structured Data for Google Site Name) -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "黃冠智醫師",
+      "alternateName": ["黃冠智醫師個人官方網站", "黃冠智院長", "黃冠智醫師健康指南"],
+      "url": "https://drhuanggi.vercel.app/"
+    })} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
