@@ -33,25 +33,64 @@ const formatDate = (date: Date) => {
 ---
 
 <Layout
-  meta_title="黃冠智醫師｜肝膽腸胃科·豐田診所院長｜醫學筆記與健康指南"
+  meta_title="黃冠智醫師｜豐田診所院長·肝膽腸胃專科｜無痛內視鏡與代謝減重指南"
   title="黃冠智醫師｜肝膽腸胃科·豐田診所院長｜醫學筆記與健康指南"
-  description="豐田診所院長黃冠智醫師的官方網站。提供胃食道逆流、大腸鏡檢查、肝病防治、減重門診等肝膽腸胃內科專業醫學筆記與健康指南。"
+  description="台中豐田診所院長黃冠智醫師官方網站。專精肝膽腸胃專科、無痛內視鏡（胃鏡與大腸鏡息肉切除）、代謝減重門診、三高慢性病整合管理與健康衛教指南。"
 >
-  <!-- Google 醫師專業結構化標籤 (JSON-LD) -->
+  <!-- Google 醫師專業結構化標籤 (JSON-LD) - 確立豐田診所院長、肝膽腸胃專科、無痛內視鏡與代謝減重權威定位 -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Physician",
+    "@id": "https://drhuanggi.vercel.app/#physician",
     "name": "黃冠智醫師",
-    "alternateName": ["黃冠智 醫師", "黃冠智 院長"],
-    "jobTitle": "豐田診所院長 / 肝膽腸胃內科主治醫師",
-    "medicalSpecialty": [
-      "Gastroenterology",
-      "Hepatology",
-      "InternalMedicine"
+    "alternateName": [
+      "黃冠智 醫師",
+      "黃冠智 院長",
+      "豐田診所院長",
+      "黃冠智 肝膽腸胃專科",
+      "黃冠智 無痛內視鏡與代謝減重",
+      "台中黃冠智醫師"
     ],
-    "description": "豐田診所院長黃冠智醫師，專長內視鏡檢查、胃食道逆流、大腸息肉切除、肝病追蹤、減重醫學與三高慢病管理。",
+    "jobTitle": "豐田診所院長 / 肝膽腸胃專科醫師",
+    "medicalSpecialty": [
+      "https://schema.org/Gastroenterology",
+      "https://schema.org/Hepatology",
+      "DigestiveEndoscopy",
+      "BariatricMedicine"
+    ],
+    "knowsAbout": [
+      "豐田診所院長",
+      "肝膽腸胃專科",
+      "無痛內視鏡",
+      "代謝減重",
+      "無痛胃鏡",
+      "無痛大腸鏡",
+      "大腸息肉切除",
+      "胃食道逆流",
+      "幽門螺旋桿菌",
+      "慢性肝病與脂肪肝防治",
+      "肥胖醫學與瘦瘦針管理"
+    ],
+    "worksFor": {
+      "@type": "MedicalClinic",
+      "name": "豐田診所",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "建成路1848號",
+        "addressLocality": "南區",
+        "addressRegion": "台中市",
+        "postalCode": "402",
+        "addressCountry": "TW"
+      },
+      "telephone": "+886-4-2285-0066"
+    },
+    "description": "台中市豐田診所院長黃冠智醫師，專精肝膽腸胃專科、無痛內視鏡（胃鏡與大腸鏡息肉切除）、代謝減重門診與慢性病整合管理。",
     "image": "https://static.wixstatic.com/media/f229cb_5dcb4100d96e46e1bab7ea4cb7062215~mv2.jpg",
-    "url": "https://drhuanggi.vercel.app"
+    "url": "https://drhuanggi.vercel.app",
+    "sameAs": [
+      "https://www.youtube.com/channel/UC4cCA2pEP_JUQwGpWUR19AQ",
+      "https://drhuanggi.vercel.app/"
+    ]
   })} />
 
   <!-- 頁首海龜視覺橫幅 Banner -->
