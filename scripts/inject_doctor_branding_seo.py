@@ -126,3 +126,4 @@ else:
     print("Warning: old schema pattern not found in index.astro, writing title/desc updates only")
     with open(index_path, 'w', encoding='utf-8') as f:
         f.write(idx)
+
