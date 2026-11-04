@@ -1,77 +1,81 @@
+import os, sys, shutil, re
 from PIL import Image
-import os
-import shutil
-import re
 
-images_info = [
-    (
-        r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_09_immigration_1793713318979.jpg",
-        "09、移民：某些文化可能比其他文化更好.webp",
-        "src/content/books/21世紀的21堂課/09-移民某些文化可能比其他文化更好.md",
-        r"G:\我的雲端硬碟\讀書筆記庫\讀書筆記\21世紀的21堂課\09、移民：某些文化可能比其他文化更好.md"
-    ),
-    (
-        r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_10_terrorism_1793713341985.jpg",
-        "10、恐怖主義：切勿恐慌.webp",
-        "src/content/books/21世紀的21堂課/10-恐怖主義切勿恐慌.md",
-        r"G:\我的雲端硬碟\讀書筆記庫\讀書筆記\21世紀的21堂課\10、恐怖主義：切勿恐慌.md"
-    ),
-    (
-        r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_11_war_1793713360760.jpg",
-        "11、戰爭：永遠不要低估人類的愚蠢.webp",
-        "src/content/books/21世紀的21堂課/11-戰爭永遠不要低估人類的愚蠢.md",
-        r"G:\我的雲端硬碟\讀書筆記庫\讀書筆記\21世紀的21堂課\11、戰爭：永遠不要低估人類的愚蠢.md"
-    )
-]
+sys.stdout.reconfigure(encoding='utf-8')
 
-drive_backup_dir = r"G:\我的雲端硬碟\衛教文章圖片"
+# The 9 generated images
+images_map = {
+    "12、謙遜：你不是世界的中心": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_12_humility_1793801597998.jpg",
+    "13、上帝：不要妄稱上帝的名": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_13_god_1793801616236.jpg",
+    "14、世俗主義：承認你的陰影": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_14_secularism_1793801636981.jpg",
+    "15、無知：你知道的比你想像的少": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_15_ignorance_1793801653883.jpg",
+    "17、後真相：有些假新聞永遠存在": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_17_posttruth_1793801607952.jpg",
+    "18、科幻小說：未來不是你在電影裡看到的樣子": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_18_scifi_1793801618702.jpg",
+    "19、教育：改變是唯一的常態": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_19_education_1793801638165.jpg",
+    "20、意義：人生不是一個故事": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_20_meaning_1793801649288.jpg",
+    "21、內觀：僅僅觀察": r"C:\Users\X1 Yoga Gen7\.gemini\antigravity\brain\c917a291-f072-4304-8a6a-e706feb550ad\21lessons_21_meditation_1793801668600.jpg"
+}
 
-for src_path, webp_name, md_local, md_vault in images_info:
-    # 1. Convert to WebP and save to public/images and public/og-images
-    im = Image.open(src_path)
-    # Ensure 16:9 ratio resize if needed, standard high quality 1400x781
-    target_w, target_h = 1400, 788
-    im_resized = im.resize((target_w, target_h), Image.Resampling.LANCZOS)
+public_img_dir = "public/images"
+public_og_dir = "public/og-images"
+drive_img_dir = r"G:\我的雲端硬碟\衛教文章圖片"
+books_dir = "src/content/books/21世紀的21堂課"
+vault_books_dir = r"G:\我的雲端硬碟\讀書筆記庫\讀書筆記\21世紀的21堂課"
+
+os.makedirs(public_img_dir, exist_ok=True)
+os.makedirs(public_og_dir, exist_ok=True)
+os.makedirs(drive_img_dir, exist_ok=True)
+
+for title, src_jpg in images_map.items():
+    if not os.path.exists(src_jpg):
+        print(f"Skipping {title}, file not found: {src_jpg}")
+        continue
     
-    out_img = os.path.join('public/images', webp_name)
-    out_og = os.path.join('public/og-images', webp_name)
-    im_resized.save(out_img, 'WEBP', quality=90)
-    im_resized.save(out_og, 'WEBP', quality=90)
-    print(f"Saved: {out_img} and {out_og}")
+    img = Image.open(src_jpg)
     
-    # 2. Backup PNG to Drive
-    if os.path.exists(drive_backup_dir):
-        drive_png = os.path.join(drive_backup_dir, webp_name.replace('.webp', '.png'))
-        im.save(drive_png, 'PNG')
-        print(f"Backed up to Drive: {drive_png}")
-        
-    # 3. Update local markdown
-    if os.path.exists(md_local):
-        with open(md_local, encoding='utf-8') as f:
-            c = f.read()
-        if 'coverImage:' in c:
-            c = re.sub(r'coverImage:.*', f'coverImage: "{webp_name}"', c)
-        else:
-            c = re.sub(r'^order: (.*)$', f'order: \\1\ncoverImage: "{webp_name}"', c, flags=re.MULTILINE)
-        with open(md_local, 'w', encoding='utf-8') as f:
-            f.write(c)
-        print(f"Updated local markdown: {md_local}")
-        
-    # 4. Update Obsidian vault markdown
-    if os.path.exists(md_vault):
-        with open(md_vault, encoding='utf-8') as f:
-            vc = f.read()
-        if 'coverImage:' in vc:
-            vc = re.sub(r'coverImage:.*', f'coverImage: "{webp_name}"', vc)
-        else:
-            # check if has frontmatter
-            if vc.startswith('---'):
-                vc = re.sub(r'^---', f'---\ncoverImage: "{webp_name}"', vc, count=1)
+    # 1. Save PNG to Google Drive
+    drive_png = os.path.join(drive_img_dir, f"{title}.png")
+    img.save(drive_png, format="PNG")
+    print(f"Backed up to Drive: {drive_png}")
+    
+    # 2. Save WebP to public/images and public/og-images
+    webp_name = f"{title}.webp"
+    public_webp = os.path.join(public_img_dir, webp_name)
+    og_webp = os.path.join(public_og_dir, webp_name)
+    
+    img.save(public_webp, format="WEBP", quality=92)
+    img.save(og_webp, format="WEBP", quality=92)
+    print(f"Saved WebP: {public_webp}")
+    
+    # 3. Update Markdown in src/content/books/21世紀的21堂課
+    # Find matching md file
+    prefix = title.split('、')[0] # e.g. "12"
+    for fname in os.listdir(books_dir):
+        if fname.startswith(prefix) and fname.endswith('.md'):
+            fpath = os.path.join(books_dir, fname)
+            with open(fpath, 'r', encoding='utf-8') as f:
+                content = f.read()
+            if 'coverImage:' in content:
+                content = re.sub(r'coverImage:\s*["\']?[^"\']+["\']?', f'coverImage: "{webp_name}"', content)
             else:
-                vc = f'---\ncoverImage: "{webp_name}"\n---\n' + vc
-        with open(md_vault, 'w', encoding='utf-8') as f:
-            f.write(vc)
-        print(f"Updated vault markdown: {md_vault}")
+                content = content.replace('---', f'---\ncoverImage: "{webp_name}"', 1)
+            with open(fpath, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"Updated frontmatter in {fpath}")
+            
+    # 4. Also update Obsidian vault if it exists
+    if os.path.exists(vault_books_dir):
+        for fname in os.listdir(vault_books_dir):
+            if fname.startswith(prefix) and fname.endswith('.md'):
+                fpath = os.path.join(vault_books_dir, fname)
+                with open(fpath, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                if 'coverImage:' in content:
+                    content = re.sub(r'coverImage:\s*["\']?[^"\']+["\']?', f'coverImage: "{webp_name}"', content)
+                else:
+                    content = content.replace('---', f'---\ncoverImage: "{webp_name}"', 1)
+                with open(fpath, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                print(f"Updated frontmatter in Vault: {fpath}")
 
-print("=== Image processing complete! ===")
-
+print("All 9 generated images processed and frontmatters updated successfully!")
