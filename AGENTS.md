@@ -2,40 +2,52 @@
 
 ## 🎨 文章封面圖生成規範 (Cover Image Prompt Rule)
 
-當使用者要求「生成文章封面圖」或「批次生成文章封面圖」時，**必須 100% 統一使用以下【地雷食物系列】最高標準規格，徹底達到原生 16:9 的豐富橫向構圖**：
+當使用者要求「生成文章封面圖」或「批次生成文章封面圖」時，**依文章類型（讀書筆記 vs. 醫療衛教筆記）嚴格套用以下專屬最高標準規格**，徹底達到原生 16:9 的豐富橫向構圖與生動微縮立體世界觀：
 
 ---
 
-### 🌟 滿分黃金範本：【地雷食物系列】(1400x781 / 16:9)
-* **視覺風格**：可愛手作 3D 針織毛線娃娃 (Cute 3D knitted crochet amigurumi plush doll)。
-* **材質與質感**：細緻手作毛線紋理、羊毛質感、溫馨柔和的工作室燈光 (Hand-crafted yarn texture, soft wool thread details, cozy felt background, warm soft lighting)。
-* **原生 16:9 構圖核心規範**：
-  1. **女醫師採「坐姿 / 半身 / 緊密置中」**：
-     * 女醫師娃娃為坐姿、半身或小巧微型人偶，**身旁緊密圍繞主題器官玩偶與情境道具**。
-     * 絕不全身筆直高高站立貫穿上下邊界，人物高度舒適維持在畫面中央。
-  2. **橫向豐富桌面陳列 (Rich Horizontal Tabletop Cluster)**：
-     * 主體與道具緊密聚集在木質桌面/毛氈地毯正中央，左右橫向展開（如食物玩偶排開、天秤、台階、藥盒等），畫面豐富、飽滿又有故事性。
-  3. **四周均勻呼吸留白 (Generous 4-Side Margins)**：
-     * 畫面頂部保留寬闊的空白毛氈背景牆。
-     * 畫面底部保留充足的毛氈地毯與木質桌面。
-     * 整體畫面呈現原生 16:9 的精緻橫向陳列，頭頂、頭髮、手部道具與桌面**完全在畫面正中央，100% 絕不貼邊**。
-  4. **嚴格禁止文字與字母 (ABSOLUTELY NO TEXT / LETTERS)**：
-     * 所有道具（如少鹽罐、藥瓶、牛奶盒、餐盒）一律維持純毛線編織紋理，**絕對不能出現任何英文字母或標籤 (No text, no words, no letters on any props)**。
+### 📚 體系 A：【讀書筆記】巨型羊毛書本立體微縮舞台 (Giant Open Wool Book Diorama)
 
----
+所有讀書筆記（如《漫步華爾街》、《貨幣失能》、《21世紀的21堂課》等所有書籍章節）**100% 統一套用此「攤開的巨型粗羊毛書本舞台」架構**：
 
-### 📝 標準通用 Prompt 範本 (Master Prompt Template)
+* **視覺風格**：可愛手作 3D 針織毛線娃娃微縮景觀 (Handcrafted amigurumi crochet miniature book-world diorama)。
+* **核心基底（必備世界觀）**：
+  * **以「攤開的巨型粗羊毛編織書本（空白米白羊毛書頁）」作為整體立體舞台** (`On top of a giant open knitted book with blank cream wool pages`)。
+  * 背景為溫馨柔和的圖書館書房、層疊的毛線書堆、溫暖閱讀燈散景 (`cozy blurred library study with soft stacked wool books and warm reading lamp bokeh`)。
+* **角色與情境動態**：
+  * 角色為可愛的小小探索者人偶（男生/女生隨機可愛人偶）或智慧動物夥伴（貓頭鷹、小狐狸、小貓咪、小松鼠等）。
+  * **角色必須有互動動作或沉浸於事件中**（如手持放大鏡探索、攜手合作、在三叉路口思考、在壁爐旁交談、在天秤兩端衡量），**絕非呆立或證件照擺拍**。
+  * **嚴格禁忌**：**讀書筆記絕對不出現醫師、白袍、聽診器！**
+* **攝影與光影**：微距攝影、移軸微縮景觀（Tilt-shift miniature effect）、柔和淺景深、溫暖柔和的晨光/黃金光斑（Floating warm light motes）、原生 16:9 橫向構圖、四周保留呼吸留白。
+* **嚴格禁止文字與字母 (ABSOLUTELY NO TEXT / LETTERS)**：純視覺敘事，畫面上與任何道具絕不出現文字、數字、圖表或標籤。
 
-未來生成任何封面圖時，直接套用此範本填入主題：
-
+#### 📝 讀書筆記標準通用 Prompt 範本 (Book Master Template)
 ```text
-Cute 3D knitted crochet amigurumi plush doll style, hand-crafted yarn texture, soft wool thread details, cozy felt background, warm soft studio lighting. ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS ON ANY PROPS. Rich tabletop diorama wide horizontal 16:9 scene matching the food series: A cute chibi female doctor amigurumi doll (sitting or half-body, centered comfortably) is closely surrounded by a rich, cute horizontal cluster of [主題道具與可愛器官/食物玩偶描述]. Positioned in the middle with generous breathing margins on all 4 sides (top, bottom, left, right). 16:9 widescreen diorama composition, 100% completely intact.
+Generate a blog post cover image with an aspect ratio of 16:9 (landscape). Subject: On top of a giant open knitted book with blank cream wool pages, a charming and intricate miniature diorama exploring [章節核心主題與故事隱喻]. In the center, [可愛小小毛線人偶/動物夥伴正在進行的生動互動與探索動作], closely surrounded by a rich cluster of miniature wool architectural structures, stylized props, and landscape elements: [具體高低錯落的微型造景道具，如微型石板路、小建築、奇幻機關、天秤、燈火等]. Art Style: Rendered in a realistic, cute, handcrafted amigurumi knitted style (crochet wool texture) miniature book-world diorama. Texture: High-quality soft yarn texture, visible knit stitches, fuzzy wool and felt details. Characters: Cute, miniature chibi-style knitted explorer dolls or wise animal dolls, button-like eyes, warm and curious expressions (NO doctors, NO white coats, NO stethoscopes). Colors: Rich, warm, and inviting harmonious palette (cream wool, warm amber, glowing golds, soft pastels, cozy earth tones). Composition: Central focus on the giant open knitted book stage with generous breathing margins on all 4 sides (top, bottom, left, right). 100% completely intact diorama. Background: Cozy blurred library study with soft stacked wool books and warm reading lamp bokeh. Technical: High quality, 3D render, macro photography, tilt-shift miniature effect, photorealistic warm lighting, soft depth of field, wide shot. Constraints: ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS, NO WATERMARKS, NO LABELS, NO TYPOGRAPHY, NO CHARTS, NO INFOGRAPHICS, NO UI ELEMENTS, NO MEDICAL ATTIRE. Full bleed framing.
+```
+
+---
+
+### 🏥 體系 B：【醫療衛教筆記】微型醫學探索舞台 (Medical Mini-World Diorama)
+
+未來新生成的醫學衛教文章封面圖，全面升級為**「具備生動情境、互動故事感與豐富立體空間」的高階微縮景觀**：
+
+* **核心基底**：
+  * 跳脫過去呆板的單一桌面，轉向**「立體多層次微縮醫學探索景觀」**（如立體人體微縮公園、巨型醫學知識百科舞台、溫馨治癒系微型診間/實驗室工坊）。
+* **角色與器官互動**：
+  * 男醫師/女醫師毛線玩偶不再只是站樁拍照，而是與**可愛的微型器官玩偶（胃部、心臟、肝臟、血管水管、胰島素小精靈）進行生動的醫療互動**（例如：醫師手拿柔軟毛線聽診器為微笑胃玩偶看診、合力修復微型血管水管、拿著放大鏡研究發光的細胞晶體、在天秤前平衡地雷食物與健康食材）。
+* **視覺與光影**：維持親切療癒的毛線質感（Amigurumi crochet）、溫暖柔和的工作室燈光、微距移軸景深、原生 16:9 留白防貼邊。
+* **嚴格禁止文字與字母**：所有藥罐、醫療器材、飲食道具維持純編織紋理，嚴禁出現任何英文字母或標籤。
+
+#### 📝 醫療筆記標準通用 Prompt 範本 (Medical Master Template)
+```text
+Generate a blog post cover image with an aspect ratio of 16:9 (landscape). Subject: On top of a warm wooden workbench or an open giant medical journal, a whimsical, heartwarming miniature diorama exploring [醫學病理/治療主題]. In the center, a cute chibi doctor amigurumi plush doll (sitting or actively interacting) is tenderly examining or working alongside a cute, anthropomorphic smiling [主題器官/細胞/微生物毛線玩偶], surrounded by a rich, creative horizontal cluster of handcrafted felt props: [具體醫療比喻道具，如毛線聽診器、微型針筒、水管管線、健康食物、藥箱模型等，生動高低錯落陳列]. Art Style: Realistic, cute, handcrafted amigurumi knitted style (crochet wool texture) miniature diorama. Texture: High-quality soft yarn texture, visible stitches, warm felt accents. Colors: Comforting, bright, warm clinical palette (mint green, gentle pastel blues, soft coral, warm amber). Composition: Dynamic tabletop diorama wide horizontal 16:9 scene, centered comfortably with generous breathing margins on all 4 sides (top, bottom, left, right). Background: Cozy softly blurred clinic studio with warm glowing fairy lights or stacked medical books bokeh. Technical: High quality 3D render, macro photography, tilt-shift miniature effect, soft depth of field. Constraints: ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS, NO LABELS, NO CHARTS, NO WATERMARKS. Full bleed framing.
 ```
 
 ---
 
 ### 生成與發布 SOP (自動化處理)
-1. **生圖 (地雷食物系列 16:9 規格)**：依主題生成符合上述「坐姿/半身、豐富桌面橫向陳列、四周充足留白」的 16:9 圖片。
+1. **生圖 (符合體系 A/B 規格)**：依主題生成符合上述「巨型立體舞台、生動動作情境、四周充足留白」的原生 16:9 圖片。
 2. **原圖備份**：將 16:9 PNG 備份至 `G:\我的雲端硬碟\衛教文章圖片\<Title>.png`。
 3. **WebP 轉檔發布**：將 16:9 圖片轉檔為高品質 WebP，**同時存入 `public/images/<Title>.webp` 與 `public/og-images/<Title>.webp`**（確保 Google Sheet 次分類工作表之圖片與網站自動無縫更新為最新版）。
 4. **綁定與驗證**：更新 Markdown 的 `coverImage` 欄位並執行 `npm run build` 驗證。

@@ -1,49 +1,26 @@
-import urllib.request, json, sys, re
-sys.stdout.reconfigure(encoding='utf-8')
+import urllib.request
+import re
+import json
 
-video_ids = [
-    "9njkkBBiDkg",
-    "zhBtKjibzkM",
-    "VGBp9EIMLLE",
-    "3Q9je5AmbEc",
-    "upRugOtf4rI",
-    "ETbc0F7G35U",
-    "vJDWppSFYyI",
-    "GEarPGa3Wso",
-    "_MFumV4dbgs",
-    "HKeYzNAzvLE",
-    "PZHOyX4llGI",
-    "Q-meLPVXDv4",
-    "GqRSeWBpCR8",
-    "zp7aeqpjGyw",
-    "Dr2M5Yvwlbs",
-    "tXlbdUwahMQ",
-    "-19NNKlOX8o",
-    "Y3G6w7l9Nwg",
-    "ibMKsMPdBDg",
-    "IgjzEfNrgFk",
-    "582aiZM_MeA",
-    "YnIuwXuu-MY",
-    "fGJFtUTxvC4",
-    "sGHNkCItIL8",
+videos = [
+    ('Ober6p42NBM', '06'),
+    ('y6eYcVWpXLY', '05'),
+    ('xdevp0g6r9M', '04'),
+    ('xXuEZGbFqu0', '03'),
+    ('nF1YCgAFjEg', '02'),
+    ('g4dFGcoet7w', '01'),
 ]
 
-headers = {'User-Agent': 'Mozilla/5.0'}
-
-results = []
-for vid in video_ids:
-    url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={vid}&format=json"
-    req = urllib.request.Request(url, headers=headers)
-    try:
-        with urllib.request.urlopen(req) as resp:
-            data = json.loads(resp.read().decode('utf-8'))
-            title = data.get('title', '')
-            results.append({'id': vid, 'title': title})
-            print(f"OK: {vid} -> {title}")
-    except Exception as e:
-        print(f"Error for {vid}: {e}")
-
-with open('scripts/today_24_videos.json', 'w', encoding='utf-8') as f:
-    json.dump(results, f, ensure_ascii=False, indent=2)
-print("Saved scripts/today_24_videos.json")
-
+with open('scripts/video_desc.txt', 'w', encoding='utf-8') as out:
+    for vid, ep in videos:
+        url = f'https://www.youtube.com/watch?v={vid}'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        html = urllib.request.urlopen(req).read().decode('utf-8', errors='ignore')
+        m = re.search(r'"shortDescription":"(.*?)"', html)
+        if m:
+            raw = m.group(1)
+            # Use json.loads to unescape properly
+            desc = json.loads(f'"{raw}"')
+            first_line = desc.split('\n')[0].strip()
+            out.write(f"=== Ep {ep} ({vid}) ===\n{first_line}\n\n")
+            print(f"Done Ep {ep}")
