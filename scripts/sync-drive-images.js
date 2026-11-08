@@ -135,6 +135,8 @@ for (const filePath of allMdFiles) {
 
   const title = titleMatch[1].trim();
   const titleClean = title.replace(/[【\[（(].+?[】\]）)]\s*/g, '').trim();
+  const titleNoPunct = title.replace(/[：:？?！「」『』]/g, '').trim();
+  const titleCleanNoPunct = titleClean.replace(/[：:？?！「」『』]/g, '').trim();
 
   // 嘗試比對標題是否有真正的圖檔
   let matchedImage = null;
@@ -142,6 +144,10 @@ for (const filePath of allMdFiles) {
   else if (realImagesMap.has(titleClean.toLowerCase())) matchedImage = realImagesMap.get(titleClean.toLowerCase());
   else if (realImagesMap.has(title.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(title.replace(/\s+/g, '').toLowerCase());
   else if (realImagesMap.has(titleClean.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(titleClean.replace(/\s+/g, '').toLowerCase());
+  else if (realImagesMap.has(titleNoPunct.toLowerCase())) matchedImage = realImagesMap.get(titleNoPunct.toLowerCase());
+  else if (realImagesMap.has(titleCleanNoPunct.toLowerCase())) matchedImage = realImagesMap.get(titleCleanNoPunct.toLowerCase());
+  else if (realImagesMap.has(titleNoPunct.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(titleNoPunct.replace(/\s+/g, '').toLowerCase());
+  else if (realImagesMap.has(titleCleanNoPunct.replace(/\s+/g, '').toLowerCase())) matchedImage = realImagesMap.get(titleCleanNoPunct.replace(/\s+/g, '').toLowerCase());
 
   // 特殊檔名映射修正（圖片名稱與文章 title 不一致時手動對應）
   const SPECIAL_MAP = {
@@ -153,6 +159,8 @@ for (const filePath of allMdFiles) {
     '難治性幽門桿菌治療_二次治療失敗': '難治性幽門桿菌治療',
     '【幽門桿菌】【實證】2026NEJM幽門螺旋桿菌回顧與臨床前沿': '幽門螺旋桿菌 (h. pylori) 第二線治療處方',
     '12、個人理財的 10 項練習':   '12、個人理財十練習',
+    '10、新宗教：科技人本主義':   '10、新宗教科技人本主義',
+    '11、信數據得永生？':         '11、信數據得永生',
   };
   if (!matchedImage && SPECIAL_MAP[title] && realImagesMap.has(SPECIAL_MAP[title].toLowerCase())) {
     matchedImage = realImagesMap.get(SPECIAL_MAP[title].toLowerCase());
