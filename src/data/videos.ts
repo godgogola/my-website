@@ -38,6 +38,7 @@ export const bookCategories = [
   '全部',
   '漫步華爾街',
   '財富階梯',
+  '投資金律',
   '你的人生，他們六個說了算!',
 ] as const;
 
@@ -59,16 +60,69 @@ export const videoCategories = [
   '你的人生，他們六個說了算!',
   '漫步華爾街',
   '財富階梯',
+  '投資金律',
 ] as const;
 
 export function getVideoSectionType(category: string): 'medical' | 'book' {
-  if (category === '漫步華爾街' || category === '財富階梯' || category === '你的人生，他們六個說了算!') {
+  if (category === '漫步華爾街' || category === '財富階梯' || category === '投資金律' || category === '你的人生，他們六個說了算!') {
     return 'book';
   }
   return 'medical';
 }
 
 export const videos: VideoItem[] = [
+  {
+    id: 'pQqvjP_3Pps',
+    title: '買在高點注定報酬悲劇？大師教你看懂資產真正價值：小心摧毀財務的深層風險！｜《投資金律》Ep.02',
+    description: '買在歷史高點注定迎來低報酬？看著過去幾年狂飆的熱門資產，你是否也忍不住跟風進場？在《投資金律》第二章「風險與報酬面面觀」中，伯恩斯坦帶領我們從歷史經驗跨入估值理論，運用歐文·費雪與高登估值模型，徹底拆解預期報酬與真正致命的「深層風險」！',
+    category: '投資金律',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=pQqvjP_3Pps',
+    featured: true,
+    order: 1,
+    thumbnail: '/images/02、風險與報酬面面觀.webp',
+    articleSlug: '投資金律/02-風險與報酬面面觀',
+    articleTitle: '02、風險與報酬面面觀',
+  },
+  {
+    id: 'mQmCpRSz_5M',
+    title: '為什麼高報酬零風險全是騙局？大師揭露金融界物理定律：局勢最黑暗時報酬最高！｜《投資金律》Ep.01',
+    description: '想追求超額報酬，卻又害怕市場波動回檔？威廉·伯恩斯坦在投資經典《投資金律》第一章「不入虎穴，焉得虎子」中直言：多數投資人進入市場宛如盲目遠征。想要在資本市場長治久安，首先必須刻在骨子裡的物理定律就是——風險與報酬永遠共生！',
+    category: '投資金律',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=mQmCpRSz_5M',
+    featured: true,
+    order: 2,
+    thumbnail: '/images/01、不入虎穴，焉得虎子.webp',
+    articleSlug: '投資金律/01-不入虎穴-焉得虎子',
+    articleTitle: '01、不入虎穴，焉得虎子',
+  },
+  {
+    id: 'gnPZxINxkzk',
+    title: '有錢卻不快樂？小心陷入貧窮的富有！大師剖析人生的五種財富：健康才是前面的1｜《財富階梯》Ep.12',
+    description: '拼命賺錢卻賠上了健康與家庭，這只是一種「貧窮的富有」！在《財富階梯》第 12 章中，尼克·馬朱利指出：金錢只是人生的強化劑（Enhancer），而非人生本體。要活出真正富足的人生，必須均衡佈局五種維度的核心財富！',
+    category: '財富階梯',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=gnPZxINxkzk',
+    featured: true,
+    order: 3,
+    thumbnail: '/images/12、人生強化器.webp',
+    articleSlug: '財富階梯/12-人生強化器',
+    articleTitle: '12、人生強化器',
+  },
+  {
+    id: 'V4tO3tpupnw',
+    title: '有錢真的會更快樂嗎？諾貝爾獎大數據揭露幸福真相！別在廚房裡只堆滿了鹽巴｜《財富階梯》Ep.11',
+    description: '金錢到底能不能買到幸福？有人說錢能解決九成九的問題，也有人堅信金錢買不到快樂。在《財富階梯》第 11 章中，尼克·馬朱利引用諾貝爾獎得主卡尼曼與基林斯沃斯的大數據研究，為大家給出最客觀的答案：金錢確實能帶來幸福，但作用因人而異！',
+    category: '財富階梯',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=V4tO3tpupnw',
+    featured: true,
+    order: 4,
+    thumbnail: '/images/11、金錢能買到幸福嗎？.webp',
+    articleSlug: '財富階梯/11-金錢能買到幸福嗎',
+    articleTitle: '11、金錢能買到幸福嗎？',
+  },
   {
     id: 'XH5pjh6E608',
     title: '空腹血糖正常就不會得糖尿病？2026 ADA 權威指引：糖尿病四大診斷門檻與糖尿病前期黃金逆轉期｜黃冠智醫師',

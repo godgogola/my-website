@@ -1,0 +1,47 @@
+{
+  "description": "醫學筆記 16:9 微型醫學微縮景觀（方案 B）翻新記錄表",
+  "total_posts": 267,
+  "quota_status": {
+    "exhausted_at": "2026-11-09 21:10",
+    "reset_expected_at": "2026-11-10 01:50",
+    "message": "429 Too Many Requests - Capacity exhausted on image generator model"
+  },
+  "completed_categories": {
+    "高血壓": [
+      "S-ABCDE 高血壓生活型態調整",
+      "最新高血壓診斷分級與 722 量測準則",
+      "次發性高血壓",
+      "長期血壓控制不良的併發症",
+      "高血壓藥物介紹",
+      "高血壓藥物在一般族群及共病族群的選擇",
+      "高血壓藥物效果"
+    ]
+  },
+  "completed_in_current_session": [
+    "非酒精性脂肪肝",
+    "【代謝異常脂肪肝】",
+    "肝硬化",
+    "急性胰臟炎",
+    "膽囊息肉",
+    "肝炎",
+    "肝臟常見的腫瘤",
+    "肝臟血管瘤",
+    "脾腫大及肝腫大",
+    "酒精性肝病變",
+    "A型肝炎"
+  ],
+  "in_progress_category": "肝膽胰疾病",
+  "category_stats": {
+    "肝膽胰疾病": {
+      "total": 16,
+      "completed": 13,
+      "remaining": 3
+    }
+  },
+  "immediate_next_batch": [
+    "B型肝炎",
+    "C型肝炎",
+    "脂肪肝",
+    "【2026 ADA】 糖尿病照護_心血管-腎臟-代謝（CKM）綜合風險管理"
+  ]
+}
