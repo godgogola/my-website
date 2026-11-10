@@ -1,11 +1,6 @@
 {
   "description": "醫學筆記 16:9 微型醫學微縮景觀（方案 B）翻新記錄表",
-  "total_posts": 267,
-  "quota_status": {
-    "exhausted_at": "2026-11-09 21:10",
-    "reset_expected_at": "2026-11-10 01:50",
-    "message": "429 Too Many Requests - Capacity exhausted on image generator model"
-  },
+  "total_posts": 269,
   "completed_categories": {
     "高血壓": [
       "S-ABCDE 高血壓生活型態調整",
@@ -15,33 +10,39 @@
       "高血壓藥物介紹",
       "高血壓藥物在一般族群及共病族群的選擇",
       "高血壓藥物效果"
+    ],
+    "肝膽胰疾病": [
+      "非酒精性脂肪肝",
+      "【代謝異常脂肪肝】",
+      "肝硬化",
+      "急性胰臟炎",
+      "膽囊息肉",
+      "肝炎",
+      "肝臟常見的腫瘤",
+      "肝臟血管瘤",
+      "脾腫大及肝腫大",
+      "酒精性肝病變",
+      "A型肝炎",
+      "B型肝炎",
+      "C型肝炎",
+      "膽結石",
+      "【代謝異常脂肪肝】逆轉代謝異常脂肪肝",
+      "代謝異常相關脂肪性肝病與大腸腺瘤"
+    ],
+    "慢性病": [
+      "代謝症候群",
+      "【慢性腎臟病】慢性腎臟病各分期保腎措施",
+      "改善胰島素阻抗",
+      "【痛風】急性痛風的原因",
+      "【痛風】痛風常發作的部位",
+      "【痛風】痛風急慢性期治療",
+      "【貧血】小球性與大球性貧血"
     ]
   },
-  "completed_in_current_session": [
-    "非酒精性脂肪肝",
-    "【代謝異常脂肪肝】",
-    "肝硬化",
-    "急性胰臟炎",
-    "膽囊息肉",
-    "肝炎",
-    "肝臟常見的腫瘤",
-    "肝臟血管瘤",
-    "脾腫大及肝腫大",
-    "酒精性肝病變",
-    "A型肝炎"
-  ],
-  "in_progress_category": "肝膽胰疾病",
-  "category_stats": {
-    "肝膽胰疾病": {
-      "total": 16,
-      "completed": 13,
-      "remaining": 3
-    }
-  },
-  "immediate_next_batch": [
-    "B型肝炎",
-    "C型肝炎",
-    "脂肪肝",
-    "【2026 ADA】 糖尿病照護_心血管-腎臟-代謝（CKM）綜合風險管理"
-  ]
+  "current_category": "要活就要動",
+  "total_completed": 30,
+  "quota_status": {
+    "exhausted_at": "2026-11-10 16:53",
+    "note": "Hit 429 capacity quota after successfully generating the last chronic image. Quota will reset shortly."
+  }
 }
