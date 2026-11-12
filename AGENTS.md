@@ -32,16 +32,21 @@ Generate a blog post cover image with an aspect ratio of 16:9 (landscape). Subje
 
 未來新生成的醫學衛教文章封面圖，全面升級為**「具備生動情境、互動故事感與豐富立體空間」的高階微縮景觀**：
 
-* **核心基底**：
-  * 跳脫過去呆板的單一桌面，轉向**「立體多層次微縮醫學探索景觀」**（如立體人體微縮公園、巨型醫學知識百科舞台、溫馨治癒系微型診間/實驗室工坊）。
-* **角色與器官互動**：
-  * 男醫師/女醫師毛線玩偶不再只是站樁拍照，而是與**可愛的微型器官玩偶（胃部、心臟、肝臟、血管水管、胰島素小精靈）進行生動的醫療互動**（例如：醫師手拿柔軟毛線聽診器為微笑胃玩偶看診、合力修復微型血管水管、拿著放大鏡研究發光的細胞晶體、在天秤前平衡地雷食物與健康食材）。
-* **視覺與光影**：維持親切療癒的毛線質感（Amigurumi crochet）、溫暖柔和的工作室燈光、微距移軸景深、原生 16:9 留白防貼邊。
+* **角色形象設定（帥氣男醫師 vs. 美麗女醫師）**：
+  * **角色顏值與氣質（告別呆板站樁）**：
+    * **帥氣男醫師 (Charming handsome male chibi doctor doll)**：俐落微捲短髮、溫柔深邃有神的大眼睛、自信溫暖的微笑、穿著剪裁挺拔合身的迷你羊毛醫師白袍。
+    * **美麗女醫師 (Elegant beautiful female chibi doctor doll)**：精緻可愛的五官、俐落馬尾或優雅微卷髮、溫婉知性的笑容、合身細緻的迷你羊毛醫師白袍。
+    * 兩者依據文章專題隨機或靈活輪替登場，展現親切高顏值專業形象。
+* **核心基底（微縮世界觀）**：
+  * 跳脫過去呆板的單一桌面，轉向**「攤開的巨型醫學知識百科舞台」**或**「立體多層次微縮醫學探索景觀」**（如立體人體微縮公園、溫馨治癒系微型診間/實驗室工坊）。
+* **角色與器官互動（向讀書筆記看齊的豐富事件）**：
+  * 醫師毛線玩偶**絕非站樁擺拍看鏡頭**，而是與**可愛的微型擬人化器官玩偶（微笑胃部、心臟、肝臟、血管水管、胰島素小精靈）進行生動的醫療互動**（例如：醫師手拿柔軟毛線聽診器為微笑胃玩偶看診、手持微型發光內視鏡仔細探索乾淨波浪隧道、合力修復微型血管水管、拿著放大鏡研究發光的細胞晶體、在天秤前平衡地雷食物與健康食材）。
+* **視覺與光影**：維持親切療癒的高品質毛線質感（Amigurumi crochet, visible knit stitches, fuzzy wool texture）、溫暖柔和的工作室黃金光斑、微距移軸景深（Tilt-shift miniature effect）、原生 16:9 留白防貼邊。
 * **嚴格禁止文字與字母**：所有藥罐、醫療器材、飲食道具維持純編織紋理，嚴禁出現任何英文字母或標籤。
 
 #### 📝 醫療筆記標準通用 Prompt 範本 (Medical Master Template)
 ```text
-Generate a blog post cover image with an aspect ratio of 16:9 (landscape). Subject: On top of a warm wooden workbench or an open giant medical journal, a whimsical, heartwarming miniature diorama exploring [醫學病理/治療主題]. In the center, a cute chibi doctor amigurumi plush doll (sitting or actively interacting) is tenderly examining or working alongside a cute, anthropomorphic smiling [主題器官/細胞/微生物毛線玩偶], surrounded by a rich, creative horizontal cluster of handcrafted felt props: [具體醫療比喻道具，如毛線聽診器、微型針筒、水管管線、健康食物、藥箱模型等，生動高低錯落陳列]. Art Style: Realistic, cute, handcrafted amigurumi knitted style (crochet wool texture) miniature diorama. Texture: High-quality soft yarn texture, visible stitches, warm felt accents. Colors: Comforting, bright, warm clinical palette (mint green, gentle pastel blues, soft coral, warm amber). Composition: Dynamic tabletop diorama wide horizontal 16:9 scene, centered comfortably with generous breathing margins on all 4 sides (top, bottom, left, right). Background: Cozy softly blurred clinic studio with warm glowing fairy lights or stacked medical books bokeh. Technical: High quality 3D render, macro photography, tilt-shift miniature effect, soft depth of field. Constraints: ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS, NO LABELS, NO CHARTS, NO WATERMARKS. Full bleed framing.
+Generate a blog post cover image with an aspect ratio of 16:9 (landscape). Subject: On top of an open giant medical knowledge book stage or a multi-layered warm wooden clinic diorama, a whimsical, heartwarming miniature scene exploring [醫學病理/治療主題]. In the center, a charming handsome male doctor (or elegant beautiful female doctor) chibi amigurumi plush doll with delicate friendly facial features, styled hair, and a neat miniature white coat is actively immersed in [具體生動的醫療探索或互動動作], alongside a cute, anthropomorphic smiling [主題器官/細胞/微生物毛線玩偶], surrounded by a rich, creative horizontal cluster of handcrafted felt props: [具體高低錯落的醫療比喻道具，如微型發光內視鏡、毛線聽診器、微型針筒、水管管線、健康食物、藥箱模型等]. Art Style: Realistic, cute, handcrafted amigurumi knitted style (crochet wool texture) miniature diorama. Texture: High-quality soft yarn texture, visible stitches, warm felt accents. Colors: Comforting, bright, warm clinical palette (mint green, gentle pastel blues, soft coral, warm amber). Composition: Dynamic tabletop diorama wide horizontal 16:9 scene, centered comfortably with generous breathing margins on all 4 sides (top, bottom, left, right). Background: Cozy softly blurred clinic studio with warm glowing fairy lights or stacked medical books bokeh. Technical: High quality 3D render, macro photography, tilt-shift miniature effect, soft depth of field. Constraints: ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS, NO LABELS, NO CHARTS, NO WATERMARKS. Full bleed framing.
 ```
 
 ---
