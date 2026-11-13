@@ -36,6 +36,7 @@ export const medicalCategories = [
 
 export const bookCategories = [
   '全部',
+  '別把你的錢留到死',
   '投資前最重要的事',
   '漫步華爾街',
   '財富階梯',
@@ -66,13 +67,105 @@ export const videoCategories = [
 ] as const;
 
 export function getVideoSectionType(category: string): 'medical' | 'book' {
-  if (category === '漫步華爾街' || category === '財富階梯' || category === '投資金律' || category === '投資前最重要的事' || category === '你的人生，他們六個說了算!') {
+  if (category === '別把你的錢留到死' || category === '漫步華爾街' || category === '財富階梯' || category === '投資金律' || category === '投資前最重要的事' || category === '你的人生，他們六個說了算!') {
     return 'book';
   }
   return 'medical';
 }
 
 export const videos: VideoItem[] = [
+  {
+    id: 'ELZzDYYKFWs',
+    title: '死後留下一大筆遺產，其實等於免費替老闆多打好幾年工！｜《別把你的錢留到死》Ep 03',
+    description: '「死前財產歸零」聽起來是不是很瘋狂？難道是要人毫無節制地揮霍當月光族嗎？絕對不是！在《別把你的錢留到死》法則三中，比爾·柏金斯（Bill Perkins）挑戰傳統「只存不花」的守財慣性，點出一個殘酷卻清醒的真相：死後留下大筆沒花完的存款，代表你曾為了賺這些錢而白白浪費了好幾年的生命能量！',
+    category: '別把你的錢留到死',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=ELZzDYYKFWs',
+    featured: true,
+    order: 3,
+    thumbnail: '/images/03、以死前財產歸零為目標.webp',
+    articleSlug: '別把你的錢留到死/03-以死前財產歸零為目標',
+    articleTitle: '03、以死前財產歸零為目標',
+  },
+  {
+    id: 'CF-biurGlww',
+    title: '體驗也會產生複利？越早投資回憶，領取越多「記憶股利」！｜《別把你的錢留到死》Ep 02',
+    description: '很多人以為存錢買股票才有複利，卻不知道「人生體驗」同樣能為你源源不絕地派發高額股利！在《別把你的錢留到死》法則二中，比爾·柏金斯（Bill Perkins）揭示了「記憶股利」（Memory Dividends）的驚人力量：越早投資體驗，你就有越長的人生歲月可以反覆回味並領取快樂利息！',
+    category: '別把你的錢留到死',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=CF-biurGlww',
+    featured: true,
+    order: 2,
+    thumbnail: '/images/02、儘早投資各種體驗.webp',
+    articleSlug: '別把你的錢留到死/02-儘早投資各種體驗',
+    articleTitle: '02、儘早投資各種體驗',
+  },
+  {
+    id: 'N4ZexwAIKgU',
+    title: '別再無意識存錢了！人生的價值是體驗總和，而非死後存款！｜《別把你的錢留到死》Ep 01',
+    description: '我們拼命加班儲蓄，往往把「極大化銀行帳戶數字」當成了人生目標，卻混淆了手段與目的！在《別把你的錢留到死》（Die With Zero）法則一中，比爾·柏金斯（Bill Perkins）提出震撼人心的觀點：人生的終極價值是所有正向體驗的加總，而非你離世時留下的遺產數字！',
+    category: '別把你的錢留到死',
+    duration: '0:33',
+    url: 'https://www.youtube.com/watch?v=N4ZexwAIKgU',
+    featured: true,
+    order: 1,
+    thumbnail: '/images/01、盡力最佳化你的人生.webp',
+    articleSlug: '別把你的錢留到死/01-盡力最佳化你的人生',
+    articleTitle: '01、盡力最佳化你的人生',
+  },
+  {
+    id: 'akVZshy4onc',
+    title: '連祖母都能聽懂的十個投資常識！簡單耐心才是終極超能力！｜《投資前最重要的事》Ep 10',
+    description: '如果今天你的祖母要你給她十個連她都能輕鬆聽懂的投資建議，你會寫下什麼？在《投資前最重要的事》全書最終章「結語：十個投資概念與建議書單」中，班·卡爾森（Ben Carlson）將全書精華濃縮為十條樸實卻無比強大的常識，並精選經典閱讀書單，陪你走上長久穩健的財富之路！',
+    category: '投資前最重要的事',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=akVZshy4onc',
+    featured: true,
+    order: 10,
+    thumbnail: '/images/10、結語：十個投資概念與建議書單.webp',
+    articleSlug: '投資前最重要的事/10-結語十個投資概念與建議書單',
+    articleTitle: '10、結語：十個投資概念與建議書單',
+  },
+  {
+    id: 'vCc1DLYQXN8',
+    title: '理財顧問真能幫你挑飆股嗎？看清專業人士的真實價值！｜《投資前最重要的事》Ep 09',
+    description: '我們到底需不需要聘請理財顧問？如果花錢請了專業人士，難道不是為了幫我們挑選飆股、躲過崩盤嗎？在《投資前最重要的事》第九章中，班·卡爾森（Ben Carlson）徹底釐清理財顧問的真實角色：好的專業人士不是水晶球預言家，而是協助你守住紀律、做好全盤規劃的行為教練！',
+    category: '投資前最重要的事',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=vCc1DLYQXN8',
+    featured: true,
+    order: 9,
+    thumbnail: '/images/09、理財專業人士.webp',
+    articleSlug: '投資前最重要的事/09-理財專業人士',
+    articleTitle: '09、理財專業人士',
+  },
+  {
+    id: 'k9U9qk7YDrQ',
+    title: '寫給恐慌時自己的合約！打造終生不敗的綜合投資計畫！｜《投資前最重要的事》Ep 08',
+    description: '學會了所有投資理論，為什麼還是常常在市場大跌時手忙腳亂？因為你缺少一份將規則白紙黑字固定下來的行動藍圖！在《投資前最重要的事》第八章中，班·卡爾森（Ben Carlson）示範如何將目標、配置、儲蓄與稅務整合成一份可終生貫徹的「綜合投資計畫」，讓你在市場狂風暴雨中依然有據可依、從容不迫！',
+    category: '投資前最重要的事',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=k9U9qk7YDrQ',
+    featured: true,
+    order: 8,
+    thumbnail: '/images/08、完整的綜合投資計畫.webp',
+    articleSlug: '投資前最重要的事/08-完整的綜合投資計畫',
+    articleTitle: '08、完整的綜合投資計畫',
+  },
+  {
+    id: '2b9hzwBgPTQ',
+    title: '決定投資成敗的不是選股？資產配置決定了八成報酬！｜《投資前最重要的事》Ep 07',
+    description: '多數投資人總把時間花在研究下一檔飆股或猜測進出場時機，但決定長期投資成敗的真正關鍵其實另有其事！在《投資前最重要的事》第七章中，班·卡爾森（Ben Carlson）明確指出：資產配置決定了八成以上的長期成果，唯有透過多元分散與定期再平衡，才能打造出陪伴自己穿越景氣循環的穩健組合！',
+    category: '投資前最重要的事',
+    duration: '0:41',
+    url: 'https://www.youtube.com/watch?v=2b9hzwBgPTQ',
+    featured: true,
+    order: 7,
+    thumbnail: '/images/07、資產配置.webp',
+    articleSlug: '投資前最重要的事/07-資產配置',
+    articleTitle: '07、資產配置',
+  },
+
   {
     id: 'XczPEcGwecM',
     title: '九成基金經理人長期輸給大盤？看破華爾街行為陷阱輕鬆躺贏！｜《投資前最重要的事》Ep.06',
