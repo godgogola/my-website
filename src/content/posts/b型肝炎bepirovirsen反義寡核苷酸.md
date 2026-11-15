@@ -5,7 +5,7 @@ publishDate: "2026-10-07"
 draft: false
 slug: "b型肝炎bepirovirsen反義寡核苷酸"
 order: 16
-coverImage: "【B型肝炎】Bepirovirsen反義寡核苷酸.webp"
+coverImage: "【B型肝炎】Bepirovirsen 反義寡核苷酸.webp"
 ---
 
 ## 🎯 核心藥理與作用機制 (Mechanism of Action)
